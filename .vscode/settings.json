@@ -1,8 +1,0 @@
-{
-    "files.exclude": {
-        "**/**.uid": true,
-        "**/bin": true,
-        "**/obj": true,
-    },
-    "workbench.tree.indent": 15,
-}
