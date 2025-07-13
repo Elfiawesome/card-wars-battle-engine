@@ -15,15 +15,22 @@ public class Battlefield
 	public IReadOnlyDictionary<Vector2, UnitSlot> Grid => _grid;
 	private ArrangementType _arrangementType = ArrangementType.Centered;
 
-	public Battlefield(Guid id, int width, int height)
+	public Battlefield(Guid id)
 	{
 		Id = id;
+	}
 
+	public void InitializeGrid(int width, int height)
+	{
 		for (var x = 0; x < width; x++)
 		{
 			for (var y = 0; y < height; y++)
 			{
-				_grid[new Vector2(x, y)] = new UnitSlot();
+				var pos = new Vector2(x, y);
+				if (!_grid.ContainsKey(pos))
+				{
+					_grid[pos] = new UnitSlot();
+				}
 			}
 		}
 	}
