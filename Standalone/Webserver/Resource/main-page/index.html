@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Wars Game Server - Debug View</title>
+    <link rel="stylesheet" href="files/main-page/style.css">
+    <script src="files/main-page/script.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Card Game - Debug View</h1>
+        <div id="connection-status">[Insert Status Here]</div>
+    </header>
+
+    <main class="game-container">
+        <!-- Players Section -->
+        <section id="players-container">
+            <h2>Players</h2>
+            <div id="players-section">
+                <!-- Player cards will be dynamically inserted here -->
+                
+            </div>
+        </section>
+
+        <!-- Battlefield Section -->
+        <section id="battlefield-container">
+            <h2>Battlefield</h2>
+            <div id="battlefield-section">
+                <!-- Battlefields and their unit slots will be inserted here -->
+                <div class="battlefield">
+                    <h4>${bf.name}</h4>
+
+                    <div class="unit-slots">
+                        <div class="unit-slot">
+
+                            <div class="unit-slot">
+                                <div class="unit-card">
+                                    <h5>${unit.name}</h5>
+                                    <div class="unit-stats">
+                                        <span class="unit-attack">${unit.attack}</span> ATK /
+                                        <span class="unit-hp">${unit.hp}</span> HP
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+        <!-- Command Section -->
+        <section id="command-container">
+            <h2>Command Input</h2>
+            <div id="command-section">
+                <input type="text" id="command-input" placeholder="e.g., play_card 1 2">
+                <button id="send-command-btn">Send Command</button>
+            </div>
+            <h3>Server Log / Response</h3>
+            <pre id="command-log"></pre>
+        </section>
+    </main>
+
+</body>
+
+</html>
