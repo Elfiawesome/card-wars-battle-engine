@@ -5,7 +5,7 @@ namespace Standalone.Webserver;
 
 public class Webserver : IAsyncDisposable
 {
-	public Func<string> ApiGameState;
+	public Func<string>? ApiGameState;
 
 	private readonly HttpListener _listener;
 	private bool _isRunning = false;
@@ -88,7 +88,7 @@ public class Webserver : IAsyncDisposable
 		switch (apiRequestType)
 		{
 			case "gamestate":
-				var data = ApiGameState.Invoke();
+				var data = ApiGameState?.Invoke() ?? "{}";
 				await ServeApiResponse(response, data);
 				break;
 		}

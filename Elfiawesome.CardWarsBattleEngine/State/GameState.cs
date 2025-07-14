@@ -1,4 +1,4 @@
-namespace Elfiawesome.CardWarsBattleEngine.Game.State;
+namespace Elfiawesome.CardWarsBattleEngine.State;
 
 public record class GameState
 {

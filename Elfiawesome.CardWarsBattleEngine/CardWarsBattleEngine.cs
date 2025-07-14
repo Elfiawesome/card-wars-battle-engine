@@ -1,6 +1,5 @@
-﻿using Elfiawesome.CardWarsBattleEngine.Game.Battlefields;
+﻿using Elfiawesome.CardWarsBattleEngine.Game.Entities;
 using Elfiawesome.CardWarsBattleEngine.Game.Intents;
-using Elfiawesome.CardWarsBattleEngine.Game.Players;
 
 namespace Elfiawesome.CardWarsBattleEngine;
 
@@ -18,13 +17,12 @@ public class CardWarsBattleEngine
 	// Self-contained own usage
 	private List<GameIntent> _intentQueue = [];
 	// private List<GameAction> _ActionQueue = [];
-	private PlayerIdGenerator _playerIdGenerator = new();
-	private BattlefieldIdGenerator _battlefieldIdGenerator = new();
-	
+
+	private long _playerIdCounter;
 
 	public Player AddPlayer() // Put card data in here?
 	{
-		var newId = _playerIdGenerator.NewId();
+		var newId = new PlayerId(_playerIdCounter++);
 		var player = new Player(newId);
 		_players[newId] = player;
 		return player;
@@ -32,7 +30,7 @@ public class CardWarsBattleEngine
 
 	public Battlefield AddBattlefield()
 	{
-		var newId = _battlefieldIdGenerator.NewId();
+		var newId = new BattlefieldId(_playerIdCounter++);
 		var battlefield = new Battlefield(newId);
 		_battlefields[newId] = battlefield;
 		return battlefield;

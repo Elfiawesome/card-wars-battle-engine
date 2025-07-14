@@ -1,6 +1,4 @@
-using Elfiawesome.CardWarsBattleEngine.Game.Battlefields;
-
-namespace Elfiawesome.CardWarsBattleEngine.Game.Players;
+namespace Elfiawesome.CardWarsBattleEngine.Game.Entities;
 
 public class Player
 {
@@ -20,3 +18,5 @@ public class Player
 		}
 	}
 }
+
+public readonly record struct PlayerId(long Id);

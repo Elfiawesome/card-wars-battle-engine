@@ -1,6 +1,4 @@
-using Elfiawesome.CardWarsBattleEngine.Game.UnitSlots;
-
-namespace Elfiawesome.CardWarsBattleEngine.Game.Battlefields;
+namespace Elfiawesome.CardWarsBattleEngine.Game.Entities;
 
 public class Battlefield
 {
@@ -36,7 +34,9 @@ public class Battlefield
 	{
 		foreach (var pos in _defaultLayout)
 		{
-			_grid.TryAdd(pos, new UnitSlot());
+			_grid.TryAdd(pos, new UnitSlot(pos));
 		}
 	}
 }
+
+public readonly record struct BattlefieldId(long Id);
