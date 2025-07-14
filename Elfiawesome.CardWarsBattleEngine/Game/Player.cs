@@ -12,6 +12,9 @@ public class Player
 
 	public void AttachBattlefield(Battlefield Battlefield)
 	{
-		ControllingBattlefieldIds.Add(Battlefield.Id);
+		if (!ControllingBattlefieldIds.Contains(Battlefield.Id))
+		{
+			ControllingBattlefieldIds.Add(Battlefield.Id);
+		}
 	}
 }

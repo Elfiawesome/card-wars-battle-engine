@@ -4,34 +4,41 @@ namespace Elfiawesome.CardWarsBattleEngine.Game;
 
 public class Battlefield
 {
-	public enum ArrangementType
-	{
-		Centered = 0, // Default: Meaning that the items are arranged by rows
-		TrueGrid
-	}
+	// By default Battlefields should look like this
+	// X X X
+	//   X
+	// But in some scenarios, we may want custom design/layout for the battlefield
+	// X X X
+	// X   X
+	//   X
+	// And mid game, we might want to add new slots in the battlefield, so it can extend on the sides the top etc (where Y is the new slots)
+	// Y X X X Y
+	//   Y X Y
+	// or (in not symmetry way too)
+	// X X X Y
+	// Y X
 
 	public readonly Guid Id;
-	private readonly Dictionary<Vector2, UnitSlot> _grid = [];
-	public IReadOnlyDictionary<Vector2, UnitSlot> Grid => _grid;
-	private ArrangementType _arrangementType = ArrangementType.Centered;
+	public IReadOnlyDictionary<BattlefieldPos, UnitSlot> Grid => _grid;
+
+	private readonly Dictionary<BattlefieldPos, UnitSlot> _grid = [];
+	private static readonly BattlefieldPos[] _defaultLayout = [
+		new(0, 0), new(1, 0), new(2, 0),
+		new(1, 1)
+	];
 
 	public Battlefield(Guid id)
 	{
 		Id = id;
 	}
 
-	public void InitializeGrid(int width, int height)
+	public void InitializeGrid()
 	{
-		for (var x = 0; x < width; x++)
+		foreach (var pos in _defaultLayout)
 		{
-			for (var y = 0; y < height; y++)
-			{
-				var pos = new Vector2(x, y);
-				if (!_grid.ContainsKey(pos))
-				{
-					_grid[pos] = new UnitSlot();
-				}
-			}
+			_grid.TryAdd(pos, new UnitSlot());
 		}
 	}
 }
+
+public readonly record struct BattlefieldPos(int X, int Y);

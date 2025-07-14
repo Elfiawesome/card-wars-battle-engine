@@ -16,6 +16,7 @@ public class CardWarsBattleEngine
 
 	// Self-contained own usage
 	private List<GameIntent> _intentQueue = [];
+	// private List<GameAction> _ActionQueue = [];
 	
 
 	public Player AddPlayer() // Put card data in here?
