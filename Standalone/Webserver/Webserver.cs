@@ -1,3 +1,4 @@
+using System.Data.SqlTypes;
 using System.Net;
 using System.Text;
 
@@ -5,8 +6,6 @@ namespace Standalone.Webserver;
 
 public class Webserver : IAsyncDisposable
 {
-	public Func<string>? ApiGameState;
-
 	private readonly HttpListener _listener;
 	private bool _isRunning = false;
 	private Task _listenTask;
@@ -16,99 +15,77 @@ public class Webserver : IAsyncDisposable
 	{
 		_listener = new HttpListener();
 		_listener.Prefixes.Add("http://localhost:3112/");
-		_listener.Start();
 
 		_listenTask = ListenTask();
 	}
 
-	public async Task ServeHtml(HttpListenerResponse resp, string htmlPath)
+	private async Task<byte[]> LoadFromResource(string relativePath)
 	{
-		using (var sr = new StreamReader(Path.Combine(ResourcePath, htmlPath)))
+		var fullPath = Path.Join(ResourcePath, relativePath);
+		using (var memoryStream = new MemoryStream())
 		{
-			string htmlString = await sr.ReadToEndAsync();
-			byte[] data = Encoding.UTF8.GetBytes(htmlString);
-
-			resp.ContentType = "text/html";
-			resp.ContentEncoding = Encoding.UTF8;
-			resp.ContentLength64 = data.LongLength;
-
-			await resp.OutputStream.WriteAsync(data);
+			using (FileStream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true))
+			{
+				await fileStream.CopyToAsync(memoryStream);
+			}
+			return memoryStream.ToArray();
 		}
 	}
 
-	public async Task ServeFile(HttpListenerResponse resp, string filePath, string contentType = "")
+	private async Task<SiteBytes> HandleConnection(HttpListenerRequest request)
 	{
-		var data = await File.ReadAllBytesAsync(Path.Combine(ResourcePath, filePath));
-		resp.ContentType = contentType;
-		resp.ContentLength64 = data.LongLength;
-
-		await resp.OutputStream.WriteAsync(data);
-	}
-
-	public async Task ServeApiResponse(HttpListenerResponse resp, string jsonData)
-	{
-		byte[] data = Encoding.UTF8.GetBytes(jsonData);
-
-		resp.ContentType = "application/json";
-		resp.ContentEncoding = Encoding.UTF8;
-		resp.ContentLength64 = data.LongLength;
-
-		await resp.OutputStream.WriteAsync(data);
-	}
-
-	private async Task HandleConnection(HttpListenerRequest request, HttpListenerResponse response)
-	{
-		string[] urlParts = request?.RawUrl?.Substring(1).Split("/") ?? [""];
-		var target = urlParts[0];
-		List<string> parts = urlParts.ToList();
+		List<string> parts = request?.RawUrl?.Substring(1).Split("/").ToList() ?? [""];
+		var target = parts[0];
 		parts.RemoveAt(0);
+
+		// Console.WriteLine($"Raw URL: {request?.RawUrl}");
 
 		switch (target)
 		{
 			case "":
-				await ServeHtml(response, "main-page/index.html");
-				break;
-			case "files":
-				await ServeFile(response, string.Join("/", parts));
-				break;
-			case "api":
-				await HandleApiRequest(parts[0], response);
-				break;
+				return new SiteBytes(await LoadFromResource("sites/main/main.html"));
+			case "styles":
+				return new SiteBytes(await LoadFromResource("sites/" + string.Join("/", parts) + "/style.css"));
+			case "scripts":
+				return new SiteBytes(await LoadFromResource("sites/" + string.Join("/", parts) + "/script.js"));
+			case "img":
+				return new SiteBytes(await LoadFromResource("assets/img/" + string.Join("/", parts)));
 			case "favicon.ico":
-				await ServeFile(response, "assets/favicon.png", "image/png");
-				break;
+				return new SiteBytes(await LoadFromResource("assets/favicon.png"), "image/png");
 			default:
-				await ServeHtml(response, "error-page/index.html");
-				break;
-		}
-	}
-
-	private async Task HandleApiRequest(string apiRequestType, HttpListenerResponse response)
-	{
-		switch (apiRequestType)
-		{
-			case "gamestate":
-				var data = ApiGameState?.Invoke() ?? "{}";
-				await ServeApiResponse(response, data);
-				break;
+				return new SiteBytes(await LoadFromResource("sites/error/page-not-found.html"));
 		}
 	}
 
 	private async Task ListenTask()
 	{
+		_listener.Start();
 		_isRunning = true;
 		while (_isRunning)
 		{
 			try
 			{
 				HttpListenerContext ctx = await _listener.GetContextAsync();
-				HttpListenerRequest req = ctx.Request;
-				HttpListenerResponse resp = ctx.Response;
-				await HandleConnection(req, resp);
+				HttpListenerRequest request = ctx.Request;
+				HttpListenerResponse response = ctx.Response;
+				try
+				{
+					var data = await HandleConnection(request);
+					response.ContentLength64 = data.Data.LongLength;
+					response.ContentType = data.ContentType;
+					await response.OutputStream.WriteAsync(data.Data);
+				}
+				catch (Exception handlingException)
+				{
+					var data = Encoding.UTF8.GetBytes($"<h1>Internal Server Error</h1><p>{handlingException.Message}</p>");
+					response.ContentLength64 = data.LongLength;
+					await response.OutputStream.WriteAsync(data);
+					Console.WriteLine($"[Webserver Handling Error]: {handlingException.Message}");
+				}
 			}
-			catch (Exception exception)
+			catch (Exception listenerException)
 			{
-				Console.WriteLine($"[Webserver Error]: {exception.Message}");
+				Console.WriteLine($"[Webserver Listener Error]: {listenerException.Message}");
 			}
 		}
 	}
@@ -118,5 +95,22 @@ public class Webserver : IAsyncDisposable
 		_isRunning = false;
 		_listener.Close();
 		await _listenTask;
+	}
+}
+
+public record struct SiteBytes
+{
+	public byte[] Data = [];
+	public string? ContentType;
+
+	public SiteBytes(byte[] data)
+	{
+		Data = data;
+	}
+
+	public SiteBytes(byte[] data, string contentType)
+	{
+		Data = data;
+		ContentType = contentType;
 	}
 }

@@ -18,5 +18,7 @@ public class SetupGame : GameIntent
 			var battlefieldId = engine.NewBattlefieldId;
 			engine.QueueAction(new CreateBattlefieldAction(battlefieldId, Battlefield.DefaultLayout.ToList()));
 		}
+
+		engine.QueueAction(new UpdatePlayerTurnsAction(engine._players.Keys.ToList(), 0));
 	}
 }
