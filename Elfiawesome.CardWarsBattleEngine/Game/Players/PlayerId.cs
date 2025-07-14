@@ -1,4 +1,4 @@
-namespace Elfiawesome.CardWarsBattleEngine.Game.Battlefields;
+namespace Elfiawesome.CardWarsBattleEngine.Game.Players;
 
 public readonly record struct PlayerId(long Id);
 
