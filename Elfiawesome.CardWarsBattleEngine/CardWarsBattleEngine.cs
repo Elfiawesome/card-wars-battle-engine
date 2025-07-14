@@ -1,4 +1,5 @@
-﻿using Elfiawesome.CardWarsBattleEngine.Game.Entities;
+﻿using Elfiawesome.CardWarsBattleEngine.Game.Actions;
+using Elfiawesome.CardWarsBattleEngine.Game.Entities;
 using Elfiawesome.CardWarsBattleEngine.Game.Intents;
 
 namespace Elfiawesome.CardWarsBattleEngine;
@@ -16,9 +17,23 @@ public class CardWarsBattleEngine
 
 	// Self-contained own usage
 	private List<GameIntent> _intentQueue = [];
-	// private List<GameAction> _ActionQueue = [];
 	private long _playerIdCounter;
 	private long _battlefieldIdCounter;
+
+	public void QueueIntent(GameIntent intent)
+	{
+		intent.IntentCompletedEvent += () => OnIntentCompeted(intent);
+		_intentQueue.Add(intent);
+		ProcessIntentQueue();
+	}
+
+	public void QueueAction(GameAction action)
+	{
+		// For now we just initiate the GameAction immediately
+		// Note that GameActions are the bare building blocks of the game
+		// Game Actions can only change the state of the game and not make more actions
+		action.Execute(this);
+	}
 
 	public Player AddPlayer() // Put card data in here?
 	{
@@ -53,13 +68,6 @@ public class CardWarsBattleEngine
 	private void OnIntentCompeted(GameIntent intent)
 	{
 		_intentQueue.Remove(intent);
-		ProcessIntentQueue();
-	}
-
-	private void QueueIntent(GameIntent intent)
-	{
-		intent.IntentCompletedEvent += () => OnIntentCompeted(intent);
-		_intentQueue.Add(intent);
 		ProcessIntentQueue();
 	}
 }
