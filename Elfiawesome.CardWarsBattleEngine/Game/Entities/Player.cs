@@ -1,13 +1,12 @@
 namespace Elfiawesome.CardWarsBattleEngine.Game.Entities;
 
-public class Player
+public class Player : Entity<PlayerId>
 {
-	public readonly PlayerId Id;
 	public readonly List<BattlefieldId> ControllingBattlefieldIds = [];
 
-	public Player(PlayerId id)
+	public Player(PlayerId id) : base(id)
 	{
-		Id = id;
+		
 	}
 
 	public void AttachBattlefield(Battlefield Battlefield)

@@ -1,6 +1,6 @@
 namespace Elfiawesome.CardWarsBattleEngine.Game.Entities;
 
-public class Battlefield
+public class Battlefield : Entity<BattlefieldId>
 {
 	// By default Battlefields should look like this
 	// X X X
@@ -16,26 +16,22 @@ public class Battlefield
 	// X X X Y
 	// Y X
 
-	public readonly BattlefieldId Id;
 	public IReadOnlyDictionary<UnitSlotPos, UnitSlot> Grid => _grid;
-
-	private readonly Dictionary<UnitSlotPos, UnitSlot> _grid = [];
-	private static readonly UnitSlotPos[] _defaultLayout = [
+	public static readonly UnitSlotPos[] DefaultLayout = [
 		new(0, 0), new(1, 0), new(2, 0),
 		new(1, 1)
 	];
 
-	public Battlefield(BattlefieldId id)
+	private readonly Dictionary<UnitSlotPos, UnitSlot> _grid = [];
+
+	public Battlefield(BattlefieldId id) : base(id)
 	{
-		Id = id;
+		
 	}
 
-	public void InitializeGrid()
+	public void AddUnitSlot(UnitSlotPos position)
 	{
-		foreach (var pos in _defaultLayout)
-		{
-			_grid.TryAdd(pos, new UnitSlot(pos));
-		}
+		_grid[position] = new UnitSlot(position);
 	}
 }
 

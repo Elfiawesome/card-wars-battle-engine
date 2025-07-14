@@ -9,16 +9,21 @@ public class CardWarsBattleEngine
 	// Public APIs
 	public IReadOnlyDictionary<PlayerId, Player> Players => _players;
 	public IReadOnlyDictionary<BattlefieldId, Battlefield> Battlefields => _battlefields;
-
+	
 	// Internal Apis
 	internal readonly Dictionary<PlayerId, Player> _players = [];
 	internal readonly Dictionary<BattlefieldId, Battlefield> _battlefields = [];
+	internal readonly Dictionary<UnitId, Unit> _units = [];
 	internal bool isGameStarted = false;
+	internal PlayerId NewPlayerId => new PlayerId(_playerIdCounter++);
+	internal BattlefieldId NewBattlefieldId => new BattlefieldId(_battlefieldIdCounter++);
+	internal UnitId NewUnitId => new UnitId(_unitIdCounter++);
 
 	// Self-contained own usage
 	private List<GameIntent> _intentQueue = [];
 	private long _playerIdCounter;
 	private long _battlefieldIdCounter;
+	private long _unitIdCounter;
 
 	public void QueueIntent(GameIntent intent)
 	{
@@ -35,6 +40,12 @@ public class CardWarsBattleEngine
 		action.Execute(this);
 	}
 
+
+	public void StartGame()
+	{
+		QueueIntent(new SetupGame());
+	}
+
 	public Player AddPlayer() // Put card data in here?
 	{
 		var newId = new PlayerId(_playerIdCounter++);
@@ -43,17 +54,11 @@ public class CardWarsBattleEngine
 		return player;
 	}
 
-	public Battlefield AddBattlefield()
+	internal Battlefield AddBattlefield(BattlefieldId newId)
 	{
-		var newId = new BattlefieldId(_battlefieldIdCounter++);
 		var battlefield = new Battlefield(newId);
 		_battlefields[newId] = battlefield;
 		return battlefield;
-	}
-
-	public void StartGame()
-	{
-		QueueIntent(new SetupGame());
 	}
 
 	private void ProcessIntentQueue()

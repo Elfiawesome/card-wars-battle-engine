@@ -1,13 +1,12 @@
 namespace Elfiawesome.CardWarsBattleEngine.Game.Entities;
 
-public class UnitSlot
+public class UnitSlot : Entity<UnitSlotPos>
 {
 	public Unit? Unit;
-	public readonly UnitSlotPos Position;
 
-	public UnitSlot(UnitSlotPos position)
+	public UnitSlot(UnitSlotPos id) : base(id)
 	{
-		Position = position;
+		
 	}
 }
 

@@ -1,3 +1,6 @@
+using Elfiawesome.CardWarsBattleEngine.Game.Actions;
+using Elfiawesome.CardWarsBattleEngine.Game.Entities;
+
 namespace Elfiawesome.CardWarsBattleEngine.Game.Intents;
 
 public class SetupGame : GameIntent
@@ -12,8 +15,8 @@ public class SetupGame : GameIntent
 			var playerId = _p.Key;
 			var player = _p.Value;
 
-			var battlefield = engine.AddBattlefield();
-			player.AttachBattlefield(battlefield);
+			var battlefieldId = engine.NewBattlefieldId;
+			engine.QueueAction(new CreateBattlefieldAction(battlefieldId, Battlefield.DefaultLayout.ToList()));
 		}
 	}
 }

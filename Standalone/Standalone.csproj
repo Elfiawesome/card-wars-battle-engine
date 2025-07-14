@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Elfiawesome.CardWarsBattleEngine\Elfiawesome.CardWarsBattleEngine.csproj" />
-    <ProjectReference Include="..\Elfiawesome.Webserver\Elfiawesome.Webserver.csproj" />
   </ItemGroup>
 
 </Project>
