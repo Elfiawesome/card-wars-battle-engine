@@ -17,8 +17,8 @@ public class CardWarsBattleEngine
 	// Self-contained own usage
 	private List<GameIntent> _intentQueue = [];
 	// private List<GameAction> _ActionQueue = [];
-
 	private long _playerIdCounter;
+	private long _battlefieldIdCounter;
 
 	public Player AddPlayer() // Put card data in here?
 	{
@@ -30,7 +30,7 @@ public class CardWarsBattleEngine
 
 	public Battlefield AddBattlefield()
 	{
-		var newId = new BattlefieldId(_playerIdCounter++);
+		var newId = new BattlefieldId(_battlefieldIdCounter++);
 		var battlefield = new Battlefield(newId);
 		_battlefields[newId] = battlefield;
 		return battlefield;
