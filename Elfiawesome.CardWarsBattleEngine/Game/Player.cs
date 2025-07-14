@@ -9,4 +9,9 @@ public class Player
 	{
 		Id = id;
 	}
+
+	public void AttachBattlefield(Battlefield Battlefield)
+	{
+		ControllingBattlefieldIds.Add(Battlefield.Id);
+	}
 }

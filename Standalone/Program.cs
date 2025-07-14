@@ -2,14 +2,12 @@
 using Standalone.Webserver;
 
 CardWarsBattleEngine Engine = new();
-var player = Engine.AddPlayer();
+var player1 = Engine.AddPlayer();
 var player2 = Engine.AddPlayer();
 var player3 = Engine.AddPlayer();
-var battlefield = Engine.AddBattlefield();
 
-Console.WriteLine(player.Id);
-Console.WriteLine(battlefield.Id);
-
+Console.WriteLine(player1.Id);
+Engine.StartGame();
 
 
 await using (var ws = new Webserver())
