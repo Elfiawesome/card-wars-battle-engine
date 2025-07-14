@@ -1,6 +1,6 @@
-using System.Numerics;
+using Elfiawesome.CardWarsBattleEngine.Game.UnitSlots;
 
-namespace Elfiawesome.CardWarsBattleEngine.Game;
+namespace Elfiawesome.CardWarsBattleEngine.Game.Battlefields;
 
 public class Battlefield
 {
@@ -18,16 +18,16 @@ public class Battlefield
 	// X X X Y
 	// Y X
 
-	public readonly Guid Id;
-	public IReadOnlyDictionary<BattlefieldPos, UnitSlot> Grid => _grid;
+	public readonly BattlefieldId Id;
+	public IReadOnlyDictionary<UnitSlotPos, UnitSlot> Grid => _grid;
 
-	private readonly Dictionary<BattlefieldPos, UnitSlot> _grid = [];
-	private static readonly BattlefieldPos[] _defaultLayout = [
+	private readonly Dictionary<UnitSlotPos, UnitSlot> _grid = [];
+	private static readonly UnitSlotPos[] _defaultLayout = [
 		new(0, 0), new(1, 0), new(2, 0),
 		new(1, 1)
 	];
 
-	public Battlefield(Guid id)
+	public Battlefield(BattlefieldId id)
 	{
 		Id = id;
 	}
@@ -40,5 +40,3 @@ public class Battlefield
 		}
 	}
 }
-
-public readonly record struct BattlefieldPos(int X, int Y);

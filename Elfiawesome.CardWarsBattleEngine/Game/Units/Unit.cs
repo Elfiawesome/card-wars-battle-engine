@@ -1,4 +1,4 @@
-namespace Elfiawesome.CardWarsBattleEngine.Game;
+namespace Elfiawesome.CardWarsBattleEngine.Game.Units;
 
 public class Unit
 {
