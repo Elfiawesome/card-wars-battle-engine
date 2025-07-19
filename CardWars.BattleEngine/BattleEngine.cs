@@ -1,58 +1,35 @@
 ﻿using CardWars.BattleEngine.Core.Actions;
-using CardWars.BattleEngine.Core.GameState;
-using CardWars.BattleEngine.Core.Processes;
+using CardWars.BattleEngine.Core.Resolvers;
+using CardWars.BattleEngine.Core.States;
 
 namespace CardWars.BattleEngine;
 
 public class BattleEngine
 {
-	// TODO: REMOVE THISTemperory API
-	public GameState GameState => _gameState;
+	private GameState _gameState = new();
+	private List<GameResolver> resolverStack = new();
 
-	// Internal APIs
-	internal GameState _gameState = new();
-
-
-	// Self usage
-	private List<QueueGameProcess> _processStack = [];
-
-	public BattleEngine()
+	public void QueueResolver(GameResolver resolver)
 	{
-		// Imitate Summoning Unit
-		QueueProcess(new SummonUnitProcess());
+		resolverStack.Add(resolver);
+		HandleResolvers();
 	}
 
-	public void QueueProcess(QueueGameProcess process)
+	private void QueueAction(GameAction action)
 	{
-		_processStack.Add(process);
-		HandleProcessStack();
+		action.Execute(_gameState);
 	}
 
-	internal void QueueAction(GameActionBatch batch)
+	private void HandleResolvers()
 	{
-		// For now we run the action immediately
-		foreach (var action in batch.Actions)
+		if (resolverStack.Count == 0) { return; }
+		GameResolver currentResolver = resolverStack[0];
+		if (currentResolver.State == GameResolver.ResolverState.Idle)
 		{
-			action.Execute(this);
-		}
-	}
-
-	private void HandleProcessStack()
-	{
-		if (_processStack.Count == 0)
-			return;
-
-		var currentProcess = _processStack[0];
-
-		if (currentProcess.State == GameProcess.ProcessState.Unprocessed)
-		{
-			currentProcess.State = GameProcess.ProcessState.Processing;
-			currentProcess.CompletedEvent += () =>
-			{
-				_processStack.RemoveAt(0);
-				HandleProcessStack();
-			};
-			currentProcess.Execute(this);
+			currentResolver.State = GameResolver.ResolverState.Resolving;
+			currentResolver.OnResolved += () => { resolverStack.RemoveAt(0); HandleResolvers(); };
+			currentResolver.OnCommited += (actions) => { actions.ForEach(action => QueueAction(action)); };
+			currentResolver.Resolve(_gameState);
 		}
 	}
 }
