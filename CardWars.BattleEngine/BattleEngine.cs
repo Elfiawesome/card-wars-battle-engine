@@ -6,7 +6,7 @@ namespace CardWars.BattleEngine;
 
 public class BattleEngine
 {
-	// Temperory API
+	// TODO: REMOVE THISTemperory API
 	public GameState GameState => _gameState;
 
 	// Internal APIs
@@ -14,7 +14,7 @@ public class BattleEngine
 
 
 	// Self usage
-	private List<GameProcess> _processStack = [];
+	private List<QueueGameProcess> _processStack = [];
 
 	public BattleEngine()
 	{
@@ -22,7 +22,7 @@ public class BattleEngine
 		QueueProcess(new SummonUnitProcess());
 	}
 
-	public void QueueProcess(GameProcess process)
+	public void QueueProcess(QueueGameProcess process)
 	{
 		_processStack.Add(process);
 		HandleProcessStack();

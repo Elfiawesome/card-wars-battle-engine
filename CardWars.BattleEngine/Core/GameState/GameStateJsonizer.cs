@@ -2,6 +2,8 @@ using System.Text.Json;
 
 namespace CardWars.BattleEngine.Core.GameState;
 
+
+// I hate this object. Need a better way to manage sending out game states
 public class GameStateJsonizer
 {
 	public static string SerializedValue(GameState state)
