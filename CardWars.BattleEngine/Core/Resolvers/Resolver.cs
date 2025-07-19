@@ -3,9 +3,9 @@ using CardWars.BattleEngine.Core.States;
 
 namespace CardWars.BattleEngine.Core.Resolvers;
 
-public abstract class GameResolver
+public abstract class Resolver
 {
-	public event Action<List<GameAction>>? OnCommited;
+	public event Action<List<ActionData>>? OnCommited;
 	public event Action? OnResolved;
 
 	public enum ResolverState
@@ -17,11 +17,11 @@ public abstract class GameResolver
 
 	public ResolverState State = ResolverState.Idle;
 
-	protected List<GameAction> Actions = [];
+	protected List<ActionData> Actions = [];
 
 	public abstract void Resolve(GameState state);
 
-	protected void AddActions(GameAction action)
+	protected void AddActions(ActionData action)
 	{
 		Actions.Add(action);
 	}
