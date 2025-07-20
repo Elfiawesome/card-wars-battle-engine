@@ -2,5 +2,11 @@
 	"name": "Test Unit",
 	"hp": 20,
 	"atk": 10,
-	"pt": 3
+	"pt": 3,
+	"abilities": [
+		{
+			"name": "[Icon] My Ability!",
+			"data": {}
+		}
+	]
 }

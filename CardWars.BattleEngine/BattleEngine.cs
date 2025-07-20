@@ -1,4 +1,5 @@
 ﻿using CardWars.BattleEngine.Core.Actions;
+using CardWars.BattleEngine.Core.Events;
 using CardWars.BattleEngine.Core.Resolvers;
 using CardWars.BattleEngine.Core.States;
 
@@ -7,11 +8,12 @@ namespace CardWars.BattleEngine;
 public class BattleEngine
 {
 	private GameState _gameState = new();
-	private List<Resolver> resolverStack = new();
+	private EventManager _eventManager = new();
+	private List<Resolver> _resolverStack = new();
 
 	public void QueueResolver(Resolver resolver)
 	{
-		resolverStack.Add(resolver);
+		_resolverStack.Add(resolver);
 		HandleResolvers();
 	}
 
@@ -30,14 +32,16 @@ public class BattleEngine
 
 	private void HandleResolvers()
 	{
-		if (resolverStack.Count == 0) { return; }
-		Resolver currentResolver = resolverStack[0];
+		if (_resolverStack.Count == 0) { return; }
+
+		var currentResolver = _resolverStack[0];
 		if (currentResolver.State == Resolver.ResolverState.Idle)
 		{
 			currentResolver.State = Resolver.ResolverState.Resolving;
-			currentResolver.OnResolved += () => { resolverStack.RemoveAt(0); HandleResolvers(); };
+			currentResolver.OnResolved += () => { _resolverStack.RemoveAt(0); HandleResolvers(); };
 			currentResolver.OnCommited += (actionBatches) => { actionBatches.ForEach(action => QueueActionBatch(action)); };
-			currentResolver.Resolve(_gameState);
+			currentResolver.OnResolverQueued += _resolverStack.Add;
+			currentResolver.Resolve(_gameState, _eventManager);
 		}
 	}
 }

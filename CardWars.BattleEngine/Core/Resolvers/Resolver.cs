@@ -1,10 +1,15 @@
 using CardWars.BattleEngine.Core.Actions;
+using CardWars.BattleEngine.Core.Events;
 using CardWars.BattleEngine.Core.States;
 
 namespace CardWars.BattleEngine.Core.Resolvers;
 
+
+// What Is The Purpose of a RESOLVER?
+// A resolver is meant to sequentially handle snippets of process logic by creating action batches
 public abstract class Resolver
 {
+	// Events
 	public event Action<List<ActionBatch>>? OnCommited;
 	public event Action<Resolver>? OnResolverQueued;
 	public event Action? OnResolved;
@@ -20,22 +25,13 @@ public abstract class Resolver
 
 	protected List<ActionBatch> ActionBatches = [];
 
-	public abstract void Resolve(GameState state);
+	public abstract void Resolve(GameState state, EventManager eventManager);
 
 	protected void QueueResolver(Resolver resolver)
 	{
 		if (State == ResolverState.Resolved) { return; }
 		OnResolverQueued?.Invoke(resolver);
 	}
-
-	protected List<ActionBatch> CallResolver(Resolver resolver, GameState state)
-	{
-		if (State == ResolverState.Resolved) { return []; }
-		resolver.Resolve(state);
-		resolver.Resolved(); // Force finish this resolver
-		return resolver.ActionBatches;
-	}
-
 
 	protected void AddActionBatch(ActionBatch action)
 	{
