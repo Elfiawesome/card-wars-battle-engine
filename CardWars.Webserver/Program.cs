@@ -3,4 +3,5 @@ using CardWars.BattleEngine.Core.Resolvers;
 
 var Engine = new BattleEngine();
 
-Engine.QueueResolver(new SummonUnitResolver());
+Engine._InitializeGame();
+Engine.QueueResolver(new SummonUnitResolver(new(1)));

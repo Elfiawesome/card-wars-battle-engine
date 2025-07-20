@@ -11,8 +11,8 @@ public class GameState
 	private long _battlefieldIdCounter = 0;
 	private long _unitSlotIdCounter = 0;
 	private long _unitIdCounter = 0;
-	public long PlayerIdCounter { get => _playerIdCounter++; }
-	public long BattlefieldIdCounter { get => _battlefieldIdCounter++; }
-	public long UnitSlotIdCounter { get => _unitSlotIdCounter++; }
-	public long UnitIdCounter { get => _unitIdCounter++; }
+	public PlayerId PlayerIdCounter { get => new(_playerIdCounter++); }
+	public BattlefieldId BattlefieldIdCounter { get => new(_battlefieldIdCounter++); }
+	public UnitSlotId UnitSlotIdCounter { get => new(_unitSlotIdCounter++); }
+	public UnitId UnitIdCounter { get => new(_unitIdCounter++); }
 }
