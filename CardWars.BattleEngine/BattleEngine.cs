@@ -15,14 +15,17 @@ public class BattleEngine
 		HandleResolvers();
 	}
 
-	private void QueueAction(ActionData action)
+	private void QueueActionBatch(ActionBatch actionBatch)
 	{
-		// Handle each actions individually here
-		switch (action)
+		actionBatch.Actions.ForEach(action =>
 		{
-			default:
-				break;
-		}
+			// Handle each actions individually here
+			switch (action)
+			{
+				default:
+					break;
+			}
+		});
 	}
 
 	private void HandleResolvers()
@@ -33,7 +36,7 @@ public class BattleEngine
 		{
 			currentResolver.State = Resolver.ResolverState.Resolving;
 			currentResolver.OnResolved += () => { resolverStack.RemoveAt(0); HandleResolvers(); };
-			currentResolver.OnCommited += (actions) => { actions.ForEach(action => QueueAction(action)); };
+			currentResolver.OnCommited += (actionBatches) => { actionBatches.ForEach(action => QueueActionBatch(action)); };
 			currentResolver.Resolve(_gameState);
 		}
 	}

@@ -5,7 +5,8 @@ namespace CardWars.BattleEngine.Core.Resolvers;
 
 public abstract class Resolver
 {
-	public event Action<List<ActionData>>? OnCommited;
+	public event Action<List<ActionBatch>>? OnCommited;
+	public event Action<Resolver>? OnResolverQueued;
 	public event Action? OnResolved;
 
 	public enum ResolverState
@@ -17,13 +18,28 @@ public abstract class Resolver
 
 	public ResolverState State = ResolverState.Idle;
 
-	protected List<ActionData> Actions = [];
+	protected List<ActionBatch> ActionBatches = [];
 
 	public abstract void Resolve(GameState state);
 
-	protected void AddActions(ActionData action)
+	protected void QueueResolver(Resolver resolver)
 	{
-		Actions.Add(action);
+		if (State == ResolverState.Resolved) { return; }
+		OnResolverQueued?.Invoke(resolver);
+	}
+
+	protected List<ActionBatch> CallResolver(Resolver resolver, GameState state)
+	{
+		if (State == ResolverState.Resolved) { return []; }
+		resolver.Resolve(state);
+		resolver.Resolved(); // Force finish this resolver
+		return resolver.ActionBatches;
+	}
+
+
+	protected void AddActionBatch(ActionBatch action)
+	{
+		ActionBatches.Add(action);
 	}
 
 	protected void CommitResolve()
@@ -35,9 +51,9 @@ public abstract class Resolver
 	protected void Commit()
 	{
 		if (State == ResolverState.Resolved) { return; }
-		if (Actions.Count == 0) { return; }
-		OnCommited?.Invoke(Actions);
-		Actions = [];
+		if (ActionBatches.Count == 0) { return; }
+		OnCommited?.Invoke(ActionBatches);
+		ActionBatches = [];
 	}
 
 	protected void Resolved()
