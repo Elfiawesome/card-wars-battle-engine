@@ -8,6 +8,12 @@ public class UpdateUnitActionHandler : ActionHandler<UpdateUnitActionData>
 {
 	public override void Handle(GameState gameState, EventManager eventManager, UpdateUnitActionData actionData)
 	{
-		Console.WriteLine($"[ACTION]: Updating UNIT Name -> ({actionData.Name})");
+		string changes = $"ID: {actionData.UnitId}, " +
+			$"Name: {actionData.Name}, " +
+			$"Hp: {actionData.Hp}, " +
+			$"Atk: {actionData.Atk}, " +
+			$"Pt: {actionData.Pt}";
+
+		Console.WriteLine($"[ACTION]: Updating UNIT with ({changes})");
 	}
 }

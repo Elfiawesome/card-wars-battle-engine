@@ -10,8 +10,8 @@ namespace CardWars.BattleEngine.Core.Actions;
 
 public class ActionHandlerManager
 {
-	private readonly Dictionary<Type, object> _handlers = [];
-	
+	private readonly Dictionary<Type, Action<GameState, EventManager, ActionData>> _handlers = [];
+
 	public ActionHandlerManager()
 	{
 		// Initialize all the handlers here
@@ -35,12 +35,23 @@ public class ActionHandlerManager
 		{
 			return;
 		}
-		_handlers.Add(typeof(TActionData), handler);
+		_handlers[typeof(TActionData)] = (gameState, eventManager, actionData) =>
+		{
+			if (actionData is TActionData typedActionData)
+			{
+				handler.Handle(gameState, eventManager, typedActionData);
+			}
+		};
 	}
 
 	public void HandleActionData<TActionData>(GameState gameState, EventManager eventManager, TActionData actionData)
 		where TActionData : ActionData
 	{
 		// TODO: point action data to its handler
+		var actionDataType = actionData.GetType();
+		if (_handlers.TryGetValue(actionDataType, out var handler))
+		{
+			handler.Invoke(gameState, eventManager, actionData);
+		}
 	}
 }
