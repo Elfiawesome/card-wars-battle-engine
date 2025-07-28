@@ -9,5 +9,14 @@ public class AttachUnitToUnitSlotActionHandler : ActionHandler<AttachUnitToUnitS
 	public override void Handle(GameState gameState, EventManager eventManager, AttachUnitToUnitSlotActionData actionData)
 	{
 		Console.WriteLine($"[ACTION]: Attaching unit {actionData.UnitId} to unit slot {actionData.UnitSlotId}");
+
+		if (gameState.UnitSlots.TryGetValue(actionData.UnitSlotId, out var unitSlot))
+		{
+			if (gameState.Units.TryGetValue(actionData.UnitId, out var unit))
+			{
+				unit.ParentUnitSlotId = actionData.UnitSlotId;
+				unitSlot.HoldingUnit = actionData.UnitId;
+			}
+		}
 	}
 }

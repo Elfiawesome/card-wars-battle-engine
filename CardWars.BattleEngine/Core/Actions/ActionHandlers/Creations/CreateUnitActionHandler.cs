@@ -9,5 +9,7 @@ public class CreateUnitActionHandler : ActionHandler<CreateUnitActionData>
 	public override void Handle(GameState gameState, EventManager eventManager, CreateUnitActionData actionData)
 	{
 		Console.WriteLine($"[ACTION]: Creating UNIT ({actionData.UnitId})");
+
+		gameState.Units.TryAdd(actionData.UnitId, new(actionData.UnitId));
 	}
 }

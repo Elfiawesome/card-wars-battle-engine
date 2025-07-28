@@ -9,5 +9,7 @@ public class CreateUnitSlotActionHandler : ActionHandler<CreateUnitSlotActionDat
 	public override void Handle(GameState gameState, EventManager eventManager, CreateUnitSlotActionData actionData)
 	{
 		Console.WriteLine($"[ACTION]: Creating UNITSLOT ({actionData.UnitSlotId})");
+
+		gameState.UnitSlots.TryAdd(actionData.UnitSlotId, new(actionData.UnitSlotId));
 	}
 }
