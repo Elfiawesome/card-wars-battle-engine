@@ -1,4 +1,6 @@
-using CardWars.BattleEngine.Core.Actions.ActionDatas;
+using CardWars.BattleEngine.Core.Actions.ActionDatas.Attachments;
+using CardWars.BattleEngine.Core.Actions.ActionDatas.Creations;
+using CardWars.BattleEngine.Core.Actions.ActionDatas.Modifications;
 using CardWars.BattleEngine.Core.Events;
 using CardWars.BattleEngine.Core.States;
 

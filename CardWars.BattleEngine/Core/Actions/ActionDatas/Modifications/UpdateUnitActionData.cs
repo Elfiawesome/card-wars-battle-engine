@@ -1,6 +1,6 @@
 using CardWars.BattleEngine.Core.States;
 
-namespace CardWars.BattleEngine.Core.Actions.ActionDatas;
+namespace CardWars.BattleEngine.Core.Actions.ActionDatas.Modifications;
 
 public class UpdateUnitActionData() : ActionData
 {
