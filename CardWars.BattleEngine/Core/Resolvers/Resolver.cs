@@ -1,5 +1,4 @@
 using CardWars.BattleEngine.Core.Actions;
-using CardWars.BattleEngine.Core.Events;
 using CardWars.BattleEngine.Core.States;
 
 namespace CardWars.BattleEngine.Core.Resolvers;
@@ -25,7 +24,7 @@ public abstract class Resolver
 
 	protected List<ActionBatch> ActionBatches = [];
 
-	public abstract void Resolve(GameState state, EventManager eventManager);
+	public abstract void Resolve(GameState state);
 
 	protected void QueueResolver(Resolver resolver)
 	{
