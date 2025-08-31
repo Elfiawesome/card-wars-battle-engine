@@ -1,8 +1,9 @@
 namespace CardWars.BattleEngine.Core.States;
 
-public class Player(PlayerId id)
+public class PlayerState(GameState gameState, PlayerId id) : BaseState<PlayerId>(gameState, id)
 {
-	public readonly PlayerId Id = id;
+	public string Name = "Default Player";
+	public List<UnitId> HandCards = [];
+	public List<BattlefieldId> ControllingBattlefields = [];
 }
-
-public readonly record struct PlayerId(long Value);
+public readonly record struct PlayerId(long Value) : IBaseId;

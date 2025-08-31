@@ -1,20 +1,32 @@
+using CardWars.BattleEngine.Core.Actions.ActionHandlers;
 using CardWars.BattleEngine.Core.States;
 
 namespace CardWars.BattleEngine.Core.Actions;
 
 public class ActionHandlerManager
 {
-	private readonly Dictionary<Type, Action<GameState, ActionData>> _handlers = [];
+	private readonly Dictionary<Type, Action<GameState, IActionData>> _handlers = [];
 
 	public ActionHandlerManager()
 	{
 		// Initialize all the handlers here
+		RegisterHandler<AttachAbilityToUnitHandler, AttachAbilityToUnitData>();
+		RegisterHandler<AttachBattlefieldToPlayerHandler, AttachBattlefieldToPlayerData>();
+		RegisterHandler<AttachUnitSlotToBattlefieldHandler, AttachUnitSlotToBattlefieldData>();
+		RegisterHandler<AttachUnitToUnitSlotHandler, AttachUnitToUnitSlotData>();
+
+		RegisterHandler<InstantiateAbilityHandler, InstantiateAbilityData>();
+		RegisterHandler<InstantiateBattlefieldHandler, InstantiateBattlefieldData>();
+		RegisterHandler<InstantiateUnitHandler, InstantiateUnitData>();
+		RegisterHandler<InstantiatePlayerHandler, InstantiatePlayerData>();
+		RegisterHandler<InstantiateUnitSlotHandler, InstantiateUnitSlotData>();
 	}
 
-	public void RegisterHandler<TActionHandler, TActionData>(TActionHandler handler)
-		where TActionHandler : ActionHandler<TActionData>
-		where TActionData : ActionData
+	public void RegisterHandler<TActionHandler, TActionData>()
+		where TActionHandler : ActionHandler<TActionData>, new()
+		where TActionData : IActionData
 	{
+		var handler = new TActionHandler();
 		if (_handlers.ContainsKey(typeof(TActionData)))
 		{
 			return;
@@ -23,13 +35,17 @@ public class ActionHandlerManager
 		{
 			if (actionData is TActionData typedActionData)
 			{
-				handler.Handle(gameState, typedActionData);
+				var success = handler.Handle(gameState, typedActionData);
+				if (!success)
+				{
+					Console.WriteLine($"Action Handler [{handler.GetType().Name}] was not successful");
+				}
 			}
 		};
 	}
 
 	public void HandleActionData<TActionData>(GameState gameState, TActionData actionData)
-		where TActionData : ActionData
+		where TActionData : IActionData
 	{
 		// TODO: point action data to its handler
 		var actionDataType = actionData.GetType();

@@ -1,9 +1,7 @@
 namespace CardWars.BattleEngine.Core.States;
 
-public class Battlefield(BattlefieldId id)
+public class BattlefieldState(GameState gameState, BattlefieldId id) : BaseState<BattlefieldId>(gameState, id)
 {
-	public readonly BattlefieldId Id = id;
-	public List<UnitSlotId> UnitSlots { get; } = new();
+	public List<UnitSlotId> UnitSlots = [];
 }
-
-public readonly record struct BattlefieldId(long Value);
+public readonly record struct BattlefieldId(long Value) : IBaseId;

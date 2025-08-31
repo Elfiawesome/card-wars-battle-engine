@@ -1,13 +1,18 @@
 namespace CardWars.BattleEngine.Core.States;
 
-public class Unit(UnitId id)
+public class UnitState : BaseState<UnitId>
 {
-	public readonly UnitId Id = id;
-	public UnitSlotId? ParentUnitSlotId { get; set; }
-	public string Name { get; set; } = "";
-	public int Hp { get; set; } = 10;
-	public int Atk { get; set; } = 10;
-	public int Pt { get; set; } = 10;
-}
+	public string Name = "";
+	public int Hp = 0;
+	public int Atk = 0;
+	public int Pt = 0;
 
-public readonly record struct UnitId(long Value);
+	public List<AbilityId> Abilities = [];
+
+	public UnitState(GameState gameState, UnitId id) : base(gameState, id)
+	{
+
+	}
+
+}
+public readonly record struct UnitId(long Value) : IBaseId;
