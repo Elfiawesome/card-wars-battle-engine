@@ -1,6 +1,6 @@
 using CardWars.BattleEngine.Core.Resolvers;
 
-namespace CardWars.BattleEngine.Core.States.EventSystem;
+namespace CardWars.BattleEngine.Core.EventSystem;
 
 public class EventOutcome
 {

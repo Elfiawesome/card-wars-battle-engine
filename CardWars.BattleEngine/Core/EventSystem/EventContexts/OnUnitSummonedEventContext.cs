@@ -1,4 +1,6 @@
-namespace CardWars.BattleEngine.Core.States.EventSystem.EventContexts;
+using CardWars.BattleEngine.Core.States;
+
+namespace CardWars.BattleEngine.Core.EventSystem.EventContexts;
 
 public class OnUnitSummonedEventContext : EventContext
 {

@@ -1,6 +1,4 @@
-using System.Security.Cryptography.X509Certificates;
-
-namespace CardWars.BattleEngine.Core.States.EventSystem;
+namespace CardWars.BattleEngine.Core.EventSystem;
 
 public class EventSignal<TEventContext, TEventOutcome>
 	where TEventContext : EventContext

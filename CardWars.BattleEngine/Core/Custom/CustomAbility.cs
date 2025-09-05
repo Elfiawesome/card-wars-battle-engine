@@ -1,8 +1,8 @@
 using CardWars.BattleEngine.Core.Actions.ActionHandlers;
+using CardWars.BattleEngine.Core.EventSystem;
+using CardWars.BattleEngine.Core.EventSystem.EventContexts;
 using CardWars.BattleEngine.Core.Resolvers;
 using CardWars.BattleEngine.Core.States;
-using CardWars.BattleEngine.Core.States.EventSystem;
-using CardWars.BattleEngine.Core.States.EventSystem.EventContexts;
 
 namespace CardWars.BattleEngine.Core.Custom;
 

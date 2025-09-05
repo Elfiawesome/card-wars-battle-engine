@@ -1,4 +1,4 @@
-using CardWars.BattleEngine.Core.States.EventSystem;
+using CardWars.BattleEngine.Core.EventSystem;
 
 namespace CardWars.BattleEngine.Core.States;
 

@@ -1,6 +1,6 @@
 using CardWars.BattleEngine.Core.Actions;
+using CardWars.BattleEngine.Core.EventSystem;
 using CardWars.BattleEngine.Core.States;
-using CardWars.BattleEngine.Core.States.EventSystem;
 
 namespace CardWars.BattleEngine.Core.Resolvers;
 
