@@ -1,6 +1,6 @@
 using CardWars.BattleEngine.Core.States;
 
-namespace CardWars.BattleEngine.Core.EventSystem.EventContexts;
+namespace CardWars.BattleEngine.Core.Events.EventContexts;
 
 public class OnUnitSummonedEventContext : EventContext
 {

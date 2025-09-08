@@ -1,4 +1,4 @@
-namespace CardWars.BattleEngine.Core.EventSystem;
+namespace CardWars.BattleEngine.Core.Events;
 
 public class EventSignal<TEventContext, TEventOutcome>
 	where TEventContext : EventContext

@@ -1,45 +1,39 @@
-﻿using CardWars.BattleEngine.Core.Actions;
+﻿using CardWars.BattleEngine.Core;
+using CardWars.BattleEngine.Core.Actions;
 using CardWars.BattleEngine.Core.Actions.ActionHandlers;
+using CardWars.BattleEngine.Core.Inputs;
 using CardWars.BattleEngine.Core.Resolvers;
 using CardWars.BattleEngine.Core.States;
+using CardWars.BattleEngine.Definitions;
 
 namespace CardWars.BattleEngine;
 
 public class BattleEngine
 {
 	private GameState _gameState = new();
-	public GameState GameState => _gameState;
+	public GameState GameState => _gameState; // TODO: To remove later
+	public DefinitionLibrary Definitions = new();
 	private ActionHandlerManager _actionHandlerManager = new();
 	private List<Resolver> _resolverStack = new();
 
 	public BattleEngine()
 	{
-		// New Player Enters
-		for (int playeri = 0; playeri < 2; playeri++)
-		{
-			PlayerId pid = new(_gameState.NewId);
-			BattlefieldId bid = new(_gameState.NewId);
-			QueueActionBatch(new([
-				new InstantiatePlayerData(pid),
-				new InstantiateBattlefieldData(bid),
-			]));
-			UnitSlotId? unitSlotId = null;
-			for (int i = 0; i < 3; i++)
-			{
-				UnitSlotId usid = new(_gameState.NewId);
-				if (unitSlotId == null) { unitSlotId = usid; }
-				QueueActionBatch(new([
-					new InstantiateUnitSlotData(usid),
-					new AttachUnitSlotToBattlefieldData(usid, bid),
-				]));
-			}
-			// Send Resolver to summon a unit
-			QueueResolver(new SummonUnitResolver(unitSlotId ?? new(0), "Unit Definition Id"));
-		}
-
 	}
 
-	public void QueueResolver(Resolver resolver)
+	public void HandleInput(IInputData input)
+	{
+		// Do my own input handling
+
+		// pass input to resolver
+		if (_resolverStack.Count == 0) { return; }
+		var currentResolver = _resolverStack[0];
+		if (currentResolver.State != Resolver.ResolverState.Resolved)
+		{
+			currentResolver.OnPlayerInput(input);
+		}
+	}
+
+	internal void QueueResolver(Resolver resolver)
 	{
 		_resolverStack.Add(resolver);
 		HandleResolvers();
@@ -67,5 +61,28 @@ public class BattleEngine
 			currentResolver.OnResolverQueued += _resolverStack.Add;
 			currentResolver.Resolve(_gameState);
 		}
+	}
+
+	public PlayerId NewPlayerJoined()
+	{
+		PlayerId pid = new(_gameState.NewId);
+		BattlefieldId bid = new(_gameState.NewId);
+		QueueActionBatch(new([
+			new InstantiatePlayerData(pid),
+			new InstantiateBattlefieldData(bid),
+			new AttachBattlefieldToPlayerData(bid, pid),
+		]));
+
+		// Create a battlefield
+		QueueResolver(new CreateBattlefieldResolver(bid, pid));
+
+		// Assumes the battlefield has already created the unit slots
+		UnitSlotId usid = _gameState.Battlefields[bid].UnitSlots[0];
+		QueueResolver(new SummonUnitResolver(usid, ""));
+		usid = _gameState.Battlefields[bid].UnitSlots[1];
+		QueueResolver(new SummonUnitResolver(usid, ""));
+		usid = _gameState.Battlefields[bid].UnitSlots[2];
+		QueueResolver(new SummonUnitResolver(usid, ""));
+		return pid;
 	}
 }

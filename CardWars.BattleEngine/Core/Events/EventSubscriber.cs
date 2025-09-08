@@ -1,4 +1,4 @@
-namespace CardWars.BattleEngine.Core.EventSystem;
+namespace CardWars.BattleEngine.Core.Events;
 
 public abstract class EventSubscriber<TEventContext, TEventOutcome>
 	where TEventContext : EventContext

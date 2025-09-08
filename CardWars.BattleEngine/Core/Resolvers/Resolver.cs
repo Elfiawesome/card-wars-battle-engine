@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Core.Actions;
-using CardWars.BattleEngine.Core.EventSystem;
+using CardWars.BattleEngine.Core.Events;
+using CardWars.BattleEngine.Core.Inputs;
 using CardWars.BattleEngine.Core.States;
 
 namespace CardWars.BattleEngine.Core.Resolvers;
@@ -23,6 +24,9 @@ public abstract class Resolver
 	protected List<ActionBatch> ActionBatches = [];
 
 	public abstract void Resolve(GameState state);
+
+	// Todo better name for when passed on player input
+	public virtual void OnPlayerInput(IInputData input) { }
 
 	protected void QueueResolver(Resolver resolver)
 	{

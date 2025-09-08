@@ -1,6 +1,6 @@
-using CardWars.BattleEngine.Core.EventSystem.EventContexts;
+using CardWars.BattleEngine.Core.Events.EventContexts;
 
-namespace CardWars.BattleEngine.Core.EventSystem;
+namespace CardWars.BattleEngine.Core.Events;
 
 public class EventManager
 {

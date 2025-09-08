@@ -2,25 +2,34 @@ namespace CardWars.BattleEngine.Definitions;
 
 public class DefinitionLibrary
 {
+	public Dictionary<string, UnitDefinition> Units = [];
+
 	public DefinitionLibrary()
 	{
-	}
-
-	public void LoadAllGameData(string rootDataPath)
-	{
-		string heroesPath = Path.Combine(rootDataPath, "Heroes");
-		string unitsPath = Path.Combine(rootDataPath, "Units");
-
-		if (!Directory.Exists(unitsPath))
+		Units.Add("archer", new UnitDefinition()
 		{
-			return;
-		}
-
-		string[] files = Directory.GetFiles(unitsPath, "*.json");
-		foreach (string filePath in files)
+			Name = "Archer Me",
+			FlavorText = "A simple archer",
+			Hp = 15,
+			Atk = 5,
+			Pt = 2,
+		});
+		Units.Add("warrior", new UnitDefinition()
 		{
-			string jsonString = File.ReadAllText(filePath);
-			Console.WriteLine(jsonString);
-		}
+			Name = "Warrior",
+			FlavorText = "A simple Warrir",
+			Hp = 30,
+			Atk = 15,
+			Pt = 10,
+		});
 	}
+}
+
+public class UnitDefinition
+{
+	public string Name { get; set; } = "";
+	public string FlavorText { get; set; } = "";
+	public int Hp { get; set; } = 0;
+	public int Atk { get; set; } = 0;
+	public int Pt { get; set; } = 0;
 }

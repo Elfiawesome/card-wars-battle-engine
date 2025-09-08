@@ -1,0 +1,87 @@
+body {
+	background-color: #121212;
+	color: #e0e0e0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 2rem;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	border-bottom: 1px solid #333;
+	padding-bottom: 10px;
+}
+
+h3,
+h4 {
+	margin: 0px;
+}
+
+h4 {
+	padding-bottom: 0px;
+}
+
+/* Main container */
+.control-panel {
+	max-width: 1200px;
+	margin: auto;
+}
+
+/* Section styling */
+.section {
+	margin-bottom: 2rem;
+	background-color: #1e1e1e;
+	padding: 1.5rem;
+	border-radius: 8px;
+}
+
+/* Players List */
+.player-list ul {
+	list-style: none;
+	padding: 0;
+}
+
+.player-list li {
+	background-color: #282828;
+	padding: 10px;
+	margin-bottom: 8px;
+	border-radius: 4px;
+}
+
+/* Battlefield Grid */
+.battlefield-grid {
+	display: grid;
+	grid-template-columns: auto auto auto auto;
+	/* grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); */
+	gap: 10px;
+}
+
+/* Unit Slots */
+.unit-slot {
+	background-color: #2a2a2a;
+	padding: 0.5em;
+	border: 1px dashed #444;
+	border-radius: 4px;
+	min-height: 100px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+
+
+/* Unit inside a slot */
+.unit {
+	text-align: left;
+	background-color: #00000038;
+	padding: 0.5em;
+	border: 1px dashed #444;
+	border-radius: 4px;
+}
+
+.unit-name {
+	font-weight: bold;
+}
+
+.unit-stat {}

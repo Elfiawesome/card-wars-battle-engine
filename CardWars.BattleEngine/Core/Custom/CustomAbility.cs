@@ -1,6 +1,5 @@
-using CardWars.BattleEngine.Core.Actions.ActionHandlers;
-using CardWars.BattleEngine.Core.EventSystem;
-using CardWars.BattleEngine.Core.EventSystem.EventContexts;
+using CardWars.BattleEngine.Core.Events;
+using CardWars.BattleEngine.Core.Events.EventContexts;
 using CardWars.BattleEngine.Core.Resolvers;
 using CardWars.BattleEngine.Core.States;
 
