@@ -20,6 +20,9 @@ public class ActionHandlerManager
 		RegisterHandler<InstantiateUnitHandler, InstantiateUnitData>();
 		RegisterHandler<InstantiatePlayerHandler, InstantiatePlayerData>();
 		RegisterHandler<InstantiateUnitSlotHandler, InstantiateUnitSlotData>();
+
+		RegisterHandler<AddPlayerToTurnOrderHandler, AddPlayerToTurnOrderData>();
+		RegisterHandler<AdvanceTurnOrderHandler, AdvanceTurnOrderData>();
 	}
 
 	public void RegisterHandler<TActionHandler, TActionData>()

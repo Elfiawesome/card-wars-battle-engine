@@ -37,6 +37,28 @@ h4 {
 	border-radius: 8px;
 }
 
+/* Turn Order Display */
+.player-turn-list {
+	display: flex;
+	justify-content: flex-start;
+	padding: 0;
+	list-style: none;
+}
+
+.player-turn {
+	padding: 10px 15px;
+	margin-right: 10px;
+	background-color: #282828;
+	border-radius: 4px;
+	font-weight: bold;
+}
+
+.player-turn.active-turn {
+	background-color: #007bff;
+	/* A bright color to indicate the active player */
+	color: #ffffff;
+}
+
 /* Players List */
 .player-list ul {
 	list-style: none;
@@ -85,3 +107,50 @@ h4 {
 }
 
 .unit-stat {}
+
+/* Input Form Styling */
+#input-section form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+}
+
+.form-group label {
+	margin-bottom: 0.5rem;
+	font-weight: bold;
+}
+
+.form-group select,
+.form-group button {
+	padding: 0.8rem;
+	border-radius: 4px;
+	background-color: #2a2a2a;
+	color: #e0e0e0;
+	border: 1px solid #333;
+}
+
+.form-group button {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.form-group button:hover {
+	background-color: #0056b3;
+}
+
+/* Input Boxes */
+.section select {
+	width: 40%;
+	background-color: #2a2a2a;
+	border: none;
+	padding: 0.5rem;
+	border-radius: 8px;
+}

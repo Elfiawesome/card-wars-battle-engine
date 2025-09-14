@@ -6,7 +6,18 @@
 	"abilities": [
 		{
 			"name": "[Icon] My Ability!",
-			"data": {}
+			"raw_text": "",
+			"subscribers": [
+				{
+					"type": "on_summoned etc",
+					"execution": []
+				}
+			],
+			"resolvers": {
+				"resolver-id-here": {
+					"execution": []
+				}
+			}
 		}
 	]
 }

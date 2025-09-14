@@ -1,5 +1,4 @@
-﻿using CardWars.BattleEngine.Core;
-using CardWars.BattleEngine.Core.Actions;
+﻿using CardWars.BattleEngine.Core.Actions;
 using CardWars.BattleEngine.Core.Actions.ActionHandlers;
 using CardWars.BattleEngine.Core.Inputs;
 using CardWars.BattleEngine.Core.Resolvers;
@@ -20,9 +19,18 @@ public class BattleEngine
 	{
 	}
 
-	public void HandleInput(IInputData input)
+	public void HandleInput(PlayerId playerId, IInputData input)
 	{
-		// Do my own input handling
+		// Do my own input handling (Need to abstract this somehow?)
+		switch (input)
+		{
+			case EndTurnInputData endTurnInput:
+				if (_gameState.CurrentPlayer != playerId) { return; }
+				QueueResolver(new EndTurnResolver());
+				break;
+			case PlayerJoinedInputData playerJoinedInputData:
+				break;
+		}
 
 		// pass input to resolver
 		if (_resolverStack.Count == 0) { return; }
@@ -69,6 +77,7 @@ public class BattleEngine
 		BattlefieldId bid = new(_gameState.NewId);
 		QueueActionBatch(new([
 			new InstantiatePlayerData(pid),
+			new AddPlayerToTurnOrderData(pid),
 			new InstantiateBattlefieldData(bid),
 			new AttachBattlefieldToPlayerData(bid, pid),
 		]));

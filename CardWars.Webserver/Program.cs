@@ -2,6 +2,7 @@
 using System.Net;
 using System.Text;
 using CardWars.BattleEngine;
+using CardWars.BattleEngine.Core.Inputs;
 using CardWars.Webserver;
 
 var engine = new BattleEngine();
@@ -9,7 +10,7 @@ var playerId = engine.NewPlayerJoined();
 playerId = engine.NewPlayerJoined();
 playerId = engine.NewPlayerJoined();
 playerId = engine.NewPlayerJoined();
-playerId = engine.NewPlayerJoined();
+// playerId = engine.NewPlayerJoined();
 
 // Setup webapp server
 var listener = new HttpListener();
@@ -28,13 +29,36 @@ while (true)
 	Console.WriteLine($"Received request: {request.HttpMethod} {request?.Url?.AbsolutePath}");
 	string? requestPath = request?.Url?.AbsolutePath;
 
+
+	// Super **Crude** Input Handling
+	Dictionary<string, Func<object?, IInputData>> InputMapping = new()
+	{
+		{"End Turn", (o) => new EndTurnInputData()},
+		{"Player Joined?", (o) => new PlayerJoinedInputData()}
+	};
+	var query = request?.QueryString;
+	if (query != null)
+	{
+		if (query.AllKeys.Contains("action") && query.AllKeys.Contains("player"))
+		{
+			var playerInput = query["player"] ?? "";
+			var actionInput = query["action"] ?? "";
+			if (InputMapping.TryGetValue(actionInput, out var func))
+			{
+				var inputData = func(null);
+				engine.HandleInput(new(int.Parse(playerInput)), inputData);
+			}
+		}
+	}
+
 	if (requestPath == null) { continue; }
-	
+
 	switch (requestPath)
 	{
 		case "/":
 			var builder = new HTMLBuilder();
 			builder.state = engine.GameState;
+			builder.options = [.. InputMapping.Keys];
 			var s = builder.Build();
 
 			response.ContentType = "text/html";
