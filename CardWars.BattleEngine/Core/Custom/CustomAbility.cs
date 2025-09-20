@@ -11,8 +11,7 @@ public class CustomAbility(GameState gameState, AbilityId id) : AbilityState(gam
 	{
 		public override void Resolve(GameState state)
 		{
-			AddActionBatch(new([
-			]));
+			AddActionBatch(new());
 			CommitResolve();
 		}
 	}

@@ -21,6 +21,7 @@ public class BattleEngine
 
 	public void HandleInput(PlayerId playerId, IInputData input)
 	{
+		if (!_gameState.CanPlayerPushInput(playerId)) { return; }
 		// Do my own input handling (Need to abstract this somehow?)
 		switch (input)
 		{
@@ -29,6 +30,18 @@ public class BattleEngine
 				QueueResolver(new EndTurnResolver());
 				break;
 			case PlayerJoinedInputData playerJoinedInputData:
+				break;
+			case DrawCardFromDeckInputData drawCardFromDeckInputData:
+				if (_gameState.Players.TryGetValue(playerId, out var player))
+				{
+					if (_gameState.Decks.TryGetValue(drawCardFromDeckInputData.DeckId, out var deck))
+					{
+						if (player.Decks.Contains(drawCardFromDeckInputData.DeckId))
+						{
+							// Console.WriteLine($"drawing from {deck.Id}");
+						}
+					}
+				}
 				break;
 		}
 
@@ -49,9 +62,10 @@ public class BattleEngine
 
 	private void QueueActionBatch(ActionBatch actionBatch)
 	{
-		actionBatch.Actions.ForEach(action =>
+		actionBatch.Actions.ForEach(actionContainer =>
 		{
-			_actionHandlerManager.HandleActionData(_gameState, action);
+			// if actionContainer is for us then execute
+			_actionHandlerManager.HandleActionData(_gameState, actionContainer.Action);
 		});
 	}
 
@@ -65,7 +79,7 @@ public class BattleEngine
 			Console.WriteLine($"Runnin Resolver [{currentResolver.GetType().Name}]");
 			currentResolver.State = Resolver.ResolverState.Resolving;
 			currentResolver.OnResolved += () => { _resolverStack.RemoveAt(0); HandleResolvers(); };
-			currentResolver.OnCommited += (actionBatches) => { actionBatches.ForEach(action => QueueActionBatch(action)); };
+			currentResolver.OnCommited += (actionBatches) => { actionBatches.ForEach(actionBatch => QueueActionBatch(actionBatch)); };
 			currentResolver.OnResolverQueued += _resolverStack.Add;
 			currentResolver.Resolve(_gameState);
 		}
@@ -75,23 +89,27 @@ public class BattleEngine
 	{
 		PlayerId pid = new(_gameState.NewId);
 		BattlefieldId bid = new(_gameState.NewId);
+		DeckId did = new(_gameState.NewId);
 		QueueActionBatch(new([
 			new InstantiatePlayerData(pid),
 			new AddPlayerToTurnOrderData(pid),
+
 			new InstantiateBattlefieldData(bid),
 			new AttachBattlefieldToPlayerData(bid, pid),
+
+			new IntstantiateDeckData(did, [
+				"warrior",
+			]),
+			new AttachDeckToPlayerData(did, pid)
 		]));
 
-		// Create a battlefield
-		QueueResolver(new CreateBattlefieldResolver(bid, pid));
-
-		// Assumes the battlefield has already created the unit slots
-		UnitSlotId usid = _gameState.Battlefields[bid].UnitSlots[0];
-		QueueResolver(new SummonUnitResolver(usid, ""));
-		usid = _gameState.Battlefields[bid].UnitSlots[1];
-		QueueResolver(new SummonUnitResolver(usid, ""));
-		usid = _gameState.Battlefields[bid].UnitSlots[2];
-		QueueResolver(new SummonUnitResolver(usid, ""));
 		return pid;
+	}
+
+	public void StartGame()
+	{
+		QueueActionBatch(new(
+			new AdvanceTurnOrderData(0)
+		));
 	}
 }

@@ -7,7 +7,7 @@ public class UnitState : BaseState<UnitId>
 	public int Atk = 0;
 	public int Pt = 0;
 
-	public List<AbilityId> Abilities = [];
+	public HashSet<AbilityId> Abilities = [];
 
 	public UnitState(GameState gameState, UnitId id) : base(gameState, id)
 	{

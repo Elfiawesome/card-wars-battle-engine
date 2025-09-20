@@ -316,6 +316,10 @@ h4 {
 					</select>
 				</div>
 				<div class="form-group">
+					<label for="args-select">Args:</label>
+					<input type="text" id="args-select" name="args"><br>
+				</div>
+				<div class="form-group">
 					<button type="submit">Submit Action</button>
 				</div>
 			</form>

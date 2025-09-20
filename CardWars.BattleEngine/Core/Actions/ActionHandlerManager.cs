@@ -14,12 +14,14 @@ public class ActionHandlerManager
 		RegisterHandler<AttachBattlefieldToPlayerHandler, AttachBattlefieldToPlayerData>();
 		RegisterHandler<AttachUnitSlotToBattlefieldHandler, AttachUnitSlotToBattlefieldData>();
 		RegisterHandler<AttachUnitToUnitSlotHandler, AttachUnitToUnitSlotData>();
+		RegisterHandler<AttachDeckToPlayerHandler, AttachDeckToPlayerData>();
 
 		RegisterHandler<InstantiateAbilityHandler, InstantiateAbilityData>();
 		RegisterHandler<InstantiateBattlefieldHandler, InstantiateBattlefieldData>();
 		RegisterHandler<InstantiateUnitHandler, InstantiateUnitData>();
 		RegisterHandler<InstantiatePlayerHandler, InstantiatePlayerData>();
 		RegisterHandler<InstantiateUnitSlotHandler, InstantiateUnitSlotData>();
+		RegisterHandler<IntstantiateDeckHandler, IntstantiateDeckData>();
 
 		RegisterHandler<AddPlayerToTurnOrderHandler, AddPlayerToTurnOrderData>();
 		RegisterHandler<AdvanceTurnOrderHandler, AdvanceTurnOrderData>();

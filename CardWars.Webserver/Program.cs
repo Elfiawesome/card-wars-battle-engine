@@ -10,7 +10,7 @@ var playerId = engine.NewPlayerJoined();
 playerId = engine.NewPlayerJoined();
 playerId = engine.NewPlayerJoined();
 playerId = engine.NewPlayerJoined();
-// playerId = engine.NewPlayerJoined();
+engine.StartGame();
 
 // Setup webapp server
 var listener = new HttpListener();
@@ -31,10 +31,14 @@ while (true)
 
 
 	// Super **Crude** Input Handling
-	Dictionary<string, Func<object?, IInputData>> InputMapping = new()
+	Dictionary<string, Func<string, IInputData>> InputMapping = new()
 	{
 		{"End Turn", (o) => new EndTurnInputData()},
-		{"Player Joined?", (o) => new PlayerJoinedInputData()}
+		{"Player Joined?", (o) => new PlayerJoinedInputData()},
+		{"Draw Card", (o) => {
+				_ = long.TryParse(o, out var id);
+				return new DrawCardFromDeckInputData(new(id));
+		}}
 	};
 	var query = request?.QueryString;
 	if (query != null)
@@ -43,9 +47,10 @@ while (true)
 		{
 			var playerInput = query["player"] ?? "";
 			var actionInput = query["action"] ?? "";
+			var argsString = query["args"] ?? "";
 			if (InputMapping.TryGetValue(actionInput, out var func))
 			{
-				var inputData = func(null);
+				var inputData = func(argsString);
 				engine.HandleInput(new(int.Parse(playerInput)), inputData);
 			}
 		}

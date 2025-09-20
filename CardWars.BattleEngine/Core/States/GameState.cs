@@ -10,6 +10,7 @@ public class GameState
 	public Dictionary<UnitId, UnitState> Units = [];
 	public Dictionary<UnitSlotId, UnitSlotState> UnitSlots = [];
 	public Dictionary<AbilityId, AbilityState> Abilities = [];
+	public Dictionary<DeckId, DeckState> Decks = [];
 	public List<PlayerId> TurnOrder = [];
 	public int TurnOrderIndex = 0;
 	public PlayerId? CurrentPlayer
@@ -21,6 +22,8 @@ public class GameState
 			return TurnOrder[TurnOrderIndex];
 		}
 	}
+	public bool CanPlayerPushInput(PlayerId playerId) => AllowedPlayerInput.Contains(playerId);
+	public HashSet<PlayerId> AllowedPlayerInput = [];
 
 
 
