@@ -1,9 +1,0 @@
-{
-	"name": "Warrior",
-	"hp": 20,
-	"atk": 10,
-	"pt": 3,
-	"abilities": [
-		"pointer/to/ability"
-	]
-}
