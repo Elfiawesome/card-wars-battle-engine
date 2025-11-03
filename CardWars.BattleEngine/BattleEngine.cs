@@ -7,12 +7,11 @@ namespace CardWars.BattleEngine;
 
 public class BattleEngine
 {
+	public readonly EntityService EntityService = new();
+	public readonly TurnService TurnService = new();
+
 	private readonly BlockDispatcher _blockDispatcher = new();
 	private readonly InputDispatcher _inputDispatcher = new();
-
-	private readonly EntityService _entityService = new();
-	private readonly TurnService _turnService = new();
-
 
 	private readonly List<ResolverBase> _resolverStack = [];
 
@@ -23,10 +22,10 @@ public class BattleEngine
 		_inputDispatcher.Register();
 	}
 
-	public void HandleInput(PlayerId playerId,IInput input)
+	public void HandleInput(PlayerId playerId, IInput input)
 	{
-		if (!_turnService.IsPlayerInputAllowed(playerId)) { return; }
-		_inputDispatcher.Handle(this, input);
+		if (!TurnService.IsPlayerInputAllowed(playerId)) { return; }
+		_inputDispatcher.Handle(new InputHandlerContext(this, playerId), input);
 
 		if (_resolverStack.Count > 0)
 		{
@@ -44,7 +43,7 @@ public class BattleEngine
 		resolver.OnCommited += (blockBatches) => blockBatches.ForEach(
 			(BlockBatch) =>
 			{
-				BlockBatch.Actions.ForEach(
+				BlockBatch.Blocks.ForEach(
 					(block) =>
 					{
 						HandleBlock(block);
@@ -55,20 +54,27 @@ public class BattleEngine
 		resolver.OnResolved += () =>
 		{
 			_resolverStack.Remove(resolver);
+			HandleResolver();
 		};
+		resolver.OnResolverQueued += QueueResolver;
 
-		if (!resolver.IsResolved)
+		_resolverStack.Add(resolver);
+		HandleResolver();
+	}
+
+	private void HandleResolver()
+	{
+		if (_resolverStack.Count > 0)
 		{
-			_resolverStack.Add(resolver);
+			Console.WriteLine("Handling Resolver: " + _resolverStack[0].GetType().Name);
+			_resolverStack[0].HandleStart(this);
 		}
 	}
 
 	public PlayerId AddPlayer()
 	{
 		var playerId = new PlayerId(Guid.NewGuid());
-		var player = new Player(_entityService, playerId);
-		_entityService.Players.Add(playerId, player);
-		_turnService.AddPlayer(playerId);
+		QueueResolver(new PlayerJoinedResolver(playerId));
 		return playerId;
 	}
 }

@@ -3,17 +3,17 @@ namespace CardWars.BattleEngine.Block;
 public class BlockBatch
 {
 	public string AnimationId = "";
-	public List<IBlock> Actions = [];
+	public List<IBlock> Blocks = [];
 
 	public BlockBatch() { }
-	public BlockBatch(IBlock action, string? animationId = null)
+	public BlockBatch(IBlock block, string? animationId = null)
 	{
 		if (animationId != null) { AnimationId = animationId; }
-		Actions.Add(action);
+		Blocks.Add(block);
 	}
-	public BlockBatch(ICollection<IBlock> actions, string? animationId = null)
+	public BlockBatch(ICollection<IBlock> blocks, string? animationId = null)
 	{
 		if (animationId != null) { AnimationId = animationId; }
-		Actions.AddRange(actions);
+		Blocks.AddRange(blocks);
 	}
 }

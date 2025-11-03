@@ -6,6 +6,7 @@ namespace CardWars.BattleEngine.Resolver;
 public abstract class ResolverBase
 {
 	public event Action<List<BlockBatch>>? OnCommited;
+	public event Action<ResolverBase>? OnResolverQueued;
 	public event Action? OnResolved;
 	
 	public bool IsResolved = false;
@@ -16,9 +17,14 @@ public abstract class ResolverBase
 	public virtual void HandleInput(BattleEngine engine, IInput input) { throw new NotImplementedException(); }
 	public virtual void HandleEnd(BattleEngine engine) { throw new NotImplementedException(); }
 
-	protected void AddActionBatch(BlockBatch batch)
+	protected void AddBlockBatch(BlockBatch batch)
 	{
 		_batch.Add(batch);
+	}
+
+	protected void QueueResolver(ResolverBase resolver)
+	{
+		OnResolverQueued?.Invoke(resolver);
 	}
 
 	protected void Commit()
@@ -31,5 +37,11 @@ public abstract class ResolverBase
 	{
 		OnResolved?.Invoke();
 		IsResolved = true;
+	}
+
+	protected void CommitResolved()
+	{
+		Commit();
+		Resolved();
 	}
 }
