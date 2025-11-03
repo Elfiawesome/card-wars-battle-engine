@@ -3,10 +3,12 @@ using CardWars.BattleEngine.Input;
 
 namespace CardWars.BattleEngine.Resolver;
 
-public abstract class Resolver
+public abstract class ResolverBase
 {
 	public event Action<List<BlockBatch>>? OnCommited;
 	public event Action? OnResolved;
+	
+	public bool IsResolved = false;
 	
 	private readonly List<BlockBatch> _batch = [];
 
@@ -28,5 +30,6 @@ public abstract class Resolver
 	protected void Resolved()
 	{
 		OnResolved?.Invoke();
+		IsResolved = true;
 	}
 }
