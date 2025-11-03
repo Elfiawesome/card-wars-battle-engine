@@ -11,7 +11,9 @@ public class PlayerJoinedResolver(PlayerId playerId) : ResolverBase
 	
 	public override void HandleStart(BattleEngine engine)
 	{
-		// Too lazy TODO: later implement intantiate object via blocks
+		// TODO Implement a way to instantiate all the battlefields.
+		// TODO PlayerJoinedResolver will probably need a context object fed into it to figure out the
+		// heroes, unit deck, spell deck, etc
 		BlockBatch batch = new([
 			new AddTurnOrderBlock(PlayerId),
 			new InstantiatePlayerBlock(PlayerId)

@@ -35,7 +35,7 @@ public abstract class RequestDispatcher<TRequest> : RequestHandlerBase
 
 		_handlers[requestType] = (request) =>
 		{
-			Console.WriteLine($"[{GetType().Name}] --> [{requestType.Name}] with [{request}]");
+			Console.WriteLine($"[{GetType().Name}] --> [{request}]");
 			handler.Handle((TSpecificRequest)request);
 		};
 	}
@@ -71,7 +71,7 @@ public abstract class RequestDispatcher<TContext, TRequest> : RequestHandlerBase
 
 		_handlers[requestType] = (context, request) =>
 		{
-			Console.WriteLine($"[{GetType().Name}] --> [{requestType.Name}] with [{request}]");
+			Console.WriteLine($"[{GetType().Name}] --> [{request}]");
 			handler.Handle(context, (TSpecificRequest)request);
 		};
 	}
@@ -105,7 +105,7 @@ public abstract class RequestDispatcher<TContext, TRequest, TReturn> : RequestHa
 
 		_handlers[requestType] = (context, request) =>
 		{
-			Console.WriteLine($"[{GetType().Name}] --> [{requestType.Name}] with [{request}]");
+			Console.WriteLine($"[{GetType().Name}] --> [{request}]");
 			return handler.Handle(context, (TSpecificRequest)request);
 		};
 	}
