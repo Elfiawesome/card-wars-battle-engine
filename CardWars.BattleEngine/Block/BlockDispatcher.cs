@@ -8,7 +8,11 @@ public class BlockDispatcher : RequestDispatcher<BattleEngine, IBlock, bool>
 {
 	public override void Register()
 	{
+		RegisterHandler(new AttachBattlefieldToPlayerBlockHandler());
+		RegisterHandler(new AttachUnitSlotToBattlefieldBlockHandler());
 		RegisterHandler(new InstantiatePlayerBlockHandler());
+		RegisterHandler(new InstantiateBattlefieldBlockHandler());
+		RegisterHandler(new InstantiateUnitSlotBlockHandler());
 		
 		RegisterHandler(new AddAllowedPlayerInputsBlockHandler());
 		RegisterHandler(new AddTurnOrderBlockHandler());
