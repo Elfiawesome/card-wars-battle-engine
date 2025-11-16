@@ -12,8 +12,7 @@ public class PlayerJoinedResolver(PlayerId playerId) : ResolverBase
 	public override void HandleStart(BattleEngine engine)
 	{
 		// TODO Implement a way to instantiate all the battlefields.
-		// TODO PlayerJoinedResolver will probably need a context object fed into it to figure out the
-		// heroes, unit deck, spell deck, etc
+		// TODO PlayerJoinedResolver will need the battlefield prefab (which will be an empty with unti slots)
 		BlockBatch batch = new([
 			new AddTurnOrderBlock(PlayerId),
 			new InstantiatePlayerBlock(PlayerId)
