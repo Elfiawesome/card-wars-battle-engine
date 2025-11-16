@@ -1,7 +1,8 @@
 namespace CardWars.BattleEngine.Event;
 
-public sealed class EventService
+public sealed class EventService(BattleEngine engine)
 {
+	private readonly BattleEngine _engine = engine;
 	private readonly Dictionary<Type, List<ISubscriberWrapper>> _subscribers = new();
 
 	public void Subscribe<TEvent>(IEventSubscriber<TEvent> subscriber)
@@ -31,14 +32,14 @@ public sealed class EventService
 		var eventType = typeof(TEvent);
 		foreach (var subscriber in _subscribers[eventType])
 		{
-			subscriber.Handle(evnt);
+			subscriber.Handle(_engine, evnt);
 		}
 	}
 
 	private interface ISubscriberWrapper
 	{
 		int Priority { get; }
-		void Handle(IEvent evnt);
+		void Handle(BattleEngine engine, IEvent evnt);
 	}
 
 	private class SubscriberWrapper<TEvent>(IEventSubscriber<TEvent> subscriber) : ISubscriberWrapper
@@ -47,9 +48,9 @@ public sealed class EventService
 		private readonly IEventSubscriber<TEvent> _subscriber = subscriber;
 		public int Priority => _subscriber.Priority;
 
-		public void Handle(IEvent evnt)
+		public void Handle(BattleEngine engine, IEvent evnt)
 		{
-			_subscriber.Handle((TEvent)evnt);
+			_subscriber.Handle(engine, (TEvent)evnt);
 		}
 	}
 

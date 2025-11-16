@@ -10,7 +10,7 @@ public class BattleEngine
 {
 	public readonly EntityService EntityService = new();
 	public readonly TurnService TurnService = new();
-	public readonly EventService EventService = new();
+	public readonly EventService EventService;
 
 	private readonly BlockDispatcher _blockDispatcher = new();
 	private readonly InputDispatcher _inputDispatcher = new();
@@ -20,6 +20,7 @@ public class BattleEngine
 
 	public BattleEngine()
 	{
+		EventService = new(this); // Improve better way to do this?
 		_blockDispatcher.Register();
 		_inputDispatcher.Register();
 	}
