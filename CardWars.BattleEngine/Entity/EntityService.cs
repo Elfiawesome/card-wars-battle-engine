@@ -1,6 +1,6 @@
 namespace CardWars.BattleEngine.Entity;
 
-public class EntityService
+public sealed class EntityService
 {
 	public Dictionary<BattlefieldId, Battlefield> Battlefields = [];
 	public Dictionary<DeckId, Deck> Decks = [];

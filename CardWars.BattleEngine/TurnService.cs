@@ -2,7 +2,7 @@ using CardWars.BattleEngine.Entity;
 
 namespace CardWars.BattleEngine;
 
-public class TurnService
+public sealed class TurnService
 {
 	public enum PhaseType { Setup, Attacking }
 
