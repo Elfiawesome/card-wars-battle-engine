@@ -1,4 +1,5 @@
 using CardWars.BattleEngine.Block;
+using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 
 namespace CardWars.BattleEngine.Resolver;
@@ -7,10 +8,11 @@ public abstract class ResolverBase
 {
 	public event Action<List<BlockBatch>>? OnCommited;
 	public event Action<ResolverBase>? OnResolverQueued;
+	public event Func<IEvent, List<EventResponse>>? OnEventRaised;
 	public event Action? OnResolved;
-	
+
 	public bool IsResolved = false;
-	
+
 	private readonly List<BlockBatch> _batch = [];
 
 	public abstract void HandleStart(BattleEngine engine);
@@ -25,6 +27,11 @@ public abstract class ResolverBase
 	protected void QueueResolver(ResolverBase resolver)
 	{
 		OnResolverQueued?.Invoke(resolver);
+	}
+
+	protected List<EventResponse> RaiseEvent(IEvent evnt)
+	{
+		return OnEventRaised?.Invoke(evnt) ?? [];
 	}
 
 	protected void Commit()

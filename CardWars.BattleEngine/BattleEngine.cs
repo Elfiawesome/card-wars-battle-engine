@@ -1,4 +1,5 @@
-﻿using CardWars.BattleEngine.Block;
+﻿using System.Reflection;
+using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Entity;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
@@ -43,6 +44,7 @@ public class BattleEngine
 
 	public void QueueResolver(ResolverBase resolver)
 	{
+		// Can we check if this is bad for memeory or somethin?
 		resolver.OnCommited += (blockBatches) => blockBatches.ForEach(
 			(BlockBatch) =>
 			{
@@ -60,6 +62,11 @@ public class BattleEngine
 			HandleResolver();
 		};
 		resolver.OnResolverQueued += QueueResolver;
+		resolver.OnEventRaised += (evnt) =>
+		{
+			EventService.Raise(evnt, out var eventResponses);
+			return eventResponses;
+		};
 
 		_resolverStack.Add(resolver);
 		HandleResolver();

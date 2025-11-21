@@ -1,17 +1,21 @@
+using CardWars.BattleEngine.Resolver;
+
 namespace CardWars.BattleEngine.Event;
 
 public class EventService(BattleEngine engine)
 {
 	private readonly BattleEngine _engine = engine;
-	public void Raise(IEvent evnt)
+	public void Raise(IEvent evnt, out List<EventResponse> eventResponses)
 	{
+		eventResponses = [];
 		var allListeners = getAllActiveEventListeners();
 
 		allListeners.Sort((a, b) => b.EventPriority.CompareTo(a.EventPriority));
 
 		foreach (var listener in allListeners)
 		{
-			listener.OnGameEvent(_engine, evnt);
+			listener.OnGameEvent(_engine, evnt, out var eventResponse);
+			eventResponses.Add(eventResponse);
 		}
 	}
 
