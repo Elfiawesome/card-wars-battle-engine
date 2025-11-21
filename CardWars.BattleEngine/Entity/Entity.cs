@@ -1,11 +1,15 @@
+using CardWars.BattleEngine.Event;
+
 namespace CardWars.BattleEngine.Entity;
 
-public abstract class Entity<TId>
+public abstract class Entity<TId> : IEventListener
 	where TId : struct
 {
 	public readonly TId Id;
 	public readonly EntityService EntityService;
 	public bool IsDestroyed { get; private set; } = false;
+
+	public int EventPriority => 0;
 
 	public Entity(EntityService service, TId id)
 	{
@@ -20,4 +24,6 @@ public abstract class Entity<TId>
 	{
 		IsDestroyed = true;
 	}
+
+	public void OnGameEvent(BattleEngine engine, IEvent gameEvent) { }
 }

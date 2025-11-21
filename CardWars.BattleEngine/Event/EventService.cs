@@ -1,57 +1,28 @@
 namespace CardWars.BattleEngine.Event;
 
-public sealed class EventService(BattleEngine engine)
+public class EventService(BattleEngine engine)
 {
 	private readonly BattleEngine _engine = engine;
-	private readonly Dictionary<Type, List<ISubscriberWrapper>> _subscribers = new();
-
-	public void Subscribe<TEvent>(IEventSubscriber<TEvent> subscriber)
-		where TEvent : IEvent
+	public void Raise(IEvent evnt)
 	{
-		var eventType = typeof(TEvent);
-		var wrapper = new SubscriberWrapper<TEvent>(subscriber);
-		if (!_subscribers.TryGetValue(eventType, out var subscriberList))
+		var allListeners = getAllActiveEventListeners();
+
+		allListeners.Sort((a, b) => b.EventPriority.CompareTo(a.EventPriority));
+
+		foreach (var listener in allListeners)
 		{
-			subscriberList = [];
-			_subscribers[eventType] = subscriberList;
-		}
-
-		subscriberList.Add(wrapper);
-		subscriberList.Sort((a, b) => b.Priority.CompareTo(a.Priority));
-	}
-
-	public void Unsubscribe<TEvent>(IEventSubscriber<TEvent> subscriber) where TEvent : IEvent
-	{
-		var eventType = typeof(TEvent);
-		var subscriberList = _subscribers[eventType];
-		subscriberList?.RemoveAll((s) => s is SubscriberWrapper<TEvent>);
-	}
-
-	public void Raise<TEvent>(TEvent evnt) where TEvent : IEvent
-	{
-		var eventType = typeof(TEvent);
-		foreach (var subscriber in _subscribers[eventType])
-		{
-			subscriber.Handle(_engine, evnt);
+			listener.OnGameEvent(_engine, evnt);
 		}
 	}
 
-	private interface ISubscriberWrapper
+	public List<IEventListener> getAllActiveEventListeners()
 	{
-		int Priority { get; }
-		void Handle(BattleEngine engine, IEvent evnt);
+		var list = new List<IEventListener>();
+		list.AddRange(_engine.EntityService.Players.Values);
+		list.AddRange(_engine.EntityService.Battlefields.Values);
+		list.AddRange(_engine.EntityService.UnitCards.Values);
+		list.AddRange(_engine.EntityService.UnitSlots.Values);
+		list.AddRange(_engine.EntityService.Abilities.Values);
+		return list;
 	}
-
-	private class SubscriberWrapper<TEvent>(IEventSubscriber<TEvent> subscriber) : ISubscriberWrapper
-		where TEvent : IEvent
-	{
-		private readonly IEventSubscriber<TEvent> _subscriber = subscriber;
-		public int Priority => _subscriber.Priority;
-
-		public void Handle(BattleEngine engine, IEvent evnt)
-		{
-			_subscriber.Handle(engine, (TEvent)evnt);
-		}
-	}
-
 }
