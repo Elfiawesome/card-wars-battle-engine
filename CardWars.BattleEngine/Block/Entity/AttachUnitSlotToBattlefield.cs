@@ -12,8 +12,8 @@ public class AttachUnitSlotToBattlefieldBlockHandler : IBlockHandler<AttachUnitS
 {
 	public bool Handle(BattleEngine context, AttachUnitSlotToBattlefieldBlock request)
 	{
-		if (context.EntityService.UnitSlots.TryGetValue(request.UnitSlotId, out var unitSlot)) { return false; }
-		if (context.EntityService.Battlefields.TryGetValue(request.BattlefieldId, out var battlefield)) { return false; }
+		if (!context.EntityService.UnitSlots.TryGetValue(request.UnitSlotId, out var unitSlot)) { return false; }
+		if (!context.EntityService.Battlefields.TryGetValue(request.BattlefieldId, out var battlefield)) { return false; }
 		if (unitSlot == null) { return false; }
 		if (battlefield == null) { return false; }
 		

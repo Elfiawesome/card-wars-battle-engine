@@ -12,8 +12,8 @@ public class AttachBattlefieldToPlayerBlockHandler : IBlockHandler<AttachBattlef
 {
 	public bool Handle(BattleEngine context, AttachBattlefieldToPlayerBlock request)
 	{
-		if (context.EntityService.Battlefields.TryGetValue(request.BattlefieldId, out var battlefield)) { return false; }
-		if (context.EntityService.Players.TryGetValue(request.PlayerId, out var player)) { return false; }
+		if (!context.EntityService.Battlefields.TryGetValue(request.BattlefieldId, out var battlefield)) { return false; }
+		if (!context.EntityService.Players.TryGetValue(request.PlayerId, out var player)) { return false; }
 		if (battlefield == null) { return false; }
 		if (player == null) { return false; }
 		

@@ -38,7 +38,7 @@ public class BattleEngine
 
 	public void HandleBlock(IBlock block)
 	{
-		_blockDispatcher.Handle(this, block);
+		if (!_blockDispatcher.Handle(this, block)) { Console.WriteLine("!BLOCK UNHANDLED!: " + block.GetType().Name); }
 	}
 
 	public void QueueResolver(ResolverBase resolver)
