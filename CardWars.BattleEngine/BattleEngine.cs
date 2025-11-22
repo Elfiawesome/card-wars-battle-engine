@@ -12,7 +12,7 @@ public class BattleEngine
 	public readonly EntityService EntityService = new();
 	public readonly TurnService TurnService = new();
 	public readonly EventService EventService;
-	public readonly DefinitionService DefinitionService;
+	public readonly DefinitionService DefinitionService = new();
 
 	private readonly BlockDispatcher _blockDispatcher = new();
 	private readonly InputDispatcher _inputDispatcher = new();
