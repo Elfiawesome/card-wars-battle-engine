@@ -9,10 +9,10 @@ public class EndTurnResolver() : ResolverBase
 {
 	public override void HandleStart(BattleEngine engine)
 	{
-		int forecastedTurn = engine.TurnService.TurnNumber += 1;
+		int forecastedTurn = engine.TurnService.TurnNumber + 1;
 		TurnService.PhaseType forecastedPhase = engine.TurnService.Phase;
 		bool isPhasedChanged = false;
-		if (engine.TurnService.TurnNumber >= engine.TurnService.TurnOrder.Count)
+		if (forecastedTurn >= engine.TurnService.TurnOrder.Count)
 		{
 			forecastedTurn = 0;
 			forecastedPhase = (forecastedPhase == TurnService.PhaseType.Setup)

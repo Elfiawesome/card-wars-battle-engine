@@ -17,7 +17,7 @@ public class BattleEngine
 	private readonly BlockDispatcher _blockDispatcher = new();
 	private readonly InputDispatcher _inputDispatcher = new();
 
-	private readonly List<ResolverBase> _resolverStack = [];
+	private readonly List<ResolverBase> _resolverQueue = [];
 
 
 	public BattleEngine()
@@ -32,9 +32,9 @@ public class BattleEngine
 		if (!TurnService.IsPlayerInputAllowed(playerId)) { return; }
 		_inputDispatcher.Handle(new InputHandlerContext(this, playerId), input);
 
-		if (_resolverStack.Count > 0)
+		if (_resolverQueue.Count > 0)
 		{
-			_resolverStack[0].HandleInput(this, input);
+			_resolverQueue[0].HandleInput(this, input);
 		}
 	}
 
@@ -59,22 +59,22 @@ public class BattleEngine
 		);
 		resolver.OnResolved += () =>
 		{
-			_resolverStack.Remove(resolver);
+			_resolverQueue.Remove(resolver);
 			HandleResolver();
 		};
 		resolver.OnResolverQueued += QueueResolver;
 		resolver.OnEventRaised += EventService.Raise;
 
-		_resolverStack.Add(resolver);
+		_resolverQueue.Add(resolver);
 		HandleResolver();
 	}
 
 	private void HandleResolver()
 	{
-		if (_resolverStack.Count > 0)
+		if (_resolverQueue.Count > 0)
 		{
-			Console.WriteLine("Handling Resolver: " + _resolverStack[0].GetType().Name);
-			_resolverStack[0].HandleStart(this);
+			Console.WriteLine("Handling Resolver: " + _resolverQueue[0].GetType().Name);
+			_resolverQueue[0].HandleStart(this);
 		}
 	}
 

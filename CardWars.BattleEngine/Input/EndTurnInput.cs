@@ -1,11 +1,10 @@
 using CardWars.BattleEngine.Resolver;
-using CardWars.Core.Common.Dispatching;
 
 namespace CardWars.BattleEngine.Input;
 
 public record EndTurnInput() : IInput;
 
-public class EndTurnInputHandler : IInputHandler
+public class EndTurnInputHandler : IInputHandler<EndTurnInput>
 {
 	public void Handle(InputHandlerContext context, EndTurnInput request)
 	{

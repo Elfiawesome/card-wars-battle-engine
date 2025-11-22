@@ -8,6 +8,7 @@ public sealed class EntityService
 	public Dictionary<DeckId, Deck> Decks = [];
 	public Dictionary<PlayerId, Player> Players = [];
 	public Dictionary<UnitCardId, UnitCard> UnitCards = [];
+	public Dictionary<SpellCardId, SpellCard> SpellCards = [];
 	public Dictionary<UnitSlotId, UnitSlot> UnitSlots = [];
 	public Dictionary<AbilityId, Ability> Abilities = [];
 }
