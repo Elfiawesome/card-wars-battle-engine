@@ -17,7 +17,7 @@ public class ModifyDeckAddBlockHandler : IBlockHandler<ModifyDeckAddBlock>
 
 		request.DefinitionCardIds.ForEach((id) =>
 		{
-			deck.DefinitionIds.Add(Guid.NewGuid(), id);
+			deck.DefinitionIds.Add(new DeckDefinitionId(Guid.NewGuid()), id);
 		});
 		return true;
 	}

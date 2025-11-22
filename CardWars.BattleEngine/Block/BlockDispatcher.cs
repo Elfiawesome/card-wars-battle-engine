@@ -21,5 +21,6 @@ public class BlockDispatcher : RequestDispatcher<BattleEngine, IBlock, bool>
 		RegisterHandler(new SetTurnIndexBlockHandler());
 
 		RegisterHandler(new ModifyDeckAddBlockHandler());
+		RegisterHandler(new ModifyDeckRemoveBlockHandler());
 	}
 }
