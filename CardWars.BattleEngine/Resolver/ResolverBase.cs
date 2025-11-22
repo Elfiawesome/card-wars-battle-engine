@@ -12,6 +12,7 @@ public abstract class ResolverBase
 	public event Action? OnResolved;
 
 	public bool IsResolved = false;
+	public EventResponse? EventResponse;
 
 	private readonly List<BlockBatch> _batch = [];
 
@@ -29,6 +30,11 @@ public abstract class ResolverBase
 		OnResolverQueued?.Invoke(resolver);
 	}
 
+	protected void RaiseEvent(IEvent evnt)
+	{
+		EventResponse ??= new();
+		OnEventRaised?.Invoke(evnt, EventResponse);
+	}
 	protected void RaiseEvent(IEvent evnt, EventResponse response)
 	{
 		OnEventRaised?.Invoke(evnt, response);

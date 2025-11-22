@@ -1,5 +1,7 @@
 using CardWars.BattleEngine.Block.Turn;
 using CardWars.BattleEngine.Entity;
+using CardWars.BattleEngine.Event;
+using CardWars.BattleEngine.Event.Turn;
 
 namespace CardWars.BattleEngine.Resolver;
 
@@ -17,9 +19,11 @@ public class EndTurnResolver() : ResolverBase
 								? TurnService.PhaseType.Attacking
 								: TurnService.PhaseType.Setup;
 			isPhasedChanged = true;
+			RaiseEvent(new EndPhaseTurnEvent() { PhaseType = forecastedPhase });
 		}
 		PlayerId? forecastedPlayerId = engine.TurnService.GetPlayerByTurnNumber(forecastedTurn);
 
+		RaiseEvent(new EndTurnEvent());
 		if (forecastedPlayerId == null)
 		{
 			QueueResolver(new EndTurnResolver());

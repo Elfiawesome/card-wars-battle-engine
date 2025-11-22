@@ -25,5 +25,5 @@ public abstract class Entity<TId> : IEventListener
 		IsDestroyed = true;
 	}
 
-	public void OnGameEvent(BattleEngine engine, IEvent gameEvent, EventResponse eventResponse) { }
+	public virtual void OnGameEvent(BattleEngine engine, IEvent gameEvent, EventResponse eventResponse) { }
 }
