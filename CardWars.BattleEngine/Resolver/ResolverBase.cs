@@ -8,7 +8,7 @@ public abstract class ResolverBase
 {
 	public event Action<List<BlockBatch>>? OnCommited;
 	public event Action<ResolverBase>? OnResolverQueued;
-	public event Func<IEvent, List<EventResponse>>? OnEventRaised;
+	public event Action<IEvent, EventResponse>? OnEventRaised;
 	public event Action? OnResolved;
 
 	public bool IsResolved = false;
@@ -29,9 +29,9 @@ public abstract class ResolverBase
 		OnResolverQueued?.Invoke(resolver);
 	}
 
-	protected List<EventResponse> RaiseEvent(IEvent evnt)
+	protected void RaiseEvent(IEvent evnt, EventResponse response)
 	{
-		return OnEventRaised?.Invoke(evnt) ?? [];
+		OnEventRaised?.Invoke(evnt, response);
 	}
 
 	protected void Commit()

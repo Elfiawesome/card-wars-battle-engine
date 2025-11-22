@@ -62,11 +62,7 @@ public class BattleEngine
 			HandleResolver();
 		};
 		resolver.OnResolverQueued += QueueResolver;
-		resolver.OnEventRaised += (evnt) =>
-		{
-			EventService.Raise(evnt, out var eventResponses);
-			return eventResponses;
-		};
+		resolver.OnEventRaised += EventService.Raise;
 
 		_resolverStack.Add(resolver);
 		HandleResolver();
