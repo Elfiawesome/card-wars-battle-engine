@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using CardWars.BattleEngine.Block;
+﻿using CardWars.BattleEngine.Block;
+using CardWars.BattleEngine.Definition;
 using CardWars.BattleEngine.Entity;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
@@ -12,6 +12,7 @@ public class BattleEngine
 	public readonly EntityService EntityService = new();
 	public readonly TurnService TurnService = new();
 	public readonly EventService EventService;
+	public readonly DefinitionService DefinitionService;
 
 	private readonly BlockDispatcher _blockDispatcher = new();
 	private readonly InputDispatcher _inputDispatcher = new();
