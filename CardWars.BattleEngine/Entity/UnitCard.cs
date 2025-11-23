@@ -8,6 +8,8 @@ public class UnitCard(EntityService service, UnitCardId id) : Card<UnitCardId>(s
 	public int Hp { get; set; } = 0;
 	public int Atk { get; set; } = 0;
 	public UnitSlotId OwnerUnitSlotId { get; set; }
+	public PlayerId OwnerPlayerId { get; set; }
+	public bool IsPlayed { get; set; } = false;
 	public HashSet<AbilityId> AbilitIds { get; set; } = [];
 }
 

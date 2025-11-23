@@ -34,12 +34,10 @@ public class PlayerJoinedResolver(PlayerId playerId) : ResolverBase
 		batch.Blocks.Add(new AttachDeckToPlayerBlock(unitDeckId, PlayerId) { IsUnitDeck = true });
 		batch.Blocks.Add(new AttachDeckToPlayerBlock(spellDeckId, PlayerId) { IsSpellDeck = true });
 		// TODO: For now, we hard code the deck composition
-		batch.Blocks.Add(new ModifyDeckAddBlock(unitDeckId, [
-			"cardwars:destiny_2/goblin",
-			"cardwars:genshin_impact/hutao",
-			"cardwars:red_alert_3/spy"
-		]));
-		batch.Blocks.Add(new ModifyDeckAddBlock(spellDeckId, []));
+		batch.Blocks.Add(new ModifyDeckAddBlock(unitDeckId, "cardwars:destiny_2/goblin", new(Guid.NewGuid())));
+		batch.Blocks.Add(new ModifyDeckAddBlock(unitDeckId, "cardwars:genshin_impact/hutao", new(Guid.NewGuid())));
+		batch.Blocks.Add(new ModifyDeckAddBlock(unitDeckId, "cardwars:red_alert_3/spy", new(Guid.NewGuid())));
+		// batch.Blocks.Add(new ModifyDeckAddBlock(spellDeckId, ""));
 
 		// TODO PlayerJoinedResolver will need the battlefield prefab (which will be an empty with unit slots)
 		// For now lets just instantiate 4 of them manually

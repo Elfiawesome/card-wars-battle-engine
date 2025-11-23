@@ -2,9 +2,9 @@ namespace CardWars.BattleEngine.Entity;
 
 public class Deck(EntityService service, DeckId id) : Entity<DeckId>(service, id)
 {
-	// Holds the id (probably something else rather than string) of the prefab definition
-	public Dictionary<DeckDefinitionId, string> DefinitionIds { get; set; } = [];
+	public Dictionary<DeckPosDefinitionId, string> DefinitionIds { get; set; } = [];
 }
 
 public record struct DeckId(Guid Id);
-public record struct DeckDefinitionId(Guid Id);
+// TODO: Probably need a better name than `DeckPosDefinitionId`
+public record struct DeckPosDefinitionId(Guid Id);

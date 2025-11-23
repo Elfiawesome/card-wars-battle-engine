@@ -10,17 +10,22 @@ public class BlockDispatcher : RequestDispatcher<BattleEngine, IBlock, bool>
 	{
 		RegisterHandler(new AttachBattlefieldToPlayerBlockHandler());
 		RegisterHandler(new AttachDeckToPlayerBlockHandler());
+		RegisterHandler(new AttachUnitCardToPlayerBlockHandler());
 		RegisterHandler(new AttachUnitSlotToBattlefieldBlockHandler());
-		RegisterHandler(new InstantiatePlayerBlockHandler());
-		RegisterHandler(new InstantiateDeckBlockHandler());
-		RegisterHandler(new InstantiateBattlefieldBlockHandler());
-		RegisterHandler(new InstantiateUnitSlotBlockHandler());
 		
-		RegisterHandler(new AddAllowedPlayerInputsBlockHandler());
-		RegisterHandler(new AddTurnOrderBlockHandler());
-		RegisterHandler(new SetTurnIndexBlockHandler());
+		RegisterHandler(new InstantiateDeckBlockHandler());
+		RegisterHandler(new InstantiatePlayerBlockHandler());
+		RegisterHandler(new InstantiateBattlefieldBlockHandler());
+		RegisterHandler(new InstantiateUnitCardBlockHandler());
+		RegisterHandler(new InstantiateUnitSlotBlockHandler());
 
 		RegisterHandler(new ModifyDeckAddBlockHandler());
 		RegisterHandler(new ModifyDeckRemoveBlockHandler());
+		RegisterHandler(new ModifyUnitCardSetBlockHandler());
+		
+
+		RegisterHandler(new AddAllowedPlayerInputsBlockHandler());
+		RegisterHandler(new AddTurnOrderBlockHandler());
+		RegisterHandler(new SetTurnIndexBlockHandler());
 	}
 }

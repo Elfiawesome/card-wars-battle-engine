@@ -8,9 +8,10 @@ public class Player(EntityService service, PlayerId id) : Entity<PlayerId>(servi
 	public DeckId SpellDeckId { get; set; }
 
 
-	public Dictionary<Guid, UnitCardId> HandUnitCards = [];
-	public Dictionary<Guid, SpellCardId> HandSpellCards = [];
-	public List<Guid> HandOrder = [];
+	public Dictionary<PlayerHandId, UnitCardId> HandUnitCards = [];
+	public Dictionary<PlayerHandId, SpellCardId> HandSpellCards = [];
+	public List<PlayerHandId> HandOrder = [];
 }
 
+public record struct PlayerHandId(Guid Id);
 public record struct PlayerId(Guid Id);

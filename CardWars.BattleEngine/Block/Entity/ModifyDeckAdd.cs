@@ -5,7 +5,8 @@ namespace CardWars.BattleEngine.Block.Entity;
 
 public record ModifyDeckAddBlock(
 	DeckId DeckId,
-	List<string> DefinitionCardIds
+	string DefinitionId,
+	DeckPosDefinitionId DeckPosDefinitionId
 ) : IBlock;
 
 public class ModifyDeckAddBlockHandler : IBlockHandler<ModifyDeckAddBlock>
@@ -14,11 +15,9 @@ public class ModifyDeckAddBlockHandler : IBlockHandler<ModifyDeckAddBlock>
 	{
 		if (!context.EntityService.Decks.TryGetValue(request.DeckId, out var deck)) { return false; }
 		if (deck == null) { return false; }
+		
+		deck.DefinitionIds.Add(request.DeckPosDefinitionId, request.DefinitionId);
 
-		request.DefinitionCardIds.ForEach((id) =>
-		{
-			deck.DefinitionIds.Add(new DeckDefinitionId(Guid.NewGuid()), id);
-		});
 		return true;
 	}
 }
