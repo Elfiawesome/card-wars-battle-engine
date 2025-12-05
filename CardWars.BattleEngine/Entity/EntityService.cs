@@ -1,5 +1,3 @@
-using CardWars.BattleEngine.Event;
-
 namespace CardWars.BattleEngine.Entity;
 
 public sealed class EntityService

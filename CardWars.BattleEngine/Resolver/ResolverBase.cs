@@ -50,6 +50,10 @@ public abstract class ResolverBase
 	{
 		OnResolved?.Invoke();
 		IsResolved = true;
+
+		OnResolverQueued = null;
+		OnEventRaised = null;
+		OnResolved = null;
 	}
 
 	protected void CommitResolved()

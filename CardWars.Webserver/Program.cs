@@ -1,23 +1,13 @@
-﻿using CardWars.BattleEngine;
-using CardWars.BattleEngine.Input;
+﻿var builder = WebApplication.CreateBuilder(args);
 
-Console.WriteLine("Hello, World!");
+var app = builder.Build();
 
-var e = new BattleEngine();
-var p1 = e.AddPlayer();
-// var p2 = e.AddPlayer();
-// var p3 = e.AddPlayer();
-
-if (e.EntityService.Players.TryGetValue(p1, out var player))
+app.MapPost("/api", (object res) =>
 {
-	if (e.EntityService.Decks.TryGetValue(player.UnitDeckId, out var deck))
-	{
-		e.HandleInput(p1, new DrawCardInput(player.UnitDeckId));
-		e.HandleInput(p1, new DrawCardInput(player.UnitDeckId));
-		e.HandleInput(p1, new DrawCardInput(player.UnitDeckId));
-		e.HandleInput(p1, new DrawCardInput(player.UnitDeckId));
-	}
-}
-e.HandleInput(p1, new EndTurnInput());
-// e.HandleInput(p2, new EndTurnInput());
-// e.HandleInput(p3, new EndTurnInput());
+	Console.WriteLine("Received");
+	Console.WriteLine(res.GetType());
+	Console.WriteLine(res);
+});
+
+app.UseFileServer();
+app.Run();

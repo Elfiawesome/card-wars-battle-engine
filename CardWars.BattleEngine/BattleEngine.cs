@@ -9,6 +9,8 @@ namespace CardWars.BattleEngine;
 
 public class BattleEngine
 {
+	public event Action<IBlock>? OnBlockEvent;
+
 	public readonly EntityService EntityService = new();
 	public readonly TurnService TurnService = new();
 	public readonly EventService EventService;
@@ -40,7 +42,15 @@ public class BattleEngine
 
 	public void HandleBlock(IBlock block)
 	{
-		if (!_blockDispatcher.Handle(this, block)) { Console.WriteLine("!BLOCK UNHANDLED!: " + block.GetType().Name); }
+		if (!_blockDispatcher.Handle(this, block))
+		{
+			Console.WriteLine("!BLOCK UNHANDLED!: " + block.GetType().Name);
+		}
+		else
+		{
+			// NEW: Invoke the event
+			OnBlockEvent?.Invoke(block);
+		}
 	}
 
 	public void QueueResolver(ResolverBase resolver)
