@@ -1,5 +1,4 @@
 using CardWars.BattleEngine.Entity;
-using CardWars.BattleEngine.Input;
 
 namespace CardWars.BattleEngine.Block.Entity;
 
@@ -12,7 +11,7 @@ public class InstantiateUnitSlotBlockHandler : IBlockHandler<InstantiateUnitSlot
 	public bool Handle(BattleEngine context, InstantiateUnitSlotBlock request)
 	{
 		if (context.EntityService.UnitSlots.ContainsKey(request.UnitSlotId)) { return false; }
-		context.EntityService.UnitSlots[request.UnitSlotId] = new UnitSlot(context.EntityService, request.UnitSlotId);
+		context.EntityService.UnitSlots[request.UnitSlotId] = new UnitSlot(request.UnitSlotId);
 		return true;
 	}
 }

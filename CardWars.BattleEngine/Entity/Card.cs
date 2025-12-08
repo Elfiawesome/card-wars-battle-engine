@@ -1,6 +1,6 @@
 namespace CardWars.BattleEngine.Entity;
 
-public abstract class Card<T>(EntityService service, T id) : Entity<T>(service, id)
+public abstract class Card<T>(T id) : Entity<T>(id)
 	where T : struct
 {
 	

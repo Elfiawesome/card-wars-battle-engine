@@ -1,6 +1,6 @@
 namespace CardWars.BattleEngine.Entity;
 
-public class Ability(EntityService service, AbilityId id) : Entity<AbilityId>(service, id)
+public class Ability(AbilityId id) : Entity<AbilityId>(id)
 {
 	public UnitCardId OwnerCardId { get; set; }
 }

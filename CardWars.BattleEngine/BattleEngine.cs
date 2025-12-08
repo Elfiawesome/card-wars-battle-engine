@@ -44,7 +44,7 @@ public class BattleEngine
 	{
 		if (!_blockDispatcher.Handle(this, block))
 		{
-			Console.WriteLine("!BLOCK UNHANDLED!: " + block.GetType().Name);
+			Console.WriteLine("[Block Error!]: " + block.GetType().Name);
 		}
 		else
 		{
@@ -83,7 +83,7 @@ public class BattleEngine
 	{
 		if (_resolverQueue.Count > 0)
 		{
-			Console.WriteLine("Handling Resolver: " + _resolverQueue[0].GetType().Name);
+			Console.WriteLine("[Resolver] --> " + _resolverQueue[0].GetType().Name);
 			_resolverQueue[0].HandleStart(this);
 		}
 	}

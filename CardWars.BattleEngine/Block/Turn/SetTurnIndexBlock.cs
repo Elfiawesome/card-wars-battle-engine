@@ -1,5 +1,3 @@
-using CardWars.BattleEngine.Input;
-
 namespace CardWars.BattleEngine.Block.Turn;
 
 public record SetTurnIndexBlock(

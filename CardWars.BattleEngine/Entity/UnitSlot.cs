@@ -1,6 +1,6 @@
 namespace CardWars.BattleEngine.Entity;
 
-public class UnitSlot(EntityService service, UnitSlotId id) : Entity<UnitSlotId>(service, id)
+public class UnitSlot(UnitSlotId id) : Entity<UnitSlotId>(id)
 {
 	public BattlefieldId OwnerBattlefieldId { get; set; }
 	public UnitCardId UnitCardId { get; set; }

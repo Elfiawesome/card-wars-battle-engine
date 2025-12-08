@@ -1,6 +1,6 @@
 namespace CardWars.BattleEngine.Entity;
 
-public class UnitCard(EntityService service, UnitCardId id) : Card<UnitCardId>(service, id)
+public class UnitCard(UnitCardId id) : Card<UnitCardId>(id)
 {
 	public string Name { get; set; } = "Default Name";
 	public string FlavourText { get; set; } = "Default Description";

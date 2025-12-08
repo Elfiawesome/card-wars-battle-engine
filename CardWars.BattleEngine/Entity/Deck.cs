@@ -1,6 +1,6 @@
 namespace CardWars.BattleEngine.Entity;
 
-public class Deck(EntityService service, DeckId id) : Entity<DeckId>(service, id)
+public class Deck(DeckId id) : Entity<DeckId>(id)
 {
 	public Dictionary<DeckPosDefinitionId, string> DefinitionIds { get; set; } = [];
 }

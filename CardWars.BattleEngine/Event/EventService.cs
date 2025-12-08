@@ -1,30 +1,14 @@
-using CardWars.BattleEngine.Resolver;
-
 namespace CardWars.BattleEngine.Event;
 
 public class EventService(BattleEngine engine)
 {
 	private readonly BattleEngine _engine = engine;
-	public void Raise(IEvent evnt, EventResponse eventResponses)
+
+	public void Raise(IEvent evnt, EventResponse eventResponse)
 	{
-		var allListeners = getAllActiveEventListeners();
-
-		allListeners.Sort((a, b) => b.EventPriority.CompareTo(a.EventPriority));
-
-		foreach (var listener in allListeners)
+		foreach (var player in _engine.EntityService.Players)
 		{
-			listener.OnGameEvent(_engine, evnt, eventResponses);
+			// We do all the event handling here instead. Then the actual entity can just be data only, no logic there
 		}
-	}
-
-	public List<IEventListener> getAllActiveEventListeners()
-	{
-		var list = new List<IEventListener>();
-		list.AddRange(_engine.EntityService.Players.Values);
-		list.AddRange(_engine.EntityService.Battlefields.Values);
-		list.AddRange(_engine.EntityService.UnitCards.Values);
-		list.AddRange(_engine.EntityService.UnitSlots.Values);
-		list.AddRange(_engine.EntityService.Abilities.Values);
-		return list;
 	}
 }

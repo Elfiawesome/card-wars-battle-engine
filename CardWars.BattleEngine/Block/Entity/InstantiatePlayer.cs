@@ -1,5 +1,4 @@
 using CardWars.BattleEngine.Entity;
-using CardWars.BattleEngine.Input;
 
 namespace CardWars.BattleEngine.Block.Entity;
 
@@ -12,7 +11,7 @@ public class InstantiatePlayerBlockHandler : IBlockHandler<InstantiatePlayerBloc
 	public bool Handle(BattleEngine context, InstantiatePlayerBlock request)
 	{
 		if (context.EntityService.Players.ContainsKey(request.PlayerId)) { return false; }
-		context.EntityService.Players[request.PlayerId] = new Player(context.EntityService, request.PlayerId);
+		context.EntityService.Players[request.PlayerId] = new Player(request.PlayerId);
 		return true;
 	}
 }

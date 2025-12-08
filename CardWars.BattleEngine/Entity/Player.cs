@@ -1,6 +1,6 @@
 namespace CardWars.BattleEngine.Entity;
 
-public class Player(EntityService service, PlayerId id) : Entity<PlayerId>(service, id)
+public class Player(PlayerId id) : Entity<PlayerId>(id)
 {
 	public string Name { get; set; } = "Default Name";
 	public HashSet<BattlefieldId> ControllingBattlefieldIds { get; set; } = [];

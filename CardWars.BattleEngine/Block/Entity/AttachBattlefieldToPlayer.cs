@@ -1,5 +1,4 @@
 using CardWars.BattleEngine.Entity;
-using CardWars.BattleEngine.Input;
 
 namespace CardWars.BattleEngine.Block.Entity;
 

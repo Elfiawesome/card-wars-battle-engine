@@ -1,5 +1,4 @@
 using CardWars.BattleEngine.Entity;
-using CardWars.BattleEngine.Input;
 
 namespace CardWars.BattleEngine.Block.Entity;
 
@@ -12,7 +11,7 @@ public class InstantiateBattlefieldBlockHandler : IBlockHandler<InstantiateBattl
 	public bool Handle(BattleEngine context, InstantiateBattlefieldBlock request)
 	{
 		if (context.EntityService.Battlefields.ContainsKey(request.BattlefieldId)) { return false; }
-		context.EntityService.Battlefields[request.BattlefieldId] = new Battlefield(context.EntityService, request.BattlefieldId);
+		context.EntityService.Battlefields[request.BattlefieldId] = new Battlefield(request.BattlefieldId);
 		return true;
 	}
 }
