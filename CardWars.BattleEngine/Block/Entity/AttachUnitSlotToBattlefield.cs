@@ -19,6 +19,6 @@ public class AttachUnitSlotToBattlefieldBlockHandler : IBlockHandler<AttachUnitS
 		if (battlefield.ControllingUnitSlotIds.Contains(request.UnitSlotId)) { return false; }
 		unitSlot.OwnerBattlefieldId = request.BattlefieldId;
 		battlefield.ControllingUnitSlotIds.Add(request.UnitSlotId);
-		return false;
+		return true;
 	}
 }
