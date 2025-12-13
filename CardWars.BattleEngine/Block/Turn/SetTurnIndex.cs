@@ -1,17 +1,19 @@
+using CardWars.BattleEngine.State;
+
 namespace CardWars.BattleEngine.Block.Turn;
 
-public record SetTurnIndexBlock(
+public record struct SetTurnIndexBlock(
 	int TurnIndex,
-	TurnService.PhaseType Phase,
+	TurnPhase Phase,
 	bool IsPhaseChanged = false // This is for in case the client needs animation for "new phase entered"
 ) : IBlock;
 
 public class SetTurnIndexBlockHandler : IBlockHandler<SetTurnIndexBlock>
 {
-	public bool Handle(BattleEngine context, SetTurnIndexBlock request)
+	public bool Handle(IServiceContainer service, SetTurnIndexBlock request)
 	{
-		context.TurnService.TurnNumber = request.TurnIndex;
-		context.TurnService.Phase = request.Phase;
+		service.State.TurnIndex = request.TurnIndex;
+		service.State.TurnPhase = request.Phase;
 		return true;
 	}
 }

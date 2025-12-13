@@ -1,21 +1,21 @@
-using CardWars.BattleEngine.Entity;
+using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine.Block.Entity;
 
-public record ModifyDeckAddBlock(
+public record struct ModifyDeckAddBlock(
 	DeckId DeckId,
-	string DefinitionId,
-	DeckPosDefinitionId DeckPosDefinitionId
+	DeckDefinitionIdKey DeckDefinitionIdKey,
+	string DefinitionId
 ) : IBlock;
 
 public class ModifyDeckAddBlockHandler : IBlockHandler<ModifyDeckAddBlock>
 {
-	public bool Handle(BattleEngine context, ModifyDeckAddBlock request)
+	public bool Handle(IServiceContainer service, ModifyDeckAddBlock request)
 	{
-		if (!context.EntityService.Decks.TryGetValue(request.DeckId, out var deck)) { return false; }
+		if (!service.State.Decks.TryGetValue(request.DeckId, out var deck)) { return false; }
 		if (deck == null) { return false; }
-		
-		deck.DefinitionIds.Add(request.DeckPosDefinitionId, request.DefinitionId);
+
+		deck.DefinitionIds.Add(request.DeckDefinitionIdKey, request.DefinitionId);
 
 		return true;
 	}

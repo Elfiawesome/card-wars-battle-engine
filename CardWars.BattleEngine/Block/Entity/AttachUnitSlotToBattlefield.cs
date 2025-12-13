@@ -1,4 +1,4 @@
-using CardWars.BattleEngine.Entity;
+using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine.Block.Entity;
 
@@ -9,16 +9,16 @@ public record AttachUnitSlotToBattlefieldBlock(
 
 public class AttachUnitSlotToBattlefieldBlockHandler : IBlockHandler<AttachUnitSlotToBattlefieldBlock>
 {
-	public bool Handle(BattleEngine context, AttachUnitSlotToBattlefieldBlock request)
+	public bool Handle(IServiceContainer service, AttachUnitSlotToBattlefieldBlock request)
 	{
-		if (!context.EntityService.UnitSlots.TryGetValue(request.UnitSlotId, out var unitSlot)) { return false; }
-		if (!context.EntityService.Battlefields.TryGetValue(request.BattlefieldId, out var battlefield)) { return false; }
+		if (!service.State.UnitSlots.TryGetValue(request.UnitSlotId, out var unitSlot)) { return false; }
+		if (!service.State.Battlefields.TryGetValue(request.BattlefieldId, out var battlefield)) { return false; }
 		if (unitSlot == null) { return false; }
 		if (battlefield == null) { return false; }
-		
-		if (battlefield.UnitSlotIds.Contains(request.UnitSlotId)) { return false; }
+
+		if (battlefield.ControllingUnitSlotIds.Contains(request.UnitSlotId)) { return false; }
 		unitSlot.OwnerBattlefieldId = request.BattlefieldId;
-		battlefield.UnitSlotIds.Add(request.UnitSlotId);
-		return true;
+		battlefield.ControllingUnitSlotIds.Add(request.UnitSlotId);
+		return false;
 	}
 }

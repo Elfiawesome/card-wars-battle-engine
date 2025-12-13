@@ -1,31 +1,29 @@
-using CardWars.BattleEngine.Entity;
+using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine.Block.Entity;
 
 public record AttachDeckToPlayerBlock(
 	DeckId DeckId,
 	PlayerId PlayerId,
-	bool IsUnitDeck = false,
-	bool IsSpellDeck = false
+	DeckType DeckType
 ) : IBlock;
 
 public class AttachDeckToPlayerBlockHandler : IBlockHandler<AttachDeckToPlayerBlock>
 {
-	public bool Handle(BattleEngine context, AttachDeckToPlayerBlock request)
+	public bool Handle(IServiceContainer service, AttachDeckToPlayerBlock request)
 	{
-		if (!context.EntityService.Decks.TryGetValue(request.DeckId, out var deck)) { return false; }
-		if (!context.EntityService.Players.TryGetValue(request.PlayerId, out var player)) { return false; }
+		if (!service.State.Decks.TryGetValue(request.DeckId, out var deck)) { return false; }
+		if (!service.State.Players.TryGetValue(request.PlayerId, out var player)) { return false; }
 		if (deck == null) { return false; }
 		if (player == null) { return false; }
 
-		if (request.IsUnitDeck)
+		if (player.ControllingDecks.TryGetValue(request.DeckType, out var controllingDecks))
 		{
-			player.UnitDeckId = request.DeckId;
+			if (controllingDecks.Contains(request.DeckId)) { return false; }
+			controllingDecks.Add(request.DeckId);
+			deck.OwnerPlayerId = request.PlayerId;
+			return true;
 		}
-		if (request.IsSpellDeck)
-		{
-			player.SpellDeckId = request.DeckId;		
-		}
-		return true;
+		return false;
 	}
 }

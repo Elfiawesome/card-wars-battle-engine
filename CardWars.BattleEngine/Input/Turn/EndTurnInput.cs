@@ -1,6 +1,6 @@
-using CardWars.BattleEngine.Resolver;
+using CardWars.BattleEngine.Resolver.Player;
 
-namespace CardWars.BattleEngine.Input;
+namespace CardWars.BattleEngine.Input.Turn;
 
 public record EndTurnInput() : IInput;
 
@@ -8,6 +8,6 @@ public class EndTurnInputHandler : IInputHandler<EndTurnInput>
 {
 	public void Handle(InputHandlerContext context, EndTurnInput request)
 	{
-		context.Engine.QueueResolver(new EndTurnResolver());
+		context.ServiceContainer.Resolver.QueueResolver(new EndTurnResolver());
 	}
 }

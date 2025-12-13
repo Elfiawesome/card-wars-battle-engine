@@ -1,97 +1,53 @@
 ﻿using CardWars.BattleEngine.Block;
-using CardWars.BattleEngine.Definition;
-using CardWars.BattleEngine.Entity;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.Resolver;
+using CardWars.BattleEngine.Resolver.Player;
+using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine;
 
-public class BattleEngine
+public class BattleEngine : IServiceContainer
 {
-	public event Action<IBlock>? OnBlockEvent;
+	public StateService State { get; set; }
+	public ResolverService Resolver { get; set; }
+	public EventService EventService { get; set; }
 
-	public readonly EntityService EntityService = new();
-	public readonly TurnService TurnService = new();
-	public readonly EventService EventService;
-	public readonly DefinitionService DefinitionService = new();
-
-	private readonly BlockDispatcher _blockDispatcher = new();
-	private readonly InputDispatcher _inputDispatcher = new();
-
-	private readonly List<ResolverBase> _resolverQueue = [];
-
+	public BlockDispatcher BlockDispatcher { get; set; }
+	public InputDispatcher InputDispatcher { get; set; }
+	public EventResolverDispatcher EventResolverDispatcher { get; set; }
 
 	public BattleEngine()
 	{
-		EventService = new(this); // Improve better way to do this?
-		_blockDispatcher.Register();
-		_inputDispatcher.Register();
-	}
-
-	public void HandleInput(PlayerId playerId, IInput input)
-	{
-		if (!TurnService.IsPlayerInputAllowed(playerId)) { return; }
-		_inputDispatcher.Handle(new InputHandlerContext(this, playerId), input);
-
-		if (_resolverQueue.Count > 0)
-		{
-			_resolverQueue[0].HandleInput(this, input);
-		}
-	}
-
-	public void HandleBlock(IBlock block)
-	{
-		if (!_blockDispatcher.Handle(this, block))
-		{
-			Console.WriteLine("[Block Error!]: " + block.GetType().Name);
-		}
-		else
-		{
-			// NEW: Invoke the event
-			OnBlockEvent?.Invoke(block);
-		}
-	}
-
-	public void QueueResolver(ResolverBase resolver)
-	{
-		// Can we check if this is bad for memeory or somethin?
-		resolver.OnCommited += (blockBatches) => blockBatches.ForEach(
-			(BlockBatch) =>
-			{
-				BlockBatch.Blocks.ForEach(
-					(block) =>
-					{
-						HandleBlock(block);
-					}
-				);
-			}
-		);
-		resolver.OnResolved += () =>
-		{
-			_resolverQueue.Remove(resolver);
-			HandleResolver();
-		};
-		resolver.OnResolverQueued += QueueResolver;
-		resolver.OnEventRaised += EventService.Raise;
-
-		_resolverQueue.Add(resolver);
-		HandleResolver();
-	}
-
-	private void HandleResolver()
-	{
-		if (_resolverQueue.Count > 0)
-		{
-			Console.WriteLine("[Resolver] --> " + _resolverQueue[0].GetType().Name);
-			_resolverQueue[0].HandleStart(this);
-		}
+		State = new(this);
+		Resolver = new(this);
+		EventService = new(this);
+		BlockDispatcher = new();
+		InputDispatcher = new();
+		EventResolverDispatcher = new();
+		BlockDispatcher.Register();
+		InputDispatcher.Register();
+		EventResolverDispatcher.Register();
 	}
 
 	public PlayerId AddPlayer()
 	{
-		var playerId = new PlayerId(Guid.NewGuid());
-		QueueResolver(new PlayerJoinedResolver(playerId));
-		return playerId;
+		var newPlayerId = new PlayerId(Guid.NewGuid());
+		Resolver.QueueResolver(new PlayerJoinedResolver() { PlayerId = newPlayerId });
+		return newPlayerId;
+	}
+
+	public void HandleInput(PlayerId playerId, IInput input)
+	{
+		if (!State.AllowedPlayerInputs.Contains(playerId))
+		{
+
+		}
+		else
+		{
+			InputDispatcher.Handle(new InputHandlerContext(this, playerId), input);
+		}
+		// IDK maybe u wanna have handle input even on another players turn????
+		Resolver.HandleInput(playerId, input);
 	}
 }

@@ -1,24 +1,10 @@
 ﻿using CardWars.BattleEngine;
-using CardWars.BattleEngine.Input;
 
-Console.WriteLine("Hello, World!");
+var be = new BattleEngine();
+var p1 = be.AddPlayer();
+var p2 = be.AddPlayer();
+var p3 = be.AddPlayer();
+var p4 = be.AddPlayer();
 
-var e = new BattleEngine();
-var p1 = e.AddPlayer();
-// var p2 = e.AddPlayer();
-// var p3 = e.AddPlayer();
-e.HandleInput(p1, new EndTurnInput());
 
-if (e.EntityService.Players.TryGetValue(p1, out var player))
-{
-	if (e.EntityService.Decks.TryGetValue(player.UnitDeckId, out var deck))
-	{
-		e.HandleInput(p1, new DrawCardInput(player.UnitDeckId));
-		e.HandleInput(p1, new DrawCardInput(player.UnitDeckId));
-		e.HandleInput(p1, new DrawCardInput(player.UnitDeckId));
-		e.HandleInput(p1, new DrawCardInput(player.UnitDeckId));
-	}
-}
-e.HandleInput(p1, new EndTurnInput());
-// e.HandleInput(p2, new EndTurnInput());
-// e.HandleInput(p3, new EndTurnInput());
+be.State.PrintSnapshot();

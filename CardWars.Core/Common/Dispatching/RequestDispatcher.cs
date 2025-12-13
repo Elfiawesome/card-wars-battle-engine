@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+
 namespace CardWars.Core.Common.Dispatching;
 
 public abstract class RequestHandlerBase
@@ -5,11 +7,11 @@ public abstract class RequestHandlerBase
 	public abstract void Register();
 }
 
-
 public abstract class RequestDispatcher<TRequest> : RequestHandlerBase
 	where TRequest : IRequest
 {
 	private readonly Dictionary<Type, Action<TRequest>> _handlers = [];
+	public ReadOnlyDictionary<Type, Action<TRequest>> Handlers => new(_handlers);
 
 	public void Handle(TRequest baseRequest)
 	{
@@ -46,6 +48,7 @@ public abstract class RequestDispatcher<TContext, TRequest> : RequestHandlerBase
 	where TContext : notnull
 {
 	private readonly Dictionary<Type, Action<TContext, TRequest>> _handlers = [];
+	public ReadOnlyDictionary<Type, Action<TContext, TRequest>> Handlers => new(_handlers);
 
 	public void Handle(TContext context, TRequest baseRequest)
 	{
@@ -83,6 +86,7 @@ public abstract class RequestDispatcher<TContext, TRequest, TReturn> : RequestHa
 	where TReturn : notnull
 {
 	private readonly Dictionary<Type, Func<TContext, TRequest, TReturn>> _handlers = [];
+	public ReadOnlyDictionary<Type, Func<TContext, TRequest, TReturn>> Handlers => new(_handlers);
 
 	public TReturn Handle(TContext context, TRequest baseRequest)
 	{

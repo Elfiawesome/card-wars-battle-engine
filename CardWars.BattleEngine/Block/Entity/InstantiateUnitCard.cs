@@ -1,17 +1,17 @@
-using CardWars.BattleEngine.Entity;
+using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine.Block.Entity;
 
-public record InstantiateUnitCardBlock(
+public record struct InstantiateUnitCardBlock(
 	UnitCardId UnitCardId
 ) : IBlock;
 
 public class InstantiateUnitCardBlockHandler : IBlockHandler<InstantiateUnitCardBlock>
 {
-	public bool Handle(BattleEngine context, InstantiateUnitCardBlock request)
+	public bool Handle(IServiceContainer service, InstantiateUnitCardBlock request)
 	{
-		if (context.EntityService.UnitCards.ContainsKey(request.UnitCardId)) { return false; }
-		context.EntityService.UnitCards[request.UnitCardId] = new UnitCard(request.UnitCardId);
+		if (service.State.UnitCards.ContainsKey(request.UnitCardId)) { return false; }
+		service.State.UnitCards[request.UnitCardId] = new UnitCard(request.UnitCardId);
 		return true;
 	}
 }

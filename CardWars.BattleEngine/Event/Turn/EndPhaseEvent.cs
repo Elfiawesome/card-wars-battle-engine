@@ -2,9 +2,7 @@ using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine.Event.Turn;
 
-public class EndTurnEvent : IEvent
+public record EndPhaseEvent : IEvent
 {
-	public int Turn = 0;
-	public PlayerId PlayerId;
 	public TurnPhase Phase = TurnPhase.Setup;
 }

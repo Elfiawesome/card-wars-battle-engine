@@ -4,28 +4,35 @@ using CardWars.Core.Common.Dispatching;
 
 namespace CardWars.BattleEngine.Block;
 
-public class BlockDispatcher : RequestDispatcher<BattleEngine, IBlock, bool>
+public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool>
 {
 	public override void Register()
 	{
-		RegisterHandler(new AttachBattlefieldToPlayerBlockHandler());
+		// Entity
 		RegisterHandler(new AttachDeckToPlayerBlockHandler());
-		RegisterHandler(new AttachUnitCardToPlayerBlockHandler());
+		RegisterHandler(new AttachBattlefieldToPlayerBlockHandler());
 		RegisterHandler(new AttachUnitSlotToBattlefieldBlockHandler());
-		
+		RegisterHandler(new InstantiateBattlefieldBlockHandler());
 		RegisterHandler(new InstantiateDeckBlockHandler());
 		RegisterHandler(new InstantiatePlayerBlockHandler());
-		RegisterHandler(new InstantiateBattlefieldBlockHandler());
-		RegisterHandler(new InstantiateUnitCardBlockHandler());
 		RegisterHandler(new InstantiateUnitSlotBlockHandler());
 
 		RegisterHandler(new ModifyDeckAddBlockHandler());
 		RegisterHandler(new ModifyDeckRemoveBlockHandler());
-		RegisterHandler(new ModifyUnitCardSetBlockHandler());
-		
 
+		// Turn
 		RegisterHandler(new AddAllowedPlayerInputsBlockHandler());
 		RegisterHandler(new AddTurnOrderBlockHandler());
+		// RegisterHandler(new RemoveTurnOrderBlockHandler());
 		RegisterHandler(new SetTurnIndexBlockHandler());
+
+	}
+
+	public void Handle(IServiceContainer serviceContainer, BlockBatch blockBatch)
+	{
+		foreach (var block in blockBatch.Blocks)
+		{
+			Handle(serviceContainer, block);
+		}
 	}
 }
