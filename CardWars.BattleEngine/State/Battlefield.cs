@@ -6,4 +6,4 @@ public class Battlefield(BattlefieldId id) : EntityState<BattlefieldId>(id)
 	public HashSet<UnitSlotId> ControllingUnitSlotIds { get; set; } = [];
 }
 
-public record struct BattlefieldId(Guid Id);
+public record struct BattlefieldId(Guid Id) : EntityId;

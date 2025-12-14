@@ -29,10 +29,12 @@ public class PlayerJoinedResolver : Resolver
 
 		var spellDeckId = new DeckId(Guid.NewGuid());
 		batch.Blocks.Add(new InstantiateDeckBlock(spellDeckId));
+		batch.Blocks.Add(new ModifyDeckTypeBlock(spellDeckId, DeckType.Spell));
 		batch.Blocks.Add(new AttachDeckToPlayerBlock(spellDeckId, PlayerId, DeckType.Spell));
 
 		var unitDeckId = new DeckId(Guid.NewGuid());
 		batch.Blocks.Add(new InstantiateDeckBlock(unitDeckId));
+		batch.Blocks.Add(new ModifyDeckTypeBlock(unitDeckId, DeckType.Unit));
 		batch.Blocks.Add(new AttachDeckToPlayerBlock(unitDeckId, PlayerId, DeckType.Unit));
 
 		// We only raise the event here beacuse when we add our heroes, there will be abilities that 

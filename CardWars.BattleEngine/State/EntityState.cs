@@ -1,7 +1,7 @@
 namespace CardWars.BattleEngine.State;
 
 public abstract class EntityState<TId>
-	where TId : struct
+	where TId : EntityId
 {
 	public readonly TId Id;
 
@@ -9,4 +9,9 @@ public abstract class EntityState<TId>
 	{
 		Id = id;
 	}
+}
+
+public interface EntityId
+{
+	public Guid Id { get; set; }
 }

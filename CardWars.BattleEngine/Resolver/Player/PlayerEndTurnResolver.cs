@@ -33,7 +33,7 @@ public class PlayerEndTurnResolver : Resolver
 		if (forecastedPlayerId == null)
 		{
 			// Probably some error happened if the player id is null. For now, we just continously end turn
-			ServiceContainer.Resolver.QueueResolver(new EndTurnResolver());
+			ServiceContainer.Resolver.QueueResolver(new PlayerEndTurnResolver());
 		}
 		else
 		{

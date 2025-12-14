@@ -4,4 +4,4 @@ public class UnitCard(UnitCardId id) : EntityState<UnitCardId>(id)
 {
 }
 
-public record struct UnitCardId(Guid Id);
+public record struct UnitCardId(Guid Id) : EntityId;

@@ -8,6 +8,6 @@ public class EndTurnInputHandler : IInputHandler<EndTurnInput>
 {
 	public void Handle(InputHandlerContext context, EndTurnInput request)
 	{
-		context.ServiceContainer.Resolver.QueueResolver(new EndTurnResolver());
+		context.ServiceContainer.Resolver.QueueResolver(new PlayerEndTurnResolver());
 	}
 }

@@ -1,22 +1,25 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace CardWars.BattleEngine.State;
 
 public class StateService(IServiceContainer container) : Service(container)
 {
 	// Entity States
-	public Dictionary<AbilityId, Ability> Abilities = [];
-	public Dictionary<BattlefieldId, Battlefield> Battlefields = [];
-	public Dictionary<DeckId, Deck> Decks = [];
-	public Dictionary<PlayerId, Player> Players = [];
-	public Dictionary<SpellCardId, SpellCard> SpellCards = [];
-	public Dictionary<UnitCardId, UnitCard> UnitCards = [];
-	public Dictionary<UnitSlotId, UnitSlot> UnitSlots = [];
+	public Dictionary<AbilityId, Ability> Abilities { get; set; } = [];
+	public Dictionary<BattlefieldId, Battlefield> Battlefields { get; set; } = [];
+	public Dictionary<DeckId, Deck> Decks { get; set; } = [];
+	public Dictionary<PlayerId, Player> Players { get; set; } = [];
+	public Dictionary<SpellCardId, SpellCard> SpellCards { get; set; } = [];
+	public Dictionary<UnitCardId, UnitCard> UnitCards { get; set; } = [];
+	public Dictionary<UnitSlotId, UnitSlot> UnitSlots { get; set; } = [];
 
 	// Global States
 	// Turns
-	public List<PlayerId> TurnOrder = [];
-	public HashSet<PlayerId> AllowedPlayerInputs = [];
-	public int TurnIndex = 0;
-	public TurnPhase TurnPhase = TurnPhase.None;
+	public List<PlayerId> TurnOrder { get; set; } = [];
+	public HashSet<PlayerId> AllowedPlayerInputs { get; set; } = [];
+	public int TurnIndex { get; set; } = 0;
+	public TurnPhase TurnPhase { get; set; } = TurnPhase.None;
 	public PlayerId? CurrentPlayerId => GetPlayerIdByTurnIndex(TurnIndex);
 
 	public PlayerId? GetPlayerIdByTurnIndex(int turnIndex)

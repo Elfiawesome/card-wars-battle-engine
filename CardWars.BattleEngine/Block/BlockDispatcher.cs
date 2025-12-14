@@ -19,6 +19,7 @@ public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool
 
 		RegisterHandler(new ModifyDeckAddBlockHandler());
 		RegisterHandler(new ModifyDeckRemoveBlockHandler());
+		RegisterHandler(new ModifyDeckTypeBlockHandler());
 
 		// Turn
 		RegisterHandler(new AddAllowedPlayerInputsBlockHandler());

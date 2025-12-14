@@ -17,13 +17,12 @@ public class AttachDeckToPlayerBlockHandler : IBlockHandler<AttachDeckToPlayerBl
 		if (deck == null) { return false; }
 		if (player == null) { return false; }
 
-		if (player.ControllingDecks.TryGetValue(request.DeckType, out var controllingDecks))
-		{
-			if (controllingDecks.Contains(request.DeckId)) { return false; }
-			controllingDecks.Add(request.DeckId);
-			deck.OwnerPlayerId = request.PlayerId;
-			return true;
-		}
-		return false;
+		if (!player.ControllingDecks.ContainsKey(deck.DeckType)) { player.ControllingDecks[deck.DeckType] = []; }
+		var controllingDecks = player.ControllingDecks[deck.DeckType];
+		
+		if (controllingDecks.Contains(request.DeckId)) { return false; }
+		controllingDecks.Add(request.DeckId);
+		deck.OwnerPlayerId = request.PlayerId;
+		return true;
 	}
 }
