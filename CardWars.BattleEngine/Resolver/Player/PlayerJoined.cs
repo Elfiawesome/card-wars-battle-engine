@@ -1,53 +1,53 @@
 using CardWars.BattleEngine.Block.Entity;
 using CardWars.BattleEngine.Block.Turn;
-using CardWars.BattleEngine.Event.Turn;
+using CardWars.BattleEngine.Event;
+using CardWars.BattleEngine.Event.Player;
 using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine.Resolver.Player;
 
-public class PlayerJoinedResolver : Resolver
+public class PlayerJoinedResolver(PlayerJoinedEvent evnt) : EventResolver<PlayerJoinedEvent>(evnt)
 {
-	public PlayerId PlayerId;
-
 	public override void HandleStart()
 	{
+		var playerId = Event.PlayerId;
+
 		var batch = Open();
-		batch.Blocks.Add(new AddTurnOrderBlock(PlayerId));
-		batch.Blocks.Add(new InstantiatePlayerBlock(PlayerId));
+		batch.Blocks.Add(new AddTurnOrderBlock(playerId));
+		batch.Blocks.Add(new InstantiatePlayerBlock(playerId));
 
 		// Check if this is the first player. Because we need to intialize the phase and allowed player inputs for them
 		if (ServiceContainer?.State.CurrentPlayerId == null)
 		{
 			batch.Blocks.Add(new SetTurnIndexBlock(0, TurnPhase.Setup, true));
-			batch.Blocks.Add(new AddAllowedPlayerInputsBlock(PlayerId));
+			batch.Blocks.Add(new AddAllowedPlayerInputsBlock(playerId));
 		}
 
 
 		var battlefieldId = new BattlefieldId(Guid.NewGuid());
 		batch.Blocks.Add(new InstantiateBattlefieldBlock(battlefieldId));
-		batch.Blocks.Add(new AttachBattlefieldToPlayerBlock(battlefieldId, PlayerId));
+		batch.Blocks.Add(new AttachBattlefieldToPlayerBlock(battlefieldId, playerId));
 
 		var spellDeckId = new DeckId(Guid.NewGuid());
 		batch.Blocks.Add(new InstantiateDeckBlock(spellDeckId));
 		batch.Blocks.Add(new ModifyDeckTypeBlock(spellDeckId, DeckType.Spell));
-		batch.Blocks.Add(new AttachDeckToPlayerBlock(spellDeckId, PlayerId, DeckType.Spell));
+		batch.Blocks.Add(new AttachDeckToPlayerBlock(spellDeckId, playerId, DeckType.Spell));
 
 		var unitDeckId = new DeckId(Guid.NewGuid());
 		batch.Blocks.Add(new InstantiateDeckBlock(unitDeckId));
 		batch.Blocks.Add(new ModifyDeckTypeBlock(unitDeckId, DeckType.Unit));
-		batch.Blocks.Add(new AttachDeckToPlayerBlock(unitDeckId, PlayerId, DeckType.Unit));
+		batch.Blocks.Add(new AttachDeckToPlayerBlock(unitDeckId, playerId, DeckType.Unit));
 
-		// We only raise the event here beacuse when we add our heroes, there will be abilities that 
-		// can +/- the unit slots on the battlefield
-		ServiceContainer?.EventService.Raise(new PlayerJoinedEvent());
+		var playerSetupEvent = new PlayerSetupEvent() { PlayerId = playerId };
+		ServiceContainer?.EventService.Raise(playerSetupEvent);
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < playerSetupEvent.UnitSlotCount; i++)
 		{
 			var unitSlotId = new UnitSlotId(Guid.NewGuid());
 			batch.Blocks.Add(new InstantiateUnitSlotBlock(unitSlotId));
 			batch.Blocks.Add(new AttachUnitSlotToBattlefieldBlock(unitSlotId, battlefieldId));
 		}
-		
+
 		CommitResolved();
 	}
 }

@@ -2,9 +2,9 @@ using CardWars.BattleEngine.Block.Turn;
 using CardWars.BattleEngine.Event.Turn;
 using CardWars.BattleEngine.State;
 
-namespace CardWars.BattleEngine.Resolver.Player;
+namespace CardWars.BattleEngine.Resolver.Turn;
 
-public class PlayerEndTurnResolver : Resolver
+public class RequestEndTurnResolver(RequestEndTurnEvent evnt) : EventResolver<RequestEndTurnEvent>(evnt)
 {
 	public override void HandleStart()
 	{
@@ -22,7 +22,6 @@ public class PlayerEndTurnResolver : Resolver
 							: TurnPhase.Setup;
 			isPhasedChanged = true;
 
-			// RAISE EVENT HERE
 			ServiceContainer.EventService.Raise(new EndPhaseEvent() { Phase = forecastedPhase });
 		}
 
@@ -33,16 +32,10 @@ public class PlayerEndTurnResolver : Resolver
 		if (forecastedPlayerId == null)
 		{
 			// Probably some error happened if the player id is null. For now, we just continously end turn
-			ServiceContainer.Resolver.QueueResolver(new PlayerEndTurnResolver());
+			ServiceContainer.Resolver.QueueResolver(new RequestEndTurnResolver(evnt));
 		}
 		else
 		{
-			ServiceContainer.EventService.Raise(new EndTurnEvent()
-			{
-				Turn = forecastedTurn,
-				Phase = forecastedPhase,
-				PlayerId = (PlayerId)forecastedPlayerId
-			});
 			Open().Blocks.AddRange([
 				new SetTurnIndexBlock(forecastedTurn, forecastedPhase, isPhasedChanged),
 				new AddAllowedPlayerInputsBlock((PlayerId)forecastedPlayerId, true)

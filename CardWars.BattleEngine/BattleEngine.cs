@@ -1,5 +1,6 @@
 ﻿using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
+using CardWars.BattleEngine.Event.Player;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.Resolver;
 using CardWars.BattleEngine.Resolver.Player;
@@ -33,7 +34,8 @@ public class BattleEngine : IServiceContainer
 	public PlayerId AddPlayer()
 	{
 		var newPlayerId = new PlayerId(Guid.NewGuid());
-		Resolver.QueueResolver(new PlayerJoinedResolver() { PlayerId = newPlayerId });
+		EventService.Raise(new PlayerJoinedEvent() { PlayerId = newPlayerId });
+		State.AllowedPlayerInputs.Add(newPlayerId);
 		return newPlayerId;
 	}
 
