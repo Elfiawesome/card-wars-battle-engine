@@ -8,9 +8,17 @@ var p2 = be.AddPlayer();
 var p3 = be.AddPlayer();
 var p4 = be.AddPlayer();
 
-be.HandleInput(p1, new DrawCardInput(
-	be.State.Players[p1].ControllingDecks[DeckType.Unit].First())
-);
+var deckId = be.State.Players[p1].ControllingDecks[DeckType.Unit].First();
+be.HandleInput(p1, new DrawCardInput(deckId));
+be.HandleInput(p1, new DrawCardInput(deckId));
+be.HandleInput(p1, new DrawCardInput(deckId));
+be.HandleInput(p1, new DrawCardInput(deckId));
+be.HandleInput(p1, new DrawCardInput(deckId));
+be.HandleInput(p1, new DrawCardInput(deckId));
+be.HandleInput(p1, new DrawCardInput(deckId));
+be.HandleInput(p1, new DrawCardInput(deckId));
+be.HandleInput(p1, new DrawCardInput(deckId));
+
 
 be.State.PrintSnapshot();
 

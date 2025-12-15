@@ -28,8 +28,7 @@ public class DrawCardResolver(DrawCardEvent evnt) : EventResolver<DrawCardEvent>
 			});
 			batch.Blocks.Add(new AttachUnitCardToPlayerBlock(
 				unitCardId,
-				Event.PlayerId,
-				new PlayerHandId(Guid.NewGuid())
+				Event.PlayerId
 			));
 		}
 

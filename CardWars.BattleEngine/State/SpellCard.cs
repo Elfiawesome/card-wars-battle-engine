@@ -1,7 +1,7 @@
 namespace CardWars.BattleEngine.State;
 
-public class SpellCard(SpellCardId id) : EntityState<SpellCardId>(id)
+public class SpellCard(SpellCardId id) : Card<SpellCardId>(id)
 {
 }
 
-public record struct SpellCardId(Guid Id) : EntityId;
+public record struct SpellCardId(Guid Id) : ICardId;
