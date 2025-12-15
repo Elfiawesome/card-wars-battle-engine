@@ -3,7 +3,6 @@ using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Event.Player;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.Resolver;
-using CardWars.BattleEngine.Resolver.Player;
 using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine;
@@ -35,7 +34,6 @@ public class BattleEngine : IServiceContainer
 	{
 		var newPlayerId = new PlayerId(Guid.NewGuid());
 		EventService.Raise(new PlayerJoinedEvent() { PlayerId = newPlayerId });
-		State.AllowedPlayerInputs.Add(newPlayerId);
 		return newPlayerId;
 	}
 

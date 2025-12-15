@@ -8,7 +8,7 @@ public class RequestEndTurnEvent : IEvent
 	public PlayerId PlayerId;
 }
 
-public class RequestEndTurnEventEventHandler : IEventHandler<RequestEndTurnEvent>
+public class RequestEndTurnEventHandler : IEventHandler<RequestEndTurnEvent>
 {
 	public void Handle(IServiceContainer serviceContainer, RequestEndTurnEvent request)
 	{
