@@ -8,4 +8,4 @@ public class Player(PlayerId id) : EntityState<PlayerId>(id)
 	public List<ICardId> HandCards { get; set; } = [];
 }
 
-public record struct PlayerId(Guid Id) : EntityId;
+public record struct PlayerId(Guid Id) : IStateId;

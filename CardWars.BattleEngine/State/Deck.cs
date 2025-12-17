@@ -11,5 +11,5 @@ public class Deck(DeckId id) : EntityState<DeckId>(id)
 
 public enum DeckType { Unit = 0, Spell }
 
-public record struct DeckDefinitionIdKey(Guid Id) : EntityId;
-public record struct DeckId(Guid Id) : EntityId;
+public record struct DeckDefinitionIdKey(Guid Id) : IStateId;
+public record struct DeckId(Guid Id) : IStateId;

@@ -22,7 +22,8 @@ public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool
 		RegisterHandler(new ModifyDeckAddBlockHandler());
 		RegisterHandler(new ModifyDeckRemoveBlockHandler());
 		RegisterHandler(new ModifyDeckTypeBlockHandler());
-		RegisterHandler(new ModifyUnitCardBlockHandler());
+		RegisterHandler(new ModifyUnitCardHpModifyBlockHandler());
+		RegisterHandler(new ModifyUnitCardHpNewBlockHandler());
 
 		// Turn
 		RegisterHandler(new AddAllowedPlayerInputsBlockHandler());

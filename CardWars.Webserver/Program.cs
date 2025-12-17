@@ -23,3 +23,6 @@ be.HandleInput(p1, new DrawCardInput(deckId));
 be.State.PrintSnapshot();
 
 Console.WriteLine(StateSerializer.ToJson(be.State));
+
+// Example usage of getStat...
+Console.WriteLine(be.State.UnitCards.First().Value.GetStat<CompositeIntStat>("hp"));

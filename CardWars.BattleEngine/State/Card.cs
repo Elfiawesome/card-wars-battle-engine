@@ -6,4 +6,4 @@ public class Card<TCardId>(TCardId id) : EntityState<TCardId>(id)
 	
 }
 
-public interface ICardId : EntityId;
+public interface ICardId : IStateId;

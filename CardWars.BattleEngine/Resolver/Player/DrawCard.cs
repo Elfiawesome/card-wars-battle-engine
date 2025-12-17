@@ -21,11 +21,15 @@ public class DrawCardResolver(DrawCardEvent evnt) : EventResolver<DrawCardEvent>
 			// Let's just create a generic card
 			UnitCardId unitCardId = new(Guid.NewGuid());
 			batch.Blocks.Add(new InstantiateUnitCardBlock(unitCardId));
-			batch.Blocks.Add(new ModifyUnitCardBlock()
-			{
-				HpModifyType = NumberModifyType.Set,
-				Hp = 5
-			});
+
+			batch.Blocks.Add(new ModifyUnitCardHpNewBlock(unitCardId,
+				new StatLayer()
+				{
+					Name = "Base",
+					Value = 10,
+					MaxValue = 10,
+				}
+			));
 			batch.Blocks.Add(new AttachUnitCardToPlayerBlock(
 				unitCardId,
 				Event.PlayerId

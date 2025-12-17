@@ -20,7 +20,7 @@ public static class StateSerializer
 	{
 		public override bool CanConvert(Type typeToConvert)
 		{
-			return typeof(EntityId).IsAssignableFrom(typeToConvert);
+			return typeof(IStateId).IsAssignableFrom(typeToConvert);
 		}
 
 		public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
@@ -29,7 +29,7 @@ public static class StateSerializer
 			return (JsonConverter)Activator.CreateInstance(converterType)!;
 		}
 
-		private class EntityIdConverter<T> : JsonConverter<T> where T : EntityId
+		private class EntityIdConverter<T> : JsonConverter<T> where T : IStateId
 		{
 			public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
 			{
