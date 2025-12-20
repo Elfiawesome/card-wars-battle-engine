@@ -14,30 +14,30 @@ public class PlayerJoinedResolver(PlayerJoinedEvent evnt) : EventResolver<Player
 		var playerId = Event.PlayerId;
 
 		var batch = Open();
-		batch.Blocks.Add(new AddTurnOrderBlock(playerId));
-		batch.Blocks.Add(new InstantiatePlayerBlock(playerId));
+		batch.AddBlock(new AddTurnOrderBlock(playerId));
+		batch.AddBlock(new InstantiatePlayerBlock(playerId));
 
 		// Check if this is the first player. Because we need to intialize the phase and allowed player inputs for them
 		if (ServiceContainer?.State.CurrentPlayerId == null)
 		{
-			batch.Blocks.Add(new SetTurnIndexBlock(0, TurnPhase.Setup, true));
-			batch.Blocks.Add(new AddAllowedPlayerInputsBlock(playerId));
+			batch.AddBlock(new SetTurnIndexBlock(0, TurnPhase.Setup, true));
+			batch.AddBlock(new AddAllowedPlayerInputsBlock(playerId));
 		}
 
 
 		var battlefieldId = new BattlefieldId(Guid.NewGuid());
-		batch.Blocks.Add(new InstantiateBattlefieldBlock(battlefieldId));
-		batch.Blocks.Add(new AttachBattlefieldToPlayerBlock(battlefieldId, playerId));
+		batch.AddBlock(new InstantiateBattlefieldBlock(battlefieldId));
+		batch.AddBlock(new AttachBattlefieldToPlayerBlock(battlefieldId, playerId));
 
 		var spellDeckId = new DeckId(Guid.NewGuid());
-		batch.Blocks.Add(new InstantiateDeckBlock(spellDeckId));
-		batch.Blocks.Add(new ModifyDeckTypeBlock(spellDeckId, DeckType.Spell));
-		batch.Blocks.Add(new AttachDeckToPlayerBlock(spellDeckId, playerId, DeckType.Spell));
+		batch.AddBlock(new InstantiateDeckBlock(spellDeckId));
+		batch.AddBlock(new ModifyDeckTypeBlock(spellDeckId, DeckType.Spell));
+		batch.AddBlock(new AttachDeckToPlayerBlock(spellDeckId, playerId, DeckType.Spell));
 
 		var unitDeckId = new DeckId(Guid.NewGuid());
-		batch.Blocks.Add(new InstantiateDeckBlock(unitDeckId));
-		batch.Blocks.Add(new ModifyDeckTypeBlock(unitDeckId, DeckType.Unit));
-		batch.Blocks.Add(new AttachDeckToPlayerBlock(unitDeckId, playerId, DeckType.Unit));
+		batch.AddBlock(new InstantiateDeckBlock(unitDeckId));
+		batch.AddBlock(new ModifyDeckTypeBlock(unitDeckId, DeckType.Unit));
+		batch.AddBlock(new AttachDeckToPlayerBlock(unitDeckId, playerId, DeckType.Unit));
 
 		var playerSetupEvent = new PlayerSetupEvent() { PlayerId = playerId };
 		ServiceContainer?.EventService.Raise(playerSetupEvent);
@@ -45,8 +45,8 @@ public class PlayerJoinedResolver(PlayerJoinedEvent evnt) : EventResolver<Player
 		for (int i = 0; i < playerSetupEvent.UnitSlotCount; i++)
 		{
 			var unitSlotId = new UnitSlotId(Guid.NewGuid());
-			batch.Blocks.Add(new InstantiateUnitSlotBlock(unitSlotId));
-			batch.Blocks.Add(new AttachUnitSlotToBattlefieldBlock(unitSlotId, battlefieldId));
+			batch.AddBlock(new InstantiateUnitSlotBlock(unitSlotId));
+			batch.AddBlock(new AttachUnitSlotToBattlefieldBlock(unitSlotId, battlefieldId));
 		}
 
 		CommitResolved();

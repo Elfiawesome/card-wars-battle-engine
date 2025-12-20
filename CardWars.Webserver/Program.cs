@@ -4,6 +4,10 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.State.Entity;
 
 var be = new BattleEngine();
+be.BlockDispatcher.BlockBatchProcessedAction += (playerId, blockBatchRecord) =>
+{
+};
+
 var p1 = be.AddPlayer();
 var p2 = be.AddPlayer();
 var p3 = be.AddPlayer();

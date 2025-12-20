@@ -6,15 +6,20 @@ namespace CardWars.BattleEngine.State;
 
 public static class StateSerializer
 {
+	// TODO: Just change this as a object not state
 	public static string ToJson(StateService state)
+	{
+		return ToJsonObject(state);
+	}
+
+	public static string ToJsonObject(object instance)
 	{
 		var options = new JsonSerializerOptions
 		{
 			PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
 		};
 		options.Converters.Add(new EntityIdJsonConverterFactory());
-		return JsonSerializer.Serialize(state, options);
-
+		return JsonSerializer.Serialize(instance, options);		
 	}
 
 	private class EntityIdJsonConverterFactory : JsonConverterFactory

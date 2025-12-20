@@ -33,11 +33,11 @@ public class RequestEndTurnResolver(RequestEndTurnEvent evnt) : EventResolver<Re
 		if (forecastedPlayerId == null)
 		{
 			// Probably some error happened if the player id is null. For now, we just continously end turn
-			ServiceContainer.Resolver.QueueResolver(new RequestEndTurnResolver(evnt));
+			ServiceContainer.Resolver.QueueResolver(new RequestEndTurnResolver(Event));
 		}
 		else
 		{
-			Open().Blocks.AddRange([
+			Open().AddBlock([
 				new SetTurnIndexBlock(forecastedTurn, forecastedPhase, isPhasedChanged),
 				new AddAllowedPlayerInputsBlock((PlayerId)forecastedPlayerId, true)
 			]);

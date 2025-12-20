@@ -1,12 +1,13 @@
 using CardWars.BattleEngine.Block.Entity;
 using CardWars.BattleEngine.Block.Turn;
+using CardWars.BattleEngine.State.Entity;
 using CardWars.Core.Common.Dispatching;
 
 namespace CardWars.BattleEngine.Block;
 
 public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool>
 {
-	public Action<BlockBatch>? BlockBatchProcessedAction = null;
+	public Action<PlayerId, BlockBatchRecord>? BlockBatchProcessedAction = null;
 
 	public override void Register()
 	{
@@ -16,9 +17,9 @@ public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool
 		RegisterHandler(new AttachUnitCardToPlayerBlockHandler());
 		RegisterHandler(new AttachUnitCardToUnitSlotBlockHandler());
 		RegisterHandler(new AttachUnitSlotToBattlefieldBlockHandler());
-		
+
 		RegisterHandler(new DetachUnitCardFromPlayerBlockHandler());
-		
+
 		RegisterHandler(new InstantiateBattlefieldBlockHandler());
 		RegisterHandler(new InstantiateDeckBlockHandler());
 		RegisterHandler(new InstantiatePlayerBlockHandler());
@@ -41,11 +42,44 @@ public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool
 
 	public void Handle(IServiceContainer serviceContainer, BlockBatch blockBatch)
 	{
+		Dictionary<PlayerId, BlockBatchRecord> blockBatchRecords = [];
+		
 		foreach (var block in blockBatch.Blocks)
 		{
-			Handle(serviceContainer, block);
+			var success = Handle(serviceContainer, block.Block);
+			if (success)
+			{
+				foreach (var playerId in serviceContainer.State.Players.Keys)
+				{
+					if (!blockBatchRecords.TryGetValue(playerId, out var blockBatchRecord))
+					{
+						blockBatchRecord = new BlockBatchRecord();
+						blockBatchRecords.Add(playerId, blockBatchRecord);
+					}
+
+					if (block.TargetedPlayerIds == null)
+					{
+						blockBatchRecord.Blocks.Add(block.Block);
+						continue;
+					}
+					if (block.TargetedPlayerIds.Count == 0)
+					{
+						blockBatchRecord.Blocks.Add(block.Block);
+						continue;
+					}
+					if (block.TargetedPlayerIds.Contains(playerId))
+					{
+						blockBatchRecord.Blocks.Add(block.Block);
+						continue;						
+					}
+				}
+			}
 		}
 
-		BlockBatchProcessedAction?.Invoke(blockBatch);
+		foreach(var item in blockBatchRecords)
+		{
+			BlockBatchProcessedAction?.Invoke(item.Key, item.Value);
+		}
+		
 	}
 }
