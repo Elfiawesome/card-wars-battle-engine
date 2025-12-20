@@ -11,13 +11,9 @@ var p4 = be.AddPlayer();
 
 var deckId = be.State.Players[p1].ControllingDecks[DeckType.Unit].First();
 be.HandleInput(p1, new DrawCardInput(deckId));
+be.HandleInput(p1, new DrawCardInput(deckId));
+be.HandleInput(p1, new DrawCardInput(deckId));
 
 Console.WriteLine(StateSerializer.ToJson(be.State));
-
-var battlefield = be.State.Battlefields.First().Value;
-
-// Console.WriteLine(
-// 	be.Mapping.GetValue<string>(battlefield, "owner_player_id")
-// );
 
 be.Mapping.Print();

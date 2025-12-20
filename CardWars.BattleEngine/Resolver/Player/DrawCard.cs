@@ -40,6 +40,8 @@ public class DrawCardResolver(DrawCardEvent evnt) : EventResolver<DrawCardEvent>
 				"pt",
 				new StatLayer() { Name = "Base", Value = 3, MaxValue = 3 }
 			));
+
+			batch.Blocks.Add(new AttachUnitCardToPlayerBlock(unitCardId, Event.PlayerId));
 		}
 		CommitResolved();
 	}

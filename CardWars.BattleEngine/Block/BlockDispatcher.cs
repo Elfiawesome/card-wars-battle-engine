@@ -14,7 +14,11 @@ public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool
 		RegisterHandler(new AttachBattlefieldToPlayerBlockHandler());
 		RegisterHandler(new AttachDeckToPlayerBlockHandler());
 		RegisterHandler(new AttachUnitCardToPlayerBlockHandler());
+		RegisterHandler(new AttachUnitCardToUnitSlotBlockHandler());
 		RegisterHandler(new AttachUnitSlotToBattlefieldBlockHandler());
+		
+		RegisterHandler(new DetachUnitCardFromPlayerBlockHandler());
+		
 		RegisterHandler(new InstantiateBattlefieldBlockHandler());
 		RegisterHandler(new InstantiateDeckBlockHandler());
 		RegisterHandler(new InstantiatePlayerBlockHandler());
