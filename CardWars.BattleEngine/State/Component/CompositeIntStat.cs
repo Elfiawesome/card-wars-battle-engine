@@ -1,7 +1,9 @@
-namespace CardWars.BattleEngine.State;
+using CardWars.BattleEngine.State.Entity;
+
+// TODO: needs a better name... like data structure? idk?? 
+namespace CardWars.BattleEngine.State.Component; 
 
 public record struct StatLayerId(Guid Id) : IStateId;
-
 
 public struct StatLayer()
 {

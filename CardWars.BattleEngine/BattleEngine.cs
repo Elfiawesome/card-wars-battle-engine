@@ -4,6 +4,8 @@ using CardWars.BattleEngine.Event.Player;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.Resolver;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.State.Entity;
+using CardWars.Core.Common.Mapping;
 
 namespace CardWars.BattleEngine;
 
@@ -16,9 +18,11 @@ public class BattleEngine : IServiceContainer
 	public BlockDispatcher BlockDispatcher { get; set; }
 	public InputDispatcher InputDispatcher { get; set; }
 	public EventResolverDispatcher EventResolverDispatcher { get; set; }
+	public MappingService Mapping { get; set; }
 
 	public BattleEngine()
 	{
+		Mapping = new();
 		State = new(this);
 		Resolver = new(this);
 		EventService = new(this);

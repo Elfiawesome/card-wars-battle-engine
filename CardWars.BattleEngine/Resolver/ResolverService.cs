@@ -1,5 +1,5 @@
 using CardWars.BattleEngine.Input;
-using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.State.Entity;
 
 namespace CardWars.BattleEngine.Resolver;
 

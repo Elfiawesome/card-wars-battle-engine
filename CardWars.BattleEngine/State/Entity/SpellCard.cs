@@ -1,4 +1,4 @@
-namespace CardWars.BattleEngine.State;
+namespace CardWars.BattleEngine.State.Entity;
 
 public class SpellCard(SpellCardId id) : Card<SpellCardId>(id)
 {

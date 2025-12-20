@@ -1,4 +1,4 @@
-using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.State.Entity;
 using CardWars.Core.Common.Dispatching;
 
 namespace CardWars.BattleEngine.Input;

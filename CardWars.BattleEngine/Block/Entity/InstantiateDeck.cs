@@ -1,4 +1,4 @@
-using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.State.Entity;
 
 namespace CardWars.BattleEngine.Block.Entity;
 

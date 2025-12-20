@@ -1,5 +1,5 @@
 using CardWars.BattleEngine.Resolver.Turn;
-using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.State.Entity;
 
 namespace CardWars.BattleEngine.Event.Turn;
 

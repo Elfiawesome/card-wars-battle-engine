@@ -1,6 +1,7 @@
 using CardWars.BattleEngine.Block.Turn;
 using CardWars.BattleEngine.Event.Turn;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.State.Entity;
 
 namespace CardWars.BattleEngine.Resolver.Turn;
 

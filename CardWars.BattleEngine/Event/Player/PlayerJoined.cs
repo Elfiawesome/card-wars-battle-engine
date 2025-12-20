@@ -1,5 +1,5 @@
 using CardWars.BattleEngine.Resolver.Player;
-using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.State.Entity;
 
 namespace CardWars.BattleEngine.Event.Player;
 

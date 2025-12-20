@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Block.Turn;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Event.Player;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.State.Entity;
 
 namespace CardWars.BattleEngine.Resolver.Player;
 

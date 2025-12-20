@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CardWars.BattleEngine.State.Entity;
 
 namespace CardWars.BattleEngine.State;
 
@@ -16,7 +17,7 @@ public static class StateSerializer
 
 	}
 
-	public class EntityIdJsonConverterFactory : JsonConverterFactory
+	private class EntityIdJsonConverterFactory : JsonConverterFactory
 	{
 		public override bool CanConvert(Type typeToConvert)
 		{

@@ -1,4 +1,4 @@
-namespace CardWars.BattleEngine.State;
+namespace CardWars.BattleEngine.State.Entity;
 
 public class Card<TCardId>(TCardId id) : EntityState<TCardId>(id)
 	where TCardId : ICardId

@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.Resolver;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Common.Mapping;
 
 namespace CardWars.BattleEngine;
 
@@ -14,4 +15,6 @@ public interface IServiceContainer
 	public BlockDispatcher BlockDispatcher { get; set; }
 	public InputDispatcher InputDispatcher { get; set; }
 	public EventResolverDispatcher EventResolverDispatcher { get; set; }
+
+	public MappingService Mapping { get; set; }
 }
