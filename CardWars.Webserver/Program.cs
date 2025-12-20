@@ -1,4 +1,5 @@
 ﻿using CardWars.BattleEngine;
+using CardWars.BattleEngine.Block.Entity;
 using CardWars.BattleEngine.Input.Player;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.State.Entity;

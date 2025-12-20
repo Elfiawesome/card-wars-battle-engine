@@ -1,6 +1,7 @@
 using System.Dynamic;
 using CardWars.BattleEngine.Block.Entity;
 using CardWars.BattleEngine.Event.Player;
+using CardWars.BattleEngine.State.Component;
 using CardWars.BattleEngine.State.Entity;
 
 namespace CardWars.BattleEngine.Resolver.Player;
@@ -24,8 +25,22 @@ public class DrawCardResolver(DrawCardEvent evnt) : EventResolver<DrawCardEvent>
 			batch.Blocks.Add(new InstantiateUnitCardBlock(unitCardId));
 
 			// batch.Blocks.Add( Block that edits the unit card stats );
+			batch.Blocks.Add(new ModifyUnitCardCompositeIntStatAddBlock(
+				unitCardId,
+				"hp",
+				new StatLayer() { Name = "Base", Value = 8, MaxValue = 8 }
+			));
+			batch.Blocks.Add(new ModifyUnitCardCompositeIntStatAddBlock(
+				unitCardId,
+				"atk",
+				new StatLayer() { Name = "Base", Value = 5, MaxValue = 5 }
+			));
+			batch.Blocks.Add(new ModifyUnitCardCompositeIntStatAddBlock(
+				unitCardId,
+				"pt",
+				new StatLayer() { Name = "Base", Value = 3, MaxValue = 3 }
+			));
 		}
-
 		CommitResolved();
 	}
 }

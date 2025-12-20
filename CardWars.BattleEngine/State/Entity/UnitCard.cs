@@ -1,14 +1,20 @@
 using CardWars.BattleEngine.State.Component;
+using CardWars.Core.Common.Mapping;
 
 namespace CardWars.BattleEngine.State.Entity;
 
 public class UnitCard(UnitCardId id) : Card<UnitCardId>(id)
 {
-	public string Name = "";
-	public CompositeIntStat Hp = new();
-	public CompositeIntStat Atk = new();
-	public CompositeIntStat Pt = new();
-	public CompositeIntStat Charge = new();
+	[PropertyMapping]
+	public string Name { get; set; } = "";
+	[PropertyMapping]
+	public CompositeIntStat Hp { get; set; } = new();
+	[PropertyMapping]
+	public CompositeIntStat Atk { get; set; } = new();
+	[PropertyMapping]
+	public CompositeIntStat Pt { get; set; } = new();
+	[PropertyMapping]
+	public CompositeIntStat Charge { get; set; } = new();
 
 
 }
