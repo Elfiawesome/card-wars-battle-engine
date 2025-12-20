@@ -6,6 +6,8 @@ namespace CardWars.BattleEngine.Block;
 
 public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool>
 {
+	public Action<BlockBatch>? BlockBatchProcessedAction = null;
+
 	public override void Register()
 	{
 		// Entity
@@ -39,5 +41,7 @@ public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool
 		{
 			Handle(serviceContainer, block);
 		}
+
+		BlockBatchProcessedAction?.Invoke(blockBatch);
 	}
 }

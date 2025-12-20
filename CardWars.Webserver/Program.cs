@@ -1,9 +1,7 @@
 ﻿using CardWars.BattleEngine;
-using CardWars.BattleEngine.Block.Entity;
 using CardWars.BattleEngine.Input.Player;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.State.Entity;
-using CardWars.Core.Common.Mapping;
 
 var be = new BattleEngine();
 var p1 = be.AddPlayer();
