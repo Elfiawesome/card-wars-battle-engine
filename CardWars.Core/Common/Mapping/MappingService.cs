@@ -1,4 +1,7 @@
+using System.Globalization;
 using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CardWars.Core.Common.Mapping;
 
@@ -11,6 +14,23 @@ public class PropertyMappingAttribute(string Name = "") : Attribute
 public class MappingService
 {
 	public Dictionary<Type, Dictionary<string, PropertyInfo>> _mappings = [];
+
+	// Debug Print
+	public void Print()
+	{
+		foreach (var item in _mappings)
+		{
+			var type = item.Key;
+			var mapping = item.Value;
+
+			Console.WriteLine($" --- {type.Name} ---");
+			foreach (var _m in mapping)
+			{
+				Console.WriteLine($" -> [{_m.Key}] as `{_m.Value.Name} | {_m.Value.PropertyType.Name}`");
+			}
+		}
+	}
+
 	public void Register<T>()
 		where T : notnull
 	{
@@ -21,11 +41,22 @@ public class MappingService
 		{
 			if (prop.GetCustomAttribute<PropertyMappingAttribute>() is { } attr)
 			{
-				if (propertyMap.ContainsKey(attr.Name))
+				var mappingName = attr.Name;
+				if (mappingName == "")
 				{
-					throw new InvalidOperationException($"Duplicate mapping name '{attr.Name}' found on type '{type.Name}'.");
+					mappingName = prop.Name;
+					// TODO: Haha funnny regex in middle of the code
+					mappingName = Regex.Replace(
+						Regex.Replace(mappingName, "([a-z0-9])([A-Z])", "$1_$2"),
+						"([A-Z])([A-Z][a-z])", "$1_$2"
+					).ToLower(CultureInfo.InvariantCulture);
 				}
-				propertyMap[attr.Name] = prop;
+
+				if (propertyMap.ContainsKey(mappingName))
+				{
+					throw new InvalidOperationException($"Duplicate mapping name '{mappingName}' found on type '{type.Name}'.");
+				}
+				propertyMap[mappingName] = prop;
 			}
 		}
 		_mappings[type] = propertyMap;
@@ -45,10 +76,9 @@ public class MappingService
 		}
 	}
 
-	public TValue GetValue<TTarget, TValue>(TTarget instance, string mappedName)
-		where TTarget : notnull
+	public TValue GetValue<TValue>(object instance, string mappedName)
 	{
-		var type = typeof(TTarget);
+		var type = instance.GetType();
 
 		if (!_mappings.TryGetValue(type, out var map) ||
 			!map.TryGetValue(mappedName, out var prop))
@@ -59,7 +89,7 @@ public class MappingService
 		object? rawValue = prop.GetValue(instance);
 		if (rawValue is null) { return default!; }
 		if (rawValue is not TValue) { return default!; }
-		
+
 		return (TValue)rawValue;
 	}
 }

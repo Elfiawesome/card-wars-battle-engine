@@ -17,6 +17,8 @@ Console.WriteLine(StateSerializer.ToJson(be.State));
 
 var battlefield = be.State.Battlefields.First().Value;
 
-Console.WriteLine(
-	be.Mapping.GetValue<Battlefield, IStateId>(battlefield, "owner_player_id")
-);
+// Console.WriteLine(
+// 	be.Mapping.GetValue<string>(battlefield, "owner_player_id")
+// );
+
+be.Mapping.Print();
