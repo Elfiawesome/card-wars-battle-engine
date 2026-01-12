@@ -7,6 +7,7 @@ public class UnitCard(UnitCardId id) : Card<UnitCardId>(id)
 {
 	public PlayerId? OwnerPlayerId { get; set; } = null;
 	public UnitSlotId? OwnerUnitSlotId { get; set; } = null;
+	public override Dictionary<TargetPlay, List<IStateId>> PlayableOn => new() {{TargetPlay.UnitSlot, []}};
 
 	[PropertyMapping]
 	public string Name { get; set; } = "";

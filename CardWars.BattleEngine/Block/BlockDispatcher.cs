@@ -29,8 +29,10 @@ public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool
 		RegisterHandler(new ModifyDeckAddBlockHandler());
 		RegisterHandler(new ModifyDeckRemoveBlockHandler());
 		RegisterHandler(new ModifyDeckTypeBlockHandler());
+		RegisterHandler(new ModifyUnitCardAddPlayableOnBlockHandler());
 		RegisterHandler(new ModifyUnitCardCompositeIntStatAddBlockHandler());
 		RegisterHandler(new ModifyUnitCardCompositeIntStatSetBlockHandler());
+		RegisterHandler(new ModifyUnitCardRemovePlayableOnBlockHandler());
 
 		// Turn
 		RegisterHandler(new AddAllowedPlayerInputsBlockHandler());

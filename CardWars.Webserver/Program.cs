@@ -17,6 +17,8 @@ var deckId = be.State.Players[p1].ControllingDecks[DeckType.Unit].First();
 be.HandleInput(p1, new DrawCardInput(deckId));
 be.HandleInput(p1, new DrawCardInput(deckId));
 be.HandleInput(p1, new DrawCardInput(deckId));
+be.HandleInput(p1, new IntendPlayCardInput(deckId, 0, TargetPlay.None, null));
+
 
 Console.WriteLine(StateSerializer.ToJson(be.State));
 

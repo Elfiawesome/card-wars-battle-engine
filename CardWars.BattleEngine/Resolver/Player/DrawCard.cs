@@ -1,4 +1,3 @@
-using System.Dynamic;
 using CardWars.BattleEngine.Block.Entity;
 using CardWars.BattleEngine.Event.Player;
 using CardWars.BattleEngine.State.Component;

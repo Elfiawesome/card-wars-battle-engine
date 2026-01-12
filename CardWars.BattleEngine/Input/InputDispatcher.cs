@@ -9,6 +9,7 @@ public class InputDispatcher : RequestDispatcher<InputHandlerContext, IInput>
 	public override void Register()
 	{
 		RegisterHandler(new DrawCardInputHandler());
+		RegisterHandler(new IntendPlayCardInputHandler());
 		RegisterHandler(new EndTurnInputHandler());
 	}
 }
