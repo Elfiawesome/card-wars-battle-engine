@@ -9,11 +9,6 @@ public class IntendPlayCardInputHandler : IInputHandler<IntendPlayCardInput>
 {
 	public void Handle(InputHandlerContext context, IntendPlayCardInput request)
 	{
-		context.ServiceContainer.EventService.Raise(new IntendPlayCardEvent() { 
-			PlayerId = context.PlayerId, 
-			PlayingCardHandPos = request.HandPos,
-			TargetPlay = request.TargetPlay,
-			TargetId = request.TargetId
-		});
+		// context.ServiceContainer.EventService.Raise();
 	}
 }
