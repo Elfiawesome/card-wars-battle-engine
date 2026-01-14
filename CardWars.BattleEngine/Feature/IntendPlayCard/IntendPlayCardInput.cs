@@ -1,7 +1,7 @@
-using CardWars.BattleEngine.Event.Player;
+using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State.Entity;
 
-namespace CardWars.BattleEngine.Input.Player;
+namespace CardWars.BattleEngine.Feature.IntendPlayCard;
 
 public record IntendPlayCardInput(DeckId DeckId, int HandPos, TargetPlay TargetPlay, IStateId? TargetId = null) : IInput;
 

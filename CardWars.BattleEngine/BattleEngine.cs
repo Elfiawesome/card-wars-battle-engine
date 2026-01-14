@@ -1,6 +1,6 @@
 ﻿using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
-using CardWars.BattleEngine.Event.Player;
+using CardWars.BattleEngine.Feature.PlayerJoined;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.Resolver;
 using CardWars.BattleEngine.State;

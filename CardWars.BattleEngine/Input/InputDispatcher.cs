@@ -1,5 +1,6 @@
-using CardWars.BattleEngine.Input.Player;
-using CardWars.BattleEngine.Input.Turn;
+using CardWars.BattleEngine.Feature.DrawCard;
+using CardWars.BattleEngine.Feature.EndTurn;
+using CardWars.BattleEngine.Feature.IntendPlayCard;
 using CardWars.Core.Common.Dispatching;
 
 namespace CardWars.BattleEngine.Input;

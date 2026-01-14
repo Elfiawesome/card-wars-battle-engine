@@ -1,5 +1,8 @@
-using CardWars.BattleEngine.Event.Player;
-using CardWars.BattleEngine.Event.Turn;
+using CardWars.BattleEngine.Feature.DrawCard;
+using CardWars.BattleEngine.Feature.EndTurn;
+using CardWars.BattleEngine.Feature.IntendPlayCard;
+using CardWars.BattleEngine.Feature.PlayerJoined;
+using CardWars.BattleEngine.Feature.PlayerSetup;
 using CardWars.Core.Common.Dispatching;
 
 namespace CardWars.BattleEngine.Event;

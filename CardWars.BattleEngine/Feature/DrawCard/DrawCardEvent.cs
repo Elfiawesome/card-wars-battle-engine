@@ -1,7 +1,7 @@
-using CardWars.BattleEngine.Resolver.Player;
+using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State.Entity;
 
-namespace CardWars.BattleEngine.Event.Player;
+namespace CardWars.BattleEngine.Feature.DrawCard;
 
 public class DrawCardEvent : IEvent
 {

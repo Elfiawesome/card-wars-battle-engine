@@ -1,6 +1,6 @@
-using CardWars.BattleEngine.Event.Player;
+using CardWars.BattleEngine.Resolver;
 
-namespace CardWars.BattleEngine.Resolver.Player;
+namespace CardWars.BattleEngine.Feature.PlayerSetup;
 
 public class PlayerSetupResolver(PlayerSetupEvent evnt) : EventResolver<PlayerSetupEvent>(evnt)
 {

@@ -1,5 +1,6 @@
 ﻿using CardWars.BattleEngine;
-using CardWars.BattleEngine.Input.Player;
+using CardWars.BattleEngine.Feature.DrawCard;
+using CardWars.BattleEngine.Feature.IntendPlayCard;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.State.Entity;
 

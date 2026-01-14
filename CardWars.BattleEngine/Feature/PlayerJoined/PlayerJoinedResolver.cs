@@ -1,11 +1,11 @@
 using CardWars.BattleEngine.Block.Entity;
 using CardWars.BattleEngine.Block.Turn;
-using CardWars.BattleEngine.Event;
-using CardWars.BattleEngine.Event.Player;
+using CardWars.BattleEngine.Feature.PlayerSetup;
+using CardWars.BattleEngine.Resolver;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.State.Entity;
 
-namespace CardWars.BattleEngine.Resolver.Player;
+namespace CardWars.BattleEngine.Feature.PlayerJoined;
 
 public class PlayerJoinedResolver(PlayerJoinedEvent evnt) : EventResolver<PlayerJoinedEvent>(evnt)
 {

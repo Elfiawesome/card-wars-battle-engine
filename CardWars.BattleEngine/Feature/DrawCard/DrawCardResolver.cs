@@ -1,9 +1,9 @@
 using CardWars.BattleEngine.Block.Entity;
-using CardWars.BattleEngine.Event.Player;
+using CardWars.BattleEngine.Resolver;
 using CardWars.BattleEngine.State.Component;
 using CardWars.BattleEngine.State.Entity;
 
-namespace CardWars.BattleEngine.Resolver.Player;
+namespace CardWars.BattleEngine.Feature.DrawCard;
 
 public class DrawCardResolver(DrawCardEvent evnt) : EventResolver<DrawCardEvent>(evnt)
 {

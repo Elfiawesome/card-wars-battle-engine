@@ -1,6 +1,6 @@
-using CardWars.BattleEngine.Event.Turn;
+using CardWars.BattleEngine.Input;
 
-namespace CardWars.BattleEngine.Input.Turn;
+namespace CardWars.BattleEngine.Feature.EndTurn;
 
 public record EndTurnInput() : IInput;
 

@@ -1,7 +1,7 @@
-using CardWars.BattleEngine.Resolver.Turn;
+using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State;
 
-namespace CardWars.BattleEngine.Event.Turn;
+namespace CardWars.BattleEngine.Feature.EndTurn;
 
 public class EndPhaseEvent : IEvent
 {

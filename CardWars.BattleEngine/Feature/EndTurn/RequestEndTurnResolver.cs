@@ -1,9 +1,9 @@
 using CardWars.BattleEngine.Block.Turn;
-using CardWars.BattleEngine.Event.Turn;
+using CardWars.BattleEngine.Resolver;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.State.Entity;
 
-namespace CardWars.BattleEngine.Resolver.Turn;
+namespace CardWars.BattleEngine.Feature.EndTurn;
 
 public class RequestEndTurnResolver(RequestEndTurnEvent evnt) : EventResolver<RequestEndTurnEvent>(evnt)
 {

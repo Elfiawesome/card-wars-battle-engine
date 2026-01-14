@@ -1,4 +1,4 @@
-using CardWars.BattleEngine.Event.Player;
+using CardWars.BattleEngine.Feature.PlayerSetup;
 
 namespace CardWars.BattleEngine.Event;
 

@@ -1,6 +1,6 @@
-using CardWars.BattleEngine.Block.Entity;
-using CardWars.BattleEngine.Event.Player;
-namespace CardWars.BattleEngine.Resolver.Player;
+using CardWars.BattleEngine.Resolver;
+
+namespace CardWars.BattleEngine.Feature.IntendPlayCard;
 
 public class IntendPlayCardResolver(IntendPlayCardEvent evnt) : EventResolver<IntendPlayCardEvent>(evnt)
 {
