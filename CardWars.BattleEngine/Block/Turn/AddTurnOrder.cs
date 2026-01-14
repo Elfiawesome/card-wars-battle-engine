@@ -6,6 +6,7 @@ public record struct AddTurnOrderBlock(
 	PlayerId PlayerId
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class AddTurnOrderBlockHandler : IBlockHandler<AddTurnOrderBlock>
 {
 	public bool Handle(IServiceContainer service, AddTurnOrderBlock request)

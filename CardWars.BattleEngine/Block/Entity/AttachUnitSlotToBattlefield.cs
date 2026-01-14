@@ -7,6 +7,7 @@ public record AttachUnitSlotToBattlefieldBlock(
 	BattlefieldId BattlefieldId
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class AttachUnitSlotToBattlefieldBlockHandler : IBlockHandler<AttachUnitSlotToBattlefieldBlock>
 {
 	public bool Handle(IServiceContainer service, AttachUnitSlotToBattlefieldBlock request)

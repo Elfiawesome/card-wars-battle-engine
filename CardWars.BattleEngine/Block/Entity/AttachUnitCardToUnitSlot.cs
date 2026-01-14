@@ -7,6 +7,7 @@ public record AttachUnitCardToUnitSlotBlock(
 	UnitSlotId UnitSlotId
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class AttachUnitCardToUnitSlotBlockHandler : IBlockHandler<AttachUnitCardToUnitSlotBlock>
 {
 	public bool Handle(IServiceContainer service, AttachUnitCardToUnitSlotBlock request)

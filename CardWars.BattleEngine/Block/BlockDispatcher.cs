@@ -1,5 +1,4 @@
-using CardWars.BattleEngine.Block.Entity;
-using CardWars.BattleEngine.Block.Turn;
+using System.Reflection;
 using CardWars.BattleEngine.State.Entity;
 using CardWars.Core.Common.Dispatching;
 
@@ -11,41 +10,52 @@ public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool
 
 	public override void Register()
 	{
-		// Entity
-		RegisterHandler(new AttachBattlefieldToPlayerBlockHandler());
-		RegisterHandler(new AttachDeckToPlayerBlockHandler());
-		RegisterHandler(new AttachUnitCardToPlayerBlockHandler());
-		RegisterHandler(new AttachUnitCardToUnitSlotBlockHandler());
-		RegisterHandler(new AttachUnitSlotToBattlefieldBlockHandler());
+		RegisterAssembly(Assembly.GetExecutingAssembly());
+	}
 
-		RegisterHandler(new DetachUnitCardFromPlayerBlockHandler());
+	// Might change this for a .py script to create the auto registration
+	public void RegisterAssembly(Assembly assembly)
+	{
+		var handlerTypes = assembly.GetTypes()
+			.Where(t => t.GetCustomAttribute<BlockHandlerRegistry>() != null && t.IsClass && !t.IsAbstract);
+		
+		var registerMethodDefinition = typeof(RequestDispatcher<IServiceContainer, IBlock, bool>)
+			.GetMethod(nameof(RegisterHandler));
+		
+		if (registerMethodDefinition == null) return;
+		
+		foreach (var handlerType in handlerTypes)
+		{
+			// Find the IBlockHandler<T> interface implementation to determine T
+			var interfaceType = handlerType.GetInterfaces()
+				.FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IBlockHandler<>));
 
-		RegisterHandler(new InstantiateBattlefieldBlockHandler());
-		RegisterHandler(new InstantiateDeckBlockHandler());
-		RegisterHandler(new InstantiatePlayerBlockHandler());
-		RegisterHandler(new InstantiateUnitCardBlockHandler());
-		RegisterHandler(new InstantiateUnitSlotBlockHandler());
+			if (interfaceType == null) continue;
 
-		RegisterHandler(new ModifyDeckAddBlockHandler());
-		RegisterHandler(new ModifyDeckRemoveBlockHandler());
-		RegisterHandler(new ModifyDeckTypeBlockHandler());
-		RegisterHandler(new ModifyUnitCardAddPlayableOnBlockHandler());
-		RegisterHandler(new ModifyUnitCardCompositeIntStatAddBlockHandler());
-		RegisterHandler(new ModifyUnitCardCompositeIntStatSetBlockHandler());
-		RegisterHandler(new ModifyUnitCardRemovePlayableOnBlockHandler());
+			// Extract the Block type (e.g., AttachBattlefieldToPlayerBlock)
+			var blockType = interfaceType.GetGenericArguments()[0];
 
-		// Turn
-		RegisterHandler(new AddAllowedPlayerInputsBlockHandler());
-		RegisterHandler(new AddTurnOrderBlockHandler());
-		// RegisterHandler(new RemoveTurnOrderBlockHandler());
-		RegisterHandler(new SetTurnIndexBlockHandler());
+			// Create instance of the handler
+			var handlerInstance = Activator.CreateInstance(handlerType);
 
+			// Call RegisterHandler<T>(handlerInstance) dynamically
+			var genericRegisterMethod = registerMethodDefinition.MakeGenericMethod(blockType);
+			
+			try 
+			{
+				genericRegisterMethod.Invoke(this, [handlerInstance]);
+			}
+			catch (TargetInvocationException ex)
+			{
+				throw ex.InnerException ?? ex;
+			}
+		}
 	}
 
 	public void Handle(IServiceContainer serviceContainer, BlockBatch blockBatch)
 	{
 		Dictionary<PlayerId, BlockBatchRecord> blockBatchRecords = [];
-		
+
 		foreach (var block in blockBatch.Blocks)
 		{
 			var success = Handle(serviceContainer, block.Block);
@@ -72,16 +82,15 @@ public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool
 					if (block.TargetedPlayerIds.Contains(playerId))
 					{
 						blockBatchRecord.Blocks.Add(block.Block);
-						continue;						
+						continue;
 					}
 				}
 			}
 		}
 
-		foreach(var item in blockBatchRecords)
+		foreach (var item in blockBatchRecords)
 		{
 			BlockBatchProcessedAction?.Invoke(item.Key, item.Value);
 		}
-		
 	}
 }

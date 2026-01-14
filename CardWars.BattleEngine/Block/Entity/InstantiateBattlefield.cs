@@ -6,6 +6,7 @@ public record struct InstantiateBattlefieldBlock(
 	BattlefieldId BattlefieldId
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class InstantiateBattlefieldBlockHandler : IBlockHandler<InstantiateBattlefieldBlock>
 {
 	public bool Handle(IServiceContainer service, InstantiateBattlefieldBlock request)

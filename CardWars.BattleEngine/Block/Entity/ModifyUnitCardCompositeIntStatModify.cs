@@ -9,6 +9,7 @@ public record struct ModifyUnitCardCompositeIntStatSetBlock(
 	StatLayer NewStatLayer
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class ModifyUnitCardCompositeIntStatSetBlockHandler : IBlockHandler<ModifyUnitCardCompositeIntStatSetBlock>
 {
 	public bool Handle(IServiceContainer service, ModifyUnitCardCompositeIntStatSetBlock request)

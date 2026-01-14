@@ -8,6 +8,7 @@ public record AttachDeckToPlayerBlock(
 	DeckType DeckType
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class AttachDeckToPlayerBlockHandler : IBlockHandler<AttachDeckToPlayerBlock>
 {
 	public bool Handle(IServiceContainer service, AttachDeckToPlayerBlock request)

@@ -8,6 +8,7 @@ public record struct SetTurnIndexBlock(
 	bool IsPhaseChanged = false // This is for in case the client needs animation for "new phase entered"
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class SetTurnIndexBlockHandler : IBlockHandler<SetTurnIndexBlock>
 {
 	public bool Handle(IServiceContainer service, SetTurnIndexBlock request)

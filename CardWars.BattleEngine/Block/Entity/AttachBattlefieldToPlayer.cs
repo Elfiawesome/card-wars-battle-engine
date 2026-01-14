@@ -7,6 +7,7 @@ public record AttachBattlefieldToPlayerBlock(
 	PlayerId PlayerId
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class AttachBattlefieldToPlayerBlockHandler : IBlockHandler<AttachBattlefieldToPlayerBlock>
 {
 	public bool Handle(IServiceContainer service, AttachBattlefieldToPlayerBlock request)

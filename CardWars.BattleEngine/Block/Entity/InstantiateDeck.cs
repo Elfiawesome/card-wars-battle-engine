@@ -6,6 +6,7 @@ public record struct InstantiateDeckBlock(
 	DeckId DeckId
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class InstantiateDeckBlockHandler : IBlockHandler<InstantiateDeckBlock>
 {
 	public bool Handle(IServiceContainer service, InstantiateDeckBlock request)

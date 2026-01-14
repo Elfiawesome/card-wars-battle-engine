@@ -7,6 +7,7 @@ public record AttachUnitCardToPlayerBlock(
 	PlayerId PlayerId
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class AttachUnitCardToPlayerBlockHandler : IBlockHandler<AttachUnitCardToPlayerBlock>
 {
 	public bool Handle(IServiceContainer service, AttachUnitCardToPlayerBlock request)

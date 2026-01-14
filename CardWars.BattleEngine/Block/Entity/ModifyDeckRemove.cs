@@ -7,6 +7,7 @@ public record struct ModifyDeckRemoveBlock(
 	DeckDefinitionIdKey DeckDefinitionIdKey
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class ModifyDeckRemoveBlockHandler : IBlockHandler<ModifyDeckRemoveBlock>
 {
 	public bool Handle(IServiceContainer service, ModifyDeckRemoveBlock request)

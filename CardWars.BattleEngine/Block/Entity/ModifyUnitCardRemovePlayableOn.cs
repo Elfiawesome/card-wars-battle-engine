@@ -7,6 +7,7 @@ public record struct ModifyUnitCardRemovePlayableOnBlock(
 	TargetPlay TargetPlay
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class ModifyUnitCardRemovePlayableOnBlockHandler : IBlockHandler<ModifyUnitCardRemovePlayableOnBlock>
 {
 	public bool Handle(IServiceContainer service, ModifyUnitCardRemovePlayableOnBlock request)

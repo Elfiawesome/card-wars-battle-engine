@@ -6,6 +6,7 @@ public record struct InstantiatePlayerBlock(
 	PlayerId PlayerId
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class InstantiatePlayerBlockHandler : IBlockHandler<InstantiatePlayerBlock>
 {
 	public bool Handle(IServiceContainer service, InstantiatePlayerBlock request)

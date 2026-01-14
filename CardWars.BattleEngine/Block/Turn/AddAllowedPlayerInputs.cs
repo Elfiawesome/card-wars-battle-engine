@@ -7,6 +7,7 @@ public record struct AddAllowedPlayerInputsBlock(
 	bool ClearPrev = true
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class AddAllowedPlayerInputsBlockHandler : IBlockHandler<AddAllowedPlayerInputsBlock>
 {
 	public bool Handle(IServiceContainer service, AddAllowedPlayerInputsBlock request)

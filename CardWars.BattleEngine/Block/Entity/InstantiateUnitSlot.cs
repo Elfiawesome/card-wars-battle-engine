@@ -6,6 +6,7 @@ public record struct InstantiateUnitSlotBlock(
 	UnitSlotId UnitSlotId
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class InstantiateUnitSlotBlockHandler : IBlockHandler<InstantiateUnitSlotBlock>
 {
 	public bool Handle(IServiceContainer service, InstantiateUnitSlotBlock request)

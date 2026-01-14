@@ -7,6 +7,7 @@ public record DetachUnitCardFromPlayerBlock(
 	PlayerId PlayerId
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class DetachUnitCardFromPlayerBlockHandler : IBlockHandler<DetachUnitCardFromPlayerBlock>
 {
 	public bool Handle(IServiceContainer service, DetachUnitCardFromPlayerBlock request)

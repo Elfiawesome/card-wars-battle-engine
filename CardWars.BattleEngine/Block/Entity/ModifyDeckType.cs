@@ -7,6 +7,7 @@ public record struct ModifyDeckTypeBlock(
 	DeckType DeckType
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class ModifyDeckTypeBlockHandler : IBlockHandler<ModifyDeckTypeBlock>
 {
 	public bool Handle(IServiceContainer service, ModifyDeckTypeBlock request)

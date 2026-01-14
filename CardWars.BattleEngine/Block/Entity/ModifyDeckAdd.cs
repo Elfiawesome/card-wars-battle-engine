@@ -8,6 +8,7 @@ public record struct ModifyDeckAddBlock(
 	string DefinitionId
 ) : IBlock;
 
+[BlockHandlerRegistry]
 public class ModifyDeckAddBlockHandler : IBlockHandler<ModifyDeckAddBlock>
 {
 	public bool Handle(IServiceContainer service, ModifyDeckAddBlock request)
