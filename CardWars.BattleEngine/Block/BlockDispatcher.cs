@@ -10,46 +10,11 @@ public class BlockDispatcher : RequestDispatcher<IServiceContainer, IBlock, bool
 
 	public override void Register()
 	{
-		RegisterAssembly(Assembly.GetExecutingAssembly());
-	}
 
-	// Might change this for a .py script to create the auto registration
-	public void RegisterAssembly(Assembly assembly)
-	{
-		var handlerTypes = assembly.GetTypes()
-			.Where(t => t.GetCustomAttribute<BlockHandlerRegistry>() != null && t.IsClass && !t.IsAbstract);
-		
-		var registerMethodDefinition = typeof(RequestDispatcher<IServiceContainer, IBlock, bool>)
-			.GetMethod(nameof(RegisterHandler));
-		
-		if (registerMethodDefinition == null) return;
-		
-		foreach (var handlerType in handlerTypes)
-		{
-			// Find the IBlockHandler<T> interface implementation to determine T
-			var interfaceType = handlerType.GetInterfaces()
-				.FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IBlockHandler<>));
-
-			if (interfaceType == null) continue;
-
-			// Extract the Block type (e.g., AttachBattlefieldToPlayerBlock)
-			var blockType = interfaceType.GetGenericArguments()[0];
-
-			// Create instance of the handler
-			var handlerInstance = Activator.CreateInstance(handlerType);
-
-			// Call RegisterHandler<T>(handlerInstance) dynamically
-			var genericRegisterMethod = registerMethodDefinition.MakeGenericMethod(blockType);
-			
-			try 
-			{
-				genericRegisterMethod.Invoke(this, [handlerInstance]);
-			}
-			catch (TargetInvocationException ex)
-			{
-				throw ex.InnerException ?? ex;
-			}
-		}
+		RequestRegister.RegisterAssembly<
+			BlockHandlerRegistry,
+			RequestDispatcher<IServiceContainer, IBlock, bool>>
+				(Assembly.GetExecutingAssembly(), this);
 	}
 
 	public void Handle(IServiceContainer serviceContainer, BlockBatch blockBatch)
