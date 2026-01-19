@@ -1,26 +1,9 @@
 ﻿using CardWars.BattleEngine;
-using CardWars.BattleEngine.Feature.DrawCard;
-using CardWars.BattleEngine.Feature.IntendPlayCard;
-using CardWars.BattleEngine.State;
-using CardWars.BattleEngine.State.Entity;
+using CardWars.BattleEngineVanilla;
+using CardWars.BattleEngineVanilla.Input;
 
 var be = new BattleEngine();
-be.BlockDispatcher.BlockBatchProcessedAction += (playerId, blockBatchRecord) =>
-{
-};
+var mod = new VanillaMod();
+be.LoadMod(mod);
 
-var p1 = be.AddPlayer();
-var p2 = be.AddPlayer();
-var p3 = be.AddPlayer();
-var p4 = be.AddPlayer();
-
-var deckId = be.State.Players[p1].ControllingDecks[DeckType.Unit].First();
-be.HandleInput(p1, new DrawCardInput(deckId));
-be.HandleInput(p1, new DrawCardInput(deckId));
-be.HandleInput(p1, new DrawCardInput(deckId));
-// be.HandleInput(p1, new IntendPlayCardInput(deckId, 0, TargetPlay.None, null));
-
-
-Console.WriteLine(StateSerializer.ToJson(be.State));
-
-be.Mapping.Print();
+be.HandleInput(new TestInput());

@@ -1,6 +1,6 @@
-using CardWars.Core.Common.Dispatching;
+using CardWars.BattleEngine.Core.Request;
 
 namespace CardWars.BattleEngine.Event;
 
-public interface IEventHandler<TEvent> : IRequestHandler<IServiceContainer, TEvent>
+public interface IEventHandler<TEvent> : IRequestHandler<Transaction, TEvent>
 	where TEvent : IEvent;

@@ -1,0 +1,7 @@
+namespace CardWars.BattleEngine.State.Entities;
+
+public class UnitSlot : IEntity
+{
+	public EntityId Id { get; init; }
+	public EntityId HoldingCard { get; set; }
+}

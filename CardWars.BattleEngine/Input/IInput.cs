@@ -1,4 +1,4 @@
-using CardWars.Core.Common.Dispatching;
+using CardWars.BattleEngine.Core.Request;
 
 namespace CardWars.BattleEngine.Input;
 

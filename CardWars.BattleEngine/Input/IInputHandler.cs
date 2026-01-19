@@ -1,9 +1,6 @@
-using CardWars.BattleEngine.State.Entity;
-using CardWars.Core.Common.Dispatching;
+using CardWars.BattleEngine.Core.Request;
 
 namespace CardWars.BattleEngine.Input;
 
-public interface IInputHandler<TInput> : IRequestHandler<InputHandlerContext, TInput>
+public interface IInputHandler<TInput> : IRequestHandler<Transaction, TInput>
 	where TInput : IInput;
-
-public record struct InputHandlerContext(IServiceContainer ServiceContainer, PlayerId PlayerId);

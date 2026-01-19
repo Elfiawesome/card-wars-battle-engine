@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardWars.Webserver", "CardW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardWars.BattleEngine", "CardWars.BattleEngine\CardWars.BattleEngine.csproj", "{97A2BBBE-5070-4736-940E-30BA9BF70581}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardWars.Core", "CardWars.Core\CardWars.Core.csproj", "{8E933D28-4797-4734-953D-88C422B3A555}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardWars.BattleEngineVanilla", "CardWars.BattleEngineVanilla\CardWars.BattleEngineVanilla.csproj", "{4C1B478F-3651-495F-B07E-859B9F64AC26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,18 +43,18 @@ Global
 		{97A2BBBE-5070-4736-940E-30BA9BF70581}.Release|x64.Build.0 = Release|Any CPU
 		{97A2BBBE-5070-4736-940E-30BA9BF70581}.Release|x86.ActiveCfg = Release|Any CPU
 		{97A2BBBE-5070-4736-940E-30BA9BF70581}.Release|x86.Build.0 = Release|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Debug|x64.Build.0 = Debug|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Debug|x86.Build.0 = Debug|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Release|x64.ActiveCfg = Release|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Release|x64.Build.0 = Release|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Release|x86.ActiveCfg = Release|Any CPU
-		{8E933D28-4797-4734-953D-88C422B3A555}.Release|x86.Build.0 = Release|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Debug|x64.Build.0 = Debug|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Debug|x86.Build.0 = Debug|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Release|x64.ActiveCfg = Release|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Release|x64.Build.0 = Release|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Release|x86.ActiveCfg = Release|Any CPU
+		{4C1B478F-3651-495F-B07E-859B9F64AC26}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

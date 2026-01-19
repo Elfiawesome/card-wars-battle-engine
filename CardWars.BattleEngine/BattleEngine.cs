@@ -1,57 +1,61 @@
-﻿using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
-using CardWars.BattleEngine.Feature.PlayerJoined;
 using CardWars.BattleEngine.Input;
-using CardWars.BattleEngine.Resolver;
 using CardWars.BattleEngine.State;
-using CardWars.BattleEngine.State.Entity;
-using CardWars.Core.Common.Mapping;
 
 namespace CardWars.BattleEngine;
 
-public class BattleEngine : IServiceContainer
+public class BattleEngine
 {
-	public StateService State { get; set; }
-	public ResolverService Resolver { get; set; }
-	public EventService EventService { get; set; }
+	public BattleEngineRegistry Registry = new();
+	public GameState State = new();
+	private Transaction? _currentTransaction;
 
-	public BlockDispatcher BlockDispatcher { get; set; }
-	public InputDispatcher InputDispatcher { get; set; }
-	public EventResolverDispatcher EventResolverDispatcher { get; set; }
-	public MappingService Mapping { get; set; }
-
-	public BattleEngine()
+	public void LoadMod(IBattleEngineMod mod)
 	{
-		Mapping = new();
-		State = new(this);
-		Resolver = new(this);
-		EventService = new(this);
-		BlockDispatcher = new();
-		InputDispatcher = new();
-		EventResolverDispatcher = new();
-		BlockDispatcher.Register();
-		InputDispatcher.Register();
-		EventResolverDispatcher.Register();
+		mod.OnLoad(Registry);
 	}
 
-	public PlayerId AddPlayer()
+	public void HandleInput(IInput input)
 	{
-		var newPlayerId = new PlayerId(Guid.NewGuid());
-		EventService.Raise(new PlayerJoinedEvent() { PlayerId = newPlayerId });
-		return newPlayerId;
-	}
-
-	public void HandleInput(PlayerId playerId, IInput input)
-	{
-		if (!State.AllowedPlayerInputs.Contains(playerId))
+		if (_currentTransaction == null)
 		{
+			_currentTransaction = new Transaction() { Registry = Registry, State = State };
+		}
 
-		}
-		else
-		{
-			InputDispatcher.Handle(new InputHandlerContext(this, playerId), input);
-		}
-		// IDK maybe u wanna have handle input even on another players turn????
-		Resolver.HandleInput(playerId, input);
+		_currentTransaction.ProcessInput(input);
+		if (_currentTransaction.IsResolved) _currentTransaction = null; 
 	}
+}
+
+public class Transaction
+{
+	public required BattleEngineRegistry Registry;
+	public required GameState State;
+	public Queue<IEvent> PendingEvents = [];
+	
+	public bool IsResolved => PendingEvents.Count == 0;
+
+	public void ProcessInput(IInput input)
+	{
+		Registry.InputHandlers.Execute(this, input);
+
+		int recursionCount = 0;
+		while (true)
+		{
+			bool newWork = false;
+
+			if (PendingEvents.Count > 0)
+			{
+				var evnt = PendingEvents.Dequeue();
+				Registry.EventHandlers.Execute(this, evnt);
+				newWork = true;
+			}
+
+			if (recursionCount > 100) { break; }
+			if (newWork == false) { break; }
+			recursionCount++;
+		}
+	}
+	
+	public void RaiseEvent(IEvent evnt) => PendingEvents.Enqueue(evnt);
 }
