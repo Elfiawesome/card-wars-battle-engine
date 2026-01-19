@@ -1,3 +1,5 @@
+using CardWars.BattleEngine.Behaviour;
+
 namespace CardWars.BattleEngine.State.Entities;
 
 public class GenericCard : IEntity
@@ -7,4 +9,6 @@ public class GenericCard : IEntity
 	public EntityId ParentPlayerId { get; set; }
 
 	// Data driven functionality here?
+	public int BehaviourPriority => 0;
+	public List<BehvaiourPointer> GetBheaviours() => [];
 }

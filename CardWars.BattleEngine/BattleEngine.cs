@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
@@ -15,15 +16,15 @@ public class BattleEngine
 		mod.OnLoad(Registry);
 	}
 
-	public void HandleInput(IInput input)
+	public void HandleInput(IInput input, List<IBehaviour>? DEBUG_testBehaviour = null)
 	{
 		if (_currentTransaction == null)
 		{
-			_currentTransaction = new Transaction() { Registry = Registry, State = State };
+			_currentTransaction = new Transaction() { Registry = Registry, State = State, DEBUG_testBehaviour = DEBUG_testBehaviour ?? [] };
 		}
 
 		_currentTransaction.ProcessInput(input);
-		if (_currentTransaction.IsResolved) _currentTransaction = null; 
+		if (_currentTransaction.IsResolved) _currentTransaction = null;
 	}
 }
 
@@ -32,8 +33,10 @@ public class Transaction
 	public required BattleEngineRegistry Registry;
 	public required GameState State;
 	public Queue<IEvent> PendingEvents = [];
-	
+
 	public bool IsResolved => PendingEvents.Count == 0;
+
+	public List<IBehaviour> DEBUG_testBehaviour = [];
 
 	public void ProcessInput(IInput input)
 	{
@@ -47,6 +50,13 @@ public class Transaction
 			if (PendingEvents.Count > 0)
 			{
 				var evnt = PendingEvents.Dequeue();
+
+				// Get all listeners with behaviours (from state and retrieve the BehaviourPointer)
+				foreach (var behvaiour in DEBUG_testBehaviour)
+				{
+					if (behvaiour.ListeningEventType == evnt.GetType()) { behvaiour.OnEvent(evnt); }
+				}
+
 				Registry.EventHandlers.Execute(this, evnt);
 				newWork = true;
 			}
@@ -56,6 +66,6 @@ public class Transaction
 			recursionCount++;
 		}
 	}
-	
+
 	public void RaiseEvent(IEvent evnt) => PendingEvents.Enqueue(evnt);
 }

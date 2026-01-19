@@ -6,4 +6,8 @@ public class Player : IEntity
 	public string Name = "";
 	public HashSet<EntityId> Battlefields = [];
 	public HashSet<EntityId> HandCards = [];
+
+
+	public int BehaviourPriority => 0;
+	public List<BehvaiourPointer> GetBheaviours() => [];
 }

@@ -2,5 +2,8 @@ namespace CardWars.BattleEngine.State;
 
 public interface IEntity
 {
-	EntityId Id { get; }
+	public EntityId Id { get; init; }
+	public int BehaviourPriority { get; }
+
+	public List<BehvaiourPointer> GetBheaviours();
 }
