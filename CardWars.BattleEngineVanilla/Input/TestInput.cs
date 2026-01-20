@@ -11,6 +11,6 @@ public class TestInputHandler() : IInputHandler<TestInput>
 	public void Handle(Transaction context, TestInput request)
 	{
 		Console.WriteLine("Handling Test Input!");
-		context.RaiseEvent(new TestEvent());
+		context.QueueEvent(new TestEvent());
 	}
 }

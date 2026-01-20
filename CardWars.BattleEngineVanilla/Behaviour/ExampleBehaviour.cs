@@ -4,17 +4,16 @@ using CardWars.BattleEngineVanilla.Event;
 
 namespace CardWars.BattleEngineVanilla.Behaviour;
 
-public class TestBehehaviour : IBehaviour
+public class ExampleBehaviour : SimpleBehaviour
 {
-	public Type? ListeningEventType { get; set; } = typeof(TestEvent);
-	public int Priority { get; set; } = 0;
+	public override Type ListeningEventType => typeof(TestEvent);
+	public override int Priority => 0;
 
-	public void OnEvent(IEvent evnt)
+
+	public override BehaviourResult Start(IEvent evnt, BehaviourContext context)
 	{
-		Console.WriteLine("This behaviour activated");
-		if (evnt is TestEvent testEvent)
-		{
-			testEvent.SomeNumber += 1;
-		}
+		Console.WriteLine("Simple Behaviour Ran!");
+		context.RaiseEvent(evnt);
+		return BehaviourResult.Complete;
 	}
 }

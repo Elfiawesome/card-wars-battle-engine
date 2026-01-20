@@ -17,4 +17,6 @@ public readonly record struct ResourceId(string Namespace, string Path)
 	public override string ToString() => $"{Namespace}:{Path}";
 
 	public bool IsEmpty => string.IsNullOrEmpty(Namespace) && string.IsNullOrEmpty(Path);
+
+	public static implicit operator ResourceId(string value) { return Parse(value); }
 }

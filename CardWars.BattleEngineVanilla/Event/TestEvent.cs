@@ -14,6 +14,6 @@ public class TestEventHandler : IEventHandler<TestEvent>
 	public void Handle(Transaction context, TestEvent request)
 	{
 		Console.WriteLine("Test Event Raised and Resolving! with " + request.SomeNumber + " & '" + request.SomeString + "'");
-		context.RaiseEvent(request);
+		// context.QueueEvent(request);
 	}
 }

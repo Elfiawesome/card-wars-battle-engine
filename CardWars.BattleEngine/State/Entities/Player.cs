@@ -9,5 +9,5 @@ public class Player : IEntity
 
 
 	public int BehaviourPriority => 0;
-	public List<BehaviourPointer> GetBheaviours() => [];
+	public List<BehaviourPointer> GetBehaviours() => [];
 }
