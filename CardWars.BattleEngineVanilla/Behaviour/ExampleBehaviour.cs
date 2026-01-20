@@ -11,7 +11,7 @@ public class TestBehehaviour : IBehaviour
 
 	public void OnEvent(IEvent evnt)
 	{
-		Console.WriteLine("This behvaiour activated");
+		Console.WriteLine("This behaviour activated");
 		if (evnt is TestEvent testEvent)
 		{
 			testEvent.SomeNumber += 1;

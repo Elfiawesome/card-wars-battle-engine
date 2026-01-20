@@ -17,6 +17,6 @@ public class VanillaMod : IBattleEngineMod
 
 		registry.EventHandlers.Register(new TestEventHandler());
 
-		registry.Behvaiour.Register<TestBehehaviour>(ResourceId.Vanilla("test_behaviour"));
+		registry.Behaviour.Register<TestBehehaviour>(ResourceId.Vanilla("test_behaviour"));
 	}
 }

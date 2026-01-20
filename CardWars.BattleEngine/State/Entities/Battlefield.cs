@@ -8,5 +8,5 @@ public class Battlefield : IEntity
 	public EntityId ParentPlayerId { get; set; }
 
 	public int BehaviourPriority => 0;
-	public List<BehvaiourPointer> GetBheaviours() => [];
+	public List<BehaviourPointer> GetBheaviours() => [];
 }

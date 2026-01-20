@@ -8,5 +8,5 @@ public class Deck : IEntity
 	public HashSet<Guid> List = [];
 
 	public int BehaviourPriority => 0;
-	public List<BehvaiourPointer> GetBheaviours() => [];
+	public List<BehaviourPointer> GetBheaviours() => [];
 }

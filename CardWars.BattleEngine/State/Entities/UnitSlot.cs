@@ -8,5 +8,5 @@ public class UnitSlot : IEntity
 	public EntityId HoldingCard { get; set; }
 
 	public int BehaviourPriority => 0;
-	public List<BehvaiourPointer> GetBheaviours() => [];
+	public List<BehaviourPointer> GetBheaviours() => [];
 }

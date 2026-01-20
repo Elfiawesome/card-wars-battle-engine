@@ -10,5 +10,5 @@ public class GenericCard : IEntity
 
 	// Data driven functionality here?
 	public int BehaviourPriority => 0;
-	public List<BehvaiourPointer> GetBheaviours() => [];
+	public List<BehaviourPointer> GetBheaviours() => [];
 }

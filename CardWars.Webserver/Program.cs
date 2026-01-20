@@ -8,5 +8,5 @@ var mod = new VanillaMod();
 be.LoadMod(mod);
 
 be.HandleInput(new TestInput(), [
-	new ExampleBehehaviour()
+	new TestBehehaviour()
 ]);

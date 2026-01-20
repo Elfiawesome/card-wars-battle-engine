@@ -5,5 +5,5 @@ public interface IEntity
 	public EntityId Id { get; init; }
 	public int BehaviourPriority { get; }
 
-	public List<BehvaiourPointer> GetBheaviours();
+	public List<BehaviourPointer> GetBheaviours();
 }

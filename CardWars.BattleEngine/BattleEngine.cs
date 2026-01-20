@@ -52,9 +52,9 @@ public class Transaction
 				var evnt = PendingEvents.Dequeue();
 
 				// Get all listeners with behaviours (from state and retrieve the BehaviourPointer)
-				foreach (var behvaiour in DEBUG_testBehaviour)
+				foreach (var behaviour in DEBUG_testBehaviour)
 				{
-					if (behvaiour.ListeningEventType == evnt.GetType()) { behvaiour.OnEvent(evnt); }
+					if (behaviour.ListeningEventType == evnt.GetType()) { behaviour.OnEvent(evnt); }
 				}
 
 				Registry.EventHandlers.Execute(this, evnt);
