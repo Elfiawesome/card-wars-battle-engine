@@ -1,5 +1,3 @@
-using CardWars.BattleEngine.Behaviour;
-
 namespace CardWars.BattleEngine.State.Entities;
 
 public class Battlefield : IEntity
