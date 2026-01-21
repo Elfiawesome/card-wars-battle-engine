@@ -45,10 +45,3 @@ public class BehaviourContext
 
 	public void RaiseEvent(IEvent evnt) => _transaction.QueueEvent(evnt);
 }
-
-// Internal record to track behaviour execution
-internal record BehaviourExecution(
-	IBehaviour Behaviour,
-	BehaviourContext Context,
-	IEvent Event
-);

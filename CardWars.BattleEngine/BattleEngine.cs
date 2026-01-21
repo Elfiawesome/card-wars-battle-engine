@@ -21,5 +21,7 @@ public class BattleEngine
 			_transaction = new Transaction() { Registry = Registry, State = State };
 		}
 		_transaction.ProcessInput(input);
+
+		if (_transaction.IsIdle) { _transaction = null; }
 	}
 }
