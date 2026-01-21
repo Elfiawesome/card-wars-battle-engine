@@ -1,15 +1,15 @@
 using CardWars.BattleEngine.State;
 
-namespace CardWars.BattleEngineVanilla.Entity;
+namespace CardWars.BattleEngine.Vanilla.Entity;
 
 public class TestEntity(EntityId id) : IEntity
 {
 	public EntityId Id { get; init; } = id;
 
-	public int BehaviourPriority => 1;
+	public int BehaviourPriority => 0;
 
 	public List<BehaviourPointer> GetBehaviours()
 	{
-		return [new(){BehaviourResource = "example_behaviour"}];
+		return [new("special_staged_behaviour")];
 	}
 }

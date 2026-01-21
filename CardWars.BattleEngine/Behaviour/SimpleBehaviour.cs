@@ -1,4 +1,3 @@
-using CardWars.BattleEngine.Core.Registry;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 
