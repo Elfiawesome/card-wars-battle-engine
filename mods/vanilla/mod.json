@@ -1,0 +1,8 @@
+{
+	"id": "vanilla",
+	"name": "Vanilla",
+	"version": "",
+	"dependencies": [],
+	"load_after": [],
+	"load_before": []
+}
