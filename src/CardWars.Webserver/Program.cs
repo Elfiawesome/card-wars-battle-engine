@@ -1,6 +1,6 @@
 ﻿using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
-using CardWars.BattleEngine.Vanilla.Input;
+using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Server;
 
 Server server = new();

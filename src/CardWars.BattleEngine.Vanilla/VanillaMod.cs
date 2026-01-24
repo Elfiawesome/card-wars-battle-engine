@@ -1,5 +1,5 @@
 ﻿using CardWars.BattleEngine.Vanilla.Block;
-using CardWars.BattleEngine.Vanilla.Input;
+using CardWars.BattleEngine.Vanilla.Features;
 
 namespace CardWars.BattleEngine.Vanilla;
 

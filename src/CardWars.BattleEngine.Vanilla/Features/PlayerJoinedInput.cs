@@ -2,7 +2,7 @@ using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 
-namespace CardWars.BattleEngine.Vanilla.Input;
+namespace CardWars.BattleEngine.Vanilla.Features;
 
 public record struct PlayerJoinedInput(
 	EntityId Id
