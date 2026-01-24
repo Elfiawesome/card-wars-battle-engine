@@ -31,7 +31,14 @@ public class GameState
 	// --- Behaviour Collection ---
 	// Returns (EntityId, BehaviourPointer) sorted by entity priority
 
-	public TurnState Turn { get; set; } = new();
+	public TurnState Turn { get; set; } = new()
+	{
+		TurnOrder = [],
+		AllowedPlayerInputs = [],
+		TurnIndex = 0,
+		TurnNumber = 0,
+		Phase = TurnPhase.Setup
+	};
 
 	public IEnumerable<(EntityId entityId, BehaviourPointer pointer)> GetAllBehaviourPointers()
 	{

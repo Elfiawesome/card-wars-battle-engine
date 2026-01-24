@@ -14,13 +14,13 @@ public class BattleEngine
 		mod.OnLoad(Registry);
 	}
 
-	public void HandleInput(IInput input)
+	public void HandleInput(EntityId playerId, IInput input)
 	{
 		if (_transaction == null)
 		{
 			_transaction = new Transaction() { Registry = Registry, State = State };
 		}
-		_transaction.ProcessInput(input);
+		_transaction.ProcessInput(playerId, input);
 
 		if (_transaction.IsIdle) { _transaction = null; }
 	}

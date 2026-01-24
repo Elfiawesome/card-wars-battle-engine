@@ -4,15 +4,13 @@ using CardWars.BattleEngine.Vanilla.Block;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
-public record struct PlayerJoinedInput(
-	EntityId Id
+public record struct PlayerEndTurnInput(
 ) : IInput;
 
-public class PlayerJoinedInputHandler : IInputHandler<PlayerJoinedInput>
+public class PlayerEndTurnInputHandler : IInputHandler<PlayerJoinedInput>
 {
 	public void Handle(Transaction context, PlayerJoinedInput request)
 	{
-		if (context.State.Get(request.Id) != null) return;
-		context.ApplyBlockBatch(new([new InstantiatePlayerBlock(request.Id)]));
+		Console.WriteLine("Oh player ending turn?");
 	}
 }

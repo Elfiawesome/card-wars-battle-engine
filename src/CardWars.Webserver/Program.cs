@@ -7,8 +7,13 @@ Server server = new();
 server.BattleEngine.LoadMod(new VanillaMod());
 
 
-var playerId = new EntityId(Guid.NewGuid());
-server.BattleEngine.HandleInput(new PlayerJoinedInput(playerId));
+var playerId1 = new EntityId(Guid.NewGuid());
+var playerId2 = new EntityId(Guid.NewGuid());
+var playerId3 = new EntityId(Guid.NewGuid());
+server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedInput(playerId1));
+server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedInput(playerId2));
+server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedInput(playerId3));
+
 
 // Print all entities
 foreach (var id in server.BattleEngine.State.All)
