@@ -12,6 +12,7 @@ public class InstantiatePlayerBlockHandler : IBlockHandler<InstantiatePlayerBloc
 {
 	public void Handle(GameState context, InstantiatePlayerBlock request)
 	{
+		if (context.Get(request.Id) != null) return;
 		context.Add(new Player(request.Id));
 	}
 }
