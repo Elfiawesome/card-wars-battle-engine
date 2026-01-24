@@ -27,7 +27,7 @@ public class BehaviourContext
 
 	public void StageBlocks(BlockBatch batch) => _stagedBlocks.Add(batch);
 
-	public void StageBlock(IBlock block, Guid targetPlayerId, string animationId = "")
+	public void StageBlock(IBlock block, EntityId targetPlayerId, string animationId = "")
 		=> _stagedBlocks.Add(new BlockBatch([block], targetPlayerId, animationId));
 
 	public void CommitStagedBlocks()

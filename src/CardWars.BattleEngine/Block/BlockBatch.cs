@@ -1,7 +1,9 @@
+using CardWars.BattleEngine.State;
+
 namespace CardWars.BattleEngine.Block;
 
 public record struct BlockBatch(
 	List<IBlock> Blocks,
-	Guid TargetPlayerId,
+	EntityId TargetPlayerId,
 	string AnimationId = ""
 );
