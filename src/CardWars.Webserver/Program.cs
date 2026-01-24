@@ -13,9 +13,16 @@ var playerId3 = new EntityId(Guid.NewGuid());
 server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedInput(playerId1));
 server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedInput(playerId2));
 server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedInput(playerId3));
+server.BattleEngine.HandleInput(playerId1, new PlayerEndTurnInput());
 
 
 // Print all entities
+Console.WriteLine(" --- Turn State --- ");
+Console.WriteLine("Turn Index: " + server.BattleEngine.State.Turn.TurnIndex);
+Console.WriteLine("Phase: " + server.BattleEngine.State.Turn.Phase);
+Console.WriteLine("Allowed Input Count: " + server.BattleEngine.State.Turn.AllowedPlayerInputs.Count);
+
+Console.WriteLine(" --- All Entities --- ");
 foreach (var id in server.BattleEngine.State.All)
 {
 	Console.WriteLine(id.Id + ": " + id.GetType().Name);

@@ -1,16 +1,13 @@
 using CardWars.BattleEngine.Input;
-using CardWars.BattleEngine.State;
-using CardWars.BattleEngine.Vanilla.Block;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
 public record struct PlayerEndTurnInput(
 ) : IInput;
 
-public class PlayerEndTurnInputHandler : IInputHandler<PlayerJoinedInput>
+public class PlayerEndTurnInputHandler : IInputHandler<PlayerEndTurnInput>
 {
-	public void Handle(Transaction context, PlayerJoinedInput request)
+	public void Handle(Transaction context, PlayerEndTurnInput request)
 	{
-		Console.WriteLine("Oh player ending turn?");
 	}
 }
