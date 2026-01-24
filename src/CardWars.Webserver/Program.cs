@@ -10,9 +10,8 @@ server.BattleEngine.LoadMod(new VanillaMod());
 var playerId = new EntityId(Guid.NewGuid());
 server.BattleEngine.HandleInput(new PlayerJoinedInput(playerId));
 
-// with floating purple crystal shards,
-
+// Print all entities
 foreach (var id in server.BattleEngine.State.All)
 {
-	Console.WriteLine(id);
+	Console.WriteLine(id.Id + ": " + id.GetType().Name);
 }
