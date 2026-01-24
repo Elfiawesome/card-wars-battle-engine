@@ -1,8 +1,10 @@
-namespace CardWars.BattleEngine.State.Entities;
+using CardWars.BattleEngine.State;
 
-public class Player : IEntity
+namespace CardWars.BattleEngine.Vanilla.Entity;
+
+public class Player(EntityId id) : IEntity
 {
-	public EntityId Id { get; init; }
+	public EntityId Id { get; init; } = id;
 	public string Name = "";
 	public HashSet<EntityId> Battlefields = [];
 	public HashSet<EntityId> HandCards = [];

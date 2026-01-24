@@ -4,6 +4,6 @@ namespace CardWars.BattleEngine.Block;
 
 public record struct BlockBatch(
 	List<IBlock> Blocks,
-	EntityId TargetPlayerId,
+	EntityId? TargetPlayerId = null,
 	string AnimationId = ""
 );
