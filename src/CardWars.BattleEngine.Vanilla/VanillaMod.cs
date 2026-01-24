@@ -13,5 +13,6 @@ public class VanillaMod : IBattleEngineMod
 		registry.InputHandlers.Register(new PlayerJoinedInputHandler());
 
 		registry.BlockHandlers.Register(new InstantiatePlayerBlockHandler());
+		registry.BlockHandlers.Register(new UpdateTurnStateBlockHandler());
 	}
 }

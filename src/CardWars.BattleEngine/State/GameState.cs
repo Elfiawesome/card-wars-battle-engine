@@ -4,7 +4,7 @@ namespace CardWars.BattleEngine.State;
 
 public class GameState
 {
-	private readonly Dictionary<EntityId, IEntity> _entities = new();
+	private readonly Dictionary<EntityId, IEntity> _entities = [];
 
 	// --- CRUD ---
 
@@ -30,6 +30,8 @@ public class GameState
 
 	// --- Behaviour Collection ---
 	// Returns (EntityId, BehaviourPointer) sorted by entity priority
+
+	public TurnState Turn { get; set; } = new();
 
 	public IEnumerable<(EntityId entityId, BehaviourPointer pointer)> GetAllBehaviourPointers()
 	{
