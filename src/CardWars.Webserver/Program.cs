@@ -1,6 +1,13 @@
-﻿
+﻿using CardWars.BattleEngine;
 using CardWars.ModLoader;
+using CardWars.Server;
 
-// ModLoader ml = new();
+Server server = new();
 
-ModLoader.LoadMod();
+ModLoader ml = new(@"C:\Users\elfia\OneDrive\Desktop\CardWars\mods\");
+ml.DiscoverMods();
+ml.ResolveDependencies();
+ml.LoadAssemblies();
+
+ml.LoadModEntry<IBattleEngineMod>().ForEach((m) => server.BattleEngine.LoadMod(m));
+ml.LoadModEntry<IServerMod>().ForEach((m) => server.LoadMod(m));

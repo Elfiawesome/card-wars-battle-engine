@@ -1,6 +1,8 @@
+using CardWars.ModLoader;
+
 namespace CardWars.BattleEngine;
 
-public interface IBattleEngineMod
+public interface IBattleEngineMod : IModEntry
 {
 	string ModName { get; }
 	string Version { get; }
