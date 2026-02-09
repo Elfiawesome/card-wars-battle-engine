@@ -6,6 +6,16 @@ public record struct TurnState(
 	int TurnIndex,
 	int TurnNumber, // Total Turn Number
 	TurnPhase Phase = TurnPhase.Setup
-);
+)
+{
+	public TurnState Copy() => new()
+	{
+		TurnOrder = [.. this.TurnOrder],
+		AllowedPlayerInputs = [.. this.AllowedPlayerInputs],
+		TurnIndex = this.TurnIndex,
+		TurnNumber = this.TurnNumber,
+		Phase = this.Phase
+	};
+};
 
 public enum TurnPhase { None = 0, Setup, Attacking }

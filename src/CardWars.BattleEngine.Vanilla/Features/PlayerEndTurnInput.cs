@@ -9,5 +9,6 @@ public class PlayerEndTurnInputHandler : IInputHandler<PlayerEndTurnInput>
 {
 	public void Handle(Transaction context, PlayerEndTurnInput request)
 	{
+		Console.WriteLine("Input: " + context.InputPlayerId);
 	}
 }

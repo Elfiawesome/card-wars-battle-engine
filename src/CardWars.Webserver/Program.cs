@@ -20,6 +20,7 @@ server.BattleEngine.HandleInput(playerId1, new PlayerEndTurnInput());
 Console.WriteLine(" --- Turn State --- ");
 Console.WriteLine("Turn Index: " + server.BattleEngine.State.Turn.TurnIndex);
 Console.WriteLine("Phase: " + server.BattleEngine.State.Turn.Phase);
+Console.WriteLine("Turn Order Count: " + server.BattleEngine.State.Turn.TurnOrder.Count);
 Console.WriteLine("Allowed Input Count: " + server.BattleEngine.State.Turn.AllowedPlayerInputs.Count);
 
 Console.WriteLine(" --- All Entities --- ");

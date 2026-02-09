@@ -18,7 +18,7 @@ public class PlayerJoinedInputHandler : IInputHandler<PlayerJoinedInput>
 		BlockBatch batch = new([]);
 		batch.Blocks.Add(new InstantiatePlayerBlock(request.Id));
 		
-		var turnState = context.State.Turn;
+		var turnState = context.State.Turn.Copy();
 		turnState.TurnOrder.Add(request.Id);
 		
 		if (!context.State.All.Any((t) => t is Player))
