@@ -45,7 +45,7 @@ public class Transaction
 	public void ApplyBlockBatch(BlockBatch batch)
 	{
 		// TODO: Move this outta here and make battle engine handle this and event it out
-		foreach (var block in batch.Blocks)
+		foreach (var block in batch.Blocks ?? [])
 		{
 			Registry.BlockHandlers.Execute(State, block);
 		}

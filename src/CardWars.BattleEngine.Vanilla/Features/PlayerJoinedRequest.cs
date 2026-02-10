@@ -6,13 +6,13 @@ using CardWars.BattleEngine.Vanilla.Entity;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
-public record struct PlayerJoinedInput(
+public record struct PlayerJoinedRequestInput(
 	EntityId Id
 ) : IInput;
 
-public class PlayerJoinedInputHandler : IInputHandler<PlayerJoinedInput>
+public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequestInput>
 {
-	public void Handle(Transaction context, PlayerJoinedInput request)
+	public void Handle(Transaction context, PlayerJoinedRequestInput request)
 	{
 		if (context.State.Get(request.Id) != null) return;
 		BlockBatch batch = new([]);

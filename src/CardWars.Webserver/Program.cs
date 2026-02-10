@@ -10,10 +10,15 @@ server.BattleEngine.LoadMod(new VanillaMod());
 var playerId1 = new EntityId(Guid.NewGuid());
 var playerId2 = new EntityId(Guid.NewGuid());
 var playerId3 = new EntityId(Guid.NewGuid());
-server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedInput(playerId1));
-server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedInput(playerId2));
-server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedInput(playerId3));
-server.BattleEngine.HandleInput(playerId1, new PlayerEndTurnInput());
+server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId1));
+server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId2));
+server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId3));
+server.BattleEngine.HandleInput(playerId1, new EndTurnRequestInput());
+server.BattleEngine.HandleInput(playerId2, new EndTurnRequestInput());
+server.BattleEngine.HandleInput(playerId3, new EndTurnRequestInput());
+server.BattleEngine.HandleInput(playerId1, new EndTurnRequestInput());
+server.BattleEngine.HandleInput(playerId2, new EndTurnRequestInput());
+server.BattleEngine.HandleInput(playerId3, new EndTurnRequestInput());
 
 
 // Print all entities

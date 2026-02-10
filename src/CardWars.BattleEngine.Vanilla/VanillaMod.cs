@@ -10,9 +10,13 @@ public class VanillaMod : IBattleEngineMod
 
 	public void OnLoad(BattleEngineRegistry registry)
 	{
-		registry.InputHandlers.Register(new PlayerEndTurnInputHandler());
-		registry.InputHandlers.Register(new PlayerJoinedInputHandler());
+		registry.InputHandlers.Register(new PlayerJoinedRequestInputHandler());
+		registry.InputHandlers.Register(new EndTurnRequestInputHandler());
 
+		registry.EventHandlers.Register(new EndTurnRequestEventHandler());
+		registry.EventHandlers.Register(new EndPhaseEventHandler());
+		registry.EventHandlers.Register(new EndTurnEventHandler());
+		
 		registry.BlockHandlers.Register(new InstantiatePlayerBlockHandler());
 		registry.BlockHandlers.Register(new UpdateTurnStateBlockHandler());
 	}
