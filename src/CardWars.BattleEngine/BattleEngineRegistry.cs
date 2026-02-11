@@ -10,4 +10,5 @@ public class BattleEngineRegistry
 	public HandlerRegistry<GameState> BlockHandlers = new();
 	public HandlerRegistry<Transaction> EventHandlers = new();
 	public RegistryFactory<ResourceId, IBehaviour> Behaviours { get; } = new();
+	public RegistryFactory<ResourceId, EntityId, IEntity> Entities { get; } = new();
 }

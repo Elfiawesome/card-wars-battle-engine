@@ -7,6 +7,7 @@ public class GenericCard(EntityId id) : IEntity
 	public EntityId Id { get; init; } = id;
 	public EntityId? OwnerPlayerId { get; set; }
 	public EntityId? OwnerUnitSlotId { get; set; }
+	public bool IsPlayed => (OwnerPlayerId == null) && (OwnerUnitSlotId != null);
 
 	// Data driven functionality here?
 	public int BehaviourPriority => 0;

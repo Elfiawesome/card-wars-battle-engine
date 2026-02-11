@@ -121,7 +121,7 @@ public class Transaction
 
 		if (pointer.BehaviourResource is { } resourceId)
 		{
-			behaviour = Registry.Behaviours.Get(resourceId);
+			behaviour = Registry.Behaviours.Create(resourceId);
 		}
 		else if (pointer.BehaviourDefinition != null)
 		{

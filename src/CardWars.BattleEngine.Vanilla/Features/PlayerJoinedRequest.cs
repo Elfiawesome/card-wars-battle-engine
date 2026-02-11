@@ -17,10 +17,10 @@ public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequest
 		if (context.State.Get(request.Id) != null) return;
 		BlockBatch batch = new([]);
 		batch.Blocks.Add(new InstantiatePlayerBlock(request.Id));
-		
+
 		var turnState = context.State.Turn.Copy();
 		turnState.TurnOrder.Add(request.Id);
-		
+
 		if (!context.State.All.Any((t) => t is Player))
 		{
 			turnState.TurnIndex = 0;
@@ -29,5 +29,7 @@ public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequest
 
 		batch.Blocks.Add(new UpdateTurnStateBlock(turnState));
 		context.ApplyBlockBatch(batch);
+
+		context.QueueEvent(new PlayerJoinedEvent() { PlayerId = request.Id });
 	}
 }
