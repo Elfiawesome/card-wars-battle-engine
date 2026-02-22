@@ -24,7 +24,7 @@ public class HandlerRegistry<TContext> : Registry<Type, Action<TContext, IReques
 	{
 		var requestType = request.GetType();
 		var action = Get(requestType);
-		if (action == null) return; /* TODO: Bad request*/
+		if (action == null) { Console.WriteLine($"No handler found for {requestType}"); return; } /* TODO: Bad request*/
 		action.Invoke(context, request);
 	}
 }

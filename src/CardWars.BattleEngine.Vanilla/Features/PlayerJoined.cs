@@ -19,6 +19,9 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		var deckId = EntityId.New();
 		batch.Blocks.Add(new InstantiateDeckBlock(deckId));
 		batch.Blocks.Add(new AttachDeckToPlayer(request.PlayerId, deckId));
+		
+		var cardId = EntityId.New();
+		batch.Blocks.Add(new InstantiateCardBlock(cardId));
 
 		context.ApplyBlockBatch(batch);
 	}
