@@ -12,9 +12,9 @@ public record struct EndTurnRequestInput(
 
 public class EndTurnRequestInputHandler : IInputHandler<EndTurnRequestInput>
 {
-	public void Handle(Transaction context, EndTurnRequestInput request)
+	public void Handle(InputContext context, EndTurnRequestInput request)
 	{
-		context.QueueEvent(new EndTurnRequestEvent());
+		context.Transaction.QueueEvent(new EndTurnRequestEvent());
 	}
 }
 

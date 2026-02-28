@@ -32,7 +32,7 @@ public class Transaction
 			if ((playerId == Guid.Empty) || State.Turn.AllowedPlayerInputs.Contains(playerId))
 			{
 				InputPlayerId = playerId; // Im too lazy to inject the player id into the handler .-.
-				Registry.InputHandlers.Execute(this, input);
+				Registry.InputHandlers.Execute(new InputContext(this, playerId), input);
 				InputPlayerId = null;
 			}
 		}

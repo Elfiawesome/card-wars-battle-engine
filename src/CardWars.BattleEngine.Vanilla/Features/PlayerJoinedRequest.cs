@@ -12,24 +12,24 @@ public record struct PlayerJoinedRequestInput(
 
 public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequestInput>
 {
-	public void Handle(Transaction context, PlayerJoinedRequestInput request)
+	public void Handle(InputContext context, PlayerJoinedRequestInput request)
 	{
-		if (context.State.Get(request.Id) != null) return;
+		if (context.Transaction.State.Get(request.Id) != null) return;
 		BlockBatch batch = new([]);
 		batch.Blocks.Add(new InstantiatePlayerBlock(request.Id));
 
-		var turnState = context.State.Turn.Copy();
+		var turnState = context.Transaction.State.Turn.Copy();
 		turnState.TurnOrder.Add(request.Id);
 
-		if (!context.State.All.Any((t) => t is Player))
+		if (!context.Transaction.State.All.Any((t) => t is Player))
 		{
 			turnState.TurnIndex = 0;
 			turnState.AllowedPlayerInputs = [request.Id];
 		}
 
 		batch.Blocks.Add(new UpdateTurnStateBlock(turnState));
-		context.ApplyBlockBatch(batch);
+		context.Transaction.ApplyBlockBatch(batch);
 
-		context.QueueEvent(new PlayerJoinedEvent() { PlayerId = request.Id });
+		context.Transaction.QueueEvent(new PlayerJoinedEvent() { PlayerId = request.Id });
 	}
 }
