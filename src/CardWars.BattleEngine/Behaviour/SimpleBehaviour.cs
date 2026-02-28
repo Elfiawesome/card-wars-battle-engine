@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
+using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine.Behaviour;
 
@@ -11,6 +12,6 @@ public abstract class SimpleBehaviour : IBehaviour
 
 	public abstract BehaviourResult Start(IEvent evnt, BehaviourContext context);
 
-	public virtual BehaviourResult Resume(IInput input, BehaviourContext context)
+	public virtual BehaviourResult Resume(EntityId playerId, IInput input, BehaviourContext context)
 		=> throw new InvalidOperationException($"{GetType().Name} does not accept input");
 }

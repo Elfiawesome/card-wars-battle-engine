@@ -1,9 +1,10 @@
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
+using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine.Behaviour;
 
-public enum BehaviourResult { Continue, WaitForInput, Complete }
+public enum BehaviourResult { WaitForInput, Complete }
 
 public interface IBehaviour
 {
@@ -12,5 +13,5 @@ public interface IBehaviour
 	public int Priority { get; }
 
 	BehaviourResult Start(IEvent evnt, BehaviourContext context);
-	BehaviourResult Resume(IInput input, BehaviourContext context);
+	BehaviourResult Resume(EntityId playedId, IInput input, BehaviourContext context);
 }

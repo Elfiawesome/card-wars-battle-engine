@@ -1,6 +1,7 @@
 using CardWars.BattleEngine.Core.Registry;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
+using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine.Behaviour;
 
@@ -12,6 +13,6 @@ public class DataDrivenBehaviour : IBehaviour
 	public int Priority { get; set; } = 0;
 
 
-	public BehaviourResult Resume(IInput input, BehaviourContext context) { return BehaviourResult.Complete; }
+	public BehaviourResult Resume(EntityId playerId, IInput input, BehaviourContext context) { return BehaviourResult.Complete; }
 	public BehaviourResult Start(IEvent evnt, BehaviourContext context) { return BehaviourResult.Complete; }
 }
