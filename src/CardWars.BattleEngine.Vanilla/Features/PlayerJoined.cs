@@ -37,7 +37,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		{
 			var def = context.Registry.CardContent.Get(defId);
 			var cardId = EntityId.New();
-			batch.Blocks.Add(new InstantiateCardBlock(cardId));
+			batch.Blocks.Add(new InstantiateCardBlock(cardId, def));
 			batch.Blocks.Add(new AttachCardToDeckBlock(deckId, cardId));
 
 			// TODO: definition to load
