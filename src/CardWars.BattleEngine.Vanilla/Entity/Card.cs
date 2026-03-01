@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.Data;
 using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine.Vanilla.Entity;
@@ -16,16 +17,10 @@ public class GenericCard(EntityId id) : IEntity
 
 	public Dictionary<string, object> CustomData = [];
 
-	public List<CardAbility> Abilities { get; set; } = [];
+	public List<AbilityDefinition> Abilities { get; set; } = [];
 	// Special behaviour for card functionality like listening to use card and deploying the card onto battlefield
 	public List<BehaviourPointer> IntrinsicBehaviour { get; set; } = [];
 
 	public int BehaviourPriority => 0;
 	public List<BehaviourPointer> GetBehaviours() => [.. Abilities.Select(a => a.Behaviour), .. IntrinsicBehaviour];
-}
-
-public record struct CardAbility()
-{
-	public string Description { get; set; } = "";
-	public BehaviourPointer Behaviour { get; set; }
 }
