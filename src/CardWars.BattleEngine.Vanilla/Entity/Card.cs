@@ -13,14 +13,15 @@ public class GenericCard(EntityId id) : IEntity
 	public int Pt { get; set; } = 0;
 	public int Hp { get; set; } = 0;
 	public int Atk { get; set; } = 0;
-	
+
+	public Dictionary<string, object> CustomData = [];
+
 	public List<CardAbility> Abilities { get; set; } = [];
-	// Used primarily by spells (for custom spells)
-	// Units will all use the same deploy behaviour of summoning a unit
-	public BehaviourPointer? DeployBehaviour { get; set; }
+	// Special behaviour for card functionality like listening to use card and deploying the card onto battlefield
+	public List<BehaviourPointer> IntrinsicBehaviour { get; set; } = [];
 
 	public int BehaviourPriority => 0;
-	public List<BehaviourPointer> GetBehaviours() => [.. Abilities.Select(a => a.Behaviour)];
+	public List<BehaviourPointer> GetBehaviours() => [.. Abilities.Select(a => a.Behaviour), .. IntrinsicBehaviour];
 }
 
 public record struct CardAbility()
