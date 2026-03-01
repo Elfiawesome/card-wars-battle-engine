@@ -11,22 +11,29 @@ public class Transaction
 	public const int ProcessStackLimit = 1000;
 	public required BattleEngineRegistry Registry { get; init; }
 	public required GameState State { get; init; }
-	public bool IsIdle => _behaviourPending.Count == 0 && _eventQueue.Count == 0;
 
-	private Queue<IEvent> _eventQueue = [];
-	private List<(IBehaviour, BehaviourContext)> _behaviourPending = [];
+	public bool IsIdle => _behaviourQueue.Count == 0 && _eventQueue.Count == 0 && _activeEvent == null;
+
+	private readonly Queue<IEvent> _eventQueue = [];
+	private readonly List<BehaviourExecution> _behaviourQueue = [];
+	private IEvent? _activeEvent = null;
 
 	// Public APIs entries
 	public void ProcessInput(EntityId playerId, IInput input)
 	{
-		// Resume any leftover behaviours
-		ResumeBehaviours(playerId, input);
-		// Handle main input via handler
-		if ((playerId == Guid.Empty) || State.Turn.AllowedPlayerInputs.Contains(playerId))
+		// Input handled to current behaviour
+		bool inputConsumed = ResumeBehaviours(playerId, input);
+
+		// Handle input if no behaviours used the input
+		if (!inputConsumed)
 		{
-			Registry.InputHandlers.Execute(new InputContext(this, playerId), input);
+			if ((playerId == Guid.Empty) || State.Turn.AllowedPlayerInputs.Contains(playerId))
+			{
+				Registry.InputHandlers.Execute(new InputContext(this, playerId), input);
+			}
 		}
-		// Process & resolve until end
+
+		// Process until end
 		Process();
 	}
 
@@ -38,34 +45,73 @@ public class Transaction
 		}
 	}
 
-	public void QueueEvent(IEvent evnt)
-	{
-		_eventQueue.Enqueue(evnt);
-	}
+	public void QueueEvent(IEvent evnt) => _eventQueue.Enqueue(evnt);
 
 	// Private functions
 	private void Process()
 	{
 		int count = 0;
-		while (_eventQueue.Count > 0)
+		while (count++ <= ProcessStackLimit)
 		{
-			var evnt = _eventQueue.Dequeue();
+			// Handle pending behaviours first & exits if any one of them is waiting for input 
+			// (meaning the event does not get handled)
+			if (_behaviourQueue.Count > 0)
+			{
+				var exec = _behaviourQueue[0];
 
-			// Handle for behaviours
-			HandleBehaviourEvents(evnt);
+				if (exec.IsWaiting) return; // Still waiting for input and wait
 
-			// Finally handle event
-			Registry.EventHandlers.Execute(this, evnt);
-			if (count++ > ProcessStackLimit) { break; }
+				var result = exec.Behaviour.Start(exec.Event, exec.Context);
+
+				if (result == BehaviourResult.WaitForInput)
+				{
+					exec.IsWaiting = true;
+					return; // Exit and wait
+				}
+
+				if (result == BehaviourResult.Complete)
+				{
+					exec.Context.CommitStagedBlocks();
+					_behaviourQueue.RemoveAt(0); 
+				}
+				continue;
+			}
+
+			// Handle event after all behaviours are handled already
+			if (_activeEvent != null)
+			{
+				Registry.EventHandlers.Execute(this, _activeEvent);
+				_activeEvent = null;
+				continue;
+			}
+
+			// Handle events from queue
+			if (_eventQueue.Count > 0)
+			{
+				_activeEvent = _eventQueue.Dequeue();
+				QueueBehavioursForEvent(_activeEvent);
+				continue;
+			}
+
+			// If everything is empty, there is no action needed and we end here
+			break;
+		}
+
+		// Cleanup if infinite loop
+		if (count > ProcessStackLimit)
+		{
+			_eventQueue.Clear();
+			_behaviourQueue.Clear();
+			_activeEvent = null;
 		}
 	}
 
-	private void HandleBehaviourEvents(IEvent evnt)
+	private void QueueBehavioursForEvent(IEvent evnt)
 	{
 		var eventType = evnt.GetType();
 		var pointers = State.GetAllBehaviourPointers();
 
-		var behaviourContexts = new List<(
+		var executions = new List<(
 			int entityPriority,
 			IBehaviour behaviour,
 			BehaviourContext behaviourContext)>();
@@ -73,34 +119,40 @@ public class Transaction
 		foreach (var (entityId, pointer) in pointers)
 		{
 			var behaviour = InstantiateBehaviour(pointer, eventType);
-			if (behaviour == null) { continue; }
+			if (behaviour == null) continue;
 
 			var entity = State.Get(entityId);
 			var behaviourContext = new BehaviourContext(this, State, entityId);
-			behaviourContexts.Add((entity?.BehaviourPriority ?? 0, behaviour, behaviourContext));
+			executions.Add((entity?.BehaviourPriority ?? 0, behaviour, behaviourContext));
 		}
 
-		foreach ((int priority, IBehaviour behaviour, BehaviourContext behaviourContext) in behaviourContexts.OrderBy(e => e.entityPriority).ThenBy(e => e.behaviour.Priority))
+		// Sort by entity priority, then behaviour priority, and queue them
+		foreach (var (_, behaviour, context) in executions.OrderBy(e => e.entityPriority).ThenBy(e => e.behaviour.Priority))
 		{
-			var result = behaviour.Start(evnt, behaviourContext);
-			if (result == BehaviourResult.WaitForInput) { _behaviourPending.Add((behaviour, behaviourContext)); }
-			if (result == BehaviourResult.Complete) { behaviourContext.CommitStagedBlocks(); }
+			_behaviourQueue.Add(new BehaviourExecution(behaviour, context, evnt));
 		}
 	}
 
-	private void ResumeBehaviours(EntityId playerId, IInput input)
+	private bool ResumeBehaviours(EntityId playerId, IInput input)
 	{
-		for (int i = _behaviourPending.Count - 1; i >= 0; i--)
+		if (_behaviourQueue.Count == 0) return false;
+
+		var exec = _behaviourQueue[0];
+		if (!exec.IsWaiting) return false; // Usually not the case, but just in case
+
+		var result = exec.Behaviour.Resume(playerId, input, exec.Context);
+
+		if (result == BehaviourResult.WaitForInput)
 		{
-			var (behaviour, behaviourContext) = _behaviourPending[i];
-			var result = behaviour.Resume(playerId, input, behaviourContext);
-			if (result == BehaviourResult.WaitForInput) { continue; }
-			if (result == BehaviourResult.Complete)
-			{
-				_behaviourPending.RemoveAt(i);
-				behaviourContext.CommitStagedBlocks();
-			}
+			return true;
 		}
+
+		if (result == BehaviourResult.Complete)
+		{
+			exec.Context.CommitStagedBlocks();
+			_behaviourQueue.RemoveAt(0);
+		}
+		return true;
 	}
 
 	private IBehaviour? InstantiateBehaviour(BehaviourPointer pointer, Type eventType)
@@ -113,11 +165,18 @@ public class Transaction
 		else if (pointer.BehaviourDefinition != null)
 		{
 			// TODO: Data-driven behaviour creation
-			// behaviour = CreateDataDrivenBehaviour(pointer.BehaviourDefinition);
 		}
 
-		if (behaviour?.ListeningEventType != eventType) { return null; }
+		if (behaviour?.ListeningEventType != eventType) return null;
 
 		return behaviour;
+	}
+
+	private class BehaviourExecution(IBehaviour behaviour, BehaviourContext context, IEvent evnt)
+	{
+		public IBehaviour Behaviour { get; } = behaviour;
+		public BehaviourContext Context { get; } = context;
+		public IEvent Event { get; } = evnt;
+		public bool IsWaiting { get; set; } = false;
 	}
 }
