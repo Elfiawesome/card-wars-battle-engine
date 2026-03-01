@@ -16,7 +16,8 @@ public class AttachDeckToPlayerHandler : IBlockHandler<AttachDeckToPlayer>
 		var player = context.Get<Player>(request.PlayerId);
 		var deck = context.Get<Deck>(request.PlayerId);
 		if (player == null || deck == null) { return; }
-		Console.WriteLine(player);
-
+		
+		deck.OwnerPlayerId = request.PlayerId;
+		player.DeckIds.Add(request.DeckId);
 	}
 }
