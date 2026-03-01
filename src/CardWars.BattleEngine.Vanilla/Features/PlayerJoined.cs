@@ -16,12 +16,15 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 	{
 		var batch = new BlockBatch([]);
 
+		// Create new deck
 		var deckId = EntityId.New();
 		batch.Blocks.Add(new InstantiateDeckBlock(deckId));
-		batch.Blocks.Add(new AttachDeckToPlayer(request.PlayerId, deckId));
+		batch.Blocks.Add(new AttachDeckToPlayerBlock(request.PlayerId, deckId));
 		
+		// Populate deck with card
 		var cardId = EntityId.New();
 		batch.Blocks.Add(new InstantiateCardBlock(cardId));
+		batch.Blocks.Add(new AttachCardToDeckBlock(deckId, cardId));
 
 		context.ApplyBlockBatch(batch);
 	}
