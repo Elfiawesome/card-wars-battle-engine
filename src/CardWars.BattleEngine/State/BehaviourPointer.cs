@@ -8,4 +8,14 @@ public record struct BehaviourPointer(
 	ResourceId? BehaviourResource = null,
 	// Data driven behaviour to create
 	CompoundTag? BehaviourDefinition = null
-);
+)
+{
+	public static implicit operator BehaviourPointer(CompoundTag tag)
+	{
+		var resource = tag.GetString("resource");
+		return new BehaviourPointer(
+			BehaviourResource: string.IsNullOrEmpty(resource) ? default : ResourceId.Parse(resource),
+			BehaviourDefinition: tag
+		);
+	}
+};

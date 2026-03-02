@@ -29,25 +29,16 @@ public class GenericCard(EntityId id) : IEntity
 			foreach (var item in abilities.Items.OfType<CompoundTag>())
 			{
 				if (item.GetCompound("behaviour") is { } bTag)
-					result.Add(TagToBehaviourPointer(bTag));
+					result.Add((BehaviourPointer)bTag);
 			}
 		}
 
 		if (Data.GetList("intrinsic_behaviours") is { } intrinsics)
 		{
 			foreach (var item in intrinsics.Items.OfType<CompoundTag>())
-				result.Add(TagToBehaviourPointer(item));
+				result.Add((BehaviourPointer)item);
 		}
 
 		return result;
-	}
-
-	private static BehaviourPointer TagToBehaviourPointer(CompoundTag tag)
-	{
-		var resource = tag.GetString("resource");
-		return new BehaviourPointer(
-			BehaviourResource: string.IsNullOrEmpty(resource) ? default : ResourceId.Parse(resource),
-			BehaviourDefinition: tag
-		);
 	}
 }
