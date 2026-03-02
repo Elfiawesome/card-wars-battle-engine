@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.Core.Registry;
 using CardWars.BattleEngine.Data;
 using CardWars.BattleEngine.State;
 
@@ -10,17 +11,43 @@ public class GenericCard(EntityId id) : IEntity
 	public EntityId? OwnerUnitSlotId { get; set; }
 	public bool IsPlayed => (OwnerPlayerId == null) && (OwnerUnitSlotId != null);
 
-	public string Name { get; set; } = "";
-	public int Pt { get; set; } = 0;
-	public int Hp { get; set; } = 0;
-	public int Atk { get; set; } = 0;
+	public CompoundTag Data { get; set; } = new();
 
-	public Dictionary<string, object> CustomData = [];
+	public string Name => Data.GetString("name");
+	public int Pt => Data.GetInt("pt");
+	public int Hp => Data.GetInt("hp");
+	public int Atk => Data.GetInt("atk");
 
-	public List<AbilityDefinition> Abilities { get; set; } = [];
-	// Special behaviour for card functionality like listening to use card and deploying the card onto battlefield
-	public List<BehaviourPointer> IntrinsicBehaviour { get; set; } = [];
+	public int BehaviourPriority => Data.GetInt("behaviour_priority");
 
-	public int BehaviourPriority => 0;
-	public List<BehaviourPointer> GetBehaviours() => [.. Abilities.Select(a => a.Behaviour), .. IntrinsicBehaviour];
+	public List<BehaviourPointer> GetBehaviours()
+	{
+		var result = new List<BehaviourPointer>();
+
+		if (Data.GetList("abilities") is { } abilities)
+		{
+			foreach (var item in abilities.Items.OfType<CompoundTag>())
+			{
+				if (item.GetCompound("behaviour") is { } bTag)
+					result.Add(TagToBehaviourPointer(bTag));
+			}
+		}
+
+		if (Data.GetList("intrinsic_behaviours") is { } intrinsics)
+		{
+			foreach (var item in intrinsics.Items.OfType<CompoundTag>())
+				result.Add(TagToBehaviourPointer(item));
+		}
+
+		return result;
+	}
+
+	private static BehaviourPointer TagToBehaviourPointer(CompoundTag tag)
+	{
+		var resource = tag.GetString("resource");
+		return new BehaviourPointer(
+			BehaviourResource: string.IsNullOrEmpty(resource) ? default : ResourceId.Parse(resource),
+			BehaviourDefinition: tag
+		);
+	}
 }

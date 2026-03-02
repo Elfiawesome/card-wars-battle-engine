@@ -14,6 +14,6 @@ public class BattleEngineRegistry
 	public RegistryFactory<ResourceId, IBehaviour> Behaviours { get; } = new();
 	public RegistryFactory<ResourceId, EntityId, IEntity> Entities { get; } = new();
 
-	public Registry<ResourceId, CardDefinition> CardContent { get; } = new();
+	public Registry<ResourceId, CompoundTag> CardDefinitions { get; } = new();
 	public Registry<ResourceId, object> CustomContent {get;} = new(); // Other modded data content
 }

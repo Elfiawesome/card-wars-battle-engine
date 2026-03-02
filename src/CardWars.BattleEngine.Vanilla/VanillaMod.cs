@@ -1,6 +1,6 @@
 ﻿using CardWars.BattleEngine.Core.Registry;
+using CardWars.BattleEngine.Data;
 using CardWars.BattleEngine.Vanilla.Block;
-using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 
 namespace CardWars.BattleEngine.Vanilla;
@@ -37,33 +37,27 @@ public class VanillaMod : IBattleEngineMod
 
 	private void RegisterCardDefinitions(BattleEngineRegistry registry)
 	{
-		registry.CardContent.Register(ResourceId.Vanilla("cards/john"), new()
-		{
-			Name = "John",
-			Pt = 2,
-			Hp = 6,
-			Atk = 4,
-			Abilities = [
-				new()
-				{
-					Description = "A special ability for this unit",
-					Behaviour = new() { }
-				}
-			]
-		});
-		registry.CardContent.Register(ResourceId.Vanilla("cards/elbert"), new()
-		{
-			Name = "Elbert",
-			Pt = 1,
-			Hp = 2,
-			Atk = 3
-		});
-		registry.CardContent.Register(ResourceId.Vanilla("cards/nicholas"), new()
-		{
-			Name = "Nicholas",
-			Pt = 5,
-			Hp = 10,
-			Atk = 1
-		});
+		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/john"), new CompoundTag()
+		.Set("name", "John")
+		.Set("pt", 2)
+		.Set("hp", 6)
+		.Set("atk", 4)
+		.Set("abilities", new ListTag()
+			.Add(new CompoundTag()
+				.Set("description", "A special ability for this unit")
+				.Set("behaviour", new CompoundTag()
+					.Set("resource", "cardwars:some_behaviour")))));
+
+		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/elbert"), new CompoundTag()
+			.Set("name", "Elbert")
+			.Set("pt", 1)
+			.Set("hp", 2)
+			.Set("atk", 3));
+
+		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/nicholas"), new CompoundTag()
+			.Set("name", "Nicholas")
+			.Set("pt", 5)
+			.Set("hp", 10)
+			.Set("atk", 1));
 	}
 }

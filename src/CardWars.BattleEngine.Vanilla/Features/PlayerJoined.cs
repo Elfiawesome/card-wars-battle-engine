@@ -35,12 +35,10 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		// Populate deck with card
 		foreach (var defId in StarterDeck)
 		{
-			var def = context.Registry.CardContent.Get(defId);
+			var def = context.Registry.CardDefinitions.Get(defId);
 			var cardId = EntityId.New();
 			batch.Blocks.Add(new InstantiateCardBlock(cardId, def));
 			batch.Blocks.Add(new AttachCardToDeckBlock(deckId, cardId));
-
-			// TODO: definition to load
 		}
 
 		context.ApplyBlockBatch(batch);
