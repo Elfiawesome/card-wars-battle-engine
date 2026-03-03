@@ -42,7 +42,7 @@ public class Transaction
 		foreach (var block in batch.Blocks ?? [])
 		{
 			Registry.BlockHandlers.Execute(State, block);
-			Console.WriteLine($"Executing Block: {Helper.SerializeBlock(block)}");
+			Console.WriteLine($"Executing Block [{block.GetType().Name}]: {Helper.SerializeBlock(block)}");
 		}
 	}
 

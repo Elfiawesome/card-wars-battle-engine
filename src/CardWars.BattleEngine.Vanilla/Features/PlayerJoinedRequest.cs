@@ -1,4 +1,3 @@
-using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;

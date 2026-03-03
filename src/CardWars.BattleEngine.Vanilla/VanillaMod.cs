@@ -23,6 +23,7 @@ public class VanillaMod : IBattleEngineMod
 		registry.EventHandlers.Register(new EndPhaseEventHandler());
 		registry.EventHandlers.Register(new EndTurnEventHandler());
 		registry.EventHandlers.Register(new DrawCardRequestEventHandler());
+		registry.EventHandlers.Register(new DrawCardEventHandler());
 
 		// --- Block Handlers ---
 		registry.BlockHandlers.Register(new AttachCardToDeckBlockHandler());
