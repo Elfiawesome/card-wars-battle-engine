@@ -16,6 +16,13 @@ server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerI
 // server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId3));
 var deck = server.BattleEngine.State.OfType<Deck>().First();
 server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
+server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
+server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
+server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
+server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
+server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
+server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
+server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
 
 // server.BattleEngine.HandleInput(playerId1, new EndTurnRequestInput());
 // server.BattleEngine.HandleInput(playerId2, new EndTurnRequestInput());
