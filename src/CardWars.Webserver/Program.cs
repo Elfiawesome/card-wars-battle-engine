@@ -1,4 +1,5 @@
-﻿using CardWars.BattleEngine.State;
+﻿using CardWars.BattleEngine;
+using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
@@ -7,13 +8,12 @@ using CardWars.Server;
 Server server = new();
 server.BattleEngine.LoadMod(new VanillaMod());
 
-
+// --- Game Test Simulation ---
+// New Player Joins
 var playerId1 = new EntityId(Guid.NewGuid());
-var playerId2 = new EntityId(Guid.NewGuid());
-var playerId3 = new EntityId(Guid.NewGuid());
 server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId1));
-// server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId2));
-// server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId3));
+
+// Player Draw
 var deck = server.BattleEngine.State.OfType<Deck>().First();
 server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
 server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
@@ -24,15 +24,17 @@ server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId =
 server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
 server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
 
-// server.BattleEngine.HandleInput(playerId1, new EndTurnRequestInput());
-// server.BattleEngine.HandleInput(playerId2, new EndTurnRequestInput());
-// server.BattleEngine.HandleInput(playerId3, new EndTurnRequestInput());
-// server.BattleEngine.HandleInput(playerId1, new EndTurnRequestInput());
-// server.BattleEngine.HandleInput(playerId2, new EndTurnRequestInput());
-// server.BattleEngine.HandleInput(playerId3, new EndTurnRequestInput());
+// Player use card
+var card = server.BattleEngine.State.OfType<GenericCard>().First();
+server.BattleEngine.HandleInput(playerId1, new UseCardRequestInput() { CardId = card.Id });
 
 
-// Print all entities
+
+
+
+
+
+// --- Debug Dump State ---
 Console.WriteLine(" --- Turn State --- ");
 Console.WriteLine("Turn Index: " + server.BattleEngine.State.Turn.TurnIndex);
 Console.WriteLine("Phase: " + server.BattleEngine.State.Turn.Phase);
@@ -44,3 +46,5 @@ foreach (var id in server.BattleEngine.State.All)
 {
 	Console.WriteLine(id.Id + ": " + id.GetType().Name);
 }
+
+Console.WriteLine(Helper.GameStateDump(server.BattleEngine.State));

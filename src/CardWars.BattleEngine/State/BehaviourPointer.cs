@@ -15,7 +15,7 @@ public record struct BehaviourPointer(
 		var resource = tag.GetString("resource");
 		return new BehaviourPointer(
 			BehaviourResource: string.IsNullOrEmpty(resource) ? default : ResourceId.Parse(resource),
-			BehaviourDefinition: tag
+			BehaviourDefinition: tag // <- TODO: whats this for i forgot
 		);
 	}
 };

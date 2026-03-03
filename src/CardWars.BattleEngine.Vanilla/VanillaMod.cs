@@ -1,5 +1,6 @@
 ﻿using CardWars.BattleEngine.Core.Registry;
 using CardWars.BattleEngine.Data;
+using CardWars.BattleEngine.Vanilla.Behaviour;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Features;
 
@@ -16,6 +17,7 @@ public class VanillaMod : IBattleEngineMod
 		registry.InputHandlers.Register(new PlayerJoinedRequestInputHandler());
 		registry.InputHandlers.Register(new EndTurnRequestInputHandler());
 		registry.InputHandlers.Register(new DrawCardRequestInputHandler());
+		registry.InputHandlers.Register(new UseCardRequestInputHandler());
 
 		// --- Event Handlers ---
 		registry.EventHandlers.Register(new PlayerJoinedEventHandler());
@@ -24,6 +26,7 @@ public class VanillaMod : IBattleEngineMod
 		registry.EventHandlers.Register(new EndTurnEventHandler());
 		registry.EventHandlers.Register(new DrawCardRequestEventHandler());
 		registry.EventHandlers.Register(new DrawCardEventHandler());
+		registry.EventHandlers.Register(new UseCardRequestEventHandler());
 
 		// --- Block Handlers ---
 		registry.BlockHandlers.Register(new AttachCardToDeckBlockHandler());
@@ -39,6 +42,9 @@ public class VanillaMod : IBattleEngineMod
 		registry.BlockHandlers.Register(new SetCardDataBlockHandler());
 		registry.BlockHandlers.Register(new UpdateTurnStateBlockHandler());
 
+		// --- Behaviours ---
+		registry.Behaviours.Register<SummonUnitCardToUnitSlotBehaviour>(ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour"));
+
 		// --- Card Definitions ---
 		RegisterCardDefinitions(registry);
 	}
@@ -47,26 +53,41 @@ public class VanillaMod : IBattleEngineMod
 	private void RegisterCardDefinitions(BattleEngineRegistry registry)
 	{
 		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/john"), new CompoundTag()
-		.Set("name", "John")
-		.Set("pt", 2)
-		.Set("hp", 6)
-		.Set("atk", 4)
-		.Set("abilities", new ListTag()
-			.Add(new CompoundTag()
-				.Set("description", "A special ability for this unit")
-				.Set("behaviour", new CompoundTag()
-					.Set("resource", "cardwars:some_behaviour")))));
+			.Set("name", "John")
+			.Set("pt", 2)
+			.Set("hp", 6)
+			.Set("atk", 4)
+			// .Set("abilities", new ListTag()
+			// 	.Add(new CompoundTag()
+			// 		.Set("description", "A special ability for this unit")
+			// 		.Set("behaviour", new CompoundTag()
+			// 			.Set("resource", "cardwars:some_behaviour"))))
+			.Set("intrinsic_behaviours", new ListTag()
+				.Add(new CompoundTag()
+					.Set("resource", ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour").ToString())
+				))
+		);
 
 		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/elbert"), new CompoundTag()
 			.Set("name", "Elbert")
 			.Set("pt", 1)
 			.Set("hp", 2)
-			.Set("atk", 3));
+			.Set("atk", 3)
+			.Set("intrinsic_behaviours", new ListTag()
+				.Add(new CompoundTag()
+					.Set("resource", ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour").ToString())
+				))
+		);
 
 		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/nicholas"), new CompoundTag()
 			.Set("name", "Nicholas")
 			.Set("pt", 5)
 			.Set("hp", 10)
-			.Set("atk", 1));
+			.Set("atk", 1)
+			.Set("intrinsic_behaviours", new ListTag()
+				.Add(new CompoundTag()
+					.Set("resource", ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour").ToString())
+				))
+		);
 	}
 }
