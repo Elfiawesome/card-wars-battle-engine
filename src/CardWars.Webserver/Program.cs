@@ -1,5 +1,6 @@
 ﻿using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
+using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Server;
 
@@ -11,14 +12,17 @@ var playerId1 = new EntityId(Guid.NewGuid());
 var playerId2 = new EntityId(Guid.NewGuid());
 var playerId3 = new EntityId(Guid.NewGuid());
 server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId1));
-server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId2));
-server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId3));
-server.BattleEngine.HandleInput(playerId1, new EndTurnRequestInput());
-server.BattleEngine.HandleInput(playerId2, new EndTurnRequestInput());
-server.BattleEngine.HandleInput(playerId3, new EndTurnRequestInput());
-server.BattleEngine.HandleInput(playerId1, new EndTurnRequestInput());
-server.BattleEngine.HandleInput(playerId2, new EndTurnRequestInput());
-server.BattleEngine.HandleInput(playerId3, new EndTurnRequestInput());
+// server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId2));
+// server.BattleEngine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId3));
+var deck = server.BattleEngine.State.OfType<Deck>().First();
+server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId = deck.Id, ReceivedPlayerId = playerId1 });
+
+// server.BattleEngine.HandleInput(playerId1, new EndTurnRequestInput());
+// server.BattleEngine.HandleInput(playerId2, new EndTurnRequestInput());
+// server.BattleEngine.HandleInput(playerId3, new EndTurnRequestInput());
+// server.BattleEngine.HandleInput(playerId1, new EndTurnRequestInput());
+// server.BattleEngine.HandleInput(playerId2, new EndTurnRequestInput());
+// server.BattleEngine.HandleInput(playerId3, new EndTurnRequestInput());
 
 
 // Print all entities

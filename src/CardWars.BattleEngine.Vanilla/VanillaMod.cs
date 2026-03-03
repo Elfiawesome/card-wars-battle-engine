@@ -15,17 +15,21 @@ public class VanillaMod : IBattleEngineMod
 		// --- Input Handlers ---
 		registry.InputHandlers.Register(new PlayerJoinedRequestInputHandler());
 		registry.InputHandlers.Register(new EndTurnRequestInputHandler());
+		registry.InputHandlers.Register(new DrawCardRequestInputHandler());
 
 		// --- Event Handlers ---
 		registry.EventHandlers.Register(new PlayerJoinedEventHandler());
 		registry.EventHandlers.Register(new EndTurnRequestEventHandler());
 		registry.EventHandlers.Register(new EndPhaseEventHandler());
 		registry.EventHandlers.Register(new EndTurnEventHandler());
+		registry.EventHandlers.Register(new DrawCardRequestEventHandler());
 
 		// --- Block Handlers ---
 		registry.BlockHandlers.Register(new AttachCardToDeckBlockHandler());
 		registry.BlockHandlers.Register(new AttachCardToPlayerBlockHandler());
 		registry.BlockHandlers.Register(new AttachDeckToPlayerBlockHandler());
+		registry.BlockHandlers.Register(new DetachCardFromDeckBlockHandler());
+		registry.BlockHandlers.Register(new DetachCardFromPlayerBlockHandler());
 		registry.BlockHandlers.Register(new InstantiateCardBlockHandler());
 		registry.BlockHandlers.Register(new InstantiateDeckBlockHandler());
 		registry.BlockHandlers.Register(new InstantiatePlayerBlockHandler());

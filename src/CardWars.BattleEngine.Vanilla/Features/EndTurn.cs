@@ -3,10 +3,10 @@ using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
-using CardWars.BattleEngine.Vanilla.Entity;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
+// --- Request to end turn ---
 public record struct EndTurnRequestInput(
 ) : IInput;
 
@@ -58,6 +58,8 @@ public class EndTurnRequestEventHandler : IEventHandler<EndTurnRequestEvent>
 	}
 }
 
+
+// --- End turn events ---
 public class EndPhaseEvent() : IEvent
 {
 	public required TurnState TurnState;
