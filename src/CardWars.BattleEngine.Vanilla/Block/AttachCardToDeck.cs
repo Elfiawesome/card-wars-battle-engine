@@ -9,7 +9,7 @@ public record class AttachCardToDeckBlock(
 	EntityId CardId
 ) : IBlock;
 
-public class AttachDeckToPlayerHandler : IBlockHandler<AttachCardToDeckBlock>
+public class AttachCardToDeckBlockHandler : IBlockHandler<AttachCardToDeckBlock>
 {
 	public void Handle(GameState context, AttachCardToDeckBlock request)
 	{

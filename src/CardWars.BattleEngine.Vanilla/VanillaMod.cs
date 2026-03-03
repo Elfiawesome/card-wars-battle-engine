@@ -23,11 +23,12 @@ public class VanillaMod : IBattleEngineMod
 		registry.EventHandlers.Register(new EndTurnEventHandler());
 
 		// --- Block Handlers ---
-		registry.BlockHandlers.Register(new AttachDeckToPlayerHandler());
+		registry.BlockHandlers.Register(new AttachCardToDeckBlockHandler());
 		registry.BlockHandlers.Register(new AttachDeckToPlayerBlockHandler());
-		registry.BlockHandlers.Register(new InstantiateDeckBlockHandler());
 		registry.BlockHandlers.Register(new InstantiateCardBlockHandler());
+		registry.BlockHandlers.Register(new InstantiateDeckBlockHandler());
 		registry.BlockHandlers.Register(new InstantiatePlayerBlockHandler());
+		registry.BlockHandlers.Register(new SetCardDataBlockHandler());
 		registry.BlockHandlers.Register(new UpdateTurnStateBlockHandler());
 
 		// --- Card Definitions ---
