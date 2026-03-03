@@ -18,7 +18,7 @@ public class SummonUnitCardToUnitSlotBehaviour : Behaviour<UseCardRequestEvent>
 		{
 			if (context.Owner is GenericCard card)
 			{
-				if (evnt.TargetEntityId != null | evnt.TargetEntityId == Guid.Empty)
+				if (evnt.TargetEntityId != null && evnt.TargetEntityId != Guid.Empty)
 				{
 					var unitSlot = context.State.Get<UnitSlot>(evnt.TargetEntityId ?? Guid.Empty);
 					if (unitSlot != null)
