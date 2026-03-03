@@ -27,7 +27,7 @@ public class DrawCardRequestEvent() : IEvent
 {
 	public required EntityId PlayerId;
 	public required EntityId DeckId;
-	public bool IsCancelled = true;
+	public bool IsCancelled = false;
 	public double LuckRate = 0.0; // <- used as a way to determin luck later on
 }
 
