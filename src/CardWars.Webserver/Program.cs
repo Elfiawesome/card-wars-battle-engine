@@ -26,7 +26,8 @@ server.BattleEngine.HandleInput(playerId1, new DrawCardRequestInput() { DeckId =
 
 // Player use card
 var card = server.BattleEngine.State.OfType<GenericCard>().First();
-server.BattleEngine.HandleInput(playerId1, new UseCardRequestInput() { CardId = card.Id });
+var unitSlot = server.BattleEngine.State.OfType<UnitSlot>().First();
+server.BattleEngine.HandleInput(playerId1, new UseCardRequestInput() { CardId = card.Id, TargetEntityId = unitSlot.Id });
 
 
 

@@ -5,14 +5,15 @@ using CardWars.BattleEngine.State;
 namespace CardWars.BattleEngine.Vanilla.Features;
 
 public record struct UseCardRequestInput(
-	EntityId CardId
+	EntityId CardId,
+	EntityId? TargetEntityId
 ) : IInput;
 
 public class UseCardRequestInputHandler : IInputHandler<UseCardRequestInput>
 {
 	public void Handle(InputContext context, UseCardRequestInput request)
 	{
-		context.Transaction.QueueEvent(new UseCardRequestEvent() { CardId = request.CardId });
+		context.Transaction.QueueEvent(new UseCardRequestEvent() { CardId = request.CardId, TargetEntityId = request.TargetEntityId });
 	}
 }
 

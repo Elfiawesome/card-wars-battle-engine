@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Core.Registry;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
+using CardWars.BattleEngine.Vanilla.Entity;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
@@ -31,7 +32,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		var deckId = EntityId.New();
 		batch.Blocks.Add(new InstantiateDeckBlock(deckId));
 		batch.Blocks.Add(new AttachDeckToPlayerBlock(request.PlayerId, deckId));
-		
+
 		// Populate deck with card
 		foreach (var defId in StarterDeck)
 		{
@@ -39,6 +40,19 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 			var cardId = EntityId.New();
 			batch.Blocks.Add(new InstantiateCardBlock(cardId, def));
 			batch.Blocks.Add(new AttachCardToDeckBlock(deckId, cardId));
+		}
+
+		// Create new Battlefield
+		var battlefieldId = EntityId.New();
+		batch.Blocks.Add(new InstantiateBattlefieldBlock(battlefieldId));
+		batch.Blocks.Add(new AttachBattlefieldToPlayerBlock(request.PlayerId, battlefieldId));
+		
+		// Create a 4 unit sot
+		for (int i = 0; i < 3; i++)
+		{
+			var unitSlotId = EntityId.New();
+			batch.Blocks.Add(new InstantiateUnitSlotBlock(unitSlotId));
+			batch.Blocks.Add(new AttachUnitSlotToBattlefieldBlock(battlefieldId, unitSlotId));
 		}
 
 		context.ApplyBlockBatch(batch);
