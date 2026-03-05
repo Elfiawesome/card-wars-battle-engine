@@ -20,7 +20,7 @@ public class DetachCardFromUnitSlotBlockHandler : IBlockHandler<DetachCardFromUn
 		if (unitSlot.HoldingCardId == request.CardId)
 		{
 			unitSlot.HoldingCardId = null;
-			card.OwnerPlayerId = null;
+			card.OwnerUnitSlotId = null;
 		}
 	}
 }
