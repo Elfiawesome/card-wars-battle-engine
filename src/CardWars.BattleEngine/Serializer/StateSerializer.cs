@@ -10,7 +10,7 @@ public class StateJsonConverter : JsonConverter<EntityId>
 	{
 		return reader.TokenType switch
 		{
-			JsonTokenType.String => EntityId.None,
+			JsonTokenType.String => new EntityId(reader.GetGuid()),
 			_ => throw new JsonException($"Unexpected token: {reader.TokenType}")
 		};
 	}
