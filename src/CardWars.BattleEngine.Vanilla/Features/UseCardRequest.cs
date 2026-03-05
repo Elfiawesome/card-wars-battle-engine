@@ -21,13 +21,13 @@ public class UseCardRequestEvent() : IEvent
 {
 	public EntityId CardId;
 	public EntityId? TargetEntityId;
-	public bool IsCancelled;
+	public bool IsCancelled = true;
 };
 
 public class UseCardRequestEventHandler : IEventHandler<UseCardRequestEvent>
 {
 	public void Handle(Transaction context, UseCardRequestEvent request)
 	{
-		// Uh do nothing I guess
+		// Uh do nothing I guess. Since the behaviours of the individual cards will handle them
 	}
 }
