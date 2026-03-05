@@ -6,4 +6,7 @@ public record struct BlockBatch(
 	List<IBlock> Blocks,
 	EntityId? TargetPlayerId = null,
 	string AnimationId = ""
-);
+)
+{
+	public List<string> AnimationArgs { get; set; } = [];
+}
