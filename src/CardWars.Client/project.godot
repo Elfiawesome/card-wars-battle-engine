@@ -22,4 +22,4 @@ config/icon="res://icon.svg"
 [dotnet]
 
 project/assembly_name="CardWars.Client"
-project/solution_directory="../../CardWars.sln"
+project/solution_directory="../../"
