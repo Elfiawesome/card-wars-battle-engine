@@ -30,7 +30,7 @@ public class SummonUnitCardToUnitSlotBehaviour : Behaviour<UseCardRequestEvent>
 			}
 		}
 
-		context.CommitBlocks(batch);
+		context.StageBlocks(batch);
 		context.CommitStagedBlocks();
 
 		return BehaviourResult.Complete;
