@@ -1,5 +1,6 @@
 using System.Text.Json;
 using CardWars.BattleEngine.Block;
+using CardWars.BattleEngine.Serializer;
 using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine;
@@ -30,8 +31,10 @@ public static class Helper
 
 		var options = new JsonSerializerOptions
 		{
-			IgnoreReadOnlyProperties = true,
+			IgnoreReadOnlyProperties = true
 		};
+		options.Converters.Add(new StateJsonConverter());
+		options.Converters.Add(new DataTagJsonConverter());
 		return JsonSerializer.Serialize(data, options);
 	}
 }

@@ -1,10 +1,7 @@
-using System.Text.Json.Serialization;
-
 namespace CardWars.BattleEngine.Data;
 
 public enum DataTagType { Int, Float, String, Bool, Compound, List }
 
-[JsonConverter(typeof(DataTagJsonConverter))]
 public abstract class DataTag
 {
 	public abstract DataTagType Type { get; }
