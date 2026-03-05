@@ -21,7 +21,7 @@ public class UseCardRequestEvent() : IEvent
 {
 	public EntityId CardId;
 	public EntityId? TargetEntityId;
-	public bool IsCancelled = true;
+	public bool IsCancelled;
 };
 
 public class UseCardRequestEventHandler : IEventHandler<UseCardRequestEvent>
