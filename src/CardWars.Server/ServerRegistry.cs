@@ -1,6 +1,9 @@
+using CardWars.BattleEngine.Core.Registry;
+using CardWars.Server.Packet;
+
 namespace CardWars.Server;
 
 public class ServerRegistry
 {
-	public Dictionary<string, string> SomeRegistry = [];
+	public HandlerRegistry<PacketContext> PacketHandlers = new();
 }
