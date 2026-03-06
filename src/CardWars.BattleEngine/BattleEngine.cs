@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 
@@ -8,6 +9,7 @@ public class BattleEngine
 	public BattleEngineRegistry Registry = new();
 	public GameState State = new();
 	private Transaction? _transaction = null;
+	public Action<BlockBatch>? OnBlockBatchEvent;
 
 	public void LoadMod(IBattleEngineMod mod)
 	{
@@ -18,7 +20,7 @@ public class BattleEngine
 	{
 		if (_transaction == null)
 		{
-			_transaction = new Transaction() { Registry = Registry, State = State };
+			_transaction = new Transaction { Registry = Registry, State = State, OnBlockBatchEvent = OnBlockBatchEvent };
 		}
 		_transaction.ProcessInput(playerId, input);
 

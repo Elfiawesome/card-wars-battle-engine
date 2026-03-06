@@ -14,6 +14,8 @@ public class Transaction
 
 	public bool IsIdle => _behaviourQueue.Count == 0 && _eventQueue.Count == 0 && _activeEvent == null;
 
+	public Action<BlockBatch>? OnBlockBatchEvent;
+
 	private readonly Queue<IEvent> _eventQueue = [];
 	private readonly List<BehaviourExecution> _behaviourQueue = [];
 	private IEvent? _activeEvent = null;
@@ -44,6 +46,7 @@ public class Transaction
 			Registry.BlockHandlers.Execute(State, block);
 			Console.WriteLine($"Executing Block [{block.GetType().Name}]: {Helper.SerializeBlock(block)}");
 		}
+		OnBlockBatchEvent?.Invoke(batch);
 	}
 
 	public void QueueEvent(IEvent evnt) => _eventQueue.Enqueue(evnt);
