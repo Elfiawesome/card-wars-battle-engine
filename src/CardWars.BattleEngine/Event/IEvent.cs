@@ -1,4 +1,4 @@
-using CardWars.BattleEngine.Core.Request;
+using CardWars.Core.Request;
 
 namespace CardWars.BattleEngine.Event;
 

@@ -5,6 +5,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CardWars.Core\CardWars.Core.csproj" />
     <ProjectReference Include="..\CardWars.Server\CardWars.Server.csproj" />
     <ProjectReference Include="..\CardWars.BattleEngine.Vanilla\CardWars.BattleEngine.Vanilla.csproj" />
   </ItemGroup>

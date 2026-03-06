@@ -1,6 +1,6 @@
-using CardWars.BattleEngine.Core.Request;
+using CardWars.Core.Request;
 
-namespace CardWars.BattleEngine.Core.Registry;
+namespace CardWars.Core.Registry;
 
 public class HandlerRegistry<TContext> : Registry<Type, Action<TContext, IRequest>>
 	where TContext : notnull

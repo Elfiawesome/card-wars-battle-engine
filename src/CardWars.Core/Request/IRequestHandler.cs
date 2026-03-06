@@ -1,4 +1,4 @@
-namespace CardWars.BattleEngine.Core.Request;
+namespace CardWars.Core.Request;
 
 public interface IRequestHandler<in TContext, in TRequest>
 	where TRequest : IRequest

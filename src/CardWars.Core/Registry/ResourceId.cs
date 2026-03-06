@@ -1,4 +1,4 @@
-namespace CardWars.BattleEngine.Core.Registry;
+namespace CardWars.Core.Registry;
 
 public readonly record struct ResourceId(string Namespace, string Path)
 {

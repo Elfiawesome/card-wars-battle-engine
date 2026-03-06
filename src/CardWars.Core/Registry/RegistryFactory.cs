@@ -1,4 +1,4 @@
-namespace CardWars.BattleEngine.Core.Registry;
+namespace CardWars.Core.Registry;
 
 public class RegistryFactory<TId, T>
 	where TId : notnull

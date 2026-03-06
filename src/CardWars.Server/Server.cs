@@ -7,8 +7,8 @@ public class Server
 {
 	public BattleEngine.BattleEngine BattleEngine { get; } = new();
 	public ServerRegistry Registry = new();
-	public List<IListener> Listeners;
-	public Dictionary<Guid, IConnection> Connections;
+	public List<IListener> Listeners = [];
+	public Dictionary<Guid, IConnection> Connections = [];
 
 	public void LoadMod(IServerMod mod)
 	{

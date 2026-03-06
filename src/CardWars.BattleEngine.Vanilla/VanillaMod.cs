@@ -1,8 +1,8 @@
-﻿using CardWars.BattleEngine.Core.Registry;
-using CardWars.BattleEngine.Data;
+﻿using CardWars.BattleEngine.Data;
 using CardWars.BattleEngine.Vanilla.Behaviour;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla;
 

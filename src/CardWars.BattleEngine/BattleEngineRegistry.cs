@@ -1,8 +1,8 @@
 using CardWars.BattleEngine.Behaviour;
-using CardWars.BattleEngine.Core.Registry;
 using CardWars.BattleEngine.Data;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine;
 
