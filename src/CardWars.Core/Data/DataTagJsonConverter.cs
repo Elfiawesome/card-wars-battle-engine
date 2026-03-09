@@ -10,13 +10,22 @@ public class DataTagJsonConverter : JsonConverter<DataTag>
 		return reader.TokenType switch
 		{
 			JsonTokenType.True or JsonTokenType.False => new BoolTag(reader.GetBoolean()),
-			JsonTokenType.String => new StringTag(reader.GetString()!),
+			JsonTokenType.String => ReadString(ref reader),
 			JsonTokenType.Number => reader.TryGetInt32(out var i) ? new IntTag(i) : new FloatTag(reader.GetSingle()),
 			JsonTokenType.StartObject => ReadCompound(ref reader, options),
 			JsonTokenType.StartArray => ReadList(ref reader, options),
 			JsonTokenType.Null => null,
 			_ => throw new JsonException($"Unexpected token: {reader.TokenType}")
 		};
+	}
+
+	private static DataTag ReadString(ref Utf8JsonReader reader)
+	{
+		var str = reader.GetString()!;
+		// Attempt to detect GUIDs
+		if (Guid.TryParse(str, out var guid) && str.Contains('-'))
+			return new GuidTag(guid);
+		return new StringTag(str);
 	}
 
 	private CompoundTag ReadCompound(ref Utf8JsonReader reader, JsonSerializerOptions options)
@@ -51,6 +60,7 @@ public class DataTagJsonConverter : JsonConverter<DataTag>
 			case FloatTag t: writer.WriteNumberValue(t.Value); break;
 			case StringTag t: writer.WriteStringValue(t.Value); break;
 			case BoolTag t: writer.WriteBooleanValue(t.Value); break;
+			case GuidTag t: writer.WriteStringValue(t.Value.ToString()); break;
 			case CompoundTag t:
 				writer.WriteStartObject();
 				foreach (var (key, tag) in t.Entries)

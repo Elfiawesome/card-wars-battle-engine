@@ -1,6 +1,6 @@
 namespace CardWars.Core.Data;
 
-public enum DataTagType { Int, Float, String, Bool, Compound, List }
+public enum DataTagType { Int, Float, String, Bool, Compound, List, Guid }
 
 public abstract class DataTag
 {
@@ -36,6 +36,13 @@ public sealed class BoolTag(bool value) : DataTag
 	public override DataTag Clone() => new BoolTag(Value);
 }
 
+public sealed class GuidTag(Guid value) : DataTag
+{
+	public Guid Value { get; set; } = value;
+	public override DataTagType Type => DataTagType.Guid;
+	public override DataTag Clone() => new GuidTag(Value);
+}
+
 public sealed class ListTag : DataTag
 {
 	private readonly List<DataTag> _items = [];
@@ -47,6 +54,7 @@ public sealed class ListTag : DataTag
 	public ListTag Add(DataTag tag) { _items.Add(tag); return this; }
 	public ListTag Add(int value) => Add(new IntTag(value));
 	public ListTag Add(string value) => Add(new StringTag(value));
+	public ListTag Add(Guid value) => Add(new GuidTag(value));
 
 	public DataTag? Get(int index) => index >= 0 && index < _items.Count ? _items[index] : null;
 	public T? Get<T>(int index) where T : DataTag => Get(index) as T;
@@ -88,6 +96,7 @@ public sealed class CompoundTag : DataTag
 	public CompoundTag Set(string key, float value) => Set(key, new FloatTag(value));
 	public CompoundTag Set(string key, string value) => Set(key, new StringTag(value));
 	public CompoundTag Set(string key, bool value) => Set(key, new BoolTag(value));
+	public CompoundTag Set(string key, Guid value) => Set(key, new GuidTag(value));
 
 	// --- Typed Getters ---
 
@@ -95,10 +104,11 @@ public sealed class CompoundTag : DataTag
 	public float GetFloat(string key, float fallback = 0f) => Get<FloatTag>(key)?.Value ?? fallback;
 	public string GetString(string key, string fallback = "") => Get<StringTag>(key)?.Value ?? fallback;
 	public bool GetBool(string key, bool fallback = false) => Get<BoolTag>(key)?.Value ?? fallback;
+	public Guid GetGuid(string key) => Get<GuidTag>(key)?.Value ?? Guid.Empty;
 	public CompoundTag? GetCompound(string key) => Get<CompoundTag>(key);
 	public ListTag? GetList(string key) => Get<ListTag>(key);
 
-	// --- Path Access (dot-separated, numeric segments index into lists) ---
+	// --- Path Access ---
 
 	public DataTag? GetByPath(string path)
 	{

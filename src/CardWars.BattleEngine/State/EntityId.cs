@@ -1,3 +1,5 @@
+using CardWars.Core.Data;
+
 namespace CardWars.BattleEngine.State;
 
 public readonly record struct EntityId(Guid Value)
@@ -10,4 +12,12 @@ public readonly record struct EntityId(Guid Value)
 	public override string ToString() => Value.ToString()[..8];
 
 	public static implicit operator EntityId(Guid guid) => new(guid);
+
+	public DataTag ToTag() => new GuidTag(Value);
+	public static EntityId FromTag(DataTag tag) => tag switch
+	{
+		GuidTag g => new EntityId(g.Value),
+		StringTag s when Guid.TryParse(s.Value, out var g) => new EntityId(g),
+		_ => None
+	};
 }
