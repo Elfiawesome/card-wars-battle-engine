@@ -1,8 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using CardWars.BattleEngine.Data;
 
-namespace CardWars.BattleEngine.Serializer;
+namespace CardWars.Core.Data;
 
 public class DataTagJsonConverter : JsonConverter<DataTag>
 {

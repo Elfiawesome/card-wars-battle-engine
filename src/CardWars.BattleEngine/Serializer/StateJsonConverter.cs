@@ -4,6 +4,7 @@ using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine.Serializer;
 
+// TODO: Remove this for something more elegant .-.
 public class StateJsonConverter : JsonConverter<EntityId>
 {
 	public override EntityId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

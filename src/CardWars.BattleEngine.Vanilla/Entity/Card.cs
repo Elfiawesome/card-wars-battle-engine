@@ -1,5 +1,5 @@
-using CardWars.BattleEngine.Data;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Entity;
 

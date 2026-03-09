@@ -1,7 +1,7 @@
 using CardWars.BattleEngine.Block;
-using CardWars.BattleEngine.Data;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
 

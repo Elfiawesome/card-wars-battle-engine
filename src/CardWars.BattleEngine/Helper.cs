@@ -2,6 +2,7 @@ using System.Text.Json;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Serializer;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine;
 

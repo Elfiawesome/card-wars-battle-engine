@@ -1,4 +1,4 @@
-using CardWars.BattleEngine.Data;
+using CardWars.Core.Data;
 using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.State;

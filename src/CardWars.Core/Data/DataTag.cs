@@ -1,4 +1,4 @@
-namespace CardWars.BattleEngine.Data;
+namespace CardWars.Core.Data;
 
 public enum DataTagType { Int, Float, String, Bool, Compound, List }
 
