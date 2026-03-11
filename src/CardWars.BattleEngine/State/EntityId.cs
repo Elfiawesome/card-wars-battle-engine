@@ -2,6 +2,7 @@ using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.State;
 
+[DataTagConverter(typeof(EntityIdTagConverter))]
 public readonly record struct EntityId(Guid Value)
 {
 	public static EntityId New() => new(Guid.NewGuid());
@@ -12,12 +13,15 @@ public readonly record struct EntityId(Guid Value)
 	public override string ToString() => Value.ToString()[..8];
 
 	public static implicit operator EntityId(Guid guid) => new(guid);
+}
 
-	public DataTag ToTag() => new GuidTag(Value);
-	public static EntityId FromTag(DataTag tag) => tag switch
+public class EntityIdTagConverter : DataTagConverter<EntityId>
+{
+	protected override DataTag? ConvertTo(EntityId value) => new GuidTag(value.Value);
+	protected override EntityId ConvertFrom(DataTag tag) => tag switch
 	{
 		GuidTag g => new EntityId(g.Value),
 		StringTag s when Guid.TryParse(s.Value, out var g) => new EntityId(g),
-		_ => None
+		_ => EntityId.None
 	};
 }

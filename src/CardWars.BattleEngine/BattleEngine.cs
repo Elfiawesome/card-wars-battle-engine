@@ -1,6 +1,7 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine;
 
@@ -11,8 +12,16 @@ public class BattleEngine
 	private Transaction? _transaction = null;
 	public Action<BlockBatch>? OnBlockBatchEvent;
 
+	public BattleEngine()
+	{
+		// --- DataTag registry for base Battle Engine --- 
+		DataTagTypeRegistry.ScanAssembly(typeof(BattleEngine).Assembly);
+	}
+
 	public void LoadMod(IBattleEngineMod mod)
 	{
+		// --- DataTag registry for mods --- 
+		DataTagTypeRegistry.ScanAssembly(mod.GetType().Assembly);
 		mod.OnLoad(Registry);
 	}
 

@@ -1,5 +1,8 @@
+using CardWars.Core.Data;
+
 namespace CardWars.Core.Registry;
 
+[DataTagConverter(typeof(ResourceIdTagConverter))]
 public readonly record struct ResourceId(string Namespace, string Path)
 {
 	public static readonly ResourceId Empty = new("", "");
@@ -19,4 +22,16 @@ public readonly record struct ResourceId(string Namespace, string Path)
 	public bool IsEmpty => string.IsNullOrEmpty(Namespace) && string.IsNullOrEmpty(Path);
 
 	public static implicit operator ResourceId(string value) { return Parse(value); }
+}
+
+public class ResourceIdTagConverter : DataTagConverter<ResourceId>
+{
+	protected override DataTag? ConvertTo(ResourceId value)
+		=> value.IsEmpty ? null : new StringTag(value.ToString());
+
+	protected override ResourceId ConvertFrom(DataTag tag) => tag switch
+	{
+		StringTag s => ResourceId.Parse(s.Value),
+		_ => ResourceId.Empty
+	};
 }
