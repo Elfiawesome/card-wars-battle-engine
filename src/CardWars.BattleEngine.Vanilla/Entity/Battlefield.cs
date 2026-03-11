@@ -1,12 +1,14 @@
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Entity;
 
+[DataTagType()]
 public class Battlefield(EntityId id) : IEntity
 {
-	public EntityId Id { get; init; } = id;
-	public EntityId OwnerPlayerId { get; set; }
-	public HashSet<EntityId> UnitSlotIds { get; } = [];
+	[DataTag] public EntityId Id { get; init; } = id;
+	[DataTag] public EntityId OwnerPlayerId { get; set; }
+	[DataTag] public HashSet<EntityId> UnitSlotIds { get; } = [];
 
 	public int BehaviourPriority => 0;
 

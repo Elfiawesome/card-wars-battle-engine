@@ -5,10 +5,11 @@ using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
 
+[DataTagType()]
 public record class SetCardDataBlock(
-	EntityId TargetId,
-	string Path,
-	DataTag Value
+	[property: DataTag] EntityId TargetId,
+	[property: DataTag] string Path,
+	[property: DataTag] DataTag Value
 ) : IBlock;
 
 public class SetCardDataBlockHandler : IBlockHandler<SetCardDataBlock>

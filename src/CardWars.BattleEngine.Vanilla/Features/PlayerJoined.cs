@@ -2,13 +2,15 @@ using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
+using CardWars.Core.Data;
 using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
+[DataTagType()]
 public class PlayerJoinedEvent() : IEvent
 {
-	public EntityId PlayerId;
+	[DataTag] public EntityId PlayerId { get; set; }
 };
 
 public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>

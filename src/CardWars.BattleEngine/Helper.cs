@@ -1,6 +1,5 @@
 using System.Text.Json;
 using CardWars.BattleEngine.Block;
-using CardWars.BattleEngine.Serializer;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data;
 
@@ -16,26 +15,18 @@ public static class Helper
 
 	public static string GameStateDump(GameState state)
 	{
-		Dictionary<string, object> data = [];
-		Dictionary<Guid, object> Entities = [];
-		data.Add("turn_state", state.Turn);
-
+		CompoundTag gameState = new();
+		gameState.Set("turn_state", DataTagSerializer.Serialize(state.Turn));
+		
+		ListTag entities = new();
 		foreach (var entity in state.All)
 		{
-			Dictionary<string, object> entityData = new() { 
-				{ "type", entity.GetType().Name },
-				{ "data", entity } 
-			};
-			Entities[entity.Id.Value] = entityData;
+			entities.Add(DataTagSerializer.Serialize(entity));
 		}
-		data.Add("entities", Entities);
+		gameState.Set("entities", entities);
 
-		var options = new JsonSerializerOptions
-		{
-			IgnoreReadOnlyProperties = true
-		};
-		options.Converters.Add(new StateJsonConverter());
+		var options = new JsonSerializerOptions { };
 		options.Converters.Add(new DataTagJsonConverter());
-		return JsonSerializer.Serialize(data, options);
+		return JsonSerializer.Serialize(gameState, options);
 	}
 }

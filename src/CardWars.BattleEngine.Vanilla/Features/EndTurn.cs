@@ -2,19 +2,22 @@ using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
+[DataTagType()]
 public class EndPhaseEvent() : IEvent
 {
-	public required TurnState TurnState;
-	public bool PhaseChanged = false;
+	[DataTag] public required TurnState TurnState { get; set; }
+	[DataTag] public bool PhaseChanged { get; set; } = false;
 }
 
+[DataTagType()]
 public class EndTurnEvent() : IEvent
 {
-	public required TurnState TurnState;
-	public bool PhaseChanged = false;
+	[DataTag] public required TurnState TurnState { get; set; }
+	[DataTag] public bool PhaseChanged { get; set; } = false;
 }
 
 public class EndPhaseEventHandler : IEventHandler<EndPhaseEvent>

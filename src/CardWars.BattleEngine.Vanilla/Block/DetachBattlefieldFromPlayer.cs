@@ -1,12 +1,14 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
 
+[DataTagType()]
 public record class DetachBattlefieldFromPlayerBlock(
-	EntityId PlayerId,
-	EntityId BattlefieldId
+	[property: DataTag] EntityId PlayerId,
+	[property: DataTag] EntityId BattlefieldId
 ) : IBlock;
 
 public class DetachBattlefieldFromPlayerHandler : IBlockHandler<DetachBattlefieldFromPlayerBlock>

@@ -1,11 +1,13 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
 
+[DataTagType()]
 public record class InstantiateUnitSlotBlock(
-	EntityId Id
+	[property: DataTag] EntityId Id
 ) : IBlock;
 
 public class InstantiateUnitSlotBlockHandler : IBlockHandler<InstantiateUnitSlotBlock>

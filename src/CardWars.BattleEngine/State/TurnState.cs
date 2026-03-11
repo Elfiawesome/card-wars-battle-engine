@@ -1,11 +1,13 @@
+using CardWars.Core.Data;
+
 namespace CardWars.BattleEngine.State;
 
 public record struct TurnState(
-	List<EntityId> TurnOrder,
-	HashSet<EntityId> AllowedPlayerInputs,
-	int TurnIndex,
-	int TurnNumber, // Total Turn Number
-	TurnPhase Phase = TurnPhase.Setup
+    [property: DataTag] List<EntityId> TurnOrder,
+    [property: DataTag] HashSet<EntityId> AllowedPlayerInputs,
+    [property: DataTag] int TurnIndex,
+    [property: DataTag] int TurnNumber,
+    [property: DataTag] TurnPhase Phase = TurnPhase.Setup
 )
 {
 	public TurnState Copy() => new()

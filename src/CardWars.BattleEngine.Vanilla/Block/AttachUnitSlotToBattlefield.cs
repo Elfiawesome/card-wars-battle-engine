@@ -1,12 +1,14 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
 
+[DataTagType()]
 public record class AttachUnitSlotToBattlefieldBlock(
-	EntityId BattlefieldId,
-	EntityId UnitSlotId
+	[property: DataTag] EntityId BattlefieldId,
+	[property: DataTag] EntityId UnitSlotId
 ) : IBlock;
 
 public class AttachUnitSlotToBattlefieldBlockHandler : IBlockHandler<AttachUnitSlotToBattlefieldBlock>

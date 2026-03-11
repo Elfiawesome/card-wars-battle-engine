@@ -4,13 +4,15 @@ using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
 // --- Request to draw the card (so that behaviours can intercept and reject the card request) ---
+[DataTagType()]
 public record struct DrawCardRequestInput(
-	EntityId DeckId,
-	EntityId ReceivedPlayerId // Since we might draw a card as someone else for another deck
+	[property: DataTag] EntityId DeckId,
+	[property: DataTag] EntityId ReceivedPlayerId // Since we might draw a card as someone else for another deck
 ) : IInput;
 
 public class DrawCardRequestInputHandler : IInputHandler<DrawCardRequestInput>
@@ -23,12 +25,13 @@ public class DrawCardRequestInputHandler : IInputHandler<DrawCardRequestInput>
 	}
 }
 
+[DataTagType()]
 public class DrawCardRequestEvent() : IEvent
 {
-	public required EntityId PlayerId;
-	public required EntityId DeckId;
-	public bool IsCancelled = false;
-	public double LuckRate = 0.0; // <- used as a way to determin luck later on
+	[DataTag] public required EntityId PlayerId { get; set; }
+	[DataTag] public required EntityId DeckId { get; set; }
+	[DataTag] public bool IsCancelled { get; set; } = false;
+	[DataTag] public double LuckRate { get; set; } = 0.0; // <- used as a way to determin luck later on
 }
 
 public class DrawCardRequestEventHandler : IEventHandler<DrawCardRequestEvent>

@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Reflection;
+using CardWars.Core.Registry;
 
 namespace CardWars.Core.Data;
 
@@ -19,8 +20,14 @@ public static class DataTagTypeRegistry
 			var attr = type.GetCustomAttribute<DataTagTypeAttribute>();
 			if (attr != null)
 			{
-				_idToType[attr.Id] = type;
-				_typeToId[type] = attr.Id;
+				if (attr.Id == null)
+				{
+					Register(type, ResourceId.Vanilla(DataTagSerializer.ToSnakeCase(type.Name)).ToString());
+				}
+				else
+				{
+					Register(type, attr.Id.ToString() ?? "unknown:unknown");
+				}
 			}
 		}
 	}

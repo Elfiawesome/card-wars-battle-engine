@@ -5,9 +5,10 @@ using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
 
+[DataTagType()]
 public record class InstantiateCardBlock(
-	EntityId Id,
-	CompoundTag? Data = null
+	[property: DataTag] EntityId Id,
+	[property: DataTag] CompoundTag? Data = null
 ) : IBlock;
 
 public class InstantiateCardBlockHandler : IBlockHandler<InstantiateCardBlock>

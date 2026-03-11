@@ -1,12 +1,14 @@
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
+[DataTagType()]
 public record struct UseCardRequestInput(
-	EntityId CardId,
-	EntityId? TargetEntityId
+	[property: DataTag] EntityId CardId,
+	[property: DataTag] EntityId? TargetEntityId
 ) : IInput;
 
 public class UseCardRequestInputHandler : IInputHandler<UseCardRequestInput>
@@ -17,11 +19,12 @@ public class UseCardRequestInputHandler : IInputHandler<UseCardRequestInput>
 	}
 }
 
+[DataTagType()]
 public class UseCardRequestEvent() : IEvent
 {
-	public EntityId CardId;
-	public EntityId? TargetEntityId;
-	public bool IsCancelled;
+	[DataTag] public EntityId CardId { get; set; }
+	[DataTag] public EntityId? TargetEntityId { get; set; }
+	[DataTag] public bool IsCancelled { get; set; }
 };
 
 public class UseCardRequestEventHandler : IEventHandler<UseCardRequestEvent>

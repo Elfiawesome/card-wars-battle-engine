@@ -1,9 +1,11 @@
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
+[DataTagType()]
 public record struct EndTurnRequestInput(
 ) : IInput;
 
@@ -15,9 +17,10 @@ public class EndTurnRequestInputHandler : IInputHandler<EndTurnRequestInput>
 	}
 }
 
+[DataTagType()]
 public class EndTurnRequestEvent() : IEvent
 {
-	public bool IsCancelled = false;
+	[DataTag] public bool IsCancelled { get; set; } = false;
 }
 
 public class EndTurnRequestEventHandler : IEventHandler<EndTurnRequestEvent>
