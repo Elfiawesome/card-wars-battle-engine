@@ -5,7 +5,7 @@ namespace CardWars.BattleEngine.State;
 
 public record struct BehaviourPointer(
 	// Points to a Hard-Coded behaviour registered in registry
-	[property: DataTag] ResourceId? BehaviourResource = null,
+	[property: DataTag("resource")] ResourceId? BehaviourResource = null,
 	// Data driven behaviour to create
-	[property: DataTag] CompoundTag? BehaviourDefinition = null
+	[property: DataTag("definition")] CompoundTag? BehaviourDefinition = null
 );
