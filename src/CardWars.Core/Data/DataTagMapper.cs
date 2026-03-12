@@ -5,15 +5,15 @@ using System.Text;
 
 namespace CardWars.Core.Data;
 
-public static class DataTagSerializer
+public static class DataTagMapper
 {
 	private static readonly ConcurrentDictionary<Type, TypeMeta> _metaCache = new();
 	private static readonly ConcurrentDictionary<Type, IDataTagConverter?> _converterCache = new();
 
 	// ======================== PUBLIC API ========================
 
-	/// <summary>Serialize an object to a CompoundTag.</summary>
-	public static CompoundTag Serialize(object obj)
+	/// <summary>Converts an object to a CompoundTag.</summary>
+	public static CompoundTag ToTag(object obj)
 	{
 		if (obj is CompoundTag existing)
 			return (CompoundTag)existing.Clone();
@@ -39,11 +39,11 @@ public static class DataTagSerializer
 		return tag;
 	}
 
-	/// <summary>Deserialize a CompoundTag to T.</summary>
-	public static T Deserialize<T>(CompoundTag tag) => (T)Deserialize(tag, typeof(T))!;
+	/// <summary>Converts a CompoundTag to T.</summary>
+	public static T FromTag<T>(CompoundTag tag) => (T)FromTag(tag, typeof(T))!;
 
 	/// <summary>Deserialize a CompoundTag to the specified type.</summary>
-	public static object Deserialize(CompoundTag tag, Type targetType)
+	public static object FromTag(CompoundTag tag, Type targetType)
 	{
 		var resolvedType = ResolveType(tag, targetType);
 		var meta = GetOrBuildMeta(resolvedType);
@@ -136,7 +136,7 @@ public static class DataTagSerializer
 			return EnumerableToListTag(enumerable, actualType);
 
 		// Complex object → CompoundTag (recursive)
-		return Serialize(value);
+		return ToTag(value);
 	}
 
 	/// <summary>Convert a DataTag back to a C# value.</summary>
@@ -215,7 +215,7 @@ public static class DataTagSerializer
 
 		// Complex object
 		if (tag is CompoundTag ct)
-			return Deserialize(ct, actualType);
+			return FromTag(ct, actualType);
 
 		return GetDefault(targetType);
 	}

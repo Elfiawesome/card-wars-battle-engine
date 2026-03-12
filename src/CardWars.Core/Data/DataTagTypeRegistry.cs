@@ -22,7 +22,7 @@ public static class DataTagTypeRegistry
 			{
 				if (attr.Id == null)
 				{
-					Register(type, ResourceId.Vanilla(DataTagSerializer.ToSnakeCase(type.Name)).ToString());
+					Register(type, ResourceId.Vanilla(DataTagMapper.ToSnakeCase(type.Name)).ToString());
 				}
 				else
 				{

@@ -30,14 +30,14 @@ public class GenericCard(EntityId id) : IEntity
 			foreach (var item in abilities.Items.OfType<CompoundTag>())
 			{
 				if (item.GetCompound("behaviour") is { } bTag)
-					result.Add(DataTagSerializer.Deserialize<BehaviourPointer>(bTag));// <- this feels and looks wrong? TODO: fix
+					result.Add(DataTagMapper.FromTag<BehaviourPointer>(bTag));// <- this feels and looks wrong? TODO: fix
 			}
 		}
 
 		if (Data.GetList("intrinsic_behaviours") is { } intrinsics)
 		{
 			foreach (var item in intrinsics.Items.OfType<CompoundTag>())
-				result.Add(DataTagSerializer.Deserialize<BehaviourPointer>(item)); // <- this feels and looks wrong?
+				result.Add(DataTagMapper.FromTag<BehaviourPointer>(item)); // <- this feels and looks wrong?
 		}
 
 		return result;

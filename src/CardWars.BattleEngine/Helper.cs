@@ -16,12 +16,12 @@ public static class Helper
 	public static string GameStateDump(GameState state)
 	{
 		CompoundTag gameState = new();
-		gameState.Set("turn_state", DataTagSerializer.Serialize(state.Turn));
+		gameState.Set("turn_state", DataTagMapper.ToTag(state.Turn));
 		
 		ListTag entities = new();
 		foreach (var entity in state.All)
 		{
-			entities.Add(DataTagSerializer.Serialize(entity));
+			entities.Add(DataTagMapper.ToTag(entity));
 		}
 		gameState.Set("entities", entities);
 
