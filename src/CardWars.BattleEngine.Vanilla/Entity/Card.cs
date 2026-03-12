@@ -7,12 +7,12 @@ namespace CardWars.BattleEngine.Vanilla.Entity;
 [DataTagType()]
 public class GenericCard(EntityId id) : IEntity
 {
-	public EntityId Id { get; init; } = id;
-	public EntityId? OwnerPlayerId { get; set; }
-	public EntityId? OwnerUnitSlotId { get; set; }
+	[DataTag] public EntityId Id { get; init; } = id;
+	[DataTag] public EntityId? OwnerPlayerId { get; set; }
+	[DataTag] public EntityId? OwnerUnitSlotId { get; set; }
 	public bool IsPlayed => (OwnerPlayerId == null) && (OwnerUnitSlotId != null);
 
-	public CompoundTag Data { get; set; } = new();
+	[DataTag] public CompoundTag Data { get; set; } = new();
 
 	public string Name => Data.GetString("name");
 	public int Pt => Data.GetInt("pt");
