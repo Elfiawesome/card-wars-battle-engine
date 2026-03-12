@@ -22,7 +22,7 @@ public class SummonUnitCardToUnitSlotBehaviour : Behaviour<UseCardRequestEvent>
 		if (evnt.TargetEntityId != null && evnt.TargetEntityId != Guid.Empty)
 		{
 			var unitSlot = context.State.Get<UnitSlot>(evnt.TargetEntityId ?? Guid.Empty);
-			if (unitSlot != null)
+			if (unitSlot != null && unitSlot.HoldingCardId == null)
 			{
 				batch.Blocks.Add(new DetachCardFromPlayerBlock(card.OwnerPlayerId ?? Guid.Empty, card.Id));
 				batch.Blocks.Add(new AttachCardToUnitSlotBlock(unitSlot.Id, card.Id));
