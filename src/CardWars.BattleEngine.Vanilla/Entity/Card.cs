@@ -15,7 +15,7 @@ public class GenericCard(EntityId id) : IEntity
 	[DataTag] public CompoundTag Data { get; set; } = new();
 
 	public string CardType => Data.GetString("card_type");
-	
+
 	// --- Base Card Data ---
 	public string Name => Data.GetString("name");
 
@@ -29,12 +29,22 @@ public class GenericCard(EntityId id) : IEntity
 	public int Charge => Data.GetInt("charge"); // Amount of attacks per unit
 	public int ChargeMax => Data.GetInt("charge_max");
 	public ListTag? SpAtk => Data.GetList("sp_atk"); // idk todo later
+	public bool IsFatal => (Hp <= 0) && IsUnit;
+	public bool HasCharge => Charge > 0;
 
 
 	// --- Hero Specific Data ---
 	public int Hrt => Data.GetInt("hrt");
 
+
+	public bool IsSpell => CardType == "spell";
+	public bool IsUnit => CardType == "unit";
+	public bool IsHero => CardType == "hero";
+
 	public int BehaviourPriority => Data.GetInt("behaviour_priority");
+
+	public static int AtkToHrt(int hpDamage)
+		=> hpDamage > 0 ? (int)Math.Ceiling(hpDamage / 10.0) : 0;
 
 	public List<BehaviourPointer> GetBehaviours()
 	{
