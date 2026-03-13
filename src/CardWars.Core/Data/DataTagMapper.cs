@@ -386,8 +386,9 @@ public static class DataTagMapper
 
 			foreach (var param in parameters)
 			{
-				// TODO: Use the var attr = param.GetCustomAttribute<DataTagAttribute>(); instead???
-				var paramKey = ToSnakeCase(param.Name ?? "");
+				var paramAttr = param.GetCustomAttribute<DataTagAttribute>();
+
+				var paramKey = ToSnakeCase(paramAttr?.Key ?? "");
 				var matchingProp = taggedProps.FirstOrDefault(p => p.Key == paramKey);
 
 				if (matchingProp != null)

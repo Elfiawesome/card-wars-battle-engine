@@ -3,6 +3,7 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.Core.Data;
 using CardWars.Server;
 
 Server server = new();
