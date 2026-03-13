@@ -386,11 +386,24 @@ public static class DataTagMapper
 
 			foreach (var param in parameters)
 			{
+				// Getting the property equivalent from constructor parameter
 				var paramAttr = param.GetCustomAttribute<DataTagAttribute>();
+				PropertyMeta? matchingProp = null;
+				string paramKey;
 
-				var paramKey = ToSnakeCase(paramAttr?.Key ?? "");
-				var matchingProp = taggedProps.FirstOrDefault(p => p.Key == paramKey);
+				if (paramAttr?.Key != null)
+				{
+					paramKey = paramAttr.Key;
+					matchingProp = taggedProps.FirstOrDefault(p => p.Key == paramKey);
+				}
+				else
+				{
+					matchingProp = taggedProps.FirstOrDefault(p =>
+						string.Equals(p.PropertyInfo.Name, param.Name, StringComparison.OrdinalIgnoreCase));
+					paramKey = matchingProp?.Key ?? ToSnakeCase(param.Name ?? "");
+				}
 
+				// Check if matchingProp works
 				if (matchingProp != null)
 				{
 					paramMetas.Add(new ConstructorParamMeta(
