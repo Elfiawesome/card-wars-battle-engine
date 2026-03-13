@@ -43,8 +43,8 @@ public class DrawCardRequestEventHandler : IEventHandler<DrawCardRequestEvent>
 
 		var batch = new BlockBatch([]);
 
-		var cardId = deck.CardIds.FirstOrDefault(Guid.Empty);
-		if (cardId == Guid.Empty) { return; /* Deck is empty*/ }
+		var cardId = deck.CardIds.FirstOrDefault(EntityId.None);
+		if (cardId == EntityId.None) { return; /* Deck is empty*/ }
 
 		batch.Blocks.Add(new DetachCardFromDeckBlock(request.DeckId, cardId));
 		batch.Blocks.Add(new AttachCardToPlayerBlock(request.PlayerId, cardId));

@@ -40,7 +40,7 @@ public static class DataTagMapper
 	}
 
 	/// <summary>Converts a CompoundTag to T.</summary>
-	public static T FromTag<T>(CompoundTag tag) => (T)FromTag(tag, typeof(T))!;
+	public static T FromTag<T>(CompoundTag tag) => (T)FromTag(tag, typeof(T));
 
 	/// <summary>Deserialize a CompoundTag to the specified type.</summary>
 	public static object FromTag(CompoundTag tag, Type targetType)
@@ -264,12 +264,12 @@ public static class DataTagMapper
 			if (genericDef == typeof(HashSet<>) || genericDef == typeof(ISet<>))
 			{
 				var setType = typeof(HashSet<>).MakeGenericType(elementType);
-				var set = Activator.CreateInstance(setType)!;
-				var addMethod = setType.GetMethod("Add")!;
+				var set = Activator.CreateInstance(setType);
+				var addMethod = setType.GetMethod("Add");
 				foreach (var item in listTag.Items)
 				{
 					var val = TagToObject(item, elementType);
-					if (val != null) addMethod.Invoke(set, [val]);
+					if (val != null) addMethod?.Invoke(set, [val]);
 				}
 				return set;
 			}
@@ -386,6 +386,7 @@ public static class DataTagMapper
 
 			foreach (var param in parameters)
 			{
+				// TODO: Use the var attr = param.GetCustomAttribute<DataTagAttribute>(); instead???
 				var paramKey = ToSnakeCase(param.Name ?? "");
 				var matchingProp = taggedProps.FirstOrDefault(p => p.Key == paramKey);
 

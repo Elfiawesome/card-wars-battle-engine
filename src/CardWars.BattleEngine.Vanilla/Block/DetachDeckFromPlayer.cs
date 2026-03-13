@@ -22,7 +22,7 @@ public class DetachDeckFromPlayerBlockHandler : IBlockHandler<DetachDeckFromPlay
 		if (player.DeckIds.Contains(request.DeckId))
 		{
 			player.DeckIds.Remove(request.DeckId);
-			deck.OwnerPlayerId = Guid.Empty; // TODO : Idk if i should make it EntityId?
+			deck.OwnerPlayerId = null;
 		}
 	}
 }

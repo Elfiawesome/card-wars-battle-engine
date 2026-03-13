@@ -35,6 +35,7 @@ public class EndTurnRequestEventHandler : IEventHandler<EndTurnRequestEvent>
 		if (newTurnState.TurnIndex >= newTurnState.TurnOrder.Count)
 		{
 			newTurnState.TurnIndex = 0;
+			newTurnState.TurnNumber += 1;
 			newTurnState.Phase = (newTurnState.Phase == TurnPhase.Setup)
 							? TurnPhase.Attacking
 							: TurnPhase.Setup;

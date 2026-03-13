@@ -29,7 +29,7 @@ public class Transaction
 		// Handle input if no behaviours used the input
 		if (!inputConsumed)
 		{
-			if ((playerId == Guid.Empty) || State.Turn.AllowedPlayerInputs.Contains(playerId))
+			if ((playerId == EntityId.None) || State.Turn.AllowedPlayerInputs.Contains(playerId))
 			{
 				Registry.InputHandlers.Execute(new InputContext(this, playerId), input);
 			}
@@ -171,7 +171,7 @@ public class Transaction
 			// TODO: Data-driven behaviour creation
 		}
 
-		if (behaviour?.ListeningEventType != eventType) return null;
+		if (behaviour != null && !behaviour.ListeningEventType.IsAssignableFrom(eventType)) return null;
 
 		return behaviour;
 	}

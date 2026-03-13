@@ -22,7 +22,7 @@ public class DetachUnitSlotFromBattlefieldBlockHandler : IBlockHandler<DetachUni
 		if (battlefield.UnitSlotIds.Contains(request.UnitSlotId))
 		{
 			battlefield.UnitSlotIds.Remove(request.UnitSlotId);
-			unitSlot.OwnerBattlefieldId = Guid.Empty; // TODO : Idk if i should make it EntityId?
+			unitSlot.OwnerBattlefieldId = null;
 		}
 	}
 }

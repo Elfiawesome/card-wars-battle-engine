@@ -7,7 +7,7 @@ namespace CardWars.BattleEngine.Vanilla.Entity;
 public class UnitSlot(EntityId id) : IEntity
 {
 	[DataTag] public EntityId Id { get; init; } = id;
-	[DataTag] public EntityId OwnerBattlefieldId { get; set; }
+	[DataTag] public EntityId? OwnerBattlefieldId { get; set; }
 	[DataTag] public EntityId? HoldingCardId { get; set; }
 
 	public int BehaviourPriority => 0;

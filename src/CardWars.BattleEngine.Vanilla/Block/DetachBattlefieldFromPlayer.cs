@@ -22,7 +22,7 @@ public class DetachBattlefieldFromPlayerHandler : IBlockHandler<DetachBattlefiel
 		if (player.BattlefieldIds.Contains(request.BattlefieldId))
 		{
 			player.BattlefieldIds.Remove(request.BattlefieldId);
-			battlefield.OwnerPlayerId = Guid.Empty; // TODO : Idk if i should make it EntityId?
+			battlefield.OwnerPlayerId = null;
 		}
 	}
 }

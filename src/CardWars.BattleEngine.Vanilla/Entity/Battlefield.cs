@@ -7,7 +7,7 @@ namespace CardWars.BattleEngine.Vanilla.Entity;
 public class Battlefield(EntityId id) : IEntity
 {
 	[DataTag] public EntityId Id { get; init; } = id;
-	[DataTag] public EntityId OwnerPlayerId { get; set; }
+	[DataTag] public EntityId? OwnerPlayerId { get; set; } = null;
 	[DataTag] public HashSet<EntityId> UnitSlotIds { get; } = [];
 
 	public int BehaviourPriority => 0;

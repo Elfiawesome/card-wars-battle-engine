@@ -19,6 +19,7 @@ public class AttachDeckToPlayerBlockHandler : IBlockHandler<AttachDeckToPlayerBl
 		var deck = context.Get<Deck>(request.DeckId);
 		if (player == null || deck == null) { return; }
 		
+		if (player.DeckIds.Contains(request.DeckId)) { return; }
 		deck.OwnerPlayerId = request.PlayerId;
 		player.DeckIds.Add(request.DeckId);
 	}
