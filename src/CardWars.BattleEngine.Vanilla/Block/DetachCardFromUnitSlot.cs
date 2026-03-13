@@ -7,7 +7,7 @@ namespace CardWars.BattleEngine.Vanilla.Block;
 
 [DataTagType()]
 public record class DetachCardFromUnitSlotBlock(
-	[property: DataTag] EntityId UnitSlot,
+	[property: DataTag] EntityId UnitSlotId,
 	[property: DataTag] EntityId CardId
 ) : IBlock;
 
@@ -15,7 +15,7 @@ public class DetachCardFromUnitSlotBlockHandler : IBlockHandler<DetachCardFromUn
 {
 	public void Handle(GameState context, DetachCardFromUnitSlotBlock request)
 	{
-		var unitSlot = context.Get<UnitSlot>(request.UnitSlot);
+		var unitSlot = context.Get<UnitSlot>(request.UnitSlotId);
 		var card = context.Get<GenericCard>(request.CardId);
 		if (unitSlot == null || card == null) { return; }
 

@@ -2,6 +2,7 @@ using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
+using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data;
 using CardWars.Core.Registry;
 
@@ -47,14 +48,21 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		var battlefieldId = EntityId.New();
 		batch.Blocks.Add(new InstantiateBattlefieldBlock(battlefieldId));
 		batch.Blocks.Add(new AttachBattlefieldToPlayerBlock(request.PlayerId, battlefieldId));
-		
-		// Create a 4 unit sot
+
+
+		var addUnitSlot = (BlockBatch b, EntityId bid, UnitSlotPos pos = default) =>
+		{
+			var usid = EntityId.New();
+			b.Blocks.Add(new InstantiateUnitSlotBlock(usid));
+			b.Blocks.Add(new ModifyUnitSlotPositionBlock(usid, pos));
+			b.Blocks.Add(new AttachUnitSlotToBattlefieldBlock(bid, usid));
+		};
+		// Create a 4 unit slot (3 front row, 1 back unit)
 		for (int i = 0; i < 3; i++)
 		{
-			var unitSlotId = EntityId.New();
-			batch.Blocks.Add(new InstantiateUnitSlotBlock(unitSlotId));
-			batch.Blocks.Add(new AttachUnitSlotToBattlefieldBlock(battlefieldId, unitSlotId));
+			addUnitSlot(batch, battlefieldId, new(0, -1 + i));
 		}
+		addUnitSlot(batch, battlefieldId, new(-1, 1));
 
 		context.ApplyBlockBatch(batch);
 	}
