@@ -60,7 +60,8 @@ public class VanillaMod : IBattleEngineMod
 
 	private void RegisterCardDefinitions(BattleEngineRegistry registry)
 	{
-		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/john"), new CompoundTag()
+		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/units/john"), new CompoundTag()
+			.Set("card_type", "unit")
 			.Set("name", "John")
 			.Set("pt", 2)
 			.Set("hp", 6)
@@ -76,7 +77,8 @@ public class VanillaMod : IBattleEngineMod
 				))
 		);
 
-		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/elbert"), new CompoundTag()
+		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/units/elbert"), new CompoundTag()
+			.Set("card_type", "unit")
 			.Set("name", "Elbert")
 			.Set("pt", 1)
 			.Set("hp", 2)
@@ -87,7 +89,8 @@ public class VanillaMod : IBattleEngineMod
 				))
 		);
 
-		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/nicholas"), new CompoundTag()
+		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/units/nicholas"), new CompoundTag()
+			.Set("card_type", "unit")
 			.Set("name", "Nicholas")
 			.Set("pt", 5)
 			.Set("hp", 10)
@@ -96,6 +99,17 @@ public class VanillaMod : IBattleEngineMod
 				.Add(new CompoundTag()
 					.Set("resource", ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour").ToString())
 				))
+		);
+
+
+		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/heroes/ilyas"), new CompoundTag()
+			.Set("card_type", "hero")
+			.Set("hrt", 10)
+			// .Set("abilities", new ListTag()
+			// 	.Add(new CompoundTag()
+			// 		.Set("description", "Hero's ability")
+			// 		.Set("behaviour", new CompoundTag()
+			// 			.Set("resource", "cardwars:some_behaviour"))))
 		);
 	}
 }
