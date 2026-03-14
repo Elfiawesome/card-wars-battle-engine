@@ -10,6 +10,8 @@ public static class Logger
 
 	public static void Error(string msg) => Print(msg, "ERROR", ConsoleColor.Red);
 
+	public static void Custom(string msg, string level = "---", ConsoleColor color = ConsoleColor.Cyan) => Print(msg, level, color);
+	
 	private static void Print(string msg, string level, ConsoleColor color = ConsoleColor.White)
 	{
 		Console.ForegroundColor = color;
