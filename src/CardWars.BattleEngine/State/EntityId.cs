@@ -10,7 +10,7 @@ public readonly record struct EntityId(Guid Value)
 
 	public bool IsNone => Value == Guid.Empty;
 
-	public override string ToString() => Value.ToString()[..8];
+	public override string ToString() => Value.ToString();//[..8];
 
 	public static implicit operator EntityId(Guid guid) => new(guid);
 }
