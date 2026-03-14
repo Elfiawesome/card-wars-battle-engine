@@ -62,7 +62,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		{
 			addUnitSlot(batch, battlefieldId, new(-1 + i, 0));
 		}
-		addUnitSlot(batch, battlefieldId, new(1, -1));
+		addUnitSlot(batch, battlefieldId, new(0, -1));
 
 		context.ApplyBlockBatch(batch);
 	}
