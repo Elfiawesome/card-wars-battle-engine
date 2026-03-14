@@ -2,6 +2,7 @@ using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data;
+using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
@@ -48,6 +49,7 @@ public class EndTurnRequestEventHandler : IEventHandler<EndTurnRequestEvent>
 		if (currentPlayerId.Value.IsNone)
 		{
 			// Something wrong probably happened, so we advance to the next turn
+			Logger.Error("Current Player Id's value is none. Attempting to fix by advancing to the next turn");
 			context.QueueEvent(new EndTurnRequestEvent());
 		}
 		else
