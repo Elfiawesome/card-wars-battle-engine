@@ -13,6 +13,9 @@ public sealed class IntTag(int value) : DataTag
 	public int Value { get; set; } = value;
 	public override DataTagType Type => DataTagType.Int;
 	public override DataTag Clone() => new IntTag(Value);
+
+	// public static implicit operator int(IntTag v) => v.Value;
+	// public static implicit operator IntTag(int v) => new(v);
 }
 
 public sealed class FloatTag(float value) : DataTag
@@ -20,6 +23,9 @@ public sealed class FloatTag(float value) : DataTag
 	public float Value { get; set; } = value;
 	public override DataTagType Type => DataTagType.Float;
 	public override DataTag Clone() => new FloatTag(Value);
+
+	// public static implicit operator float(FloatTag v) => v.Value;
+	// public static implicit operator FloatTag(float v) => new(v);
 }
 
 public sealed class StringTag(string value) : DataTag
@@ -27,6 +33,9 @@ public sealed class StringTag(string value) : DataTag
 	public string Value { get; set; } = value;
 	public override DataTagType Type => DataTagType.String;
 	public override DataTag Clone() => new StringTag(Value);
+
+	// public static implicit operator string(StringTag v) => v.Value;
+	// public static implicit operator StringTag(string v) => new(v);
 }
 
 public sealed class BoolTag(bool value) : DataTag
@@ -34,6 +43,9 @@ public sealed class BoolTag(bool value) : DataTag
 	public bool Value { get; set; } = value;
 	public override DataTagType Type => DataTagType.Bool;
 	public override DataTag Clone() => new BoolTag(Value);
+
+	// public static implicit operator bool(BoolTag v) => v.Value;
+	// public static implicit operator BoolTag(bool v) => new(v);
 }
 
 public sealed class GuidTag(Guid value) : DataTag
@@ -41,6 +53,9 @@ public sealed class GuidTag(Guid value) : DataTag
 	public Guid Value { get; set; } = value;
 	public override DataTagType Type => DataTagType.Guid;
 	public override DataTag Clone() => new GuidTag(Value);
+
+	// public static implicit operator Guid(GuidTag v) => v.Value;
+	// public static implicit operator GuidTag(Guid v) => new(v);
 }
 
 public sealed class ListTag : DataTag
@@ -55,6 +70,8 @@ public sealed class ListTag : DataTag
 	public ListTag Add(int value) => Add(new IntTag(value));
 	public ListTag Add(string value) => Add(new StringTag(value));
 	public ListTag Add(Guid value) => Add(new GuidTag(value));
+	// public ListTag Add<TEnum>(TEnum value) where TEnum : struct, Enum
+	// 	=> Add(new StringTag(value.ToString()));
 
 	public DataTag? Get(int index) => index >= 0 && index < _items.Count ? _items[index] : null;
 	public T? Get<T>(int index) where T : DataTag => Get(index) as T;
@@ -97,6 +114,8 @@ public sealed class CompoundTag : DataTag
 	public CompoundTag Set(string key, string value) => Set(key, new StringTag(value));
 	public CompoundTag Set(string key, bool value) => Set(key, new BoolTag(value));
 	public CompoundTag Set(string key, Guid value) => Set(key, new GuidTag(value));
+	// public CompoundTag Set<TEnum>(string key, TEnum value) where TEnum : struct, Enum
+	// 	=> Set(key, new StringTag(value.ToString()));
 
 	// --- Typed Getters ---
 
