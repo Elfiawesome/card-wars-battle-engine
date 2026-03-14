@@ -60,9 +60,9 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		// Create a 4 unit slot (3 front row, 1 back unit)
 		for (int i = 0; i < 3; i++)
 		{
-			addUnitSlot(batch, battlefieldId, new(0, -1 + i));
+			addUnitSlot(batch, battlefieldId, new(-1 + i, 0));
 		}
-		addUnitSlot(batch, battlefieldId, new(-1, 1));
+		addUnitSlot(batch, battlefieldId, new(1, -1));
 
 		context.ApplyBlockBatch(batch);
 	}
