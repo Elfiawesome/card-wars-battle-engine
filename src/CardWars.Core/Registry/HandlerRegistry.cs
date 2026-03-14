@@ -26,6 +26,7 @@ public class HandlerRegistry<TContext> : Registry<Type, Action<TContext, IReques
 		where TRequest : IRequest
 	{
 		var requestType = request.GetType();
+		Logger.Debug($"Running handler {request.GetType().Name}");
 		var action = Get(requestType);
 		if (action == null) { Logger.Error($"No handler found for {requestType}"); return; } /* TODO: Bad request*/
 		action.Invoke(context, request);
