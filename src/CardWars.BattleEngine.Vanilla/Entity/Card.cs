@@ -28,7 +28,7 @@ public class GenericCard(EntityId id) : IEntity
 	public int AtkMax => Data.GetInt("atk_max");
 	public int Charge => Data.GetInt("charge"); // Amount of attacks per unit
 	public int ChargeMax => Data.GetInt("charge_max");
-	public ListTag? SpAtk => Data.GetList("sp_atk"); // idk todo later
+	public ListTag SpAtk => Data.GetList("sp_atk") ?? new(); // idk todo later
 	public bool IsFatal => (Hp <= 0) && IsUnit;
 	public bool HasCharge => Charge > 0;
 

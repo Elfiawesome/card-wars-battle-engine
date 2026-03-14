@@ -18,6 +18,7 @@ public class VanillaMod : IBattleEngineMod
 		registry.InputHandlers.Register(new EndTurnRequestInputHandler());
 		registry.InputHandlers.Register(new DrawCardRequestInputHandler());
 		registry.InputHandlers.Register(new UseCardRequestInputHandler());
+		registry.InputHandlers.Register(new AttackRequestInputHandler());
 
 		// --- Event Handlers ---
 		registry.EventHandlers.Register(new PlayerJoinedEventHandler());
@@ -27,6 +28,10 @@ public class VanillaMod : IBattleEngineMod
 		registry.EventHandlers.Register(new DrawCardRequestEventHandler());
 		registry.EventHandlers.Register(new DrawCardEventHandler());
 		registry.EventHandlers.Register(new UseCardRequestEventHandler());
+		registry.EventHandlers.Register(new AttackRequestEventHandler());
+		registry.EventHandlers.Register(new TargetUnitEventHandler());
+		registry.EventHandlers.Register(new UnitAttackEventHandler());
+		
 
 		// --- Block Handlers ---
 		registry.BlockHandlers.Register(new AttachBattlefieldToPlayerBlockHandler());
@@ -75,6 +80,15 @@ public class VanillaMod : IBattleEngineMod
 				.Add(new CompoundTag()
 					.Set("resource", ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour").ToString())
 				))
+			.Set("sp_atk", new ListTag()
+				.Add(new CompoundTag()
+					.Set("name", "Custom SP ATK")
+					.Set("multi_type", "row")
+					.Set("multi_amt", 1)
+					.Set("charge_cost", 1)
+					.Set("amt", 0)
+				)
+			)
 		);
 
 		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/units/elbert"), new CompoundTag()
