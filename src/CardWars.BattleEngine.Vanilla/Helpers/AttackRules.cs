@@ -11,8 +11,8 @@ public static class AttackRules
 	/// </summary>
 	public static bool CanTargetSlot(GameState state, EntityId targetSlotId)
 	{
-		var targetSlot = state.Get<UnitSlot>(targetSlotId);
-		if (targetSlot?.OwnerBattlefieldId == null) return false;
+		if (state.Require<UnitSlot>(targetSlotId) is not { } targetSlot) return false;
+		if (targetSlot.OwnerBattlefieldId == null) return false;
 
 		var battlefield = state.Get<Battlefield>(targetSlot.OwnerBattlefieldId.Value);
 		if (battlefield == null) return false;
@@ -81,8 +81,7 @@ public static class AttackRules
 
 			foreach (var slotId in bf.UnitSlotIds)
 			{
-				var slot = state.Get<UnitSlot>(slotId);
-				if (slot == null) continue;
+				if (state.Require<UnitSlot>(slotId) is not { } slot) continue;
 
 				GenericCard? card = slot.HoldingCardId != null
 					? state.Get<GenericCard>(slot.HoldingCardId.Value)

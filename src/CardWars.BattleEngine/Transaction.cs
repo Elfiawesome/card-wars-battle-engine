@@ -81,7 +81,7 @@ public class Transaction
 				if (result == BehaviourResult.Complete)
 				{
 					exec.Context.CommitStagedBlocks();
-					_behaviourQueue.RemoveAt(0); 
+					_behaviourQueue.RemoveAt(0);
 				}
 				continue;
 			}
@@ -132,8 +132,13 @@ public class Transaction
 			if (behaviour == null) continue;
 
 			var entity = State.Get(entityId);
+			if (entity == null)
+			{
+				Logger.Warn($"Behaviour pointer references missing entity [{entityId}], skipping");
+				continue;
+			}
 			var behaviourContext = new BehaviourContext(this, State, entityId);
-			executions.Add((entity?.BehaviourPriority ?? 0, behaviour, behaviourContext));
+			executions.Add((entity.BehaviourPriority, behaviour, behaviourContext));
 		}
 
 		// Sort by entity priority, then behaviour priority, and queue them

@@ -1,32 +1,25 @@
-﻿using CardWars.BattleEngine;
-using CardWars.BattleEngine.State;
-using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.Core.Data;
+﻿using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Webserver;
 
-var s = new BattleEngineSimulator();
+var sim = new Simulator();
 
-var p1 = s.AddPlayer();
-var p2 = s.AddPlayer();
+sim.Step("Add Player 1", () => sim.AddPlayer("p1"));
+sim.Step("Add Player 2", () => sim.AddPlayer("p2"));
 
-s.DrawCard(p1, s.ListDecks(p1).First().Id);
-s.PlayCard(p1,
-	s.ListHandCards(p1).First().Id,
-	new UnitSlotPos(0, -1)
-);
-s.EndTurn(p1);
+sim.Step("P1 draws a card", () => sim.DrawCard("p1"));
+sim.Step("P1 plays card to (0,-1)", () =>
+	sim.PlayCardToSlot("p1", handIndex: 0, new UnitSlotPos(0, -1)));
+sim.Step("P1 ends turn", () => sim.EndTurn("p1"));
 
-s.DrawCard(p2, s.ListDecks(p1).First().Id);
-s.PlayCard(p2,
-	s.ListHandCards(p2).First().Id,
-	new UnitSlotPos(0, 0)
-);
-s.EndTurn(p2);
+sim.Step("P2 draws a card", () => sim.DrawCard("p2"));
+sim.Step("P2 plays card to (0,0)", () =>
+	sim.PlayCardToSlot("p2", handIndex: 0, new UnitSlotPos(0, -1)));
+sim.Step("P2 ends turn", () => sim.EndTurn("p2"));
 
-s.UnitAttack(p1,
-	s.ListUnitSlots(s.ListBattlefields(p1).First().Id).First((us) => us.HoldingCardId != null).Id,
-	new UnitSlotPos(0, 0)
-);
+sim.Step("P1 attacks (0,-1) → (0,0)", () =>
+	sim.Attack("p1", from: new UnitSlotPos(0, -1), to: new UnitSlotPos(0, -1)));
 
-// --- Debug Dump State ---
-Console.WriteLine(Helper.GameStateDump(s.State));
+
+// sim.PrintBoard("p1");
+// sim.PrintBoard("p2");
+sim.DumpState();

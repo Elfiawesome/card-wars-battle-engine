@@ -1,113 +1,242 @@
+using System.Runtime.CompilerServices;
+using CardWars.BattleEngine;
+using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Logging;
+using VanillaMod = CardWars.BattleEngine.Vanilla.VanillaMod;
 
 namespace CardWars.Webserver;
 
-public class BattleEngineSimulator
+public class Simulator
 {
-	public BattleEngine.BattleEngine Engine { get; init; } = new();
+	public BattleEngine.BattleEngine Engine { get; }
 	public GameState State => Engine.State;
 
-	public BattleEngineSimulator()
+	private readonly Dictionary<string, EntityId> _aliases = new();
+	private int _stepCount;
+
+	public Simulator()
 	{
+		Engine = new();
 		Engine.LoadMod(new VanillaMod());
 	}
 
-	public EntityId AddPlayer()
+	// ═══════════════════════════════════════
+	//  Aliases – refer to entities by name
+	// ═══════════════════════════════════════
+
+	public EntityId Id(string alias)
 	{
-		var playerId = new EntityId(Guid.NewGuid());
-		Engine.HandleInput(Guid.Empty, new PlayerJoinedRequestInput(playerId));
+		if (_aliases.TryGetValue(alias, out var id)) return id;
+		throw new InvalidOperationException(
+			$"Unknown alias '{alias}'. Register it via AddPlayer() or Alias().");
+	}
+
+	public void Alias(string name, EntityId id) => _aliases[name] = id;
+
+	// ═══════════════════════════════════════
+	//  Steps – named, logged actions
+	// ═══════════════════════════════════════
+
+	public void Step(string description, Action action)
+	{
+		_stepCount++;
+		Logger.Info($"┌─ Step {_stepCount}: {description}");
+		try
+		{
+			action();
+			Logger.Info("└─ ✓ OK");
+		}
+		catch (Exception ex)
+		{
+			Logger.Error($"└─ ✗ FAILED: {ex.Message}");
+			throw;
+		}
+	}
+
+	public T Step<T>(string description, Func<T> action)
+	{
+		_stepCount++;
+		Logger.Info($"┌─ Step {_stepCount}: {description}");
+		try
+		{
+			var result = action();
+			Logger.Info($"└─ ✓ → {result}");
+			return result;
+		}
+		catch (Exception ex)
+		{
+			Logger.Error($"└─ ✗ FAILED: {ex.Message}");
+			throw;
+		}
+	}
+
+	// ═══════════════════════════════════════
+	//  Generic Input (escape hatch)
+	// ═══════════════════════════════════════
+
+	/// <summary>Send any IInput as a system-level action (no player check).</summary>
+	public void SendInput(IInput input)
+		=> Engine.HandleInput(EntityId.None, input);
+
+	/// <summary>Send any IInput on behalf of a specific player.</summary>
+	public void SendInput(EntityId playerId, IInput input)
+		=> Engine.HandleInput(playerId, input);
+
+	/// <summary>Send any IInput on behalf of a named player.</summary>
+	public void SendInput(string playerAlias, IInput input)
+		=> SendInput(Id(playerAlias), input);
+
+	// ═══════════════════════════════════════
+	//  Convenience Actions
+	// ═══════════════════════════════════════
+
+	public EntityId AddPlayer(string alias)
+	{
+		var playerId = EntityId.New();
+		Alias(alias, playerId);
+		SendInput(new PlayerJoinedRequestInput(playerId));
 		return playerId;
 	}
 
-	public void DrawCard(EntityId playerId, EntityId DeckId)
+	public void DrawCard(string playerAlias, int deckIndex = 0)
 	{
-		Engine.HandleInput(playerId, new DrawCardRequestInput() { DeckId = DeckId, ReceivedPlayerId = playerId });
-	}
-
-	public IEnumerable<GenericCard> ListHandCards(EntityId playerId)
-	{
-		var player = State.Get<Player>(playerId) ?? throw new Exception($"No player {playerId} found!");
-		foreach (var cardId in player.HandCardIds)
+		var playerId = Id(playerAlias);
+		var deck = Decks(playerAlias).ElementAtOrDefault(deckIndex)
+			?? throw new InvalidOperationException(
+				$"'{playerAlias}' has no deck at index {deckIndex}");
+		SendInput(playerId, new DrawCardRequestInput
 		{
-			var card = State.Get<GenericCard>(cardId);
-			if (card == null) { continue; }
-			yield return card;
-		}
+			DeckId = deck.Id,
+			ReceivedPlayerId = playerId
+		});
 	}
 
-	public IEnumerable<Deck> ListDecks(EntityId playerId)
+	public void PlayCardToSlot(string playerAlias, int handIndex,
+		UnitSlotPos position, int battlefieldIndex = 0)
 	{
-		var player = State.Get<Player>(playerId) ?? throw new Exception($"No player {playerId} found!");
-		foreach (var deckId in player.DeckIds)
+		var playerId = Id(playerAlias);
+		var card = Hand(playerAlias).ElementAtOrDefault(handIndex)
+			?? throw new InvalidOperationException(
+				$"'{playerAlias}' has no card at hand index {handIndex}");
+		var slot = FindEmptySlot(playerAlias, position, battlefieldIndex)
+			?? throw new InvalidOperationException(
+				$"No empty slot at ({position.X}, {position.Y}) for '{playerAlias}'");
+		SendInput(playerId, new UseCardRequestInput
 		{
-			var deck = State.Get<Deck>(deckId);
-			if (deck == null) { continue; }
-			yield return deck;
-		}
+			CardId = card.Id,
+			TargetEntityId = slot.Id
+		});
 	}
 
-	public IEnumerable<Battlefield> ListBattlefields(EntityId playerId)
+	public void Attack(string playerAlias, UnitSlotPos from, UnitSlotPos to)
 	{
-		var player = State.Get<Player>(playerId) ?? throw new Exception($"No player {playerId} found!");
-		foreach (var battlefieldId in player.BattlefieldIds)
+		var playerId = Id(playerAlias);
+		var attackerSlot = FindOccupiedSlot(playerAlias, from)
+			?? throw new InvalidOperationException(
+				$"No unit at ({from.X}, {from.Y}) for '{playerAlias}'");
+		var targetSlot = FindSlotOnOtherPlayers(playerId, to)
+			?? throw new InvalidOperationException(
+				$"No target slot found at ({to.X}, {to.Y})");
+		SendInput(playerId, new AttackRequestInput
 		{
-			var battlefield = State.Get<Battlefield>(battlefieldId);
-			if (battlefield == null) { continue; }
-			yield return battlefield;
-		}
+			AttackerSlotIds = [attackerSlot.Id],
+			TargetSlotId = targetSlot.Id
+		});
 	}
 
-	public IEnumerable<UnitSlot> ListUnitSlots(EntityId battlefieldId)
+	public void EndTurn(string playerAlias)
+		=> SendInput(Id(playerAlias), new EndTurnRequestInput());
+
+	// ═══════════════════════════════════════
+	//  Queries
+	// ═══════════════════════════════════════
+
+	public Player GetPlayer(string alias)
+		=> State.Require<Player>(Id(alias))
+		   ?? throw new InvalidOperationException($"Player '{alias}' not in state");
+
+	public List<GenericCard> Hand(string playerAlias)
+		=> GetPlayer(playerAlias).HandCardIds
+			.Select(id => State.Get<GenericCard>(id))
+			.OfType<GenericCard>().ToList();
+
+	public List<Deck> Decks(string playerAlias)
+		=> GetPlayer(playerAlias).DeckIds
+			.Select(id => State.Get<Deck>(id))
+			.OfType<Deck>().ToList();
+
+	public List<Battlefield> Battlefields(string playerAlias)
+		=> GetPlayer(playerAlias).BattlefieldIds
+			.Select(id => State.Get<Battlefield>(id))
+			.OfType<Battlefield>().ToList();
+
+	public List<UnitSlot> Slots(EntityId battlefieldId)
+		=> (State.Require<Battlefield>(battlefieldId)?.UnitSlotIds ?? [])
+			.Select(id => State.Get<UnitSlot>(id))
+			.OfType<UnitSlot>().ToList();
+
+	public List<UnitSlot> Slots(string playerAlias, int battlefieldIndex = 0)
 	{
-		var battlefield = State.Get<Battlefield>(battlefieldId) ?? throw new Exception($"No battlefield {battlefieldId} found!");
-		foreach (var unitSlotId in battlefield.UnitSlotIds)
+		var bf = Battlefields(playerAlias).ElementAtOrDefault(battlefieldIndex);
+		return bf != null ? Slots(bf.Id) : [];
+	}
+
+	public UnitSlot? FindEmptySlot(string playerAlias, UnitSlotPos pos, int bfIndex = 0)
+		=> Slots(playerAlias, bfIndex)
+			.FirstOrDefault(s => s.Position == pos && s.HoldingCardId == null);
+
+	public UnitSlot? FindOccupiedSlot(string playerAlias, UnitSlotPos pos, int bfIndex = 0)
+		=> Slots(playerAlias, bfIndex)
+			.FirstOrDefault(s => s.Position == pos && s.HoldingCardId != null);
+
+	private UnitSlot? FindSlotOnOtherPlayers(EntityId excludePlayerId, UnitSlotPos pos)
+	{
+		foreach (var player in State.OfType<Player>())
 		{
-			var unitSlot = State.Get<UnitSlot>(unitSlotId);
-			if (unitSlot == null) { continue; }
-			yield return unitSlot;
+			if (player.Id == excludePlayerId) continue;
+			foreach (var bfId in player.BattlefieldIds)
+			{
+				var slot = Slots(bfId).FirstOrDefault(s => s.Position == pos);
+				if (slot != null) return slot;
+			}
 		}
+		return null;
 	}
 
-	public void PlayCard(EntityId playerId, EntityId cardId, UnitSlotPos position = default, EntityId? battlefieldId = null)
-	{
-		if (battlefieldId == null)
-			battlefieldId = ListBattlefields(playerId).First().Id;
-		// Get Unit Slot
-		var unitSlot = ListUnitSlots((EntityId)battlefieldId).FirstOrDefault((us) => us?.Position == position && us.HoldingCardId == null, null);
-		if (unitSlot == null) { return; }
+	// ═══════════════════════════════════════
+	//  Output
+	// ═══════════════════════════════════════
 
-		PlayCard(playerId, cardId, unitSlot.Id);
+	public void DumpState()
+	{
+		Logger.Info("═══ State Dump ═══");
+		Console.WriteLine(Helper.GameStateDump(State));
 	}
 
-	public void PlayCard(EntityId playerId, EntityId cardId, EntityId? targetId = null)
+	public void PrintHand(string playerAlias)
 	{
-		Engine.HandleInput(playerId, new UseCardRequestInput() { CardId = cardId, TargetEntityId = targetId });
+		var cards = Hand(playerAlias);
+		Logger.Info($"── {playerAlias}'s Hand ({cards.Count} cards) ──");
+		for (var i = 0; i < cards.Count; i++)
+			Logger.Info($"  [{i}] {cards[i].Name}  ATK:{cards[i].Atk}  HP:{cards[i].Hp}  PT:{cards[i].Pt}");
 	}
 
-
-	public void UnitAttack(EntityId playerId, EntityId attackerSlotId, UnitSlotPos position = default, EntityId? battlefieldId = null)
+	public void PrintBoard(string playerAlias)
 	{
-		// What the hell, we need to have options for both slots to be position not some id some position smh...
-		if (battlefieldId == null)
-			battlefieldId = ListBattlefields(playerId).First().Id;
-		// Get Unit Slot
-		var unitSlot = ListUnitSlots((EntityId)battlefieldId).FirstOrDefault((us) => us?.Position == position, null);
-		if (unitSlot == null) { return; }
-
-		UnitAttack(playerId, attackerSlotId, unitSlot.Id);
-	}
-
-	public void UnitAttack(EntityId playerId, EntityId attackerSlotId, EntityId targetSlotId)
-	{
-		Engine.HandleInput(playerId, new AttackRequestInput() { AttackerSlotIds = [attackerSlotId], TargetSlotId = targetSlotId });
-	}
-
-	public void EndTurn(EntityId playerId)
-	{
-		Engine.HandleInput(playerId, new EndTurnRequestInput());
+		Logger.Info($"── {playerAlias}'s Board ──");
+		foreach (var slot in Slots(playerAlias)
+					 .OrderBy(s => s.Position.Y).ThenBy(s => s.Position.X))
+		{
+			var card = slot.HoldingCardId != null
+				? State.Get<GenericCard>((EntityId)slot.HoldingCardId) : null;
+			var label = card != null
+				? $"{card.Name}  ATK:{card.Atk}  HP:{card.Hp}"
+				: "[empty]";
+			Logger.Info($"  ({slot.Position.X},{slot.Position.Y}) {label}");
+		}
 	}
 }

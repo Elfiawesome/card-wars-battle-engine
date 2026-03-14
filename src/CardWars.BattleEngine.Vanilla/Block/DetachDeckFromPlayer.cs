@@ -15,9 +15,8 @@ public class DetachDeckFromPlayerBlockHandler : IBlockHandler<DetachDeckFromPlay
 {
 	public void Handle(GameState context, DetachDeckFromPlayerBlock request)
 	{
-		var deck = context.Get<Deck>(request.DeckId);
-		var player = context.Get<Player>(request.PlayerId);
-		if (deck == null || player == null) { return; }
+		if (context.Require<Deck>(request.DeckId) is not { } deck) return;
+		if (context.Require<Player>(request.PlayerId) is not { } player) return;
 
 		if (player.DeckIds.Contains(request.DeckId))
 		{

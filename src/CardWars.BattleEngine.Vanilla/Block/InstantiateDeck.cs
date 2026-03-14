@@ -2,6 +2,7 @@ using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data;
+using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
 
@@ -14,7 +15,10 @@ public class InstantiateDeckBlockHandler : IBlockHandler<InstantiateDeckBlock>
 {
 	public void Handle(GameState context, InstantiateDeckBlock request)
 	{
-		if (context.Get(request.Id) != null) return;
+		if (context.Get(request.Id) != null)
+		{
+			Logger.Warn($"Entity [{request.Id}] already exists, skipping InstantiateDeckBlock"); return;
+		}
 		context.Add(new Deck(request.Id));
 	}
 }

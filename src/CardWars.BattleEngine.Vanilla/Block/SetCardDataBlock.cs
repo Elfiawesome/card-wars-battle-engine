@@ -16,7 +16,7 @@ public class SetCardDataBlockHandler : IBlockHandler<SetCardDataBlock>
 {
 	public void Handle(GameState context, SetCardDataBlock request)
 	{
-		if (context.Get(request.TargetId) is not GenericCard card) return;
+		if (context.Require<GenericCard>(request.TargetId) is not { } card) return;
 		card.Data.SetByPath(request.Path, request.Value);
 	}
 }

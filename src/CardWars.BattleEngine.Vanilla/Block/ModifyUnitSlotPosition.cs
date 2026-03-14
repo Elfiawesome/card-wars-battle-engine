@@ -15,7 +15,7 @@ public class ModifyUnitSlotPositionBlockHandler : IBlockHandler<ModifyUnitSlotPo
 {
 	public void Handle(GameState context, ModifyUnitSlotPositionBlock request)
 	{
-		if (context.Get(request.UnitSlotId) is not UnitSlot unitSlot) return;
+		if (context.Require<UnitSlot>(request.UnitSlotId) is not { } unitSlot) return;
 		unitSlot.Position = request.Position;
 	}
 }

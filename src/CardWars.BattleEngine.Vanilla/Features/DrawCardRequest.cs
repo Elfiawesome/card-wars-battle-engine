@@ -5,6 +5,7 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data;
+using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
@@ -19,8 +20,7 @@ public class DrawCardRequestInputHandler : IInputHandler<DrawCardRequestInput>
 {
 	public void Handle(InputContext context, DrawCardRequestInput request)
 	{
-		var deck = context.Transaction.State.Get<Deck>(request.DeckId);
-		if (deck == null) return;
+		if (context.Transaction.State.Require<Deck>(request.DeckId) is not { } deck) return;
 		context.Transaction.QueueEvent(new DrawCardRequestEvent() { PlayerId = request.ReceivedPlayerId, DeckId = request.DeckId });
 	}
 }
@@ -38,13 +38,13 @@ public class DrawCardRequestEventHandler : IEventHandler<DrawCardRequestEvent>
 {
 	public void Handle(Transaction context, DrawCardRequestEvent request)
 	{
-		var deck = context.State.Get<Deck>(request.DeckId);
-		if (deck == null) return;
+		if (context.State.Require<Player>(request.PlayerId) is not { } player) return;
+		if (context.State.Require<Deck>(request.DeckId) is not { } deck) return;
 
 		var batch = new BlockBatch([]);
 
 		var cardId = deck.CardIds.FirstOrDefault(EntityId.None);
-		if (cardId == EntityId.None) { return; /* Deck is empty*/ }
+		if (cardId == EntityId.None) { Logger.Warn($"Deck [{request.DeckId}] is empty, cannot draw"); return; }
 
 		batch.Blocks.Add(new DetachCardFromDeckBlock(request.DeckId, cardId));
 		batch.Blocks.Add(new AttachCardToPlayerBlock(request.PlayerId, cardId));

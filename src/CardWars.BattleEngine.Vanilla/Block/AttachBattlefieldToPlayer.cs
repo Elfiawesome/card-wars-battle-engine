@@ -15,9 +15,8 @@ public class AttachBattlefieldToPlayerBlockHandler : IBlockHandler<AttachBattlef
 {
 	public void Handle(GameState context, AttachBattlefieldToPlayerBlock request)
 	{
-		var player = context.Get<Player>(request.PlayerId);
-		var battlefield = context.Get<Battlefield>(request.BattlefieldId);
-		if (player == null || battlefield == null) { return; }
+		if (context.Require<Player>(request.PlayerId) is not { } player) return;
+		if (context.Require<Battlefield>(request.BattlefieldId) is not { } battlefield) return;
 
 		if (player.BattlefieldIds.Contains(request.BattlefieldId)) { return; }
 		player.BattlefieldIds.Add(request.BattlefieldId);

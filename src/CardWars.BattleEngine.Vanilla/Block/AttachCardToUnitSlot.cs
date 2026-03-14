@@ -15,9 +15,8 @@ public class AttachCardToUnitSlotBlockHandler : IBlockHandler<AttachCardToUnitSl
 {
 	public void Handle(GameState context, AttachCardToUnitSlotBlock request)
 	{
-		var unitSlot = context.Get<UnitSlot>(request.UnitSlotId);
-		var card = context.Get<GenericCard>(request.CardId);
-		if (unitSlot == null || card == null) { return; }
+		if (context.Require<UnitSlot>(request.UnitSlotId) is not { } unitSlot) return;
+		if (context.Require<GenericCard>(request.CardId) is not { } card) return;
 
 		if (unitSlot.HoldingCardId != null) { return; }
 		unitSlot.HoldingCardId = request.CardId;

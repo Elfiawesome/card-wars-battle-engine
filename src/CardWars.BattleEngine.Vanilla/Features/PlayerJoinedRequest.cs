@@ -4,6 +4,7 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data;
+using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
@@ -16,7 +17,7 @@ public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequest
 {
 	public void Handle(InputContext context, PlayerJoinedRequestInput request)
 	{
-		if (context.Transaction.State.Get(request.Id) != null) return;
+		if (context.Transaction.State.Get(request.Id) != null) { Logger.Warn($"Player [{request.Id}] already exists, ignoring join request"); return; }
 		BlockBatch batch = new([]);
 		batch.Blocks.Add(new InstantiatePlayerBlock(request.Id));
 

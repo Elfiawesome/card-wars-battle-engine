@@ -15,9 +15,8 @@ public class DetachUnitSlotFromBattlefieldBlockHandler : IBlockHandler<DetachUni
 {
 	public void Handle(GameState context, DetachUnitSlotFromBattlefieldBlock request)
 	{
-		var battlefield = context.Get<Battlefield>(request.BattlefieldId);
-		var unitSlot = context.Get<UnitSlot>(request.UnitSlotId);
-		if (battlefield == null || unitSlot == null) { return; }
+		if (context.Require<Battlefield>(request.BattlefieldId) is not { } battlefield) return;
+		if (context.Require<UnitSlot>(request.UnitSlotId) is not { } unitSlot) return;
 
 		if (battlefield.UnitSlotIds.Contains(request.UnitSlotId))
 		{

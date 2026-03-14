@@ -28,6 +28,9 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 
 	public void Handle(Transaction context, PlayerJoinedEvent request)
 	{
+		// Make sure we don't re-create a player with the same id
+		if (context.State.Require<Player>(request.PlayerId) is not { } player) return;
+		
 		var batch = new BlockBatch([]);
 
 		// Create new deck

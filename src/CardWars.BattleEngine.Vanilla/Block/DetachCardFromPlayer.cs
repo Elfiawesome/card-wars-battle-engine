@@ -15,9 +15,8 @@ public class DetachCardFromPlayerBlockHandler : IBlockHandler<DetachCardFromPlay
 {
 	public void Handle(GameState context, DetachCardFromPlayerBlock request)
 	{
-		var player = context.Get<Player>(request.PlayerId);
-		var card = context.Get<GenericCard>(request.CardId);
-		if (player == null || card == null) { return; }
+		if (context.Require<Player>(request.PlayerId) is not { } player) return;
+		if (context.Require<GenericCard>(request.CardId) is not { } card) return;
 
 		if (player.HandCardIds.Contains(request.CardId))
 		{

@@ -30,6 +30,14 @@ public class SummonUnitCardToUnitSlotBehaviour : Behaviour<UseCardRequestEvent>
 				batch.Blocks.Add(new AttachCardToUnitSlotBlock(unitSlot.Id, card.Id));
 				Logger.Debug("We want to summon this unit " + context.OwnerEntityId + " to slot " + evnt.TargetEntityId);
 			}
+			else
+			{
+				Logger.Warn("Could not resolve SummonUnitCardToUnitSlotBehaviour due to UnitSlot not being empty");
+			}
+		}
+		else
+		{
+			Logger.Warn("Could not resolve SummonUnitCardToUnitSlotBehaviour due to empty/null TargetEntityId");
 		}
 
 		context.StageBlocks(batch);

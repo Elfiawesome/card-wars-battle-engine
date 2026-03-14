@@ -21,27 +21,23 @@ public class AttackRequestInputHandler : IInputHandler<AttackRequestInput>
 		var state = context.Transaction.State;
 
 		// Check if only on attacking turn
-		if (state.Turn.Phase != TurnPhase.Attacking) { Logger.Error("Tried to run a attack request not in attacking phase"); return; }
+		if (state.Turn.Phase != TurnPhase.Attacking) { Logger.Error("Attack request rejected: not in Attacking phase"); return; }
 
 		// Check if Targeted Unit Slot is valid
-		var targetSlot = state.Get<UnitSlot>(request.TargetSlotId);
-		if (targetSlot == null) { return; }
+		if (state.Require<UnitSlot>(request.TargetSlotId) is not { } targetSlot) return;
 
 		// Check if Targeted Unit is valid
-		if (targetSlot.HoldingCardId == null) { return; }
-		var targetCard = state.Get<GenericCard>((EntityId)targetSlot.HoldingCardId);
-		if (targetCard == null) { return; }
+		if (targetSlot.HoldingCardId == null) { Logger.Error("Target Unit Slot does not have any holding card id"); return; }
+		if (state.Require<GenericCard>((EntityId)targetSlot.HoldingCardId) is not { } targetCard) return;
 
 		foreach (var attackerSlotId in request.AttackerSlotIds)
 		{
 			// Check if Attacker Unit Slot is valid
-			var attackerSlot = state.Get<UnitSlot>(attackerSlotId);
-			if (attackerSlot == null) { continue; }
+			if (state.Require<UnitSlot>(attackerSlotId) is not { } attackerSlot) continue;
 
 			// Check if Attacker Unit is valid
-			if (attackerSlot.HoldingCardId == null) { continue; }
-			var attackerCard = state.Get<GenericCard>((EntityId)attackerSlot.HoldingCardId);
-			if (attackerCard == null) { return; }
+			if (attackerSlot.HoldingCardId == null) { Logger.Error("One of Attacker's Unit Slot does not have any holding card id"); continue; }
+			if (state.Require<GenericCard>((EntityId)attackerSlot.HoldingCardId) is not { } attackerCard) continue;
 
 			context.Transaction.QueueEvent(new AttackRequestEvent() { AttackerId = attackerCard.Id, TargetId = targetCard.Id });
 		}
@@ -101,16 +97,9 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 		var state = context.State;
 
 		// Check if Attacker & Target Unit are valid
-		var attackerCard = state.Get<GenericCard>(request.AttackerId);
-		var targetCard = state.Get<GenericCard>(request.TargetId);
-		if (attackerCard == null || targetCard == null) { return; }
-		if (targetCard.OwnerUnitSlotId == null) { return; }
-
-
-		// void HandleSPAtk()
-		// {
-		// 	Logger.Custom($"{context}");
-		// }
+		if (state.Require<GenericCard>(request.AttackerId) is not { } attackerCard) return;
+		if (state.Require<GenericCard>(request.TargetId) is not { } targetCard) return;
+		if (targetCard.OwnerUnitSlotId == null) { Logger.Error("Target Card is not on any OwnerUnitSlotId"); return; }
 
 		// Check if the attacker has SP Atk
 		for (int i = 0; i < attackerCard.SpAtk.Count; i++)
@@ -124,14 +113,11 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 			var chargeCost = spAtk.Get<IntTag>("charge_cost") ?? new IntTag(1);
 			var amt = spAtk.Get<IntTag>("amt") ?? new IntTag(attackerCard.Atk);
 
-			Logger.Custom($"{name.Value}");
-			Logger.Custom($"{multiType.Value}");
-			Logger.Custom($"{multiAmt.Value}");
-			Logger.Custom($"{chargeCost.Value}");
-			Logger.Custom($"{amt.Value}");
+			Logger.Debug($"SpAtk '{name.Value}': pattern={multiType.Value} amt={amt.Value} " +
+				 $"multiAmt={multiAmt.Value} charge={chargeCost.Value}");
 
-			var unitSlotsTargetted = SlotTargetResolver.Resolve(state, (EntityId)targetCard.OwnerUnitSlotId, multiType.Value);
-			unitSlotsTargetted.ForEach((s) => Logger.Custom("-->" + s.ToString()));
+			var affected = SlotTargetResolver.Resolve(state, (EntityId)targetCard.OwnerUnitSlotId, multiType.Value);
+			Logger.Debug($"Targeted slots: [{string.Join(", ", affected)}]");
 		}
 
 		AttackRules.CanTargetSlot(state, (EntityId)targetCard.OwnerUnitSlotId);

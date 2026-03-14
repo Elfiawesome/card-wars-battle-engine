@@ -2,6 +2,7 @@ using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data;
+using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
 
@@ -15,7 +16,11 @@ public class InstantiateCardBlockHandler : IBlockHandler<InstantiateCardBlock>
 {
 	public void Handle(GameState context, InstantiateCardBlock request)
 	{
-		if (context.Get(request.Id) != null) return;
+		if (context.Get(request.Id) != null)
+		{
+			Logger.Warn($"Entity [{request.Id}] already exists, skipping InstantiateCardBlock"); return;
+		}
+
 		var card = new GenericCard(request.Id);
 		if (request.Data != null)
 			card.Data = (CompoundTag)request.Data.Clone();
