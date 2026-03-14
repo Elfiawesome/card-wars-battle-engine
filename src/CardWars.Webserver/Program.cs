@@ -1,5 +1,5 @@
 ﻿using CardWars.BattleEngine;
-using CardWars.Core.Logger;
+using CardWars.Core.Logging;
 using CardWars.Webserver;
 
 var s = new BattleEngineSimulator();
@@ -24,4 +24,4 @@ s.DrawCard(p2, s.ListDecks(p2).First().Id);
 // );
 
 // --- Debug Dump State ---
-Console.WriteLine(Helper.GameStateDump(s.State));
+Logger.Info(Helper.GameStateDump(s.State));

@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine;
 
@@ -33,6 +34,10 @@ public class Transaction
 			{
 				Registry.InputHandlers.Execute(new InputContext(this, playerId), input);
 			}
+			else
+			{
+				Logger.Error($"Input received cannot be processed because the attached Player Id [{playerId}] is not allowed to be processed. Could be because AllowedPlayerInputs does not contain it.");
+			}
 		}
 
 		// Process until end
@@ -44,7 +49,7 @@ public class Transaction
 		foreach (var block in batch.Blocks ?? [])
 		{
 			Registry.BlockHandlers.Execute(State, block);
-			Console.WriteLine($"Executing Block [{block.GetType().Name}]: {Helper.SerializeBlock(block)}");
+			Logger.Debug($"Executing Block [{block.GetType().Name}]: {Helper.SerializeBlock(block)}");
 		}
 		OnBlockBatchEvent?.Invoke(batch);
 	}
@@ -104,6 +109,7 @@ public class Transaction
 		// Cleanup if infinite loop
 		if (count > ProcessStackLimit)
 		{
+			Logger.Error($"Game process stack exceeded stack limit of {ProcessStackLimit}");
 			_eventQueue.Clear();
 			_behaviourQueue.Clear();
 			_activeEvent = null;

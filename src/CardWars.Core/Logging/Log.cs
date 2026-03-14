@@ -1,4 +1,4 @@
-namespace CardWars.Core.Logger;
+namespace CardWars.Core.Logging;
 
 public static class Logger
 {

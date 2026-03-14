@@ -1,3 +1,4 @@
+using CardWars.Core.Logging;
 using CardWars.Core.Request;
 
 namespace CardWars.Core.Registry;
@@ -14,7 +15,9 @@ public class HandlerRegistry<TContext> : Registry<Type, Action<TContext, IReques
 			{
 				handler.Handle(context, specificReqeust);
 			}
-			else { /* TODO: Bad request... */ }
+			else { 
+				Logger.Error($"Handler for {typeof(TRequest)} received a request of type {request.GetType()}");
+			}
 		};
 		base.Register(typeof(TRequest), action);
 	}
@@ -24,7 +27,7 @@ public class HandlerRegistry<TContext> : Registry<Type, Action<TContext, IReques
 	{
 		var requestType = request.GetType();
 		var action = Get(requestType);
-		if (action == null) { Console.WriteLine($"No handler found for {requestType}"); return; } /* TODO: Bad request*/
+		if (action == null) { Logger.Error($"No handler found for {requestType}"); return; } /* TODO: Bad request*/
 		action.Invoke(context, request);
 	}
 }
