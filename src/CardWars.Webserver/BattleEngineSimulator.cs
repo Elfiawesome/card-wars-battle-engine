@@ -22,13 +22,9 @@ public class BattleEngineSimulator
 		return playerId;
 	}
 
-	public void DrawCard(EntityId playerId, EntityId? DeckId = null)
+	public void DrawCard(EntityId playerId, EntityId DeckId)
 	{
-		if (DeckId == null)
-		{
-			DeckId = State.OfType<Deck>().First().Id;
-		}
-		Engine.HandleInput(playerId, new DrawCardRequestInput() { DeckId = DeckId ?? EntityId.None, ReceivedPlayerId = playerId });
+		Engine.HandleInput(playerId, new DrawCardRequestInput() { DeckId = DeckId, ReceivedPlayerId = playerId });
 	}
 
 	public IEnumerable<GenericCard> ListHandCards(EntityId playerId)
@@ -78,5 +74,10 @@ public class BattleEngineSimulator
 	public void PlayCard(EntityId playerId, EntityId cardId, EntityId? targetId = null)
 	{
 		Engine.HandleInput(playerId, new UseCardRequestInput() { CardId = cardId, TargetEntityId = targetId });
+	}
+
+	public void UnitAttack(EntityId playerId, EntityId attackerId, EntityId targetId)
+	{
+		Engine.HandleInput(playerId, new AttackRequestInput() { AttackerIds = [attackerId], TargetId = targetId });
 	}
 }
