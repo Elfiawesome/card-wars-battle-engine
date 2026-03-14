@@ -130,7 +130,7 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 			Logger.Custom($"{chargeCost.Value}");
 			Logger.Custom($"{amt.Value}");
 
-			var unitSlotsTargetted = MultiUnitSlotTargetSystem.ListUnitSlots(state, (EntityId)targetCard.OwnerUnitSlotId, multiType.Value);
+			var unitSlotsTargetted = SlotTargetResolver.Resolve(state, (EntityId)targetCard.OwnerUnitSlotId, multiType.Value);
 			unitSlotsTargetted.ForEach((s) => Logger.Custom("-->" + s.ToString()));
 		}
 
