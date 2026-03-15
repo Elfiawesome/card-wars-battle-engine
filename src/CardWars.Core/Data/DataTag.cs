@@ -14,6 +14,19 @@ public sealed class IntTag(int value) : DataTag
 	public override DataTagType Type => DataTagType.Int;
 	public override DataTag Clone() => new IntTag(Value);
 
+	// Operator overload
+	public static IntTag operator +(IntTag v1, IntTag v2) => new(v1.Value + v2.Value);
+	public static IntTag operator -(IntTag v1, IntTag v2) => new(v1.Value - v2.Value);
+	public static IntTag operator *(IntTag v1, IntTag v2) => new(v1.Value * v2.Value);
+	public static IntTag operator /(IntTag v1, IntTag v2) => new(v1.Value / v2.Value);
+	public static IntTag operator ++(IntTag v1) { v1.Value += 1; return v1; }
+	public static IntTag operator --(IntTag v1) { v1.Value -= 1; return v1; }
+
+	public static IntTag operator +(IntTag v1, int v2) => new(v1.Value + v2);
+	public static IntTag operator -(IntTag v1, int v2) => new(v1.Value - v2);
+	public static IntTag operator *(IntTag v1, int v2) => new(v1.Value * v2);
+	public static IntTag operator /(IntTag v1, int v2) => new(v1.Value / v2);
+
 	// public static implicit operator int(IntTag v) => v.Value;
 	// public static implicit operator IntTag(int v) => new(v);
 }
@@ -23,6 +36,19 @@ public sealed class FloatTag(float value) : DataTag
 	public float Value { get; set; } = value;
 	public override DataTagType Type => DataTagType.Float;
 	public override DataTag Clone() => new FloatTag(Value);
+
+	// Operator overload
+	public static FloatTag operator +(FloatTag v1, FloatTag v2) => new(v1.Value + v2.Value);
+	public static FloatTag operator -(FloatTag v1, FloatTag v2) => new(v1.Value - v2.Value);
+	public static FloatTag operator *(FloatTag v1, FloatTag v2) => new(v1.Value * v2.Value);
+	public static FloatTag operator /(FloatTag v1, FloatTag v2) => new(v1.Value / v2.Value);
+	public static FloatTag operator ++(FloatTag v1) { v1.Value += 1; return v1; }
+	public static FloatTag operator --(FloatTag v1) { v1.Value -= 1; return v1; }
+
+	public static FloatTag operator +(FloatTag v1, float v2) => new(v1.Value + v2);
+	public static FloatTag operator -(FloatTag v1, float v2) => new(v1.Value - v2);
+	public static FloatTag operator *(FloatTag v1, float v2) => new(v1.Value * v2);
+	public static FloatTag operator /(FloatTag v1, float v2) => new(v1.Value / v2);
 
 	// public static implicit operator float(FloatTag v) => v.Value;
 	// public static implicit operator FloatTag(float v) => new(v);
@@ -34,6 +60,12 @@ public sealed class StringTag(string value) : DataTag
 	public override DataTagType Type => DataTagType.String;
 	public override DataTag Clone() => new StringTag(Value);
 
+	// Operator overload
+	public static StringTag operator +(StringTag v1, StringTag v2) => new(v1.Value + v2.Value);
+	public static StringTag operator ++(StringTag v1) { v1.Value += 1; return v1; }
+
+	public static StringTag operator +(StringTag v1, string v2) => new(v1.Value + v2);
+
 	// public static implicit operator string(StringTag v) => v.Value;
 	// public static implicit operator StringTag(string v) => new(v);
 }
@@ -43,6 +75,10 @@ public sealed class BoolTag(bool value) : DataTag
 	public bool Value { get; set; } = value;
 	public override DataTagType Type => DataTagType.Bool;
 	public override DataTag Clone() => new BoolTag(Value);
+
+	// Operator overload
+	public static bool operator true(BoolTag v1) => v1.Value;
+	public static bool operator false(BoolTag v1) => v1.Value;
 
 	// public static implicit operator bool(BoolTag v) => v.Value;
 	// public static implicit operator BoolTag(bool v) => new(v);
@@ -75,6 +111,7 @@ public sealed class ListTag : DataTag
 
 	public DataTag? Get(int index) => index >= 0 && index < _items.Count ? _items[index] : null;
 	public T? Get<T>(int index) where T : DataTag => Get(index) as T;
+	public T Get<T>(int index, T defaultValue) where T : DataTag => Get(index) as T ?? defaultValue;
 	public void Set(int index, DataTag tag) { if (index >= 0 && index < _items.Count) _items[index] = tag; }
 	public bool RemoveAt(int index)
 	{
@@ -103,6 +140,8 @@ public sealed class CompoundTag : DataTag
 
 	public DataTag? Get(string key) => _entries.GetValueOrDefault(key);
 	public T? Get<T>(string key) where T : DataTag => Get(key) as T;
+	public T Get<T>(string key, T defaultValue) where T : DataTag => Get(key) as T ?? defaultValue;
+
 	public bool Has(string key) => _entries.ContainsKey(key);
 	public bool Remove(string key) => _entries.Remove(key);
 

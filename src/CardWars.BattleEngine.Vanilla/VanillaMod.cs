@@ -2,6 +2,7 @@
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data;
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla;
@@ -31,7 +32,8 @@ public class VanillaMod : IBattleEngineMod
 		registry.EventHandlers.Register(new AttackRequestEventHandler());
 		registry.EventHandlers.Register(new TargetUnitEventHandler());
 		registry.EventHandlers.Register(new UnitAttackEventHandler());
-		
+		registry.EventHandlers.Register(new UnitTakeDamageEventHandler());
+
 
 		// --- Block Handlers ---
 		registry.BlockHandlers.Register(new AttachBattlefieldToPlayerBlockHandler());
@@ -71,24 +73,24 @@ public class VanillaMod : IBattleEngineMod
 			.Set("pt", 2)
 			.Set("hp", 6)
 			.Set("atk", 4)
+			.Set("intrinsic_behaviours", new ListTag()
+				.Add(new CompoundTag()
+					.Set("resource", ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour").ToString())
+				))
+			// .Set("sp_atk", new ListTag()
+			// 	.Add(new CompoundTag()
+			// 		.Set("name", "Custom SP ATK")
+			// 		.Set("multi_type", "row")
+			// 		.Set("multi_amt", 1)
+			// 		.Set("charge_cost", 1)
+			// 		.Set("amt", 0)
+			// 	)
+			// )
 			// .Set("abilities", new ListTag()
 			// 	.Add(new CompoundTag()
 			// 		.Set("description", "A special ability for this unit")
 			// 		.Set("behaviour", new CompoundTag()
 			// 			.Set("resource", "cardwars:some_behaviour"))))
-			.Set("intrinsic_behaviours", new ListTag()
-				.Add(new CompoundTag()
-					.Set("resource", ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour").ToString())
-				))
-			.Set("sp_atk", new ListTag()
-				.Add(new CompoundTag()
-					.Set("name", "Custom SP ATK")
-					.Set("multi_type", "row")
-					.Set("multi_amt", 1)
-					.Set("charge_cost", 1)
-					.Set("amt", 0)
-				)
-			)
 		);
 
 		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/units/elbert"), new CompoundTag()

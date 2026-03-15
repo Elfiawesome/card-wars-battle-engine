@@ -1,6 +1,8 @@
+using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Helpers;
 using CardWars.Core.Data;
@@ -96,30 +98,101 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 	{
 		var state = context.State;
 
+		BlockBatch batch = new([]);
+
 		// Check if Attacker & Target Unit are valid
 		if (state.Require<GenericCard>(request.AttackerId) is not { } attackerCard) return;
 		if (state.Require<GenericCard>(request.TargetId) is not { } targetCard) return;
 		if (targetCard.OwnerUnitSlotId == null) { Logger.Error("Target Card is not on any OwnerUnitSlotId"); return; }
 
-		// Check if the attacker has SP Atk
-		for (int i = 0; i < attackerCard.SpAtk.Count; i++)
+		if (attackerCard.SpAtk.Count > 0)
 		{
-			var spAtk = attackerCard.SpAtk.Get<CompoundTag>(i);
-			if (spAtk == null) { continue; }
-			// Get SP Atk details
-			var name = spAtk.Get<StringTag>("name") ?? new StringTag("Default");
-			var multiType = spAtk.Get<StringTag>("multi_type") ?? new StringTag("");
-			var multiAmt = spAtk.Get<IntTag>("multi_amt") ?? new IntTag(attackerCard.Atk);
-			var chargeCost = spAtk.Get<IntTag>("charge_cost") ?? new IntTag(1);
-			var amt = spAtk.Get<IntTag>("amt") ?? new IntTag(attackerCard.Atk);
+			// SP Atk
+			for (int i = 0; i < attackerCard.SpAtk.Count; i++)
+			{
+				var spAtk = attackerCard.SpAtk.Get<CompoundTag>(i);
+				if (spAtk == null) { continue; }
+				// Get SP Atk details
+				var name = spAtk.Get<StringTag>("name") ?? new StringTag("Default");
+				var multiType = spAtk.Get<StringTag>("multi_type") ?? new StringTag("");
+				var multiAmt = spAtk.Get<IntTag>("multi_amt") ?? new IntTag(attackerCard.Atk);
+				var chargeCost = spAtk.Get<IntTag>("charge_cost") ?? new IntTag(1);
+				var amt = spAtk.Get<IntTag>("amt") ?? new IntTag(attackerCard.Atk);
 
-			Logger.Debug($"SpAtk '{name.Value}': pattern={multiType.Value} amt={amt.Value} " +
-				 $"multiAmt={multiAmt.Value} charge={chargeCost.Value}");
+				Logger.Debug($"SpAtk '{name.Value}': pattern={multiType.Value} amt={amt.Value} " +
+					 $"multiAmt={multiAmt.Value} charge={chargeCost.Value}");
 
-			var affected = SlotTargetResolver.Resolve(state, (EntityId)targetCard.OwnerUnitSlotId, multiType.Value);
-			Logger.Debug($"Targeted slots: [{string.Join(", ", affected)}]");
+				var affected = SlotTargetResolver.Resolve(state, (EntityId)targetCard.OwnerUnitSlotId, multiType.Value);
+				Logger.Debug($"Targeted slots: [{string.Join(", ", affected)}]");
+
+				var charge = targetCard.Data.Get<IntTag>("charge", new IntTag(0));
+				if (charge.Value > 0)
+				{
+					charge -= 1;
+					batch.Blocks.Add(new SetCardDataBlock(targetCard.Id, "charge", charge));
+					context.QueueEvent(new UnitTakeDamageEvent()
+					{
+						Amt = attackerCard.Atk,
+						DamagedUnitId = targetCard.Id,
+						EntitySourceId = attackerCard.Id,
+						IsSPAtk = true
+					});
+				}
+				else
+				{
+					Logger.Warn("Tried to attack with no charge");
+				}
+			}
 		}
+		else
+		{
+			// BA Atk
+			if (AttackRules.CanTargetSlot(state, (EntityId)targetCard.OwnerUnitSlotId))
+			{
+				Logger.Custom("Attacking successful!");
+				var charge = targetCard.Data.Get<IntTag>("charge", new IntTag(0));
+				if (charge.Value > 0)
+				{
+					charge -= 1;
+					batch.Blocks.Add(new SetCardDataBlock(targetCard.Id, "charge", charge));
+					context.QueueEvent(new UnitTakeDamageEvent()
+					{
+						Amt = attackerCard.Atk,
+						DamagedUnitId = targetCard.Id,
+						EntitySourceId = attackerCard.Id,
+						IsSPAtk = true
+					});
+				}
+				else
+				{
+					Logger.Warn("Tried to attack with no charge");
+				}
 
-		AttackRules.CanTargetSlot(state, (EntityId)targetCard.OwnerUnitSlotId);
+			}
+			else
+			{
+				Logger.Custom("Attacking faill!");
+			}
+		}
+		context.ApplyBlockBatch(batch);
+	}
+}
+
+
+public class UnitTakeDamageEvent : IEvent
+{
+	[DataTag] public int Amt { get; set; }
+	[DataTag] public EntityId DamagedUnitId { get; set; }
+	[DataTag] public EntityId? EntitySourceId { get; set; }
+	[DataTag] public bool IsSPAtk { get; set; } = false;
+}
+
+public class UnitTakeDamageEventHandler : IEventHandler<UnitTakeDamageEvent>
+{
+	public void Handle(Transaction context, UnitTakeDamageEvent request)
+	{
+		if (context.State.Require<GenericCard>(request.DamagedUnitId) is not { } targetCard) return;
+		var newHp = new IntTag(targetCard.Hp - request.Amt);
+		context.ApplyBlockBatch(new BlockBatch([new SetCardDataBlock(request.DamagedUnitId, "hp", newHp)]));
 	}
 }

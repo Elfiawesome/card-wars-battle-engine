@@ -30,7 +30,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 	{
 		// Make sure we don't re-create a player with the same id
 		if (context.State.Require<Player>(request.PlayerId) is not { } player) return;
-		
+
 		var batch = new BlockBatch([]);
 
 		// Create new deck
@@ -43,6 +43,28 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		{
 			var def = context.Registry.CardDefinitions.Get(defId);
 			var cardId = EntityId.New();
+
+			// Add other data in a card that may not exist
+			if (def != null)
+			{
+				switch (def.GetString("card_type"))
+				{
+					case "unit":
+						if (!def.Has("hp_max")) def.Set("hp_max", def.GetInt("hp"));
+						if (!def.Has("atk_max")) def.Set("atk_max", def.GetInt("atk"));
+						if (!def.Has("pt_max")) def.Set("pt_max", def.GetInt("pt"));
+						if (!def.Has("charge")) def.Set("charge", 1);
+						if (!def.Has("charge_max")) def.Set("charge_max", def.GetInt("charge"));
+						break;
+					case "spell":
+						break;
+					case "hero":
+						if (!def.Has("hrt")) def.Set("hrt", 0);
+						if (!def.Has("hrt_max")) def.Set("hrt_max", def.GetInt("hrt"));
+						break;
+				}
+			}
+
 			batch.Blocks.Add(new InstantiateCardBlock(cardId, def));
 			batch.Blocks.Add(new AttachCardToDeckBlock(deckId, cardId));
 		}
