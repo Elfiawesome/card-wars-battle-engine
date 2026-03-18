@@ -7,16 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CardWars.BattleEngine\CardWars.BattleEngine.csproj" />
+    <ProjectReference Include="..\CardWars.Client\CardWars.Client.csproj" />
   </ItemGroup>
-
 
   <Target Name="CopyModToVanillaFolder" AfterTargets="Build">
     <ItemGroup>
       <ModOutputFiles Include="$(TargetDir)$(TargetName).dll" />
       <ModOutputFiles Include="$(TargetDir)$(TargetName).pdb" />
     </ItemGroup>
-    <Message Text="Copying BattleEngine Vanilla Mod to mods folder..." Importance="high" />
+    <Message Text="Copying Client Vanilla Mod to mods folder..." Importance="high" />
     <Copy SourceFiles="@(ModOutputFiles)" DestinationFolder="$(MSBuildProjectDirectory)\..\..\mods\vanilla\code\" />
   </Target>
+  
 </Project>

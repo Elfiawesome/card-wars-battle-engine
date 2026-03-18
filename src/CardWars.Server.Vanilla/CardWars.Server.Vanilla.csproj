@@ -10,4 +10,12 @@
     <ProjectReference Include="..\CardWars.Server\CardWars.Server.csproj" />
   </ItemGroup>
 
+  <Target Name="CopyModToVanillaFolder" AfterTargets="Build">
+    <ItemGroup>
+      <ModOutputFiles Include="$(TargetDir)$(TargetName).dll" />
+      <ModOutputFiles Include="$(TargetDir)$(TargetName).pdb" />
+    </ItemGroup>
+    <Message Text="Copying Server Vanilla Mod to mods folder..." Importance="high" />
+    <Copy SourceFiles="@(ModOutputFiles)" DestinationFolder="$(MSBuildProjectDirectory)\..\..\mods\vanilla\code\" />
+  </Target>
 </Project>

@@ -1,6 +1,10 @@
 .vscode/
 .tools/
 
+# Exclude build mods in vanilla folder
+**.dll
+**.pdb
+
 # Godot 4+ specific ignores
 .godot/
 /android/

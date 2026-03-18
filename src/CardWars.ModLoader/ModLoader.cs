@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using System.Runtime.Loader;
+using CardWars.Core.Logging;
 
 namespace CardWars.ModLoader;
 
@@ -15,19 +17,32 @@ public class LoadedMod
 
 public class ModLoader
 {
-	private string _modDir;
+	private readonly string _modDir;
 	private Dictionary<string, LoadedMod> _mods = [];
 	private readonly List<string> _loadOrder = [];
 
 	public ModLoader(string modDir)
 	{
 		_modDir = modDir;
+		// There are 3 stages for mod loader to work
+		// 1. Discover Mods from a directory (This will load the manifest and store them, for loading compatabilities and versioning)
+		// 2. Resolve Dependencies. This to ensure all mods have their dependencies. Then sort by load order
+		// 3. Load Assemblies. By load order, we load the assembly for each dll
+		// 4. Then we can get each mod entry from each assembly
+	}
+
+	public void Setup()
+	{
+		DiscoverMods();
+		ResolveDependencies();
+		LoadAssemblies();
 	}
 
 	public void DiscoverMods()
 	{
 		foreach (var dir in Directory.GetDirectories(_modDir))
 		{
+			Logger.Info("Found mod in " + dir);
 			var manifestPath = Path.Combine(dir, "mod.json");
 			var manifest = ModManifest.Load(manifestPath);
 			_mods[manifest.Id] = new()
@@ -79,24 +94,29 @@ public class ModLoader
 
 	public void LoadAssemblies()
 	{
+		var loadContext = AssemblyLoadContext.GetLoadContext(typeof(ModLoader).Assembly) ?? AssemblyLoadContext.Default;
+
 		foreach (var modId in _loadOrder)
 		{
 			var mod = _mods[modId];
 			var codeDir = Path.Combine(mod.RootPath, "code");
+			Logger.Info("Loading mod assembly from " + codeDir);
 
 			if (!Directory.Exists(codeDir)) continue;
 
 			foreach (var dllPath in Directory.GetFiles(codeDir, "*.dll"))
 			{
+				Logger.Info("Loading mod dll from " + dllPath);
 				try
 				{
-					mod.Assembly = Assembly.LoadFrom(dllPath);
+					mod.Assembly = loadContext.LoadFromAssemblyPath(dllPath);
 					mod.State = ModLoadState.AssemblyLoaded;
+					Logger.Info($"Successfully loaded assembly for {modId}");
 				}
 				catch (Exception ex)
 				{
 					mod.State = ModLoadState.Failed;
-					Console.WriteLine($"Failed to load assembly for {modId}: {ex.Message}");
+					Logger.Error($"Failed to load assembly for {modId}: {ex.Message}");
 				}
 			}
 		}
@@ -105,15 +125,18 @@ public class ModLoader
 	public List<TModEntry> LoadModEntry<TModEntry>()
 		where TModEntry : IModEntry
 	{
+		Logger.Info($"Attempting to load mod entry type {typeof(TModEntry)}");
 		List<TModEntry> modEntries = [];
 		foreach (var modId in _loadOrder)
 		{
+			Logger.Info($"Scanning {modId}...");
 			var mod = _mods[modId];
 			if (mod.Assembly == null) continue;
 
 			mod.Assembly.GetTypes().Where((t) => typeof(TModEntry).IsAssignableFrom(t)).ToList().ForEach(
 				(t) =>
 				{
+					Logger.Info($"Found {typeof(TModEntry)}: {t.FullName}");
 					var modeEntry = (TModEntry?)Activator.CreateInstance(t);
 					if (modeEntry != null)
 					{
