@@ -1,3 +1,5 @@
+using CardWars.Core.Data;
+
 namespace CardWars.ModLoader;
 
 public interface IModManifest
@@ -12,4 +14,9 @@ public interface IModManifest
 	IReadOnlyList<string> ContentPaths { get; }  // Paths to content directories
 }
 
-public record struct ModDependency(string ModId, string? MinVersion = null, bool Optional = false);
+[DataTagType]
+public record struct ModDependency(
+	[property: DataTag()] string ModId,
+	[property: DataTag()] string? MinVersion = null,
+	[property: DataTag()] bool Optional = false
+);
