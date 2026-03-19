@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
 using CardWars.Core.Logging;
+using CardWars.Core.Registry;
 
 namespace CardWars.ModLoader;
 
@@ -100,7 +101,7 @@ public class ModLoader
 		{
 			var mod = _mods[modId];
 			var codeDir = Path.Combine(mod.RootPath, "code");
-			Logger.Info("Loading mod assembly from " + codeDir);
+			Logger.Info("Loading mod dll folder from " + codeDir);
 
 			if (!Directory.Exists(codeDir)) continue;
 
@@ -133,6 +134,7 @@ public class ModLoader
 			var mod = _mods[modId];
 			if (mod.Assembly == null) continue;
 
+			mod.Assembly.GetTypes().ToList().ForEach((t) => Logger.Debug(t.FullName));
 			mod.Assembly.GetTypes().Where((t) => typeof(TModEntry).IsAssignableFrom(t)).ToList().ForEach(
 				(t) =>
 				{
@@ -144,7 +146,45 @@ public class ModLoader
 					}
 				});
 		}
+		if (modEntries.Count < 1) Logger.Error($"No {typeof(TModEntry)} found...");
 		return modEntries;
 	}
+
+	public IEnumerable<ModContentResult> GetContentServer() => GetContent("server");
+	public IEnumerable<ModContentResult> GetContentClient() => GetContent("client");
+
+
+	private IEnumerable<ModContentResult> GetContent(string side)
+	{
+		foreach (var modId in _loadOrder)
+		{
+			var mod = _mods[modId];
+			var contentDir = Path.Combine(mod.RootPath, "content", side);
+
+			foreach (var filePath in Directory.EnumerateFiles(contentDir, "*.*", SearchOption.AllDirectories))
+			{
+				var relFilePath = Path.GetRelativePath(contentDir, filePath);
+				var sanePath = Path.ChangeExtension(relFilePath, null).Replace("\\", "/");
+				var id = new ResourceId(modId, sanePath);
+
+				var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+				if (fs == null) { continue; }
+				yield return new ModContentResult()
+				{
+					Id = id,
+					Stream = fs,
+					FilePath = filePath
+				};
+			}
+		}
+	}
+}
+
+public class ModContentResult
+{
+	public required ResourceId Id;
+	public required Stream Stream;
+	public required string FilePath;
+	public string FileType => Path.GetExtension(FilePath);
 }
 
