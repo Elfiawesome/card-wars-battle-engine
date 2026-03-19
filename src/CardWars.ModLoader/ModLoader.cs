@@ -134,7 +134,7 @@ public class ModLoader
 			var mod = _mods[modId];
 			if (mod.Assembly == null) continue;
 
-			mod.Assembly.GetTypes().ToList().ForEach((t) => Logger.Debug(t.FullName));
+			mod.Assembly.GetTypes().ToList().ForEach((t) => Logger.Debug("type: " + t.FullName ?? "null"));
 			mod.Assembly.GetTypes().Where((t) => typeof(TModEntry).IsAssignableFrom(t)).ToList().ForEach(
 				(t) =>
 				{
