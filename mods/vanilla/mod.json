@@ -1,6 +1,6 @@
 {
-	"id": "vanilla",
-	"name": "Vanilla",
+	"id": "cardwars",
+	"name": "Vanilla Card Wars Mod",
 	"version": "0.0.0",
 	"dependencies": []
 }
