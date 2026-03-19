@@ -5,5 +5,5 @@ namespace CardWars.Server;
 
 public class ServerRegistry
 {
-	public HandlerRegistry<PacketContext> PacketHandlers = new();
+	public HandlerRegistry<PacketContextServer> PacketHandlers = new();
 }

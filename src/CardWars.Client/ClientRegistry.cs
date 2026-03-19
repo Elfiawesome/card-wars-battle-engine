@@ -4,5 +4,5 @@ namespace CardWars.Client;
 
 public class ClientRegistry
 {
-	public Registry<ResourceId, object> SomeRegistryTest { get; } = new(); 
+	public HandlerRegistry<PacketContextClient> PacketHandlers = new();
 }

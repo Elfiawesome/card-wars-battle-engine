@@ -1,4 +1,4 @@
-using CardWars.Server.Transport;
+using CardWars.Core.Network.Transport;
 
 namespace CardWars.Server.Listener;
 

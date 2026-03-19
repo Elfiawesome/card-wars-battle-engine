@@ -1,7 +1,7 @@
 using CardWars.BattleEngine;
 using CardWars.Core.Logging;
 using CardWars.Server.Listener;
-using CardWars.Server.Transport;
+using CardWars.Core.Network.Transport;
 using CardWars.Server.Packet;
 
 namespace CardWars.Server;
@@ -80,7 +80,7 @@ public class Server
 					{
 						if (packet != null)
 						{
-							var context = new PacketContext();
+							var context = new PacketContextServer();
 							Registry.PacketHandlers.Execute(context, packet);
 						}
 					}

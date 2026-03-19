@@ -1,5 +1,5 @@
 using CardWars.Core.Request;
 
-namespace CardWars.Server.Packet;
+namespace CardWars.Core.Network.Packet;
 
 public interface IPacket : IRequest;

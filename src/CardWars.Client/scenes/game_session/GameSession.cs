@@ -1,9 +1,9 @@
 using CardWars.BattleEngine;
 using CardWars.Server;
 using CardWars.Server.Listener;
-using CardWars.Server.Transport;
-using CardWars.Server.Packet;
 using Godot;
+using CardWars.Core.Network.Packet;
+using CardWars.Core.Network.Transport;
 
 namespace CardWars.Client;
 
@@ -63,6 +63,7 @@ public partial class GameSession : Node
 	private void HandleIncomingPacket(IPacket packet)
 	{
 		Core.Logging.Logger.Debug($"Client received packet from server: {packet.GetType().Name}");
+		ClientRegistry.PacketHandlers.Execute(new PacketContextClient(), packet);
 	}
 
 	public override void _ExitTree()

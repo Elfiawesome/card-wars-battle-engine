@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
-using CardWars.Server.Packet;
+using CardWars.Core.Network.Packet;
 
-namespace CardWars.Server.Transport;
+namespace CardWars.Core.Network.Transport;
 
 public class LocalConnection : IConnection
 {
