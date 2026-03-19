@@ -1,27 +1,15 @@
-using CardWars.Server.Listener;
-using CardWars.Server.Transport;
+using CardWars.BattleEngine;
 
 namespace CardWars.Server;
 
 public class Server
 {
-	public BattleEngine.BattleEngine BattleEngine { get; } = new();
-	public ServerRegistry Registry = new();
-	public List<IListener> Listeners = [];
-	public Dictionary<Guid, IConnection> Connections = [];
+	// --- Registry ---
+	public ServerRegistry Registry { get; } = new();
+	public BattleEngineRegistry SharedBattleEngineRegistry { get; } = new();
 
-	public void LoadMod(IServerMod mod)
-	{
-		mod.OnLoad(Registry);
-	}
+	public Server() { }
 
-	public Server()
-	{
-
-	}
-
-	public void PlayerJoin()
-	{
-		
-	}
+	public void LoadMod(IServerMod mod) => mod.OnLoad(Registry);
+	public void LoadMod(IBattleEngineMod mod) => mod.OnLoad(SharedBattleEngineRegistry);
 }

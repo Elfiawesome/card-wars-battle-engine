@@ -4,9 +4,8 @@ namespace CardWars.Server.Transport;
 
 public interface IConnection : IDisposable
 {
-	public string Id { get; }
 	public bool IsConnected { get; }
 	public void Send(IPacket packet);
-	public bool TryReceive(IPacket packet);
+	public bool TryReceive(out IPacket? packet);
 	public void Disconnect();
 }
