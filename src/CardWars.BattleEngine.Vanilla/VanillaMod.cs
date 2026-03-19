@@ -95,7 +95,7 @@ public class VanillaMod : IBattleEngineMod
 					if (heroDataTag == null) continue;
 					Logger.Info("Registered Hero: " + content.Id.ToString());
 
-					// Set basic unit data structure
+					// Set basic hero data structure
 					heroDataTag.Set("card_type", "hero");
 
 					registry.CardDefinitions.Register(content.Id, heroDataTag);
