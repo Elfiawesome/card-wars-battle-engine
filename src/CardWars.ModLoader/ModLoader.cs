@@ -43,7 +43,7 @@ public class ModLoader
 	{
 		foreach (var dir in Directory.GetDirectories(_modDir))
 		{
-			Logger.Info("Found mod in " + dir);
+			Logger.Info($"Mod found in '{dir}'");
 			var manifestPath = Path.Combine(dir, "mod.json");
 			var manifest = ModManifest.Load(manifestPath);
 			_mods[manifest.Id] = new()
@@ -101,23 +101,22 @@ public class ModLoader
 		{
 			var mod = _mods[modId];
 			var codeDir = Path.Combine(mod.RootPath, "code");
-			Logger.Info("Loading mod dll folder from " + codeDir);
 
 			if (!Directory.Exists(codeDir)) continue;
 
 			foreach (var dllPath in Directory.GetFiles(codeDir, "*.dll"))
 			{
-				Logger.Info("Loading mod dll from " + dllPath);
+				Logger.Info($"Loading mod dll from '{dllPath}'");
 				try
 				{
 					mod.Assemblies.Add(loadContext.LoadFromAssemblyPath(dllPath));
 					mod.State = ModLoadState.AssemblyLoaded;
-					Logger.Info($"Successfully loaded assembly for {modId}");
+					Logger.Info($"Successfully loaded dll assembly for '{dllPath}'");
 				}
 				catch (Exception ex)
 				{
 					mod.State = ModLoadState.Failed;
-					Logger.Error($"Failed to load assembly for {modId}: {ex.Message}");
+					Logger.Error($"Failed to load dll assembly for '{dllPath}': {ex.Message}");
 				}
 			}
 		}
@@ -126,11 +125,11 @@ public class ModLoader
 	public List<TModEntry> LoadModEntry<TModEntry>()
 		where TModEntry : IModEntry
 	{
-		Logger.Info($"Attempting to load mod entry type {typeof(TModEntry)}");
+		Logger.Info($"Locating mod entry of type '{typeof(TModEntry)}'");
 		List<TModEntry> modEntries = [];
 		foreach (var modId in _loadOrder)
 		{
-			Logger.Info($"Scanning {modId}...");
+			Logger.Info($"Scanning [{modId}]...");
 			var mod = _mods[modId];
 
 			foreach (var assembly in mod.Assemblies)
@@ -140,7 +139,7 @@ public class ModLoader
 					.ToList()
 					.ForEach(t =>
 					{
-						Logger.Info($"Found {typeof(TModEntry)}: {t.FullName}");
+						Logger.Info($"Found mod entry type '{typeof(TModEntry)}': '{t.FullName}'");
 						var modeEntry = (TModEntry?)Activator.CreateInstance(t);
 						if (modeEntry != null)
 						{
