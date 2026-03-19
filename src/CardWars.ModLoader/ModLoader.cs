@@ -11,7 +11,7 @@ public class LoadedMod
 {
 	public required IModManifest Manifest { get; init; }
 	public required string RootPath { get; init; }
-	public Assembly? Assembly { get; set; }
+	public List<Assembly> Assemblies { get; set; } = [];
 	public ModLoadState State { get; set; } = ModLoadState.Discovered;
 }
 
@@ -110,7 +110,7 @@ public class ModLoader
 				Logger.Info("Loading mod dll from " + dllPath);
 				try
 				{
-					mod.Assembly = loadContext.LoadFromAssemblyPath(dllPath);
+					mod.Assemblies.Add(loadContext.LoadFromAssemblyPath(dllPath));
 					mod.State = ModLoadState.AssemblyLoaded;
 					Logger.Info($"Successfully loaded assembly for {modId}");
 				}
@@ -132,21 +132,23 @@ public class ModLoader
 		{
 			Logger.Info($"Scanning {modId}...");
 			var mod = _mods[modId];
-			if (mod.Assembly == null) continue;
 
-			mod.Assembly.GetTypes().ToList().ForEach((t) => Logger.Debug("type: " + t.FullName ?? "null"));
-			mod.Assembly.GetTypes().Where((t) => typeof(TModEntry).IsAssignableFrom(t)).ToList().ForEach(
-				(t) =>
-				{
-					Logger.Info($"Found {typeof(TModEntry)}: {t.FullName}");
-					var modeEntry = (TModEntry?)Activator.CreateInstance(t);
-					if (modeEntry != null)
+			foreach (var assembly in mod.Assemblies)
+			{
+				assembly.GetTypes()
+					.Where(t => typeof(TModEntry).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
+					.ToList()
+					.ForEach(t =>
 					{
-						modEntries.Add(modeEntry);
-					}
-				});
+						Logger.Info($"Found {typeof(TModEntry)}: {t.FullName}");
+						var modeEntry = (TModEntry?)Activator.CreateInstance(t);
+						if (modeEntry != null)
+						{
+							modEntries.Add(modeEntry);
+						}
+					});
+			}
 		}
-		if (modEntries.Count < 1) Logger.Error($"No {typeof(TModEntry)} found...");
 		return modEntries;
 	}
 
