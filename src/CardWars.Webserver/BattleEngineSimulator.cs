@@ -21,7 +21,7 @@ public class Simulator
 	public Simulator()
 	{
 		Engine = new();
-		Engine.LoadMod(new VanillaMod());
+		Engine.LoadMod(new VanillaMod(), []);
 	}
 
 	// ═══════════════════════════════════════

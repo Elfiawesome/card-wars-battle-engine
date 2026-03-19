@@ -1,0 +1,15 @@
+{
+	"name": "Elbert",
+	"pt": 1,
+	"hp": 2,
+	"atk": 3,
+	"sp_atk": [
+		{
+			"name": "Custom SP ATK",
+			"multi_type": "row",
+			"multi_amt": 0,
+			"charge_cost": 0,
+			"amt": 0
+		}
+	]
+}

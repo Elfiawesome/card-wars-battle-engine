@@ -4,6 +4,7 @@ using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
+using CardWars.ModLoader;
 
 namespace CardWars.BattleEngine.Vanilla;
 
@@ -12,7 +13,7 @@ public class VanillaMod : IBattleEngineMod
 	public string ModName => "Vanilla Mod";
 	public string Version => "0.0.0";
 
-	public void OnLoad(BattleEngineRegistry registry)
+	public void OnLoad(BattleEngineRegistry registry, List<ModContentResult> modContents)
 	{
 		// --- Input Handlers ---
 		registry.InputHandlers.Register(new PlayerJoinedRequestInputHandler());
@@ -61,71 +62,46 @@ public class VanillaMod : IBattleEngineMod
 		registry.Behaviours.Register<SummonUnitCardToUnitSlotBehaviour>(ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour"));
 
 		// --- Card Definitions ---
-		RegisterCardDefinitions(registry);
+		RegisterCardDefinitions(registry, modContents);
 	}
 
 
-	private void RegisterCardDefinitions(BattleEngineRegistry registry)
+	private void RegisterCardDefinitions(BattleEngineRegistry registry, List<ModContentResult> modContents)
 	{
-		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/units/john"), new CompoundTag()
-			.Set("card_type", "unit")
-			.Set("name", "John")
-			.Set("pt", 2)
-			.Set("hp", 6)
-			.Set("atk", 4)
-			.Set("intrinsic_behaviours", new ListTag()
-				.Add(new CompoundTag()
-					.Set("resource", ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour").ToString())
-				))
-			// .Set("sp_atk", new ListTag()
-			// 	.Add(new CompoundTag()
-			// 		.Set("name", "Custom SP ATK")
-			// 		.Set("multi_type", "row")
-			// 		.Set("multi_amt", 1)
-			// 		.Set("charge_cost", 1)
-			// 		.Set("amt", 0)
-			// 	)
-			// )
-			// .Set("abilities", new ListTag()
-			// 	.Add(new CompoundTag()
-			// 		.Set("description", "A special ability for this unit")
-			// 		.Set("behaviour", new CompoundTag()
-			// 			.Set("resource", "cardwars:some_behaviour"))))
-		);
+		foreach (var content in modContents)
+		{
+			using StreamReader sr = new(content.Stream);
 
-		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/units/elbert"), new CompoundTag()
-			.Set("card_type", "unit")
-			.Set("name", "Elbert")
-			.Set("pt", 1)
-			.Set("hp", 2)
-			.Set("atk", 3)
-			.Set("intrinsic_behaviours", new ListTag()
-				.Add(new CompoundTag()
-					.Set("resource", ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour").ToString())
-				))
-		);
+			switch (content.Category)
+			{
+				case ["cards", "units"]:
+					var unitData = sr.ReadToEnd();
+					var unitDataTag = DataTagSerializer.Deserialize<CompoundTag>(unitData);
+					if (unitDataTag == null) continue;
+					Logger.Info("Registered Unit: " + content.Id.ToString());
 
-		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/units/nicholas"), new CompoundTag()
-			.Set("card_type", "unit")
-			.Set("name", "Nicholas")
-			.Set("pt", 5)
-			.Set("hp", 10)
-			.Set("atk", 1)
-			.Set("intrinsic_behaviours", new ListTag()
-				.Add(new CompoundTag()
-					.Set("resource", ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour").ToString())
-				))
-		);
+					// Set basic unit data structure
+					unitDataTag.Set("card_type", "unit");
+					unitDataTag.Set("intrinsic_behaviours", new ListTag().Add(new CompoundTag().Set("resource", "cardwars:summon_unit_card_to_unit_slot_behaviour")));
 
+					registry.CardDefinitions.Register(content.Id, unitDataTag);
 
-		registry.CardDefinitions.Register(ResourceId.Vanilla("cards/heroes/ilyas"), new CompoundTag()
-			.Set("card_type", "hero")
-			.Set("hrt", 10)
-			// .Set("abilities", new ListTag()
-			// 	.Add(new CompoundTag()
-			// 		.Set("description", "Hero's ability")
-			// 		.Set("behaviour", new CompoundTag()
-			// 			.Set("resource", "cardwars:some_behaviour"))))
-		);
+					break;
+				case ["cards", "spells"]:
+					break;
+				case ["cards", "heroes"]:
+					var heroData = sr.ReadToEnd();
+					var heroDataTag = DataTagSerializer.Deserialize<CompoundTag>(heroData);
+					if (heroDataTag == null) continue;
+					Logger.Info("Registered Hero: " + content.Id.ToString());
+
+					// Set basic unit data structure
+					heroDataTag.Set("card_type", "hero");
+
+					registry.CardDefinitions.Register(content.Id, heroDataTag);
+					break;
+			}
+
+		}
 	}
 }

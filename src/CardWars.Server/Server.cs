@@ -3,6 +3,7 @@ using CardWars.Core.Logging;
 using CardWars.Server.Listener;
 using CardWars.Core.Network.Transport;
 using CardWars.Server.Packet;
+using CardWars.ModLoader;
 
 namespace CardWars.Server;
 
@@ -18,7 +19,7 @@ public class Server
 	public Server() { }
 
 	public void LoadMod(IServerMod mod) => mod.OnLoad(Registry);
-	public void LoadMod(IBattleEngineMod mod) => mod.OnLoad(SharedBattleEngineRegistry);
+	public void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents) => mod.OnLoad(SharedBattleEngineRegistry, modContents);
 
 	public void Start(params IListener[] listeners)
 	{

@@ -165,7 +165,7 @@ public class ModLoader
 			foreach (var filePath in Directory.EnumerateFiles(contentDir, "*.*", SearchOption.AllDirectories))
 			{
 				var relFilePath = Path.GetRelativePath(contentDir, filePath);
-				var sanePath = Path.ChangeExtension(relFilePath, null).Replace("\\", "/");
+				var sanePath = Path.ChangeExtension(relFilePath, null).Replace(Path.DirectorySeparatorChar, '/');
 				var id = new ResourceId(modId, sanePath);
 
 				var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
@@ -174,7 +174,8 @@ public class ModLoader
 				{
 					Id = id,
 					Stream = fs,
-					FilePath = filePath
+					FilePath = filePath,
+					Category = relFilePath.Split(Path.DirectorySeparatorChar)[..^1]
 				};
 			}
 		}
@@ -186,6 +187,7 @@ public class ModContentResult
 	public required ResourceId Id;
 	public required Stream Stream;
 	public required string FilePath;
+	public required string[] Category;
 	public string FileType => Path.GetExtension(FilePath);
 }
 

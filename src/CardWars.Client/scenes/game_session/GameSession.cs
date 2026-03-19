@@ -4,6 +4,7 @@ using CardWars.Server.Listener;
 using Godot;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
+using System.Linq;
 
 namespace CardWars.Client;
 
@@ -32,7 +33,9 @@ public partial class GameSession : Node
 	private void StartIntegratedServer(ModLoader.ModLoader modLoader)
 	{
 		IntegratedServer = new Server.Server();
-		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => IntegratedServer.LoadMod(m));
+		var serverContent = modLoader.GetContentServer().ToList();
+		var clientContent = modLoader.GetContentServer().ToList();
+		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => IntegratedServer.LoadMod(m, serverContent));
 		modLoader.LoadModEntry<IServerMod>().ForEach(m => IntegratedServer.LoadMod(m));
 
 		var localListener = new LocalListener();
