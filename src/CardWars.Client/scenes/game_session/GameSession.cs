@@ -5,6 +5,7 @@ using Godot;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using System.Linq;
+using System.IO;
 
 namespace CardWars.Client;
 
@@ -20,7 +21,11 @@ public partial class GameSession : Node
 
 	public override void _Ready()
 	{
-		ModLoader.ModLoader modLoader = new(@"C:\Users\Elfiyan\Documents\Projects\card-wars-battle-engine\mods");
+		var clientDirPath = new DirectoryInfo(System.Environment.CurrentDirectory);
+		var baseDirPath = clientDirPath.Parent?.Parent?.FullName;
+		string modFolderPath = Path.Combine(baseDirPath ?? "", "mods");
+
+		ModLoader.ModLoader modLoader = new(modFolderPath);
 		modLoader.Setup();
 		modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry));
 
