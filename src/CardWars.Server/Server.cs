@@ -4,6 +4,7 @@ using CardWars.Server.Listener;
 using CardWars.Core.Network.Transport;
 using CardWars.Server.Packet;
 using CardWars.ModLoader;
+using CardWars.Server.Session;
 
 namespace CardWars.Server;
 
@@ -13,7 +14,8 @@ public class Server
 	public BattleEngineRegistry SharedBattleEngineRegistry { get; } = new();
 
 	private readonly List<IListener> _listeners = [];
-	private readonly List<IConnection> _connections = [];
+	private readonly Dictionary<Guid, PlayerSession> _playerSessions = [];
+	private readonly Dictionary<Guid, IServerInstance> _instances = [];
 	private CancellationTokenSource? _cts;
 
 	public Server() { }
@@ -40,22 +42,35 @@ public class Server
 		_cts?.Cancel();
 		foreach (var listener in _listeners) listener.Stop();
 
-		lock (_connections)
+		lock (_playerSessions)
 		{
-			foreach (var conn in _connections) conn.Disconnect();
-			_connections.Clear();
+			foreach (var playerSession in _playerSessions)
+			{
+				playerSession.Value.Connection.Disconnect();
+			}
+			_playerSessions.Clear();
 		}
 		Logger.Info("Server stopped.");
 	}
 
 	private void OnConnectionReceived(IConnection connection)
 	{
-		lock (_connections)
+		var playerId = Guid.NewGuid();
+		lock (_playerSessions)
 		{
-			_connections.Add(connection);
+			_playerSessions.Add(playerId, new PlayerSession(playerId, connection));
 		}
-		Logger.Info("Server: A new client connected.");
+		Logger.Info($"Server: A new client [{playerId}] connected.");
 	}
+
+	public void CreateInstance(IServerInstance instance)
+		=> _instances.Add(instance.InstanceId, instance);
+
+	public void RemoveInstance(IServerInstance instance)
+		=> _instances.Remove(instance.InstanceId);
+
+	public void AddPlayerToInstance(PlayerSession playerId, IServerInstance instanceId)
+		=> instanceId.AddPlayer(playerId);
 
 	private void ServerLoop(CancellationToken token)
 	{
@@ -64,19 +79,21 @@ public class Server
 
 		while (!token.IsCancellationRequested)
 		{
-			lock (_connections)
+			lock (_playerSessions)
 			{
-				for (int i = _connections.Count - 1; i >= 0; i--)
-				{
-					var conn = _connections[i];
-					if (!conn.IsConnected)
-					{
-						_connections.RemoveAt(i);
-						Logger.Info("Server: Client disconnected.");
-						continue;
-					}
+				List<Guid> disconnected = [.. _playerSessions
+					.Where(kv => !kv.Value.Connection.IsConnected)
+					.Select(kv => kv.Key)];
 
-					// Process all packets sent by this client
+				foreach (var id in disconnected)
+				{
+					_playerSessions.Remove(id);
+					Logger.Info($"Server: Client [{id}] disconnected.");
+				}
+
+				foreach (var (playerId, playerSession) in _playerSessions)
+				{
+					var conn = playerSession.Connection;
 					while (conn.TryReceive(out var packet))
 					{
 						if (packet != null)
