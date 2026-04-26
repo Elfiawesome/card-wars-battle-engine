@@ -5,6 +5,7 @@ using CardWars.Core.Network.Transport;
 using CardWars.Server.Packet;
 using CardWars.ModLoader;
 using CardWars.Server.Session;
+using CardWars.Core.Network.Packet;
 
 namespace CardWars.Server;
 
@@ -12,13 +13,17 @@ public class Server
 {
 	public ServerRegistry Registry { get; } = new();
 	public BattleEngineRegistry SharedBattleEngineRegistry { get; } = new();
+	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
 
 	private readonly List<IListener> _listeners = [];
 	private readonly Dictionary<Guid, PlayerSession> _playerSessions = [];
 	private readonly Dictionary<Guid, IServerInstance> _instances = [];
 	private CancellationTokenSource? _cts;
 
-	public Server() { }
+	public Server()
+	{
+		// Register Core Packet Handlers
+	}
 
 	public void LoadMod(IServerMod mod) => mod.OnLoad(Registry);
 	public void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents) => mod.OnLoad(SharedBattleEngineRegistry, modContents);
@@ -60,6 +65,9 @@ public class Server
 		{
 			_playerSessions.Add(playerId, new PlayerSession(playerId, connection));
 		}
+
+		connection.Send(new S2C_PlayerJoinedRequestPacket() { ServerGreetingMessage = "Hello this is from the server :)" });
+
 		Logger.Info($"Server: A new client [{playerId}] connected.");
 	}
 
@@ -98,7 +106,7 @@ public class Server
 					{
 						if (packet != null)
 						{
-							var context = new PacketContextServer();
+							var context = new PacketContextServer() { Server = this, PlayerSession = playerSession };
 							Registry.PacketHandlers.Execute(context, packet);
 						}
 					}

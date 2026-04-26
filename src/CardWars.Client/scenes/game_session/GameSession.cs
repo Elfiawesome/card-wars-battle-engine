@@ -71,7 +71,7 @@ public partial class GameSession : Node
 	private void HandleIncomingPacket(IPacket packet)
 	{
 		Core.Logging.Logger.Debug($"Client received packet from server: {packet.GetType().Name}");
-		ClientRegistry.PacketHandlers.Execute(new PacketContextClient(), packet);
+		ClientRegistry.PacketHandlers.Execute(new PacketContextClient() { Session = this }, packet);
 	}
 
 	public override void _ExitTree()
