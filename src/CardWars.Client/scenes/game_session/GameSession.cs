@@ -6,6 +6,7 @@ using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using System.Linq;
 using System.IO;
+using CardWars.Server.Persistance;
 
 namespace CardWars.Client;
 
@@ -24,6 +25,10 @@ public partial class GameSession : Node
 		var clientDirPath = new DirectoryInfo(System.Environment.CurrentDirectory);
 		var baseDirPath = clientDirPath.Parent?.Parent?.FullName;
 		string modFolderPath = Path.Combine(baseDirPath ?? "", "mods");
+
+		// TODO REMOVE SAVEMANAGER
+		var sv = new SaveManager();
+		sv.Load(Path.Combine([baseDirPath ?? "", "saves", "save.json"]));
 
 		ModLoader.ModLoader modLoader = new(modFolderPath);
 		modLoader.Setup();
