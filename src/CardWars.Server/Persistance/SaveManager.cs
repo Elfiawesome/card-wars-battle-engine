@@ -7,6 +7,13 @@ public class SaveManager
 {
 	public SaveState SaveState = new();
 
+
+	// API
+	// LoadPlayer
+	// SavePlayer
+	// LoadWorld
+	// SaveWorld
+
 	public SaveManager()
 	{
 		DataTagTypeRegistry.ScanAssembly(typeof(SaveManager).Assembly);
