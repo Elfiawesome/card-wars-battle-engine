@@ -1,0 +1,11 @@
+{
+	"_type": "cardwars:save_state",
+	"session_name": "Save 1",
+	"worlds": [],
+	"player_saves": [
+		{},
+		{},
+		{},
+		{}
+	]
+}

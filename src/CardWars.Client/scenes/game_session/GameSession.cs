@@ -7,6 +7,8 @@ using CardWars.Core.Network.Transport;
 using System.Linq;
 using System.IO;
 using CardWars.Server.Persistance;
+using CardWars.Core.FileSystem;
+using System;
 
 namespace CardWars.Client;
 
@@ -23,8 +25,13 @@ public partial class GameSession : Node
 	public override void _Ready()
 	{
 		var clientDirPath = new DirectoryInfo(System.Environment.CurrentDirectory);
-		var baseDirPath = clientDirPath.Parent?.Parent?.FullName;
-		string modFolderPath = Path.Combine(baseDirPath ?? "", "mods");
+		var baseDirPath = clientDirPath.Parent?.Parent?.FullName ?? throw new Exception("Could not determine base directory path");
+		var savesDirPath = Path.Combine(baseDirPath, "saves") ?? throw new Exception("Could not determine saves directory path");
+		
+		// IFileSystem GameFileSystem = new FileSystem(savesDirPath);
+		// IFileSystem SessionFileSystem = new FileSystem(); ;
+
+		string modFolderPath = Path.Combine(baseDirPath, "mods");
 
 		// TODO REMOVE SAVEMANAGER
 		var sv = new SaveManager();
