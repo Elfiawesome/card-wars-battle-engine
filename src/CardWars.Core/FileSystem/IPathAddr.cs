@@ -19,9 +19,12 @@ public interface IPathAddr
 	public bool Exists { get; }
 	public bool IsFile { get; }
 	public bool IsDirectory { get; }
+	string[] Parts { get; }
 
 	public IEnumerable<IPathAddr> GetFiles(string searchPattern = "*");
 	public IEnumerable<IPathAddr> GetDirectories();
+	public IEnumerable<(IPathAddr file, IPathAddr relativePath)> Walk();
+
 
 	public void Delete();
 	public void CreateDirectory();

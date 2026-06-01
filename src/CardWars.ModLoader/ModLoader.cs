@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
+using CardWars.Core.FileSystem;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 
@@ -10,7 +11,7 @@ public enum ModLoadState { Discovered, DependenciesResolved, AssemblyLoaded, Pre
 public class LoadedMod
 {
 	public required IModManifest Manifest { get; init; }
-	public required string RootPath { get; init; }
+	public required IPathAddr RootPath { get; init; }
 	public List<Assembly> Assemblies { get; set; } = [];
 	public ModLoadState State { get; set; } = ModLoadState.Discovered;
 }
@@ -18,13 +19,14 @@ public class LoadedMod
 
 public class ModLoader
 {
-	private readonly string _modDir;
+	private readonly IEnumerable<IPathAddr> _modDirs;
 	private Dictionary<string, LoadedMod> _mods = [];
 	private readonly List<string> _loadOrder = [];
 
-	public ModLoader(string modDir)
+	public ModLoader(IPathAddr modDir) { _modDirs = [modDir]; }
+	public ModLoader(IEnumerable<IPathAddr> modDirs)
 	{
-		_modDir = modDir;
+		_modDirs = modDirs;
 		// There are 3 stages for mod loader to work
 		// 1. Discover Mods from a directory (This will load the manifest and store them, for loading compatabilities and versioning)
 		// 2. Resolve Dependencies. This to ensure all mods have their dependencies. Then sort by load order
@@ -41,16 +43,22 @@ public class ModLoader
 
 	public void DiscoverMods()
 	{
-		foreach (var dir in Directory.GetDirectories(_modDir))
+		foreach (var modDir in _modDirs)
 		{
-			Logger.Info($"Mod found in '{dir}'");
-			var manifestPath = Path.Combine(dir, "mod.json");
-			var manifest = ModManifest.Load(manifestPath);
-			_mods[manifest.Id] = new()
+			if (!modDir.Exists) continue;
+			foreach (var dir in modDir.GetDirectories())
 			{
-				Manifest = manifest,
-				RootPath = dir
-			};
+				Logger.Info($"Mod found in '{dir.Path}'");
+				var manifestPath = dir.Combine("mod.json");
+				if (!manifestPath.Exists) continue;
+
+				var manifest = ModManifest.Load(manifestPath);
+				_mods[manifest.Id] = new()
+				{
+					Manifest = manifest,
+					RootPath = dir
+				};
+			}
 		}
 	}
 
@@ -100,18 +108,18 @@ public class ModLoader
 		foreach (var modId in _loadOrder)
 		{
 			var mod = _mods[modId];
-			var codeDir = Path.Combine(mod.RootPath, "code");
+			var codeDir = mod.RootPath.Combine("code");
+			if (codeDir.Exists) continue;
 
-			if (!Directory.Exists(codeDir)) continue;
-
-			foreach (var dllPath in Directory.GetFiles(codeDir, "*.dll"))
+			foreach (var dllPath in codeDir.GetFiles("*.dll"))
 			{
 				Logger.Info($"Loading mod dll from '{dllPath}'");
 				try
 				{
-					mod.Assemblies.Add(loadContext.LoadFromAssemblyPath(dllPath));
+					using var stream = dllPath.OpenRead();
+					mod.Assemblies.Add(loadContext.LoadFromStream(stream));
 					mod.State = ModLoadState.AssemblyLoaded;
-					Logger.Info($"Successfully loaded dll assembly for '{dllPath}'");
+					Logger.Info($"Successfully loaded dll assembly for '{dllPath.Path}'");
 				}
 				catch (Exception ex)
 				{
@@ -160,34 +168,58 @@ public class ModLoader
 		foreach (var modId in _loadOrder)
 		{
 			var mod = _mods[modId];
-			var contentDir = Path.Combine(mod.RootPath, "content", side);
+			var contentDir = mod.RootPath.Combine("content", side);
+			if (!contentDir.Exists) continue;
 
-			foreach (var filePath in Directory.EnumerateFiles(contentDir, "*.*", SearchOption.AllDirectories))
+			foreach (var (filePath, relPath) in GetAllFiles(contentDir))
 			{
-				var relFilePath = Path.GetRelativePath(contentDir, filePath);
-				var sanePath = Path.ChangeExtension(relFilePath, null).Replace(Path.DirectorySeparatorChar, '/');
-				var id = new ResourceId(modId, sanePath);
+				var sanePath = relPath;
+				if (Path.HasExtension(sanePath))
+				{
+					sanePath = sanePath.Substring(0, sanePath.LastIndexOf('.'));
+				}
+				sanePath = sanePath.Replace('\\', '/');
 
-				var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-				if (fs == null) { continue; }
+				var id = new ResourceId(modId, sanePath);
+				var parts = sanePath.Split('/');
+				var category = parts.Length > 1 ? parts[..^1] : [];
+
 				yield return new ModContentResult()
 				{
 					Id = id,
-					Stream = fs,
-					FilePath = filePath,
-					Category = relFilePath.Split(Path.DirectorySeparatorChar)[..^1]
+					Stream = filePath.OpenRead(),
+					FilePath = filePath.Path,
+					Category = category
 				};
+			}
+		}
+	}
+
+	private IEnumerable<(IPathAddr file, string relPath)> GetAllFiles(IPathAddr dir, string currentRel = "")
+	{
+		foreach (var file in dir.GetFiles())
+		{
+			yield return (file, string.IsNullOrEmpty(currentRel) ? file.Name : $"{currentRel}/{file.Name}");
+		}
+
+		foreach (var subDir in dir.GetDirectories())
+		{
+			var nextRel = string.IsNullOrEmpty(currentRel) ? subDir.Name : $"{currentRel}/{subDir.Name}";
+			foreach (var item in GetAllFiles(subDir, nextRel))
+			{
+				yield return item;
 			}
 		}
 	}
 }
 
-public class ModContentResult
+public class ModContentResult : IDisposable
 {
 	public required ResourceId Id;
 	public required Stream Stream;
 	public required string FilePath;
 	public required string[] Category;
 	public string FileType => Path.GetExtension(FilePath);
-}
 
+	public void Dispose() => Stream?.Dispose();
+}

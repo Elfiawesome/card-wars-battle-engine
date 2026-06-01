@@ -6,7 +6,6 @@ using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using System.Linq;
 using System.IO;
-using CardWars.Server.Persistance;
 using CardWars.Core.FileSystem;
 using System;
 
@@ -16,42 +15,44 @@ public partial class GameSession : Node
 {
 	public ClientRegistry ClientRegistry { get; init; } = new();
 
-	// The server instance (only populated if we are hosting)
 	public Server.Server? IntegratedServer { get; private set; }
-
-	// The connection used to talk to the server (TCP or Local)
 	public IConnection? Connection { get; private set; }
 
 	public override void _Ready()
 	{
 		var clientDirPath = new DirectoryInfo(System.Environment.CurrentDirectory);
 		var baseDirPath = clientDirPath.Parent?.Parent?.FullName ?? throw new Exception("Could not determine base directory path");
-		var savesDirPath = Path.Combine(baseDirPath, "saves") ?? throw new Exception("Could not determine saves directory path");
-		
-		// IFileSystem GameFileSystem = new FileSystem(savesDirPath);
-		// IFileSystem SessionFileSystem = new FileSystem(); ;
 
-		string modFolderPath = Path.Combine(baseDirPath, "mods");
+		var prnt = Core.Logging.Logger.Info;
+		IFileSystem globalFs = new LocalFileSystem(baseDirPath);
+		IPathAddr savesDir = globalFs.GetPath("saves");
+		IPathAddr globalModsDir = globalFs.GetPath("mods");
+		globalModsDir.Walk().ToList().ForEach(p => prnt($"{p.relativePath.ToPath()}"));
 
-		// TODO REMOVE SAVEMANAGER
-		var sv = new SaveManager();
-		sv.Load(Path.Combine([baseDirPath ?? "", "saves", "save.json"]));
+		// string sessionId = "session_1";
+		// IFileSystem sessionFs = new LocalFileSystem(savesDir.Combine(sessionId).Path);
+		// IPathAddr sessionModsDir = sessionFs.GetPath("mods");
 
-		ModLoader.ModLoader modLoader = new(modFolderPath);
-		modLoader.Setup();
-		modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry));
+		// Creating our folder layouts using abstractions if missing
+		// savesDir.CreateDirectory();
+		// globalModsDir.CreateDirectory();
+		// sessionFs.Root.CreateDirectory();
+		// sessionModsDir.CreateDirectory();
 
-		StartIntegratedServer(modLoader);
+		// ModLoader.ModLoader modLoader = new([globalModsDir, sessionModsDir]);
+		// modLoader.Setup();
+		// modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry));
 
-		// Example: Sending a test packet immediately upon connecting
-		// Connection?.Send(new JoinWorldPacket { PlayerName = "Elfiyan" });
+		// StartIntegratedServer(modLoader, sessionFs);
 	}
 
-	private void StartIntegratedServer(ModLoader.ModLoader modLoader)
+	private void StartIntegratedServer(ModLoader.ModLoader modLoader, IFileSystem sessionFs)
 	{
-		IntegratedServer = new Server.Server();
+		IntegratedServer = new Server.Server(sessionFs);
+
 		var serverContent = modLoader.GetContentServer().ToList();
-		var clientContent = modLoader.GetContentServer().ToList();
+		var clientContent = modLoader.GetContentClient().ToList();
+
 		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => IntegratedServer.LoadMod(m, serverContent));
 		modLoader.LoadModEntry<IServerMod>().ForEach(m => IntegratedServer.LoadMod(m));
 
@@ -62,7 +63,6 @@ public partial class GameSession : Node
 		// IntegratedServer.Start(localListener, tcpListener);
 
 		IntegratedServer.Start(localListener);
-
 		Connection = localListener.ConnectClient();
 	}
 

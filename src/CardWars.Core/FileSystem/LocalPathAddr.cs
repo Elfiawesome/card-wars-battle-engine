@@ -12,12 +12,37 @@ public class LocalPathAddr(string path) : IPathAddr
 	public bool Exists => IsFile || IsDirectory;
 	public bool IsDirectory => Directory.Exists(Path);
 	public bool IsFile => File.Exists(Path);
+	public string[] Parts => Path.Split(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
 
 	public IEnumerable<IPathAddr> GetFiles(string searchPattern = "*")
 		=> IsDirectory ? Directory.GetFiles(Path, searchPattern).Select(f => new LocalPathAddr(f)) : [];
 
 	public IEnumerable<IPathAddr> GetDirectories()
 		=> IsDirectory ? Directory.GetDirectories(Path).Select(d => new LocalPathAddr(d)) : [];
+
+	public IEnumerable<(IPathAddr file, IPathAddr relativePath)> Walk()
+		=> GetAllFilesRecursive(new LocalPathAddr("/"));
+
+	private IEnumerable<(IPathAddr file, IPathAddr relativePath)> GetAllFilesRecursive(IPathAddr currentRelativePath)
+	{
+		foreach (var file in GetFiles())
+		{
+			yield return (file, currentRelativePath.Combine(file.Name));
+		}
+
+		foreach (var dir in GetDirectories())
+		{
+			var nextRelativePath = currentRelativePath.Combine(dir.Name);
+
+			if (dir is LocalPathAddr localDir)
+			{
+				foreach (var item in localDir.GetAllFilesRecursive(nextRelativePath))
+				{
+					yield return item;
+				}
+			}
+		}
+	}
 
 	public void Delete()
 	{
