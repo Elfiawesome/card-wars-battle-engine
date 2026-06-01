@@ -4,10 +4,10 @@ using CardWars.Server.Listener;
 using Godot;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
-using System.Linq;
-using System.IO;
-using CardWars.Core.FileSystem;
+using CardWars.Core.Storage;
+using CardWars.ModLoader;
 using System;
+using System.Linq;
 
 namespace CardWars.Client;
 
@@ -17,38 +17,33 @@ public partial class GameSession : Node
 
 	public Server.Server? IntegratedServer { get; private set; }
 	public IConnection? Connection { get; private set; }
+	public StorageManager Storage { get; private set; } = null!;
 
 	public override void _Ready()
 	{
-		var clientDirPath = new DirectoryInfo(System.Environment.CurrentDirectory);
-		var baseDirPath = clientDirPath.Parent?.Parent?.FullName ?? throw new Exception("Could not determine base directory path");
+		var clientDirPath = System.Environment.CurrentDirectory;
+		var baseDirPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(clientDirPath, "..", ".."));
+		var gamedataPath = System.IO.Path.Combine(baseDirPath, "gamedata");
 
-		var prnt = Core.Logging.Logger.Info;
-		IFileSystem globalFs = new LocalFileSystem(baseDirPath);
-		IPathAddr savesDir = globalFs.GetPath("saves");
-		IPathAddr globalModsDir = globalFs.GetPath("mods");
-		globalModsDir.Walk().ToList().ForEach(p => prnt($"{p.relativePath.ToPath()}"));
+		var provider = new LocalFileProvider();
+		Storage = new StorageManager(gamedataPath, provider);
 
-		// string sessionId = "session_1";
-		// IFileSystem sessionFs = new LocalFileSystem(savesDir.Combine(sessionId).Path);
-		// IPathAddr sessionModsDir = sessionFs.GetPath("mods");
+		var modDirs = Storage.GetModDirectories();
 
-		// Creating our folder layouts using abstractions if missing
-		// savesDir.CreateDirectory();
-		// globalModsDir.CreateDirectory();
-		// sessionFs.Root.CreateDirectory();
-		// sessionModsDir.CreateDirectory();
+		foreach (var modDir in modDirs)
+			Core.Logging.Logger.Info($"Mod directory: {modDir.FullPath}");
 
-		// ModLoader.ModLoader modLoader = new([globalModsDir, sessionModsDir]);
-		// modLoader.Setup();
-		// modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry));
+		ModLoader.ModLoader modLoader = new(modDirs);
+		modLoader.Setup();
+		modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry));
 
-		// StartIntegratedServer(modLoader, sessionFs);
+		StartIntegratedServer(modLoader);
 	}
 
-	private void StartIntegratedServer(ModLoader.ModLoader modLoader, IFileSystem sessionFs)
+	private void StartIntegratedServer(ModLoader.ModLoader modLoader)
 	{
-		IntegratedServer = new Server.Server(sessionFs);
+		var sessionName = "session_1";
+		IntegratedServer = new Server.Server(Storage, sessionName);
 
 		var serverContent = modLoader.GetContentServer().ToList();
 		var clientContent = modLoader.GetContentClient().ToList();
@@ -57,11 +52,6 @@ public partial class GameSession : Node
 		modLoader.LoadModEntry<IServerMod>().ForEach(m => IntegratedServer.LoadMod(m));
 
 		var localListener = new LocalListener();
-
-		// Note: To make this LAN compatible later, you would just add:
-		// var tcpListener = new TcpGameListener();
-		// IntegratedServer.Start(localListener, tcpListener);
-
 		IntegratedServer.Start(localListener);
 		Connection = localListener.ConnectClient();
 	}

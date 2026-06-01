@@ -1,6 +1,9 @@
 .vscode/
 .tools/
 
+# Game data (deployed mods, saves, settings)
+/gamedata/
+
 # Exclude build mods in vanilla folder
 **.dll
 **.pdb

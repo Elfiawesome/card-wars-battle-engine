@@ -1,8 +1,9 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
-using CardWars.Core.FileSystem;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
+using CardWars.Core.Storage;
+using System.IO;
 
 namespace CardWars.ModLoader;
 
@@ -11,7 +12,7 @@ public enum ModLoadState { Discovered, DependenciesResolved, AssemblyLoaded, Pre
 public class LoadedMod
 {
 	public required IModManifest Manifest { get; init; }
-	public required IPathAddr RootPath { get; init; }
+	public required StoragePath RootPath { get; init; }
 	public List<Assembly> Assemblies { get; set; } = [];
 	public ModLoadState State { get; set; } = ModLoadState.Discovered;
 }
@@ -19,19 +20,14 @@ public class LoadedMod
 
 public class ModLoader
 {
-	private readonly IEnumerable<IPathAddr> _modDirs;
+	private readonly IEnumerable<StoragePath> _modDirs;
 	private Dictionary<string, LoadedMod> _mods = [];
 	private readonly List<string> _loadOrder = [];
 
-	public ModLoader(IPathAddr modDir) { _modDirs = [modDir]; }
-	public ModLoader(IEnumerable<IPathAddr> modDirs)
+	public ModLoader(StoragePath modDir) { _modDirs = [modDir]; }
+	public ModLoader(IEnumerable<StoragePath> modDirs)
 	{
 		_modDirs = modDirs;
-		// There are 3 stages for mod loader to work
-		// 1. Discover Mods from a directory (This will load the manifest and store them, for loading compatabilities and versioning)
-		// 2. Resolve Dependencies. This to ensure all mods have their dependencies. Then sort by load order
-		// 3. Load Assemblies. By load order, we load the assembly for each dll
-		// 4. Then we can get each mod entry from each assembly
 	}
 
 	public void Setup()
@@ -48,7 +44,7 @@ public class ModLoader
 			if (!modDir.Exists) continue;
 			foreach (var dir in modDir.GetDirectories())
 			{
-				Logger.Info($"Mod found in '{dir.Path}'");
+				Logger.Info($"Mod found in '{dir.FullPath}'");
 				var manifestPath = dir.Combine("mod.json");
 				if (!manifestPath.Exists) continue;
 
@@ -109,7 +105,7 @@ public class ModLoader
 		{
 			var mod = _mods[modId];
 			var codeDir = mod.RootPath.Combine("code");
-			if (codeDir.Exists) continue;
+			if (!codeDir.Exists) continue;
 
 			foreach (var dllPath in codeDir.GetFiles("*.dll"))
 			{
@@ -119,7 +115,7 @@ public class ModLoader
 					using var stream = dllPath.OpenRead();
 					mod.Assemblies.Add(loadContext.LoadFromStream(stream));
 					mod.State = ModLoadState.AssemblyLoaded;
-					Logger.Info($"Successfully loaded dll assembly for '{dllPath.Path}'");
+					Logger.Info($"Successfully loaded dll assembly for '{dllPath.FullPath}'");
 				}
 				catch (Exception ex)
 				{
@@ -168,17 +164,18 @@ public class ModLoader
 		foreach (var modId in _loadOrder)
 		{
 			var mod = _mods[modId];
-			var contentDir = mod.RootPath.Combine("content", side);
+			var contentDir = mod.RootPath.Combine("content").Combine(side);
 			if (!contentDir.Exists) continue;
 
-			foreach (var (filePath, relPath) in GetAllFiles(contentDir))
+			foreach (var (filePath, relPath) in contentDir.Walk())
 			{
-				var sanePath = relPath;
-				if (Path.HasExtension(sanePath))
+				var sanePath = relPath.Replace('\\', '/');
+
+				var extensionIdx = sanePath.LastIndexOf('.');
+				if (extensionIdx > 0)
 				{
-					sanePath = sanePath.Substring(0, sanePath.LastIndexOf('.'));
+					sanePath = sanePath[..extensionIdx];
 				}
-				sanePath = sanePath.Replace('\\', '/');
 
 				var id = new ResourceId(modId, sanePath);
 				var parts = sanePath.Split('/');
@@ -188,26 +185,9 @@ public class ModLoader
 				{
 					Id = id,
 					Stream = filePath.OpenRead(),
-					FilePath = filePath.Path,
+					FilePath = filePath.FullPath,
 					Category = category
 				};
-			}
-		}
-	}
-
-	private IEnumerable<(IPathAddr file, string relPath)> GetAllFiles(IPathAddr dir, string currentRel = "")
-	{
-		foreach (var file in dir.GetFiles())
-		{
-			yield return (file, string.IsNullOrEmpty(currentRel) ? file.Name : $"{currentRel}/{file.Name}");
-		}
-
-		foreach (var subDir in dir.GetDirectories())
-		{
-			var nextRel = string.IsNullOrEmpty(currentRel) ? subDir.Name : $"{currentRel}/{subDir.Name}";
-			foreach (var item in GetAllFiles(subDir, nextRel))
-			{
-				yield return item;
 			}
 		}
 	}

@@ -1,43 +1,53 @@
 using CardWars.Core.Data;
-using CardWars.Core.FileSystem;
+using CardWars.Core.Logging;
+using CardWars.Core.Storage;
 
 namespace CardWars.Server.Persistance;
 
 public class SaveManager
 {
 	public SaveState SaveState = new();
-	private readonly IFileSystem _fs;
+	private readonly SessionStorage _session;
 
-	public SaveManager(IFileSystem fs)
+	public SaveManager(SessionStorage session)
 	{
-		_fs = fs;
+		_session = session;
 		DataTagTypeRegistry.ScanAssembly(typeof(SaveManager).Assembly);
+		Load();
 	}
 
-	public void Load(string filename)
+	public void Load()
 	{
-		var file = _fs.GetPath(filename);
-		if (file.Exists)
+		if (_session.SaveExists)
 		{
-			// var dataText = file.ReadAllText();
-			// var data = DataTagSerializer.Deserialize<DataTag>(dataText);
-			// SaveState = DataTagMapper.FromTag<SaveState>((CompoundTag)data);
+			try
+			{
+				SaveState = _session.LoadSave<SaveState>();
+			}
+			catch (Exception ex)
+			{
+				Logger.Warn($"Failed to load save, creating new: {ex.Message}");
+				CreateDefaultSave();
+			}
 		}
 		else
 		{
-			SaveState.PlayerSaves.Add(Guid.NewGuid(), new PlayerSaveState() { Position = 20 });
-			SaveState.PlayerSaves.Add(Guid.NewGuid(), new PlayerSaveState() { Position = 3 });
-			SaveState.PlayerSaves.Add(Guid.NewGuid(), new PlayerSaveState() { Position = 0 });
-			SaveState.PlayerSaves.Add(Guid.NewGuid(), new PlayerSaveState() { Position = 100 });
-			Save(filename);
+			CreateDefaultSave();
 		}
 	}
 
-	public void Save(string filename)
+	private void CreateDefaultSave()
 	{
-		var file = _fs.GetPath(filename);
-		var data = DataTagSerializer.Serialize(DataTagMapper.ToTag(SaveState));
-		file.WriteAllText(data);
+		SaveState.PlayerSaves.Add(Guid.NewGuid(), new PlayerSaveState() { Position = 20 });
+		SaveState.PlayerSaves.Add(Guid.NewGuid(), new PlayerSaveState() { Position = 3 });
+		SaveState.PlayerSaves.Add(Guid.NewGuid(), new PlayerSaveState() { Position = 0 });
+		SaveState.PlayerSaves.Add(Guid.NewGuid(), new PlayerSaveState() { Position = 100 });
+		Save();
+	}
+
+	public void Save()
+	{
+		_session.SaveSave(SaveState);
 	}
 }
 

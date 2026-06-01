@@ -6,7 +6,7 @@ using CardWars.Server.Packet;
 using CardWars.ModLoader;
 using CardWars.Server.Session;
 using CardWars.Core.Network.Packet;
-using CardWars.Core.FileSystem;
+using CardWars.Core.Storage;
 using CardWars.Server.Persistance;
 
 namespace CardWars.Server;
@@ -17,7 +17,8 @@ public class Server
 	public BattleEngineRegistry SharedBattleEngineRegistry { get; } = new();
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
 
-	public IFileSystem FileSystem { get; }
+	public StorageManager Storage { get; }
+	public SessionStorage Session { get; }
 	public SaveManager SaveManager { get; }
 
 	private readonly List<IListener> _listeners = [];
@@ -25,12 +26,11 @@ public class Server
 	private readonly Dictionary<Guid, IServerInstance> _instances = [];
 	private CancellationTokenSource? _cts;
 
-	public Server(IFileSystem fileSystem)
+	public Server(StorageManager storage, string sessionName = "default")
 	{
-		FileSystem = fileSystem;
-		SaveManager = new SaveManager(FileSystem);
-		SaveManager.Load("save.json");
-		// Register Core Packet Handlers
+		Storage = storage;
+		Session = storage.OpenSession(sessionName);
+		SaveManager = new SaveManager(Session);
 	}
 
 	public void LoadMod(IServerMod mod) => mod.OnLoad(Registry);
@@ -90,7 +90,6 @@ public class Server
 
 	private void ServerLoop(CancellationToken token)
 	{
-		// 60 Ticks per second
 		var tickRate = TimeSpan.FromMilliseconds(16);
 
 		while (!token.IsCancellationRequested)

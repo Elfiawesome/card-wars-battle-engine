@@ -1,5 +1,5 @@
 using CardWars.Core.Data;
-using CardWars.Core.FileSystem;
+using CardWars.Core.Storage;
 
 namespace CardWars.ModLoader;
 
@@ -29,7 +29,7 @@ public class ModManifest : IModManifest
 
 	public IReadOnlyList<string> ContentPaths => ContentPathsList;
 
-	public static ModManifest Load(IPathAddr jsonPath)
+	public static ModManifest Load(StoragePath jsonPath)
 	{
 		var json = jsonPath.ReadAllText();
 		var tag = DataTagSerializer.Deserialize<DataTag>(json);
@@ -37,6 +37,6 @@ public class ModManifest : IModManifest
 		{
 			return DataTagMapper.FromTag<ModManifest>(compoundTag);
 		}
-		throw new InvalidOperationException($"Failed to parse mod manifest: {jsonPath.Path}");
+		throw new InvalidOperationException($"Failed to parse mod manifest: {jsonPath.FullPath}");
 	}
 }
