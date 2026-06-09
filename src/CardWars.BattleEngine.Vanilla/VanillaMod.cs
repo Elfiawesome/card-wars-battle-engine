@@ -70,17 +70,13 @@ public class VanillaMod : IBattleEngineMod
 	{
 		foreach (var content in modContents)
 		{
-			using StreamReader sr = new(content.Stream);
-
 			switch (content.Category)
 			{
 				case ["cards", "units"]:
-					var unitData = sr.ReadToEnd();
-					var unitDataTag = DataTagSerializer.Deserialize<CompoundTag>(unitData);
+					var unitDataTag = content.ReadAs<CompoundTag>();
 					if (unitDataTag == null) continue;
 					Logger.Info("Registered Unit: " + content.Id.ToString());
 
-					// Set basic unit data structure
 					unitDataTag.Set("card_type", "unit");
 					unitDataTag.Set("intrinsic_behaviours", new ListTag().Add(new CompoundTag().Set("resource", "cardwars:summon_unit_card_to_unit_slot_behaviour")));
 
@@ -90,18 +86,15 @@ public class VanillaMod : IBattleEngineMod
 				case ["cards", "spells"]:
 					break;
 				case ["cards", "heroes"]:
-					var heroData = sr.ReadToEnd();
-					var heroDataTag = DataTagSerializer.Deserialize<CompoundTag>(heroData);
+					var heroDataTag = content.ReadAs<CompoundTag>();
 					if (heroDataTag == null) continue;
 					Logger.Info("Registered Hero: " + content.Id.ToString());
 
-					// Set basic hero data structure
 					heroDataTag.Set("card_type", "hero");
 
 					registry.CardDefinitions.Register(content.Id, heroDataTag);
 					break;
 			}
-
 		}
 	}
 }

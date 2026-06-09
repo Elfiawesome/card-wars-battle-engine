@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace CardWars.Core.Storage;
 
 public class LocalFileProvider : IFileProvider
@@ -36,7 +34,7 @@ public class LocalFileProvider : IFileProvider
 	private IEnumerable<(string filePath, string relativePath)> WalkRecursive(string rootPath, string currentPath)
 	{
 		foreach (var file in GetFiles(currentPath))
-			yield return (file, Path.GetRelativePath(rootPath, file));
+			yield return (file, NormalizePath(Path.GetRelativePath(rootPath, file)));
 
 		foreach (var dir in GetDirectories(currentPath))
 		{
@@ -46,4 +44,11 @@ public class LocalFileProvider : IFileProvider
 	}
 
 	public string Combine(string path1, string path2) => Path.Combine(path1, path2);
+
+	public string GetFileName(string path) => Path.GetFileName(path);
+	public string GetExtension(string path) => Path.GetExtension(path);
+	public string GetFullPath(string path) => Path.GetFullPath(path);
+	public string NormalizePath(string path) => path.Replace('\\', '/');
+	public string GetDirectoryName(string path) => NormalizePath(Path.GetDirectoryName(path) ?? string.Empty);
+	public string GetFileNameWithoutExtension(string path) => Path.GetFileNameWithoutExtension(path);
 }

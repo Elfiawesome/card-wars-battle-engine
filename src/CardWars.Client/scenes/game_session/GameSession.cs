@@ -7,6 +7,7 @@ using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;
 using CardWars.ModLoader;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CardWars.Client;
@@ -21,35 +22,32 @@ public partial class GameSession : Node
 
 	public override void _Ready()
 	{
-		var clientDirPath = System.Environment.CurrentDirectory;
-		var baseDirPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(clientDirPath, "..", ".."));
-		var gamedataPath = System.IO.Path.Combine(baseDirPath, "gamedata");
-
+		// Setup storage & providers
 		var provider = new LocalFileProvider();
+		var clientDir = System.Environment.CurrentDirectory;
+		var projectRoot = provider.GetFullPath(provider.Combine(provider.Combine(clientDir, ".."), ".."));
+		var gamedataPath = provider.Combine(projectRoot, "gamedata");
 		Storage = new StorageManager(gamedataPath, provider);
-
-		var modDirs = Storage.GetModDirectories();
-
-		foreach (var modDir in modDirs)
-			Core.Logging.Logger.Info($"Mod directory: {modDir.FullPath}");
-
-		ModLoader.ModLoader modLoader = new(modDirs);
-		modLoader.Setup();
-		modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry));
-
-		StartIntegratedServer(modLoader);
+		
+		// Start!
+		StartIntegratedServer();
 	}
 
-	private void StartIntegratedServer(ModLoader.ModLoader modLoader)
+	private void StartIntegratedServer()
 	{
 		var sessionName = "session_1";
 		IntegratedServer = new Server.Server(Storage, sessionName);
+		
+		var modDirs = Storage.AllModDirectories;
+		ModLoader.ModLoader modLoader = new(modDirs);
+		modLoader.Setup();
 
-		var serverContent = modLoader.GetContentServer().ToList();
 		var clientContent = modLoader.GetContentClient().ToList();
+		var serverContent = modLoader.GetContentServer().ToList();
 
 		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => IntegratedServer.LoadMod(m, serverContent));
-		modLoader.LoadModEntry<IServerMod>().ForEach(m => IntegratedServer.LoadMod(m));
+		modLoader.LoadModEntry<IServerMod>().ForEach(m => IntegratedServer.LoadMod(m, serverContent));
+		modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry, clientContent));
 
 		var localListener = new LocalListener();
 		IntegratedServer.Start(localListener);

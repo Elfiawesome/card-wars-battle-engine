@@ -15,4 +15,11 @@ public interface IFileProvider
 	string[] GetDirectories(string directoryPath);
 	IEnumerable<(string filePath, string relativePath)> Walk(string directoryPath);
 	string Combine(string path1, string path2);
+
+	string GetFileName(string path);
+	string GetExtension(string path);
+	string GetFullPath(string path);
+	string NormalizePath(string path);
+	string GetDirectoryName(string path);
+	string GetFileNameWithoutExtension(string path);
 }

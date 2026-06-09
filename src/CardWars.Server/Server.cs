@@ -33,7 +33,7 @@ public class Server
 		SaveManager = new SaveManager(Session);
 	}
 
-	public void LoadMod(IServerMod mod) => mod.OnLoad(Registry);
+	public void LoadMod(IServerMod mod, List<ModContentResult> modContents) => mod.OnLoad(Registry, modContents);
 	public void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents) => mod.OnLoad(SharedBattleEngineRegistry, modContents);
 
 	public void Start(params IListener[] listeners)

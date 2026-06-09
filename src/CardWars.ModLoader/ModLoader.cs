@@ -3,7 +3,6 @@ using System.Runtime.Loader;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using CardWars.Core.Storage;
-using System.IO;
 
 namespace CardWars.ModLoader;
 
@@ -42,19 +41,18 @@ public class ModLoader
 		foreach (var modDir in _modDirs)
 		{
 			if (!modDir.Exists) continue;
-			foreach (var dir in modDir.GetDirectories())
-			{
-				Logger.Info($"Mod found in '{dir.FullPath}'");
-				var manifestPath = dir.Combine("mod.json");
-				if (!manifestPath.Exists) continue;
 
-				var manifest = ModManifest.Load(manifestPath);
-				_mods[manifest.Id] = new()
-				{
-					Manifest = manifest,
-					RootPath = dir
-				};
-			}
+			var manifestPath = modDir.Combine("mod.json");
+			if (!manifestPath.Exists) continue;
+
+			Logger.Info($"Mod found in '{modDir.FullPath}'");
+
+			var manifest = ModManifest.Load(manifestPath);
+			_mods[manifest.Id] = new()
+			{
+				Manifest = manifest,
+				RootPath = modDir
+			};
 		}
 	}
 
@@ -129,11 +127,11 @@ public class ModLoader
 	public List<TModEntry> LoadModEntry<TModEntry>()
 		where TModEntry : IModEntry
 	{
-		Logger.Info($"Locating mod entry of type '{typeof(TModEntry)}'");
+		Logger.Info($"Locating mod entry of type [{typeof(TModEntry)}]");
 		List<TModEntry> modEntries = [];
 		foreach (var modId in _loadOrder)
 		{
-			Logger.Info($"Scanning [{modId}]...");
+			Logger.Info($"Scanning [{typeof(TModEntry)}] in [{modId}]...");
 			var mod = _mods[modId];
 
 			foreach (var assembly in mod.Assemblies)
@@ -169,23 +167,18 @@ public class ModLoader
 
 			foreach (var (filePath, relPath) in contentDir.Walk())
 			{
-				var sanePath = relPath.Replace('\\', '/');
-
-				var extensionIdx = sanePath.LastIndexOf('.');
-				if (extensionIdx > 0)
-				{
-					sanePath = sanePath[..extensionIdx];
-				}
+				var dir = filePath.GetDirectoryName(relPath);
+				var stem = filePath.GetFileNameWithoutExtension(relPath);
+				var sanePath = dir.Length > 0 ? $"{dir}/{stem}" : stem;
 
 				var id = new ResourceId(modId, sanePath);
-				var parts = sanePath.Split('/');
+				var parts = sanePath.Split('/'); // TODO FIX DONT USE '/'
 				var category = parts.Length > 1 ? parts[..^1] : [];
 
 				yield return new ModContentResult()
 				{
 					Id = id,
-					Stream = filePath.OpenRead(),
-					FilePath = filePath.FullPath,
+					FilePath = filePath,
 					Category = category
 				};
 			}
@@ -193,13 +186,21 @@ public class ModLoader
 	}
 }
 
-public class ModContentResult : IDisposable
+public class ModContentResult
 {
 	public required ResourceId Id;
-	public required Stream Stream;
-	public required string FilePath;
+	public required StoragePath FilePath;
 	public required string[] Category;
-	public string FileType => Path.GetExtension(FilePath);
 
-	public void Dispose() => Stream?.Dispose();
+	public Stream OpenStream() => FilePath.OpenRead();
+	public string ReadAllText() => FilePath.ReadAllText();
+
+	public T ReadAs<T>()
+	{
+		var json = ReadAllText();
+		var tag = Core.Data.DataTagSerializer.Deserialize<Core.Data.DataTag>(json);
+		if (tag is Core.Data.CompoundTag ct)
+			return Core.Data.DataTagMapper.FromTag<T>(ct);
+		throw new InvalidOperationException($"Content '{Id}' is not a CompoundTag.");
+	}
 }

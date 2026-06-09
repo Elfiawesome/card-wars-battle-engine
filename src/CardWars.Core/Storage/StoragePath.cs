@@ -3,15 +3,15 @@ namespace CardWars.Core.Storage;
 public class StoragePath
 {
 	public string FullPath { get; }
-	public string Name => System.IO.Path.GetFileName(FullPath);
-	public string Extension => System.IO.Path.GetExtension(FullPath);
-	public string[] Parts => FullPath.Split(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+	public string Name => _provider.GetFileName(FullPath);
+	public string Extension => _provider.GetExtension(FullPath);
+	public string[] Parts => _provider.NormalizePath(FullPath).Split('/');
 
 	private readonly IFileProvider _provider;
 
 	public StoragePath(string fullPath, IFileProvider provider)
 	{
-		FullPath = System.IO.Path.GetFullPath(fullPath);
+		FullPath = provider.GetFullPath(fullPath);
 		_provider = provider;
 	}
 
@@ -43,8 +43,11 @@ public class StoragePath
 	public IEnumerable<(StoragePath file, string relativePath)> Walk()
 	{
 		foreach (var (filePath, relPath) in _provider.Walk(FullPath))
-			yield return (new StoragePath(filePath, _provider), relPath);
+			yield return (new StoragePath(filePath, _provider), _provider.NormalizePath(relPath));
 	}
+
+	public string GetDirectoryName(string path) => _provider.GetDirectoryName(path);
+	public string GetFileNameWithoutExtension(string path) => _provider.GetFileNameWithoutExtension(path);
 
 	public override string ToString() => FullPath;
 }
