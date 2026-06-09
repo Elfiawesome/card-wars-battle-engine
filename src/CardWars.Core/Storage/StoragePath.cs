@@ -5,7 +5,7 @@ public class StoragePath
 	public string FullPath { get; }
 	public string Name => _provider.GetFileName(FullPath);
 	public string Extension => _provider.GetExtension(FullPath);
-	public string[] Parts => _provider.NormalizePath(FullPath).Split('/');
+	public string[] Parts => _provider.SplitPath(_provider.NormalizePath(FullPath));
 
 	private readonly IFileProvider _provider;
 
@@ -48,6 +48,8 @@ public class StoragePath
 
 	public string GetDirectoryName(string path) => _provider.GetDirectoryName(path);
 	public string GetFileNameWithoutExtension(string path) => _provider.GetFileNameWithoutExtension(path);
+	public string[] SplitPath(string path) => _provider.SplitPath(path);
+	public string JoinPath(params string[] parts) => _provider.JoinPath(parts);
 
 	public override string ToString() => FullPath;
 }

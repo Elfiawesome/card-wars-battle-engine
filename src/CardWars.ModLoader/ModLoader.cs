@@ -169,10 +169,10 @@ public class ModLoader
 			{
 				var dir = filePath.GetDirectoryName(relPath);
 				var stem = filePath.GetFileNameWithoutExtension(relPath);
-				var sanePath = dir.Length > 0 ? $"{dir}/{stem}" : stem;
+				var sanePath = dir.Length > 0 ? filePath.JoinPath(dir, stem) : stem;
 
 				var id = new ResourceId(modId, sanePath);
-				var parts = sanePath.Split('/'); // TODO FIX DONT USE '/'
+				var parts = filePath.SplitPath(sanePath);
 				var category = parts.Length > 1 ? parts[..^1] : [];
 
 				yield return new ModContentResult()

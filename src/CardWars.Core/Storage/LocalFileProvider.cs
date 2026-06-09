@@ -48,7 +48,11 @@ public class LocalFileProvider : IFileProvider
 	public string GetFileName(string path) => Path.GetFileName(path);
 	public string GetExtension(string path) => Path.GetExtension(path);
 	public string GetFullPath(string path) => Path.GetFullPath(path);
-	public string NormalizePath(string path) => path.Replace('\\', '/');
+	public string NormalizePath(string path) => path.Replace('\\', PathSeparator);
 	public string GetDirectoryName(string path) => NormalizePath(Path.GetDirectoryName(path) ?? string.Empty);
 	public string GetFileNameWithoutExtension(string path) => Path.GetFileNameWithoutExtension(path);
+
+	public static char PathSeparator => '/';
+	public string[] SplitPath(string path) => path.Split('/');
+	public string JoinPath(params string[] parts) => string.Join("/", parts.Where(p => p.Length > 0));
 }
