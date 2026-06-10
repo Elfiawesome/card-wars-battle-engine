@@ -1,3 +1,4 @@
+using CardWars.Core.Data;
 using CardWars.Core.Network.Packet;
 
 namespace CardWars.Server.Session;
@@ -11,4 +12,7 @@ public interface IServerInstance
 
 	void HandlePacket(PlayerSession session, IPacket packet);
 	void Tick(float deltaTime);
+
+	DataTag Save();
+	void Load(DataTag data);
 };

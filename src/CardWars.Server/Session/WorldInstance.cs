@@ -1,3 +1,4 @@
+using CardWars.Core.Data;
 using CardWars.Core.Network.Packet;
 
 namespace CardWars.Server.Session;
@@ -19,6 +20,15 @@ public class WorldInstance(Guid id) : IServerInstance
 
 
 	public void Tick(float deltaTime)
+	{
+	}
+
+	public DataTag Save()
+	{
+		return new BoolTag(true);
+	}
+
+	public void Load(DataTag data)
 	{
 	}
 }

@@ -7,7 +7,6 @@ using CardWars.ModLoader;
 using CardWars.Server.Session;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Storage;
-using CardWars.Server.Persistance;
 
 namespace CardWars.Server;
 
@@ -19,7 +18,6 @@ public class Server
 
 	public StorageManager Storage { get; }
 	public SessionStorage Session { get; }
-	public SaveManager SaveManager { get; }
 
 	private readonly List<IListener> _listeners = [];
 	private readonly Dictionary<Guid, PlayerSession> _playerSessions = [];
@@ -30,7 +28,6 @@ public class Server
 	{
 		Storage = storage;
 		Session = storage.OpenSession(sessionName);
-		SaveManager = new SaveManager(Session);
 	}
 
 	public void LoadMod(IServerMod mod, List<ModContentResult> modContents) => mod.OnLoad(Registry, modContents);
