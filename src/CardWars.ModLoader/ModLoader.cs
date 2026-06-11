@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
+using CardWars.Core.Data;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using CardWars.Core.Storage;
@@ -195,12 +196,19 @@ public class ModContentResult
 	public Stream OpenStream() => FilePath.OpenRead();
 	public string ReadAllText() => FilePath.ReadAllText();
 
-	public T ReadAs<T>()
+	public T? ReadAs<T>()
+		where T : DataTag
 	{
 		var json = ReadAllText();
-		var tag = Core.Data.DataTagSerializer.Deserialize<Core.Data.DataTag>(json);
-		if (tag is Core.Data.CompoundTag ct)
-			return Core.Data.DataTagMapper.FromTag<T>(ct);
-		throw new InvalidOperationException($"Content '{Id}' is not a CompoundTag.");
+		var tag = DataTagSerializer.Deserialize<T>(json);
+		return tag;
+	}
+
+	public T ReadAsObject<T>()
+	{
+		var json = ReadAllText();
+		var tag = DataTagSerializer.Deserialize<CompoundTag>(json)
+			?? throw new InvalidOperationException($"Invalid Serialization as object for '{Id}'");
+		return DataTagMapper.FromTag<T>(tag);
 	}
 }

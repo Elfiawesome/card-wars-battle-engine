@@ -46,9 +46,15 @@ public class StoragePath
 			yield return (new StoragePath(filePath, _provider), _provider.NormalizePath(relPath));
 	}
 
+	public string GetDirectoryName() => GetDirectoryName(FullPath);
 	public string GetDirectoryName(string path) => _provider.GetDirectoryName(path);
+	
+	public string GetFileNameWithoutExtension() => GetFileNameWithoutExtension(FullPath);
 	public string GetFileNameWithoutExtension(string path) => _provider.GetFileNameWithoutExtension(path);
+	
+	public string[] SplitPath() => SplitPath(FullPath);
 	public string[] SplitPath(string path) => _provider.SplitPath(path);
+	
 	public string JoinPath(params string[] parts) => _provider.JoinPath(parts);
 
 	public override string ToString() => FullPath;

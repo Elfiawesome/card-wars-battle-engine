@@ -8,4 +8,5 @@ public class ServerRegistry
 {
 	public HandlerRegistry<PacketContextServer> PacketHandlers = new();
 	public Registry<ResourceId, CompoundTag> WorldDefinitions { get; } = new();
+	public ResourceId DefaultWorld;
 }
