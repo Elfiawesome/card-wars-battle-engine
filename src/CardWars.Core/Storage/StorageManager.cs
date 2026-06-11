@@ -43,11 +43,8 @@ public class StorageManager
 		if (!sessionRoot.Exists)
 			sessionRoot.CreateDirectory();
 
-		var modsDir = sessionRoot.Combine("mods");
-		if (!modsDir.Exists)
-			modsDir.CreateDirectory();
-
 		CurrentSession = new SessionStorage(this, sessionName, sessionRoot);
+		CurrentSession.EnsureDirectories();
 		Logger.Info($"Storage: Opened session '{sessionName}' at '{sessionRoot.FullPath}'");
 		return CurrentSession;
 	}
