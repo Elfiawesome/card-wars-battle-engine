@@ -7,7 +7,10 @@ public class S2C_PlayerJoinedRequestPacketHandler : IPacketHandlerClient<S2C_Pla
 {
 	public void Handle(PacketContextClient context, S2C_PlayerJoinedRequestPacket request)
 	{
-		context.Connection.Send(new C2S_PlayerJoinedRequestResponsePacket());
+		context.Connection.Send(new C2S_PlayerJoinedRequestResponsePacket()
+		{
+			Username = context.Session.ConnectingUsername
+		});
 	}
 }
 

@@ -22,6 +22,7 @@ public interface IFileProvider
 	string NormalizePath(string path);
 	string GetDirectoryName(string path);
 	string GetFileNameWithoutExtension(string path);
+	string WithExtension(string path, string extension);
 
 	static char PathSeparator { get; }
 	string[] SplitPath(string path);

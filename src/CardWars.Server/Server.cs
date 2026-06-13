@@ -76,6 +76,19 @@ public class Server
 		Logger.Info($"Server: A new client [{playerId}] connected.");
 	}
 
+	public void SwapPlayerSessionIds(Guid oldPlayerId, Guid newPlayerId)
+	{
+		lock (_playerSessions)
+		{
+			if (_playerSessions.TryGetValue(oldPlayerId, out var ps))
+			{
+				_playerSessions[newPlayerId] = ps;
+				ps.PlayerId = newPlayerId;
+				_playerSessions.Remove(oldPlayerId);
+			}
+		}
+	}
+
 	public void CreateInstance(IServerInstance instance)
 		=> _instances.Add(instance.InstanceId, instance);
 

@@ -26,3 +26,7 @@ LoggerHook="*uid://bkqlqn8uqs1di"
 
 project/assembly_name="CardWars.Client"
 project/solution_directory="../../"
+
+[editor]
+
+run/main_run_args="Elfiawesome"

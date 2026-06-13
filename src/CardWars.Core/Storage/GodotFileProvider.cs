@@ -21,6 +21,7 @@ public class GodotFileProvider : IFileProvider
 	public string NormalizePath(string path) => throw new NotImplementedException("GodotFileProvider is not yet implemented.");
 	public string GetDirectoryName(string path) => throw new NotImplementedException("GodotFileProvider is not yet implemented.");
 	public string GetFileNameWithoutExtension(string path) => throw new NotImplementedException("GodotFileProvider is not yet implemented.");
+	public string WithExtension(string path, string extension) => throw new NotImplementedException("GodotFileProvider is not yet implemented.");
 
 	public static char PathSeparator => '/';
 	public string[] SplitPath(string path) => throw new NotImplementedException("GodotFileProvider is not yet implemented.");

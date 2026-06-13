@@ -51,6 +51,7 @@ public class LocalFileProvider : IFileProvider
 	public string NormalizePath(string path) => path.Replace('\\', PathSeparator);
 	public string GetDirectoryName(string path) => NormalizePath(Path.GetDirectoryName(path) ?? string.Empty);
 	public string GetFileNameWithoutExtension(string path) => Path.GetFileNameWithoutExtension(path);
+	public string WithExtension(string path, string extension) => NormalizePath(Path.ChangeExtension(path, extension));
 
 	public static char PathSeparator => '/';
 	public string[] SplitPath(string path) => path.Split('/');

@@ -6,11 +6,13 @@ namespace CardWars.Core.Network.Packet;
 public class S2C_PlayerJoinedRequestPacket : IPacket
 {
 	[DataTag] public string ServerGreetingMessage { get; set; } = "Hello";
+	[DataTag] public string Version => "TODO";
 }
 
 public class C2S_PlayerJoinedRequestResponsePacket : IPacket
 {
-	[DataTag] public string ClientGreetingMessage { get; set; } = "Hello";
+	[DataTag] public string ClientGreetingMessage { get; set; } = "Hello"; // Debug Testing
+	[DataTag] public required string Username { get; set; }
 }
 
 

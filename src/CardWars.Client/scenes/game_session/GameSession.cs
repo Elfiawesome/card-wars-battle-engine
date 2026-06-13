@@ -20,8 +20,11 @@ public partial class GameSession : Node
 	public IConnection? Connection { get; private set; }
 	public StorageManager Storage { get; private set; } = null!;
 
+	// Temporary settings
+	public string ConnectingUsername = "Elfiawesome";
+
 	public override void _Ready()
-	{
+	{		
 		// Setup storage & providers
 		var provider = new LocalFileProvider();
 		var clientDir = System.Environment.CurrentDirectory;

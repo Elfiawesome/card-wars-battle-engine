@@ -18,9 +18,13 @@ public class StoragePath
 	public bool Exists => _provider.Exists(FullPath);
 	public bool IsFile => _provider.IsFile(FullPath);
 	public bool IsDirectory => _provider.IsDirectory(FullPath);
+	public StoragePath Parent => new(GetDirectoryName(), _provider);
 
 	public StoragePath Combine(string part)
 		=> new(_provider.Combine(FullPath, part), _provider);
+
+	public StoragePath WithExtension(string extension)
+		=> new(_provider.WithExtension(FullPath, extension), _provider);
 
 	public Stream OpenRead() => _provider.OpenRead(FullPath);
 	public Stream OpenWrite() => _provider.OpenWrite(FullPath);
@@ -48,13 +52,13 @@ public class StoragePath
 
 	public string GetDirectoryName() => GetDirectoryName(FullPath);
 	public string GetDirectoryName(string path) => _provider.GetDirectoryName(path);
-	
+
 	public string GetFileNameWithoutExtension() => GetFileNameWithoutExtension(FullPath);
 	public string GetFileNameWithoutExtension(string path) => _provider.GetFileNameWithoutExtension(path);
-	
+
 	public string[] SplitPath() => SplitPath(FullPath);
 	public string[] SplitPath(string path) => _provider.SplitPath(path);
-	
+
 	public string JoinPath(params string[] parts) => _provider.JoinPath(parts);
 
 	public override string ToString() => FullPath;
