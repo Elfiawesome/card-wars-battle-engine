@@ -18,26 +18,37 @@ public partial class GameSession : Node
 	public StorageManager Storage { get; private set; } = null!;
 
 	// Temporary settings
-	public string ConnectingUsername = "Elfiawesome";
+	public string ConnectingUsername = "";
 
 	public override void _Ready()
-	{		
+	{
+		// Set username from cmd line args
+		ConnectingUsername = OS.GetCmdlineArgs()[2];
+
 		// Setup storage & providers
 		var provider = new LocalFileProvider();
 		var clientDir = System.Environment.CurrentDirectory;
 		var projectRoot = provider.GetFullPath(provider.Combine(provider.Combine(clientDir, ".."), ".."));
 		var gamedataPath = provider.Combine(projectRoot, "gamedata");
 		Storage = new StorageManager(gamedataPath, provider);
-		
+
 		// Start!
-		StartIntegratedServer();
+		Core.Logging.Logger.Info(ConnectingUsername);
+		if (ConnectingUsername == "Elfiawesome")
+		{
+			StartIntegratedServer();
+		}
+		else
+		{
+			// Join
+		}
 	}
 
 	private void StartIntegratedServer()
 	{
 		var sessionName = "session_1";
 		IntegratedServer = new Server.Server(Storage, sessionName);
-		
+
 		var modDirs = Storage.AllModDirectories;
 		ModLoader.ModLoader modLoader = new(modDirs);
 		modLoader.Setup();
@@ -54,6 +65,11 @@ public partial class GameSession : Node
 		var localListener = new LocalListener();
 		IntegratedServer.Start(localListener);
 		Connection = localListener.ConnectClient();
+	}
+
+	private void JoinServer()
+	{
+
 	}
 
 	public override void _Process(double delta)
