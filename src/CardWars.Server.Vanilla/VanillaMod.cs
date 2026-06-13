@@ -1,3 +1,4 @@
+using CardWars.Server.Session;
 using CardWars.Server.Vanilla.Network.Packet;
 using CardWars.ModLoader;
 using CardWars.Core.Logging;
@@ -31,10 +32,10 @@ public class VanillaMod : IServerMod
 				case []:
 					if (content.FilePath.GetFileNameWithoutExtension() == "config")
 					{
-						var ConfigDataTag = content.ReadAs<CompoundTag>();
-						if (ConfigDataTag == null) continue;
+						var configDataTag = content.ReadAs<CompoundTag>();
+						if (configDataTag == null) continue;
 
-						registry.DefaultWorld = ResourceId.Parse(ConfigDataTag.GetString("default_world"));
+						registry.DefaultWorld = ResourceId.Parse(configDataTag.GetString("default_world"));
 						Logger.Info("Registered default_world as: " + registry.DefaultWorld);
 					}
 					break;
