@@ -12,6 +12,15 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler(WorldRegistry worldReg
 {
 	public void Handle(PacketContextServer context, C2S_PlayerJoinedRequestResponsePacket request)
 	{
+		var alreadyOnline = context.Server.PlayerSessions.Values
+			.Any(p => p.Username == request.Username);
+
+		if (alreadyOnline)
+		{
+			context.PlayerSession.Connection.Disconnect();
+			return;
+		}
+
 		var persistentId = context.Server.Session.UsernameToPlayerId(request.Username);
 		if (persistentId == null)
 		{
