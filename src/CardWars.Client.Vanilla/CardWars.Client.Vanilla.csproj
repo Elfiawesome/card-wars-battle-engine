@@ -8,12 +8,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CardWars.Client\CardWars.Client.csproj" />
+    <ProjectReference Include="..\CardWars.Vanilla.Shared\CardWars.Vanilla.Shared.csproj" />
   </ItemGroup>
 
   <Target Name="CopyModToVanillaFolder" AfterTargets="Build">
     <ItemGroup>
       <ModOutputFiles Include="$(TargetDir)$(TargetName).dll" />
       <ModOutputFiles Include="$(TargetDir)$(TargetName).pdb" />
+      <ModOutputFiles Include="$(TargetDir)CardWars.Vanilla.Shared.dll" />
+      <ModOutputFiles Include="$(TargetDir)CardWars.Vanilla.Shared.pdb" />
     </ItemGroup>
     <Message Text="Copying Client Vanilla Mod to mods folder..." Importance="high" />
     <Copy SourceFiles="@(ModOutputFiles)" DestinationFolder="$(MSBuildProjectDirectory)\..\..\gamedata\mods\vanilla\code\" />

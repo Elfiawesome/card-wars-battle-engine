@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardWars.Core", "src\CardWa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardWars.Client.Vanilla", "src\CardWars.Client.Vanilla\CardWars.Client.Vanilla.csproj", "{5BE2D8C2-6B35-411B-886B-27EDA3710701}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardWars.Vanilla.Shared", "src\CardWars.Vanilla.Shared\CardWars.Vanilla.Shared.csproj", "{94E48963-F253-4CD4-8D1B-F04F260F305D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +143,18 @@ Global
 		{5BE2D8C2-6B35-411B-886B-27EDA3710701}.Release|x64.Build.0 = Release|Any CPU
 		{5BE2D8C2-6B35-411B-886B-27EDA3710701}.Release|x86.ActiveCfg = Release|Any CPU
 		{5BE2D8C2-6B35-411B-886B-27EDA3710701}.Release|x86.Build.0 = Release|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Debug|x64.Build.0 = Debug|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Debug|x86.Build.0 = Debug|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Release|x64.ActiveCfg = Release|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Release|x64.Build.0 = Release|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Release|x86.ActiveCfg = Release|Any CPU
+		{94E48963-F253-4CD4-8D1B-F04F260F305D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -155,5 +169,6 @@ Global
 		{83E7E8E6-09C7-4902-8C3A-1DBD3421D611} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{094E0F55-DCC6-4097-958E-14269A7B86B9} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{5BE2D8C2-6B35-411B-886B-27EDA3710701} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{94E48963-F253-4CD4-8D1B-F04F260F305D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal

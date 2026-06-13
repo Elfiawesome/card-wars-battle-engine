@@ -1,5 +1,5 @@
-using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
+using CardWars.Vanilla.Shared.Network.Packet;
 
 namespace CardWars.Client.Vanilla.Network.Packet;
 

@@ -5,7 +5,6 @@ using CardWars.Core.Network.Transport;
 using CardWars.Server.Packet;
 using CardWars.ModLoader;
 using CardWars.Server.Session;
-using CardWars.Core.Network.Packet;
 using CardWars.Core.Storage;
 
 namespace CardWars.Server;
@@ -18,6 +17,8 @@ public class Server
 
 	public StorageManager Storage { get; }
 	public SessionStorage Session { get; }
+
+	public Action<PlayerSession>? OnPlayerConnected { get; set; }
 
 	private readonly List<IListener> _listeners = [];
 	private readonly Dictionary<Guid, PlayerSession> _playerSessions = [];
@@ -66,14 +67,14 @@ public class Server
 	private void OnConnectionReceived(IConnection connection)
 	{
 		var playerId = Guid.NewGuid();
+		var session = new PlayerSession(playerId, connection);
 		lock (_playerSessions)
 		{
-			_playerSessions.Add(playerId, new PlayerSession(playerId, connection));
+			_playerSessions.Add(playerId, session);
 		}
 
-		connection.Send(new S2C_PlayerJoinedRequestPacket() { ServerGreetingMessage = "Hello this is from the server :)" });
-
 		Logger.Info($"Server: A new client [{playerId}] connected.");
+		OnPlayerConnected?.Invoke(session);
 	}
 
 	public void SwapPlayerSessionIds(Guid oldPlayerId, Guid newPlayerId)
@@ -95,8 +96,11 @@ public class Server
 	public void RemoveInstance(IServerInstance instance)
 		=> _instances.Remove(instance.InstanceId);
 
-	public void AddPlayerToInstance(PlayerSession playerId, IServerInstance instanceId)
-		=> instanceId.AddPlayer(playerId);
+	public void AddPlayerToInstance(PlayerSession player, IServerInstance instance)
+	{
+		player.CurrentInstance = instance;
+		instance.AddPlayer(player);
+	}
 
 	private void ServerLoop(CancellationToken token)
 	{

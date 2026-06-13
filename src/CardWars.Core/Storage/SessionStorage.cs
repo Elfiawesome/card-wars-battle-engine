@@ -1,7 +1,4 @@
-using System.Linq;
 using CardWars.Core.Data;
-using CardWars.Core.Logging;
-using CardWars.Core.Registry;
 
 namespace CardWars.Core.Storage;
 
@@ -22,7 +19,6 @@ public class SessionStorage
 		_manager = manager;
 		SessionName = sessionName;
 
-		// Initialize Directories
 		Root = root;
 		SaveFile = root.Combine("save.json");
 		ModsDir = root.Combine("mods");
@@ -41,58 +37,14 @@ public class SessionStorage
 	public StoragePath GetPath(string relativePath)
 		=> Root.Combine(relativePath);
 
-
-	// --- WORLDS ---
-	public DataTag? LoadAndCreateWorld(ResourceId worldId)
+	public DataTag? LoadData(StoragePath path)
 	{
-		var WorldFile = WorldsDir.Combine(worldId.ToFlatString()).WithExtension("json");
-		if (WorldFile.Exists)
-		{
-			// TODO
-		}
-		else
-		{
-		}
+		if (path.Exists) return DataTagSerializer.Deserialize<CompoundTag>(path.ReadAllText());
 		return null;
 	}
 
-
-	// --- PLAYER ---
-	public DataTag? LoadPlayer(Guid playerId)
+	public void SaveData(StoragePath path, DataTag data)
 	{
-		var playerSave = PlayersDir.Combine($"{playerId}").WithExtension("json");
-		if (playerSave.Exists) { return DataTagSerializer.Deserialize<CompoundTag>(playerSave.ReadAllText()); }
-		return null;
-	}
-
-	public void SavePlayer(Guid playerId, CompoundTag data)
-	{
-		var playerSave = PlayersDir.Combine($"{playerId}").WithExtension("json");
-		playerSave.WriteAllText(DataTagSerializer.Serialize(data));
-	}
-
-	// --- USERNAMES ---
-	private CompoundTag? GetUsernameFile()
-		=> UsernamesFile.Exists
-		? DataTagSerializer.Deserialize<CompoundTag>(UsernamesFile.ReadAllText()) ?? null
-		: null;
-
-	public void SetUsernameFromPlayerId(string username, Guid id)
-	{
-		var usernames = GetUsernameFile() ?? new CompoundTag();
-		usernames.Set(username, id);
-		UsernamesFile.WriteAllText(DataTagSerializer.Serialize(usernames));
-	}
-
-	public Guid? UsernameToPlayerId(string username)
-	{
-		var file = GetUsernameFile();
-		if (file == null || !file.Has(username)) return null;
-		return file.GetGuid(username);
+		path.WriteAllText(DataTagSerializer.Serialize(data));
 	}
 }
-
-// Save
-// Load
-// List
-// Exists

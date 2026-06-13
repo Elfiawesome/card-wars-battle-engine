@@ -5,4 +5,5 @@ namespace CardWars.Server;
 public interface IServerMod : IModEntry
 {
 	public void OnLoad(ServerRegistry registry, List<ModContentResult> modContents);
+	public void OnServerStart(Server server) { }
 }
