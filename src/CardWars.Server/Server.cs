@@ -20,6 +20,7 @@ public class Server
 
 	public Action<PlayerSession>? OnPlayerConnected { get; set; }
 	public Action<PlayerSession, IServerInstance>? OnPlayerInstanceChanged { get; set; }
+	public Action<PlayerSession>? OnPlayerDisconnected { get; set; }
 
 	private readonly List<IListener> _listeners = [];
 	private readonly Dictionary<Guid, PlayerSession> _playerSessions = [];
@@ -74,7 +75,7 @@ public class Server
 			_playerSessions.Add(playerId, session);
 		}
 
-		Logger.Debug($"Server: A connection request was received. [{playerId}]");
+		Logger.Debug($"Server: A connection [{playerId}] request was received.");
 		OnPlayerConnected?.Invoke(session);
 	}
 
@@ -123,14 +124,17 @@ public class Server
 		{
 			lock (_playerSessions)
 			{
-				List<Guid> disconnected = [.. _playerSessions
+				var disconnected = _playerSessions
 					.Where(kv => !kv.Value.Connection.IsConnected)
-					.Select(kv => kv.Key)];
+					.ToList();
 
-				foreach (var id in disconnected)
+				foreach (var (id, session) in disconnected)
 				{
+					session.CurrentInstance?.RemovePlayer(session);
+					Session.SavePlayer(id, session.PersistentData);
 					_playerSessions.Remove(id);
-					Logger.Info($"Server: Client [{id}] disconnected.");
+					OnPlayerDisconnected?.Invoke(session);
+					Logger.Debug($"Server: A connection [{id}] disconnected.");
 				}
 
 				foreach (var (playerId, playerSession) in _playerSessions)
@@ -152,6 +156,12 @@ public class Server
 					}
 				}
 			}
+
+			foreach (var instance in _instances.Values)
+			{
+				instance.Tick((float)tickRate.TotalSeconds);
+			}
+
 			Logger.Info("Server: Tick!");
 			Thread.Sleep(tickRate);
 		}

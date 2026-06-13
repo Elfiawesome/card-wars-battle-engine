@@ -7,10 +7,10 @@ namespace CardWars.Core.Network.Packet;
 
 public class S2C_CustomModPacket : IPacket
 {
-	[DataTag] CompoundTag Data { get; set; } = new();
+	[DataTag] public CompoundTag Data { get; set; } = new();
 };
 
 public class C2S_CustomModPacket : IPacket
 {
-	[DataTag] CompoundTag Data { get; set; } = new();
+	[DataTag] public CompoundTag Data { get; set; } = new();
 };

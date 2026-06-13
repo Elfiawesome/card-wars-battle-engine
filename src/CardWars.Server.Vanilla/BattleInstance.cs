@@ -1,4 +1,3 @@
-using CardWars.BattleEngine;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data;
