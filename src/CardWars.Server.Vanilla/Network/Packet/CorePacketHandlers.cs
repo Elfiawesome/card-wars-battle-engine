@@ -31,7 +31,8 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler(WorldRegistry worldReg
 
 		AssignPlayerToWorld(context);
 
-		context.PlayerSession.PlayState = Session.PlayState.Play;
+		context.PlayerSession.PlayState = PlayState.Play;
+		Logger.Info($"[{context.PlayerSession.Username}] [{context.PlayerSession.PlayerId}] has connected!");
 	}
 
 	private void AssignPlayerToWorld(PacketContextServer context)

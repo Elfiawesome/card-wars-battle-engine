@@ -13,8 +13,10 @@
 
   <Target Name="CopyModToVanillaFolder" AfterTargets="Build">
     <ItemGroup>
+      <!-- Main DLL -->
       <ModOutputFiles Include="$(TargetDir)$(TargetName).dll" />
       <ModOutputFiles Include="$(TargetDir)$(TargetName).pdb" />
+      <!-- Dependency DLL -->
       <ModOutputFiles Include="$(TargetDir)CardWars.Vanilla.Shared.dll" />
       <ModOutputFiles Include="$(TargetDir)CardWars.Vanilla.Shared.pdb" />
     </ItemGroup>

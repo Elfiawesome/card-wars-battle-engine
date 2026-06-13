@@ -22,11 +22,20 @@ public class VanillaMod : IServerMod
 
 	public void OnServerStart(Server server)
 	{
-		server.OnPlayerConnected = session =>
+		server.OnPlayerConnected += (session) =>
 		{
 			session.Connection.Send(new S2C_PlayerJoinedRequestPacket()
 			{
 				ServerGreetingMessage = "Hello this is from the server :)"
+			});
+		};
+
+		server.OnPlayerInstanceChanged += (player, instance) =>
+		{
+			player.Connection.Send(new S2C_InstanceChangedPacket()
+			{
+				InstanceId = instance.InstanceId,
+				InstanceType = instance.GetType().Name
 			});
 		};
 	}

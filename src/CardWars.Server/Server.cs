@@ -19,6 +19,7 @@ public class Server
 	public SessionStorage Session { get; }
 
 	public Action<PlayerSession>? OnPlayerConnected { get; set; }
+	public Action<PlayerSession, IServerInstance>? OnPlayerInstanceChanged { get; set; }
 
 	private readonly List<IListener> _listeners = [];
 	private readonly Dictionary<Guid, PlayerSession> _playerSessions = [];
@@ -73,7 +74,7 @@ public class Server
 			_playerSessions.Add(playerId, session);
 		}
 
-		Logger.Info($"Server: A new client [{playerId}] connected.");
+		Logger.Debug($"Server: A connection request was received. [{playerId}]");
 		OnPlayerConnected?.Invoke(session);
 	}
 
@@ -100,6 +101,18 @@ public class Server
 	{
 		player.CurrentInstance = instance;
 		instance.AddPlayer(player);
+		OnPlayerInstanceChanged?.Invoke(player, instance);
+	}
+
+	public void TransferPlayer(PlayerSession player, IServerInstance target)
+	{
+		lock (_playerSessions)
+		{
+			player.CurrentInstance?.RemovePlayer(player);
+			player.CurrentInstance = target;
+			target.AddPlayer(player);
+		}
+		OnPlayerInstanceChanged?.Invoke(player, target);
 	}
 
 	private void ServerLoop(CancellationToken token)
@@ -125,7 +138,13 @@ public class Server
 					var conn = playerSession.Connection;
 					while (conn.TryReceive(out var packet))
 					{
-						if (packet != null)
+						if (packet == null) continue;
+
+						if (playerSession.PlayState == PlayState.Play && playerSession.CurrentInstance != null)
+						{
+							playerSession.CurrentInstance.HandlePacket(playerSession, packet);
+						}
+						else
 						{
 							var context = new PacketContextServer() { Server = this, PlayerSession = playerSession };
 							Registry.PacketHandlers.Execute(context, packet);
