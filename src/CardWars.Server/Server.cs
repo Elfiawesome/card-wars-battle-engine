@@ -98,14 +98,7 @@ public class Server
 	public void RemoveInstance(IServerInstance instance)
 		=> _instances.Remove(instance.InstanceId);
 
-	public void AddPlayerToInstance(PlayerSession player, IServerInstance instance)
-	{
-		player.CurrentInstance = instance;
-		instance.AddPlayer(player);
-		OnPlayerInstanceChanged?.Invoke(player, instance);
-	}
-
-	public void TransferPlayer(PlayerSession player, IServerInstance target)
+	public void AddPlayerToInstance(PlayerSession player, IServerInstance target)
 	{
 		lock (_playerSessions)
 		{
