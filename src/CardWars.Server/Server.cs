@@ -162,7 +162,7 @@ public class Server
 				instance.Tick((float)tickRate.TotalSeconds);
 			}
 
-			Logger.Info("Server: Tick!");
+			// Logger.Info("Server: Tick!");
 			Thread.Sleep(tickRate);
 		}
 	}

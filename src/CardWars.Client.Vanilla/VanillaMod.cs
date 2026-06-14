@@ -1,5 +1,7 @@
-using CardWars.Client.Vanilla.Network.Packet;
+using CardWars.Client.Vanilla.Packet;
+using CardWars.Core.Data;
 using CardWars.ModLoader;
+using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Client.Vanilla;
 
@@ -13,5 +15,7 @@ public class VanillaMod : IClientMod
 	{
 		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());
 		registry.PacketHandlers.Register(new S2C_PlayerJoinedRequestPacketHandler());
+
+		DataTagTypeRegistry.ScanAssembly(typeof(S2C_PlayerJoinedRequestPacket).Assembly);
 	}
 }

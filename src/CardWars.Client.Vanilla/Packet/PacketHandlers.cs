@@ -1,7 +1,7 @@
 using CardWars.Core.Network.Packet;
-using CardWars.Vanilla.Shared.Network.Packet;
+using CardWars.Vanilla.Shared.Packet;
 
-namespace CardWars.Client.Vanilla.Network.Packet;
+namespace CardWars.Client.Vanilla.Packet;
 
 public class S2C_PlayerJoinedRequestPacketHandler : IPacketHandlerClient<S2C_PlayerJoinedRequestPacket>
 {

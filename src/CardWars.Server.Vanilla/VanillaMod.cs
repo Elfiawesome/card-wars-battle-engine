@@ -2,10 +2,8 @@ using CardWars.Core.Data;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
-using CardWars.Server;
-using CardWars.Server.Session;
-using CardWars.Server.Vanilla.Network.Packet;
-using CardWars.Vanilla.Shared.Network.Packet;
+using CardWars.Server.Vanilla.Packet;
+using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Server.Vanilla;
 

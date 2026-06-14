@@ -1,12 +1,11 @@
 using CardWars.Core.Data;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
-using CardWars.Server;
 using CardWars.Server.Packet;
 using CardWars.Server.Session;
-using CardWars.Vanilla.Shared.Network.Packet;
+using CardWars.Vanilla.Shared.Packet;
 
-namespace CardWars.Server.Vanilla.Network.Packet;
+namespace CardWars.Server.Vanilla.Packet;
 
 public class C2S_PlayerJoinedRequestResponsePacketHandler(WorldRegistry worldRegistry) : IPacketHandlerServer<C2S_PlayerJoinedRequestResponsePacket>
 {
