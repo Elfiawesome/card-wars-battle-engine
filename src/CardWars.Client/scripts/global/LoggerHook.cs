@@ -8,7 +8,7 @@ public partial class LoggerHook : Node
 	{
 		Core.Logging.Logger.OnLog += (_, level, msg) =>
 		{
-			string newMsg = $"[{level}]: {msg}";
+			string newMsg = Core.Logging.Logger.BuildLine(msg, level);
 			static void printColor(string color, string m) => GD.PrintRich($"[color={color}]" + m + "[/color]");
 			switch (level)
 			{

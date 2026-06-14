@@ -13,11 +13,22 @@ public static class Logger
 
 	public static void Custom(string msg, string level = "---", ConsoleColor color = ConsoleColor.Cyan) => Print(msg, level, color);
 
+	public static string Identity { get; set; } = "";
+
 	private static void Print(string msg, string level, ConsoleColor color = ConsoleColor.White)
 	{
 		Console.ForegroundColor = color;
-		Console.WriteLine($"[{level}]: {msg}");
+		Console.WriteLine(BuildLine(msg, level));
 		Console.ResetColor();
 		OnLog?.Invoke(color, level, msg);
+	}
+
+	public static string BuildLine(string msg, string level)
+	{
+		string line = "";
+		if (Identity != "") line += $"[{Identity}]";
+		line += $"[{level}]";
+		line += $": {msg}";
+		return line;
 	}
 }
