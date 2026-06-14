@@ -2,7 +2,7 @@
 .tools/
 
 # Game data (deployed mods, saves, settings)
-# /gamedata/
+/gamedata/saves
 
 # Exclude build mods in vanilla folder
 **.dll
