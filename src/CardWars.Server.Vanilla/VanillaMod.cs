@@ -3,7 +3,6 @@ using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
 using CardWars.Server.Vanilla.Packet;
-using CardWars.Server.Vanilla.Session;
 using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Server.Vanilla;

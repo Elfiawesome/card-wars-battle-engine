@@ -8,7 +8,7 @@ public class SessionStorage
 	public StoragePath Root { get; }
 	public StoragePath SaveFile { get; }
 	public StoragePath ModsDir { get; }
-	public StoragePath WorldsDir { get; }
+	public StoragePath SessionDir { get; }
 	public StoragePath PlayersDir { get; }
 	public StoragePath UsernamesFile { get; }
 
@@ -22,7 +22,7 @@ public class SessionStorage
 		Root = root;
 		SaveFile = root.Combine("save.json");
 		ModsDir = root.Combine("mods");
-		WorldsDir = root.Combine("worlds");
+		SessionDir = root.Combine("session");
 		PlayersDir = root.Combine("players");
 		UsernamesFile = root.Combine("usernames.json");
 	}
@@ -30,7 +30,7 @@ public class SessionStorage
 	public void EnsureDirectories()
 	{
 		if (!ModsDir.Exists) ModsDir.CreateDirectory();
-		if (!WorldsDir.Exists) WorldsDir.CreateDirectory();
+		if (!SessionDir.Exists) SessionDir.CreateDirectory();
 		if (!PlayersDir.Exists) PlayersDir.CreateDirectory();
 	}
 
@@ -47,11 +47,11 @@ public class SessionStorage
 		=> path.WriteAllText(DataTagSerializer.Serialize(data));
 
 	// --- World ---
-	public DataTag? LoadWorld(string saveName)
-		=> LoadData(WorldsDir.Combine(saveName).WithExtension("json"));
+	public DataTag? LoadWorld(string name)
+		=> LoadData(SessionDir.Combine(name).WithExtension("json"));
 
-	public void SaveWorld(string saveName, DataTag data)
-		=> SaveData(WorldsDir.Combine(saveName).WithExtension("json"), data);
+	public void SaveWorld(string name, DataTag data)
+		=> SaveData(SessionDir.Combine(name).WithExtension("json"), data);
 
 	// --- Player ---
 	public DataTag? LoadPlayer(Guid playerId)
