@@ -47,4 +47,31 @@ public class SessionStorage
 	{
 		path.WriteAllText(DataTagSerializer.Serialize(data));
 	}
+
+	public DataTag? LoadPlayer(Guid playerId)
+		=> LoadData(PlayersDir.Combine($"{playerId}").WithExtension("json"));
+
+	public void SavePlayer(Guid playerId, CompoundTag data)
+		=> SaveData(PlayersDir.Combine($"{playerId}").WithExtension("json"), data);
+
+	public void SaveUsernameMapping(string username, Guid id)
+	{
+		var usernames = LoadUsernames();
+		usernames.Set(username, id);
+		SaveData(UsernamesFile, usernames);
+	}
+
+	public Guid? UsernameToPlayerId(string username)
+	{
+		var file = LoadUsernames();
+		if (!file.Has(username)) return null;
+		return file.GetGuid(username);
+	}
+
+	private CompoundTag LoadUsernames()
+	{
+		if (UsernamesFile.Exists)
+			return DataTagSerializer.Deserialize<CompoundTag>(UsernamesFile.ReadAllText()) ?? new CompoundTag();
+		return new CompoundTag();
+	}
 }

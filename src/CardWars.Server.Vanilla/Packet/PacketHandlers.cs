@@ -49,13 +49,9 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler(WorldRegistry worldReg
 
 	private void AssignPlayerToWorld(PacketContextServer context)
 	{
-		var template = worldRegistry.Templates.Get(worldRegistry.DefaultWorld);
-		if (template == null) return;
-
-		var instance = new WorldInstance(Guid.NewGuid());
-		instance.Load(template);
-		context.Server.CreateInstance(instance);
-		context.Server.AddPlayerToInstance(context.PlayerSession, instance);
+		var world = worldRegistry.CreateWorld(worldRegistry.DefaultWorld);
+		context.Server.CreateInstance(world);
+		context.Server.AddPlayerToInstance(context.PlayerSession, world);
 	}
 }
 
