@@ -40,6 +40,10 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler(WorldRegistry worldReg
 		AssignPlayerToWorld(context);
 
 		context.PlayerSession.PlayState = PlayState.Play;
+		context.PlayerSession.Connection.Send(new S2C_ConnectionConfirmedPacket()
+		{
+			Message = $"Welcome, {context.PlayerSession.Username}!"
+		});
 		Logger.Info($"[{context.PlayerSession.Username}] [{context.PlayerSession.PlayerId}] has connected!");
 	}
 

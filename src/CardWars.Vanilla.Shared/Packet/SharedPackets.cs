@@ -18,6 +18,12 @@ public class C2S_PlayerJoinedRequestResponsePacket : IPacket
 }
 
 [DataTagType()]
+public class S2C_ConnectionConfirmedPacket : IPacket
+{
+	[DataTag] public string Message { get; set; } = "Welcome!";
+}
+
+[DataTagType()]
 public class S2C_InstanceChangedPacket : IPacket
 {
 	[DataTag] public Guid InstanceId { get; set; }

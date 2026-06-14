@@ -24,7 +24,8 @@ public partial class GameSession : Node
 	public override void _Ready()
 	{
 		DebugLabel = GetNode<Label>("DebugLabel");
-		
+		SetDebugLabel("Connecting to server...");
+
 		// Set username from cmd line args
 		ConnectingUsername = OS.GetCmdlineArgs()[2];
 		GetWindow().Title = ConnectingUsername;
@@ -104,6 +105,9 @@ public partial class GameSession : Node
 		Core.Logging.Logger.Debug($"Client received packet from server: {packet.GetType().Name}");
 		ClientRegistry.PacketHandlers.Execute(new PacketContextClient() { Session = this }, packet);
 	}
+
+	// TODO REMOVE LATER
+	public void SetDebugLabel(string text) { if (DebugLabel != null) { DebugLabel.Text = text; } }
 
 	public override void _ExitTree()
 	{

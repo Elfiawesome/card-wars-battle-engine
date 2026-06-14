@@ -11,6 +11,24 @@ public class S2C_PlayerJoinedRequestPacketHandler : IPacketHandlerClient<S2C_Pla
 		{
 			Username = context.Session.ConnectingUsername
 		});
+
+		context.Session.SetDebugLabel("Sent player info, waiting for confirmation...");
+	}
+}
+
+public class S2C_ConnectionConfirmedPacketHandler : IPacketHandlerClient<S2C_ConnectionConfirmedPacket>
+{
+	public void Handle(PacketContextClient context, S2C_ConnectionConfirmedPacket request)
+	{
+		context.Session.SetDebugLabel($"Connected! {request.Message}");
+	}
+}
+
+public class S2C_InstanceChangedPacketHandler : IPacketHandlerClient<S2C_InstanceChangedPacket>
+{
+	public void Handle(PacketContextClient context, S2C_InstanceChangedPacket request)
+	{
+		context.Session.SetDebugLabel($"Joined {request.InstanceType}!");
 	}
 }
 
