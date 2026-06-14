@@ -54,8 +54,12 @@ public class SessionStorage
 		=> SaveData(InstancesDir.Combine(name).WithExtension("json"), data);
 
 	// --- Player ---
-	public DataTag? LoadPlayer(Guid playerId)
-		=> LoadData(PlayersDir.Combine($"{playerId}").WithExtension("json"));
+	public CompoundTag? LoadPlayer(Guid playerId)
+	{
+		var d = LoadData(PlayersDir.Combine($"{playerId}").WithExtension("json"));
+		if (d is CompoundTag c) return c;
+		return null;
+	}
 
 	public void SavePlayer(Guid playerId, CompoundTag data)
 		=> SaveData(PlayersDir.Combine($"{playerId}").WithExtension("json"), data);
@@ -67,10 +71,10 @@ public class SessionStorage
 		SaveData(UsernamesFile, usernames);
 	}
 
-	public Guid? UsernameToPlayerId(string username)
+	public Guid UsernameToPlayerId(string username)
 	{
 		var file = LoadUsernames();
-		if (!file.Has(username)) return null;
+		if (!file.Has(username)) return Guid.Empty;
 		return file.GetGuid(username);
 	}
 
