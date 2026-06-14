@@ -64,7 +64,6 @@ public partial class GameSession : Node
 
 		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => IntegratedServer.LoadMod(m, serverContent));
 		modLoader.LoadModEntry<IServerMod>().ForEach(m => IntegratedServer.LoadMod(m, serverContent));
-		modLoader.LoadModEntry<IServerMod>().ForEach(m => m.OnServerStart(IntegratedServer));
 		modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry, clientContent));
 
 		var localListener = new LocalListener();

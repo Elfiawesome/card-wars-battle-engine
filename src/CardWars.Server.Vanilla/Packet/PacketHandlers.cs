@@ -37,7 +37,8 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler(WorldRegistry worldReg
 			context.Server.SwapPlayerSessionIds(context.PlayerSession.PlayerId, (Guid)persistentId);
 		}
 
-		AssignPlayerToWorld(context);
+		// Set player to their instance
+		// TODO
 
 		context.PlayerSession.PlayState = PlayState.Play;
 		context.PlayerSession.Connection.Send(new S2C_ConnectionConfirmedPacket()
@@ -45,13 +46,6 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler(WorldRegistry worldReg
 			Message = $"Welcome, {context.PlayerSession.Username}!"
 		});
 		Logger.Info($"[{context.PlayerSession.Username}] [{context.PlayerSession.PlayerId}] has connected!");
-	}
-
-	private void AssignPlayerToWorld(PacketContextServer context)
-	{
-		var world = worldRegistry.CreateWorld(worldRegistry.DefaultWorld);
-		context.Server.CreateInstance(world);
-		context.Server.AddPlayerToInstance(context.PlayerSession, world);
 	}
 }
 

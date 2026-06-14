@@ -6,6 +6,7 @@ using CardWars.Server.Packet;
 using CardWars.ModLoader;
 using CardWars.Server.Session;
 using CardWars.Core.Storage;
+using CardWars.Core.Data;
 
 namespace CardWars.Server;
 
@@ -19,7 +20,6 @@ public class Server
 	public SessionStorage Session { get; }
 
 	public Action<PlayerSession>? OnPlayerConnected { get; set; }
-	public Action<PlayerSession, IServerInstance>? OnPlayerInstanceChanged { get; set; }
 	public Action<PlayerSession>? OnPlayerDisconnected { get; set; }
 
 	private readonly List<IListener> _listeners = [];
@@ -33,7 +33,7 @@ public class Server
 		Session = storage.OpenSession(sessionName);
 	}
 
-	public void LoadMod(IServerMod mod, List<ModContentResult> modContents) => mod.OnLoad(Registry, modContents);
+	public void LoadMod(IServerMod mod, List<ModContentResult> modContents) => mod.OnLoad(this, modContents);
 	public void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents) => mod.OnLoad(SharedBattleEngineRegistry, modContents);
 
 	public void Start(params IListener[] listeners)
@@ -90,23 +90,6 @@ public class Server
 				_playerSessions.Remove(oldPlayerId);
 			}
 		}
-	}
-
-	public void CreateInstance(IServerInstance instance)
-		=> _instances.Add(instance.InstanceId, instance);
-
-	public void RemoveInstance(IServerInstance instance)
-		=> _instances.Remove(instance.InstanceId);
-
-	public void AddPlayerToInstance(PlayerSession player, IServerInstance target)
-	{
-		lock (_playerSessions)
-		{
-			player.CurrentInstance?.RemovePlayer(player);
-			player.CurrentInstance = target;
-			target.AddPlayer(player);
-		}
-		OnPlayerInstanceChanged?.Invoke(player, target);
 	}
 
 	private void ServerLoop(CancellationToken token)

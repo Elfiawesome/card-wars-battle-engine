@@ -3,22 +3,23 @@ using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
 using CardWars.Server.Vanilla.Packet;
+using CardWars.Server.Vanilla.Session;
 using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Server.Vanilla;
 
 public class VanillaMod : IServerMod
 {
-	public void OnLoad(ServerRegistry registry, List<ModContentResult> modContents)
+	public void OnLoad(Server server, List<ModContentResult> modContents)
 	{
 		var worldRegistry = new WorldRegistry();
+		RegisterPackets(server.Registry, worldRegistry);
+		RegisterEvents(server, worldRegistry);
 		LoadWorldDefinitions(worldRegistry, modContents);
-
-		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());
-		registry.PacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler(worldRegistry));
+		DataTagTypeRegistry.ScanAssembly(GetType().Assembly);
 	}
 
-	public void OnServerStart(Server server)
+	private void RegisterEvents(Server server, WorldRegistry worldRegistry)
 	{
 		server.OnPlayerConnected += (session) =>
 		{
@@ -27,15 +28,12 @@ public class VanillaMod : IServerMod
 				ServerGreetingMessage = "Hello this is from the server :)"
 			});
 		};
+	}
 
-		server.OnPlayerInstanceChanged += (player, instance) =>
-		{
-			player.Connection.Send(new S2C_InstanceChangedPacket()
-			{
-				InstanceId = instance.InstanceId,
-				InstanceType = instance.GetType().Name
-			});
-		};
+	private void RegisterPackets(ServerRegistry registry, WorldRegistry worldRegistry)
+	{
+		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());
+		registry.PacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler(worldRegistry));
 	}
 
 	private void LoadWorldDefinitions(WorldRegistry worldRegistry, List<ModContentResult> modContents)

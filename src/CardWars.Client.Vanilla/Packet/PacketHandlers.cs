@@ -24,14 +24,6 @@ public class S2C_ConnectionConfirmedPacketHandler : IPacketHandlerClient<S2C_Con
 	}
 }
 
-public class S2C_InstanceChangedPacketHandler : IPacketHandlerClient<S2C_InstanceChangedPacket>
-{
-	public void Handle(PacketContextClient context, S2C_InstanceChangedPacket request)
-	{
-		context.Session.SetDebugLabel($"Joined {request.InstanceType}!");
-	}
-}
-
 public class C2S_CustomModPacketHandler : IPacketHandlerClient<S2C_CustomModPacket>
 {
 	public void Handle(PacketContextClient context, S2C_CustomModPacket request)

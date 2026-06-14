@@ -44,10 +44,16 @@ public class SessionStorage
 	}
 
 	public void SaveData(StoragePath path, DataTag data)
-	{
-		path.WriteAllText(DataTagSerializer.Serialize(data));
-	}
+		=> path.WriteAllText(DataTagSerializer.Serialize(data));
 
+	// --- World ---
+	public DataTag? LoadWorld(string saveName)
+		=> LoadData(WorldsDir.Combine(saveName).WithExtension("json"));
+
+	public void SaveWorld(string saveName, DataTag data)
+		=> SaveData(WorldsDir.Combine(saveName).WithExtension("json"), data);
+
+	// --- Player ---
 	public DataTag? LoadPlayer(Guid playerId)
 		=> LoadData(PlayersDir.Combine($"{playerId}").WithExtension("json"));
 
