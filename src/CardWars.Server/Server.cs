@@ -83,7 +83,7 @@ public class Server
 
 	public void RemovePlayer(PlayerSession playerSession)
 	{
-		_playerSessions.Add(playerSession.PlayerId, playerSession);
+		_playerSessions.Remove(playerSession.PlayerId);
 		Session.SavePlayer(playerSession.PlayerId, DataTagMapper.ToTag(playerSession, false));
 		playerSession.Connection.Disconnect();
 	}
