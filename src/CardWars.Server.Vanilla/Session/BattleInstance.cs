@@ -1,11 +1,13 @@
+using CardWars.Core.Data;
 using CardWars.Core.Network.Packet;
 using CardWars.Server.Session;
 
 namespace CardWars.Server.Vanilla.Session;
 
-public class BattleInstance(Guid id) : IServerInstance
+[DataTagType()]
+public class BattleInstance : IServerInstance
 {
-	public Guid InstanceId => id;
+	[DataTag] public Guid InstanceId { get; set; }
 
 	public void AddPlayer(PlayerSession player) { }
 	public void RemovePlayer(PlayerSession player) { }

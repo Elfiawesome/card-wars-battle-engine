@@ -1,5 +1,6 @@
 using CardWars.Core.Data;
 using CardWars.Core.Logging;
+using CardWars.Core.Network.Transport;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
 using CardWars.Server.Vanilla.Packet;
@@ -20,19 +21,24 @@ public class VanillaMod : IServerMod
 
 	private void RegisterEvents(Server server, WorldRegistry worldRegistry)
 	{
-		server.OnPlayerConnected += (session) =>
+		server.OnPendingConnectionRequest += OnPendingConnectionRequest;
+	}
+
+	private void OnPendingConnectionRequest(IConnection connection)
+	{
+		connection.Send(new S2C_PlayerJoinedRequestPacket()
 		{
-			session.Connection.Send(new S2C_PlayerJoinedRequestPacket()
-			{
-				ServerGreetingMessage = "Hello this is from the server :)"
-			});
-		};
+			ServerGreetingMessage = "Hello! This is the server :)"
+		});
 	}
 
 	private void RegisterPackets(ServerRegistry registry, WorldRegistry worldRegistry)
 	{
+		// Pending Packets
+		registry.PendingPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler(worldRegistry));
+		
+		// Normal Packets
 		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());
-		registry.PacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler(worldRegistry));
 	}
 
 	private void LoadWorldDefinitions(WorldRegistry worldRegistry, List<ModContentResult> modContents)

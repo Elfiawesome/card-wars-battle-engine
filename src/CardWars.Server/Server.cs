@@ -7,6 +7,7 @@ using CardWars.ModLoader;
 using CardWars.Server.Session;
 using CardWars.Core.Storage;
 using CardWars.Core.Data;
+using CardWars.Core.Network.Packet;
 
 namespace CardWars.Server;
 
@@ -19,11 +20,12 @@ public class Server
 	public StorageManager Storage { get; }
 	public SessionStorage Session { get; }
 
-	public Action<PlayerSession>? OnPlayerConnected { get; set; }
+	public Action<IConnection>? OnPendingConnectionRequest { get; set; }
 	public Action<PlayerSession>? OnPlayerDisconnected { get; set; }
 
 	private readonly List<IListener> _listeners = [];
 	private readonly Dictionary<Guid, PlayerSession> _playerSessions = [];
+	private readonly List<IConnection> _pendingConnections = [];
 	private readonly Dictionary<Guid, IServerInstance> _instances = [];
 	private CancellationTokenSource? _cts;
 
@@ -57,9 +59,9 @@ public class Server
 
 		lock (_playerSessions)
 		{
-			foreach (var playerSession in _playerSessions)
+			foreach (var playerSession in _playerSessions.ToList())
 			{
-				playerSession.Value.Connection.Disconnect();
+				RemovePlayer(playerSession.Value);
 			}
 			_playerSessions.Clear();
 		}
@@ -68,28 +70,22 @@ public class Server
 
 	private void OnConnectionReceived(IConnection connection)
 	{
-		var playerId = Guid.NewGuid();
-		var session = new PlayerSession(playerId, connection);
-		lock (_playerSessions)
-		{
-			_playerSessions.Add(playerId, session);
-		}
-
-		Logger.Debug($"Server: A connection [{playerId}] request was received.");
-		OnPlayerConnected?.Invoke(session);
+		_pendingConnections.Add(connection);
+		Logger.Debug($"Server: A new pending connection request was received.");
+		OnPendingConnectionRequest?.Invoke(connection);
 	}
 
-	public void SwapPlayerSessionIds(Guid oldPlayerId, Guid newPlayerId)
+	public void AddPlayer(PlayerSession playerSession)
 	{
-		lock (_playerSessions)
-		{
-			if (_playerSessions.TryGetValue(oldPlayerId, out var ps))
-			{
-				_playerSessions[newPlayerId] = ps;
-				ps.PlayerId = newPlayerId;
-				_playerSessions.Remove(oldPlayerId);
-			}
-		}
+		_playerSessions.Add(playerSession.PlayerId, playerSession);
+		Session.SavePlayer(playerSession.PlayerId, DataTagMapper.ToTag(playerSession, false));
+	}
+
+	public void RemovePlayer(PlayerSession playerSession)
+	{
+		_playerSessions.Add(playerSession.PlayerId, playerSession);
+		Session.SavePlayer(playerSession.PlayerId, DataTagMapper.ToTag(playerSession, false));
+		playerSession.Connection.Disconnect();
 	}
 
 	private void ServerLoop(CancellationToken token)
@@ -107,8 +103,7 @@ public class Server
 				foreach (var (id, session) in disconnected)
 				{
 					session.CurrentInstance?.RemovePlayer(session);
-					Session.SavePlayer(id, session.PersistentData);
-					_playerSessions.Remove(id);
+					RemovePlayer(session);
 					OnPlayerDisconnected?.Invoke(session);
 					Logger.Debug($"Server: A connection [{id}] disconnected.");
 				}
@@ -119,16 +114,17 @@ public class Server
 					while (conn.TryReceive(out var packet))
 					{
 						if (packet == null) continue;
+						HandleLocalPacket(playerSession, packet);
+						HandleGlobalPacket(playerSession, packet);
+					}
+				}
 
-						if (playerSession.PlayState == PlayState.Play && playerSession.CurrentInstance != null)
-						{
-							playerSession.CurrentInstance.HandlePacket(playerSession, packet);
-						}
-						else
-						{
-							var context = new PacketContextServer() { Server = this, PlayerSession = playerSession };
-							Registry.PacketHandlers.Execute(context, packet);
-						}
+				foreach (var pc in _pendingConnections)
+				{
+					while (pc.TryReceive(out var packet))
+					{
+						if (packet == null) continue;
+						HandlePendingPacket(pc, packet);
 					}
 				}
 			}
@@ -142,4 +138,19 @@ public class Server
 			Thread.Sleep(tickRate);
 		}
 	}
+
+
+
+	public void HandlePendingPacket(IConnection connection, IPacket packet)
+		=> Registry.PendingPacketHandlers.Execute(
+			new PacketPendingContextServer() { Server = this, Connection = connection },
+			packet);
+
+	public void HandleLocalPacket(PlayerSession playerSession, IPacket packet)
+		=> playerSession.CurrentInstance?.HandlePacket(playerSession, packet);
+
+	public void HandleGlobalPacket(PlayerSession playerSession, IPacket packet)
+		=> Registry.PacketHandlers.Execute(
+			new PacketContextServer() { Server = this, PlayerSession = playerSession },
+			packet);
 }

@@ -5,3 +5,6 @@ namespace CardWars.Server.Packet;
 
 public interface IPacketHandlerServer<TPacket> : IRequestHandler<PacketContextServer, TPacket>
 	where TPacket : IPacket;
+
+public interface IPendingPacketHandlerServer<TPacket> : IRequestHandler<PacketPendingContextServer, TPacket>
+	where TPacket : IPacket;

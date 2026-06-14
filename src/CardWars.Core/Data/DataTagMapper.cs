@@ -13,7 +13,7 @@ public static class DataTagMapper
 	// ======================== PUBLIC API ========================
 
 	/// <summary>Converts an object to a CompoundTag.</summary>
-	public static CompoundTag ToTag(object obj)
+	public static CompoundTag ToTag(object obj, bool includeType = true)
 	{
 		if (obj is CompoundTag existing)
 			return (CompoundTag)existing.Clone();
@@ -21,9 +21,12 @@ public static class DataTagMapper
 		var tag = new CompoundTag();
 		var type = obj.GetType();
 
-		var typeId = DataTagTypeRegistry.GetTypeId(type);
-		if (typeId != null)
-			tag.Set("_type", typeId);
+		if (includeType)
+		{
+			var typeId = DataTagTypeRegistry.GetTypeId(type);
+			if (typeId != null)
+				tag.Set("_type", typeId);
+		}
 
 		var meta = GetOrBuildMeta(type);
 		foreach (var prop in meta.Properties)
