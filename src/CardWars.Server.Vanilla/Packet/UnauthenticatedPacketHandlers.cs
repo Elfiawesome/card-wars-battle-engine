@@ -6,9 +6,9 @@ using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Server.Vanilla.Packet;
 
-public class C2S_PlayerJoinedRequestResponsePacketHandler() : IPendingPacketHandlerServer<C2S_PlayerJoinedRequestResponsePacket>
+public class C2S_PlayerJoinedRequestResponsePacketHandler() : IUnauthenticatedPacketHandlerServer<C2S_PlayerJoinedRequestResponsePacket>
 {
-	public void Handle(PacketPendingContextServer context, C2S_PlayerJoinedRequestResponsePacket request)
+	public void Handle(PacketUnauthenticatedContextServer context, C2S_PlayerJoinedRequestResponsePacket request)
 	{
 		Logger.Info("Handling packet!");
 		var persistentId = context.Server.Session.UsernameToPlayerId(request.Username);
@@ -26,7 +26,7 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler() : IPendingPacketHand
 			Logger.Info("file found");
 			PlayerSession playerSession = DataTagMapper.FromTag<PlayerSession>(data);
 			playerSession.Connection = context.Connection;
-			context.Server.RemovePendingConnection(context.Connection);
+			context.Server.RemoveUnauthenticatedConnection(context.Connection);
 			context.Server.AddPlayer(playerSession);
 		}
 		else
@@ -34,7 +34,7 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler() : IPendingPacketHand
 			Logger.Info("No file found");
 			PlayerSession playerSession = new() { Connection = context.Connection, PlayerId = persistentId };
 			context.Server.Session.SavePlayer(persistentId, DataTagMapper.ToTag(playerSession, false));
-			context.Server.RemovePendingConnection(context.Connection);
+			context.Server.RemoveUnauthenticatedConnection(context.Connection);
 			context.Server.AddPlayer(playerSession);
 		}
 

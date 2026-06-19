@@ -21,8 +21,8 @@ public class VanillaMod : IServerMod
 
 	private void RegisterPackets(ServerRegistry registry)
 	{
-		// Pending Packets
-		registry.PendingPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler());
+		// Unauthenticated Packets
+		registry.UnauthenticatedPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler());
 
 		// Normal Packets
 		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());
@@ -30,10 +30,10 @@ public class VanillaMod : IServerMod
 
 	private void RegisterEvents(Server server, WorldRegistry worldRegistry)
 	{
-		server.OnPendingConnectionRequest += OnPendingConnectionRequest;
+		server.OnUnauthenticatedConnectionReceived += OnUnauthenticatedConnectionReceived;
 	}
 
-	private void OnPendingConnectionRequest(IConnection connection)
+	private void OnUnauthenticatedConnectionReceived(IConnection connection)
 	{
 		connection.Send(new S2C_PlayerJoinedRequestPacket() { ServerGreetingMessage = "Hello! This is the server :)" });
 	}

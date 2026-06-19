@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CardWars.BattleEngine;
 using CardWars.Core.Logging;
 using CardWars.Server.Listener;
@@ -12,6 +13,9 @@ namespace CardWars.Server;
 
 public class Server
 {
+	private static readonly TimeSpan _tickRate = TimeSpan.FromMilliseconds(16);
+	private static readonly TimeSpan _unauthenticatedTimeout = TimeSpan.FromSeconds(30);
+
 	public ServerRegistry Registry { get; } = new();
 	public BattleEngineRegistry SharedBattleEngineRegistry { get; } = new();
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
@@ -19,15 +23,15 @@ public class Server
 	public StorageManager Storage { get; }
 	public SessionStorage Session { get; }
 
-	public Action<IConnection>? OnPendingConnectionRequest { get; set; }
+	public Action<IConnection>? OnUnauthenticatedConnectionReceived { get; set; }
+	public Action<IConnection>? OnUnauthenticatedConnectionRemoved { get; set; }
 	public Action<PlayerSession>? OnAddPlayer { get; set; }
 	public Action<PlayerSession>? OnRemovePlayer { get; set; }
 
-	// public Action<PlayerSession>? OnPlayerDisconnected { get; set; }
-
+	private readonly object _sync = new();
 	private readonly List<IListener> _listeners = [];
 	private readonly Dictionary<Guid, PlayerSession> _playerSessions = [];
-	private readonly List<IConnection> _pendingConnections = [];
+	private readonly Dictionary<IConnection, DateTime> _unauthenticatedConnections = [];
 	private readonly Dictionary<Guid, IServerInstance> _instances = [];
 	private CancellationTokenSource? _cts;
 
@@ -59,85 +63,138 @@ public class Server
 		_cts?.Cancel();
 		foreach (var listener in _listeners) listener.Stop();
 
-		lock (_playerSessions)
+		lock (_sync)
 		{
-			foreach (var playerSession in _playerSessions.ToList())
+			foreach (var (_, session) in _playerSessions)
 			{
+				session.CurrentInstance?.RemovePlayer(session);
+				session.Connection.Disconnect();
 			}
 			_playerSessions.Clear();
+
+			foreach (var (conn, _) in _unauthenticatedConnections)
+				conn.Disconnect();
+			_unauthenticatedConnections.Clear();
 		}
 		Logger.Info("Server stopped.");
 	}
 
 	private void OnConnectionReceived(IConnection connection)
 	{
-		Logger.Debug($"Server: A new pending connection request was received.");
-		AddPendingConnection(connection);
+		Logger.Debug($"Server: A new unauthenticated connection was received.");
+		AddUnauthenticatedConnection(connection);
 	}
 
-	public void AddPendingConnection(IConnection connection) { _pendingConnections.Add(connection); OnPendingConnectionRequest?.Invoke(connection); }
+	public void AddUnauthenticatedConnection(IConnection connection)
+	{
+		lock (_sync) { _unauthenticatedConnections[connection] = DateTime.UtcNow; }
+		OnUnauthenticatedConnectionReceived?.Invoke(connection);
+	}
 
-	public void RemovePendingConnection(IConnection connection) { _pendingConnections.Remove(connection); }
+	public void RemoveUnauthenticatedConnection(IConnection connection)
+	{
+		lock (_sync) { _unauthenticatedConnections.Remove(connection); }
+		OnUnauthenticatedConnectionRemoved?.Invoke(connection);
+	}
 
-	public void AddPlayer(PlayerSession player) { _playerSessions.Add(player.PlayerId, player); OnAddPlayer?.Invoke(player); }
+	public void AddPlayer(PlayerSession player)
+	{
+		lock (_sync) { _playerSessions.Add(player.PlayerId, player); }
+		OnAddPlayer?.Invoke(player);
+	}
 
-	public void RemovePlayer(PlayerSession player) { _playerSessions.Remove(player.PlayerId); OnRemovePlayer?.Invoke(player); }
+	public void RemovePlayer(PlayerSession player)
+	{
+		lock (_sync) { _playerSessions.Remove(player.PlayerId); }
+		OnRemovePlayer?.Invoke(player);
+	}
 
+
+	// --- Loop ---
 	private void ServerLoop(CancellationToken token)
 	{
-		var tickRate = TimeSpan.FromMilliseconds(16);
+		var stopwatch = Stopwatch.StartNew();
 
 		while (!token.IsCancellationRequested)
 		{
-			lock (_playerSessions)
+			stopwatch.Restart();
+
+			lock (_sync)
 			{
-				var disconnected = _playerSessions
-					.Where(kv => !kv.Value.Connection.IsConnected)
-					.ToList();
-
-				// Handle disconnect
-				foreach (var (id, session) in disconnected)
-				{
-					// session.CurrentInstance?.RemovePlayer(session);
-					// Remove player
-					Logger.Debug($"Server: A connection [{id}] disconnected.");
-				}
-
-				// Handle connection packets
-				foreach (var (playerId, playerSession) in _playerSessions)
-				{
-					var conn = playerSession.Connection;
-					while (conn.TryReceive(out var packet))
-					{
-						if (packet == null) continue;
-						HandleLocalPacket(playerSession, packet);
-						HandleGlobalPacket(playerSession, packet);
-					}
-				}
-
-				foreach (var pc in _pendingConnections)
-				{
-					while (pc.TryReceive(out var packet))
-					{
-						if (packet == null) continue;
-						HandlePendingPacket(pc, packet);
-					}
-				}
+				ProcessDisconnections();
+				ProcessPackets();
 			}
 
 			foreach (var instance in _instances.Values)
 			{
-				instance.Tick((float)tickRate.TotalSeconds);
+				instance.Tick((float)_tickRate.TotalSeconds);
 			}
 
-			// Logger.Info("Server: Tick!");
-			Thread.Sleep(tickRate);
+			var remaining = _tickRate - stopwatch.Elapsed;
+			if (remaining > TimeSpan.Zero)
+				token.WaitHandle.WaitOne(remaining);
 		}
 	}
 
-	public void HandlePendingPacket(IConnection connection, IPacket packet)
-		=> Registry.PendingPacketHandlers.Execute(
-			new PacketPendingContextServer() { Server = this, Connection = connection },
+	private void ProcessDisconnections()
+	{
+		var now = DateTime.UtcNow;
+
+		var timedOut = _unauthenticatedConnections.Where(kv => now - kv.Value > _unauthenticatedTimeout).ToList();
+		foreach (var (conn, _) in timedOut)
+		{
+			_unauthenticatedConnections.Remove(conn);
+			conn.Disconnect();
+			Logger.Debug($"Server: An unauthenticated connection timed out and was closed.");
+		}
+
+		var deadUnauthenticated = _unauthenticatedConnections.Where(kv => !kv.Key.IsConnected).ToList();
+		foreach (var (conn, _) in deadUnauthenticated)
+		{
+			_unauthenticatedConnections.Remove(conn);
+			Logger.Debug($"Server: An unauthenticated connection disconnected.");
+		}
+
+		var disconnected = _playerSessions
+			.Where(kv => !kv.Value.Connection.IsConnected)
+			.ToList();
+		foreach (var (id, session) in disconnected)
+		{
+			session.CurrentInstance?.RemovePlayer(session);
+			_playerSessions.Remove(id);
+			OnRemovePlayer?.Invoke(session);
+			Logger.Debug($"Server: Player [{id}] disconnected.");
+		}
+	}
+
+	private void ProcessPackets()
+	{
+		foreach (var (_, playerSession) in _playerSessions)
+		{
+			var conn = playerSession.Connection;
+			while (conn.TryReceive(out var packet))
+			{
+				if (packet == null) continue;
+				HandleLocalPacket(playerSession, packet);
+				HandleGlobalPacket(playerSession, packet);
+			}
+		}
+
+		foreach (var (conn, _) in _unauthenticatedConnections)
+		{
+			while (conn.TryReceive(out var packet))
+			{
+				if (packet == null) continue;
+				HandleUnauthenticatedPacket(conn, packet);
+			}
+		}
+	}
+
+	
+	// --- Handle Packets ---
+	public void HandleUnauthenticatedPacket(IConnection connection, IPacket packet)
+		=> Registry.UnauthenticatedPacketHandlers.Execute(
+			new PacketUnauthenticatedContextServer() { Server = this, Connection = connection },
 			packet);
 
 	public void HandleLocalPacket(PlayerSession playerSession, IPacket packet)

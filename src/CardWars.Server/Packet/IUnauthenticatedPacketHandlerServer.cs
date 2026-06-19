@@ -3,5 +3,5 @@ using CardWars.Core.Request;
 
 namespace CardWars.Server.Packet;
 
-public interface IPendingPacketHandlerServer<TPacket> : IRequestHandler<PacketPendingContextServer, TPacket>
+public interface IUnauthenticatedPacketHandlerServer<TPacket> : IRequestHandler<PacketUnauthenticatedContextServer, TPacket>
 	where TPacket : IPacket;
