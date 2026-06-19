@@ -9,7 +9,7 @@ public class PlayerSession()
 	[DataTag] public Guid PlayerId { get; set; } = Guid.Empty;
 	[DataTag] public string Username { get; set; } = "";
 
-	public required IConnection Connection { get; init; }
+	public required IConnection Connection { get; set; }
 	public IServerInstance? CurrentInstance { get; set; }
 	[DataTag] public CompoundTag CustomData { get; set; } = new();
 }

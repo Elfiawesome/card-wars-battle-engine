@@ -6,50 +6,43 @@ using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Server.Vanilla.Packet;
 
-public class C2S_PlayerJoinedRequestResponsePacketHandler(WorldRegistry worldRegistry) : IPendingPacketHandlerServer<C2S_PlayerJoinedRequestResponsePacket>
+public class C2S_PlayerJoinedRequestResponsePacketHandler() : IPendingPacketHandlerServer<C2S_PlayerJoinedRequestResponsePacket>
 {
 	public void Handle(PacketPendingContextServer context, C2S_PlayerJoinedRequestResponsePacket request)
 	{
-		// Check for duplicates
-		var alreadyOnline = context.Server.PlayerSessions.Values
-			.Any(p => p.Username == request.Username);
-
-		if (alreadyOnline)
+		Logger.Info("Handling packet!");
+		var persistentId = context.Server.Session.UsernameToPlayerId(request.Username);
+		if (persistentId == Guid.Empty)
 		{
-			context.Connection.Disconnect();
-			return;
+			persistentId = Guid.NewGuid();
+			context.Server.Session.SaveUsernameMapping(request.Username, persistentId);
+			Logger.Info("Mapping does not exist, making one now");
 		}
 
-		PlayerSession? playerSession = null;
-		var persistentId = context.Server.Session.UsernameToPlayerId(request.Username);
-		if (persistentId == null)
+
+		var data = context.Server.Session.LoadPlayer(persistentId);
+		if (data != null)
 		{
-			// New player (Need to save mapping)
-			playerSession = new PlayerSession() { Connection = context.Connection, PlayerId = Guid.NewGuid() };
-			context.Server.Session.SaveUsernameMapping(request.Username, playerSession.PlayerId);
+			Logger.Info("file found");
+			PlayerSession playerSession = DataTagMapper.FromTag<PlayerSession>(data);
+			playerSession.Connection = context.Connection;
+			context.Server.RemovePendingConnection(context.Connection);
+			context.Server.AddPlayer(playerSession);
 		}
 		else
 		{
-			// Returning player
-			var save = context.Server.Session.LoadPlayer((Guid)persistentId);
-			if (save is CompoundTag saveCompoundTag)
-			{
-				playerSession = DataTagMapper.FromTag<PlayerSession>(saveCompoundTag);
-			}
+			Logger.Info("No file found");
+			PlayerSession playerSession = new() { Connection = context.Connection, PlayerId = persistentId };
+			context.Server.Session.SavePlayer(persistentId, DataTagMapper.ToTag(playerSession, false));
+			context.Server.RemovePendingConnection(context.Connection);
+			context.Server.AddPlayer(playerSession);
 		}
 
-		if (playerSession == null) { return; }
-		// Set player data from client and add them
-		playerSession.Username = request.Username;
-		context.Server.AddPlayer(playerSession);
 
-		// TODO: Set player to their instance
 
-		playerSession?.Connection.Send(new S2C_ConnectionConfirmedPacket()
-		{
-			Message = $"Welcome, {playerSession.Username}!"
-		});
-		
-		Logger.Info($"[{playerSession?.Username}] [{playerSession?.PlayerId}] has connected!");
+
+		// // TODO: Set player to their instance
+		// playerSession?.Connection.Send(new S2C_ConnectionConfirmedPacket() { Message = $"Welcome, {playerSession.Username}!" });
+		// Logger.Info($"[{playerSession?.Username}] [{playerSession?.PlayerId}] has connected!");
 	}
 }

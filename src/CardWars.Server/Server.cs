@@ -6,7 +6,6 @@ using CardWars.Server.Packet;
 using CardWars.ModLoader;
 using CardWars.Server.Session;
 using CardWars.Core.Storage;
-using CardWars.Core.Data;
 using CardWars.Core.Network.Packet;
 
 namespace CardWars.Server;
@@ -21,7 +20,10 @@ public class Server
 	public SessionStorage Session { get; }
 
 	public Action<IConnection>? OnPendingConnectionRequest { get; set; }
-	public Action<PlayerSession>? OnPlayerDisconnected { get; set; }
+	public Action<PlayerSession>? OnAddPlayer { get; set; }
+	public Action<PlayerSession>? OnRemovePlayer { get; set; }
+
+	// public Action<PlayerSession>? OnPlayerDisconnected { get; set; }
 
 	private readonly List<IListener> _listeners = [];
 	private readonly Dictionary<Guid, PlayerSession> _playerSessions = [];
@@ -61,7 +63,6 @@ public class Server
 		{
 			foreach (var playerSession in _playerSessions.ToList())
 			{
-				RemovePlayer(playerSession.Value);
 			}
 			_playerSessions.Clear();
 		}
@@ -70,23 +71,17 @@ public class Server
 
 	private void OnConnectionReceived(IConnection connection)
 	{
-		_pendingConnections.Add(connection);
 		Logger.Debug($"Server: A new pending connection request was received.");
-		OnPendingConnectionRequest?.Invoke(connection);
+		AddPendingConnection(connection);
 	}
 
-	public void AddPlayer(PlayerSession playerSession)
-	{
-		_playerSessions.Add(playerSession.PlayerId, playerSession);
-		Session.SavePlayer(playerSession.PlayerId, DataTagMapper.ToTag(playerSession, false));
-	}
+	public void AddPendingConnection(IConnection connection) { _pendingConnections.Add(connection); OnPendingConnectionRequest?.Invoke(connection); }
 
-	public void RemovePlayer(PlayerSession playerSession)
-	{
-		_playerSessions.Remove(playerSession.PlayerId);
-		Session.SavePlayer(playerSession.PlayerId, DataTagMapper.ToTag(playerSession, false));
-		playerSession.Connection.Disconnect();
-	}
+	public void RemovePendingConnection(IConnection connection) { _pendingConnections.Remove(connection); }
+
+	public void AddPlayer(PlayerSession player) { _playerSessions.Add(player.PlayerId, player); OnAddPlayer?.Invoke(player); }
+
+	public void RemovePlayer(PlayerSession player) { _playerSessions.Remove(player.PlayerId); OnRemovePlayer?.Invoke(player); }
 
 	private void ServerLoop(CancellationToken token)
 	{
@@ -100,14 +95,15 @@ public class Server
 					.Where(kv => !kv.Value.Connection.IsConnected)
 					.ToList();
 
+				// Handle disconnect
 				foreach (var (id, session) in disconnected)
 				{
-					session.CurrentInstance?.RemovePlayer(session);
-					RemovePlayer(session);
-					OnPlayerDisconnected?.Invoke(session);
+					// session.CurrentInstance?.RemovePlayer(session);
+					// Remove player
 					Logger.Debug($"Server: A connection [{id}] disconnected.");
 				}
 
+				// Handle connection packets
 				foreach (var (playerId, playerSession) in _playerSessions)
 				{
 					var conn = playerSession.Connection;
@@ -138,8 +134,6 @@ public class Server
 			Thread.Sleep(tickRate);
 		}
 	}
-
-
 
 	public void HandlePendingPacket(IConnection connection, IPacket packet)
 		=> Registry.PendingPacketHandlers.Execute(

@@ -13,10 +13,19 @@ public class VanillaMod : IServerMod
 	public void OnLoad(Server server, List<ModContentResult> modContents)
 	{
 		var worldRegistry = new WorldRegistry();
-		RegisterPackets(server.Registry, worldRegistry);
+		RegisterPackets(server.Registry);
 		RegisterEvents(server, worldRegistry);
 		LoadWorldDefinitions(worldRegistry, modContents);
 		DataTagTypeRegistry.ScanAssembly(GetType().Assembly);
+	}
+
+	private void RegisterPackets(ServerRegistry registry)
+	{
+		// Pending Packets
+		registry.PendingPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler());
+
+		// Normal Packets
+		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());
 	}
 
 	private void RegisterEvents(Server server, WorldRegistry worldRegistry)
@@ -26,19 +35,7 @@ public class VanillaMod : IServerMod
 
 	private void OnPendingConnectionRequest(IConnection connection)
 	{
-		connection.Send(new S2C_PlayerJoinedRequestPacket()
-		{
-			ServerGreetingMessage = "Hello! This is the server :)"
-		});
-	}
-
-	private void RegisterPackets(ServerRegistry registry, WorldRegistry worldRegistry)
-	{
-		// Pending Packets
-		registry.PendingPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler(worldRegistry));
-		
-		// Normal Packets
-		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());
+		connection.Send(new S2C_PlayerJoinedRequestPacket() { ServerGreetingMessage = "Hello! This is the server :)" });
 	}
 
 	private void LoadWorldDefinitions(WorldRegistry worldRegistry, List<ModContentResult> modContents)
