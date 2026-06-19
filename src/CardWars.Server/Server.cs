@@ -19,6 +19,7 @@ public class Server
 	public ServerRegistry Registry { get; } = new();
 	public BattleEngineRegistry SharedBattleEngineRegistry { get; } = new();
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
+	public IReadOnlyDictionary<Guid, IServerInstance> Instances => _instances;
 
 	public StorageManager Storage { get; }
 	public SessionStorage Session { get; }
@@ -27,6 +28,8 @@ public class Server
 	public Action<IConnection>? OnUnauthenticatedConnectionRemoved { get; set; }
 	public Action<PlayerSession>? OnAddPlayer { get; set; }
 	public Action<PlayerSession>? OnRemovePlayer { get; set; }
+	public Action<IServerInstance>? OnAddInstance { get; set; }
+	public Action<IServerInstance>? OnRemoveInstance { get; set; }
 
 	private readonly object _sync = new();
 	private readonly List<IListener> _listeners = [];
@@ -85,6 +88,7 @@ public class Server
 		AddUnauthenticatedConnection(connection);
 	}
 
+	// --- Player Session Handling ---
 	public void AddUnauthenticatedConnection(IConnection connection)
 	{
 		lock (_sync) { _unauthenticatedConnections[connection] = DateTime.UtcNow; }
@@ -107,6 +111,19 @@ public class Server
 	{
 		lock (_sync) { _playerSessions.Remove(player.PlayerId); }
 		OnRemovePlayer?.Invoke(player);
+	}
+
+	// --- Instance Handling ---
+	public void AddInstance(IServerInstance instance)
+	{
+		lock (_sync) { _instances.Add(instance.InstanceId, instance); }
+		OnAddInstance?.Invoke(instance);
+	}
+
+	public void RemoveInstance(IServerInstance instance)
+	{
+		lock (_sync) { _instances.Remove(instance.InstanceId); }
+		OnRemoveInstance?.Invoke(instance);
 	}
 
 
@@ -190,7 +207,7 @@ public class Server
 		}
 	}
 
-	
+
 	// --- Handle Packets ---
 	public void HandleUnauthenticatedPacket(IConnection connection, IPacket packet)
 		=> Registry.UnauthenticatedPacketHandlers.Execute(
