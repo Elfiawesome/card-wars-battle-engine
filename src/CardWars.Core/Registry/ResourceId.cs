@@ -21,6 +21,15 @@ public readonly record struct ResourceId(string Namespace, string Path)
 
 	public string ToFlatString() => $"{Namespace}-{Path.Replace('/', '_')}";
 
+	public static ResourceId FromFlatString(string flat)
+	{
+		var idx = flat.IndexOf('-');
+		if (idx < 0) return new ResourceId("cardwars", flat);
+		var ns = flat.Substring(0, idx);
+		var path = flat.Substring(idx + 1).Replace('_', '/');
+		return new ResourceId(ns, path);
+	}
+
 	public bool IsEmpty => string.IsNullOrEmpty(Namespace) && string.IsNullOrEmpty(Path);
 
 	public static implicit operator ResourceId(string value) { return Parse(value); }

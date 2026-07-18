@@ -3,26 +3,45 @@ using CardWars.Core.Logging;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
+using CardWars.Server.Session;
 using CardWars.Server.Vanilla.Packet;
+using CardWars.Server.Vanilla.Session;
 using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Server.Vanilla;
 
 public class VanillaMod : IServerMod
 {
+	public readonly string WorldKind = ResourceId.Vanilla("world").ToFlatString();
+	public readonly string BattleKind = ResourceId.Vanilla("battle").ToFlatString();
+
 	public void OnLoad(Server server, List<ModContentResult> modContents)
 	{
 		var worldRegistry = new WorldRegistry();
-		RegisterPackets(server.Registry);
-		RegisterEvents(server, worldRegistry);
 		LoadWorldDefinitions(worldRegistry, modContents);
+		RegisterInstanceKinds(server, worldRegistry);
+		RegisterPackets(server.Registry, worldRegistry, WorldKind);
+		RegisterEvents(server, worldRegistry);
 		DataTagTypeRegistry.ScanAssembly(GetType().Assembly);
 	}
 
-	private void RegisterPackets(ServerRegistry registry)
+	private void RegisterInstanceKinds(Server server, WorldRegistry worldRegistry)
+	{
+		server.Registry.InstanceKinds.Register(WorldKind, new InstanceKindDescriptor(
+			new WorldInstanceProvider(worldRegistry),
+			InstancePolicy.SingletonByKey,
+			InstancePersistence.Persistent));
+
+		server.Registry.InstanceKinds.Register(BattleKind, new InstanceKindDescriptor(
+			new BattleInstanceProvider(),
+			InstancePolicy.Multi,
+			InstancePersistence.Persistent));
+	}
+
+	private void RegisterPackets(ServerRegistry registry, WorldRegistry worldRegistry, string worldKind)
 	{
 		// Unauthenticated Packets
-		registry.UnauthenticatedPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler());
+		registry.UnauthenticatedPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler(worldRegistry, worldKind));
 
 		// Normal Packets
 		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());

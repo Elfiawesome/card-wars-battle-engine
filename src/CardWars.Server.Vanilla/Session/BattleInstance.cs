@@ -14,5 +14,10 @@ public class BattleInstance : IServerInstance
 
 	public void HandlePacket(PlayerSession session, IPacket packet) { }
 	public void Tick(float deltaTime) { }
-}
 
+	public void OnCreate() { }
+	public void OnLoad(CompoundTag savedData) { }
+
+	public CompoundTag OnSave() => DataTagMapper.ToTag(this);
+	public void OnDestroy() { }
+}

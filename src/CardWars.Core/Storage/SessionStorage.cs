@@ -46,12 +46,30 @@ public class SessionStorage
 	public void SaveData(StoragePath path, DataTag data)
 		=> path.WriteAllText(DataTagSerializer.Serialize(data));
 
-	// --- World ---
-	public DataTag? LoadInstance(string name)
-		=> LoadData(InstancesDir.Combine(name).WithExtension("json"));
+	// --- Instances (namespaced per kind) ---
+	public DataTag? LoadInstance(string kind, string key)
+		=> LoadData(InstancesDir.Combine(kind).Combine(key).WithExtension("json"));
 
-	public void SaveInstance(string name, DataTag data)
-		=> SaveData(InstancesDir.Combine(name).WithExtension("json"), data);
+	public void SaveInstance(string kind, string key, DataTag data)
+	{
+		var kindDir = InstancesDir.Combine(kind);
+		if (!kindDir.Exists) kindDir.CreateDirectory();
+		SaveData(kindDir.Combine(key).WithExtension("json"), data);
+	}
+
+	public void DeleteInstance(string kind, string key)
+	{
+		var file = InstancesDir.Combine(kind).Combine(key).WithExtension("json");
+		if (file.Exists) file.Delete();
+	}
+
+	public IEnumerable<string> ListInstanceKeys(string kind)
+	{
+		var kindDir = InstancesDir.Combine(kind);
+		if (!kindDir.Exists) yield break;
+		foreach (var f in kindDir.GetFiles("*.json"))
+			yield return f.GetFileNameWithoutExtension();
+	}
 
 	// --- Player ---
 	public CompoundTag? LoadPlayer(Guid playerId)
