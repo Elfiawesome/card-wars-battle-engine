@@ -10,22 +10,12 @@ public class WorldInstance : IServerInstance
 {
 	[DataTag] public Guid InstanceId { get; set; }
 	[DataTag] public ResourceId WorldId { get; set; }
-	[DataTag] public CompoundTag Data { get; set; } = new();
-	public CompoundTag TemplateData { get; set; } = new();
+	[DataTag] public CompoundTag Data { get; set; } = new(); // session related data
+	public CompoundTag TemplateData { get; set; } = new(); // For reference only
 
 	public void AddPlayer(PlayerSession player) { }
 	public void RemovePlayer(PlayerSession player) { }
 
 	public void HandlePacket(PlayerSession session, IPacket packet) { }
 	public void Tick(float deltaTime) { }
-
-	public void OnCreate()
-	{
-		Data = (CompoundTag)TemplateData.Clone();
-	}
-
-	public void OnLoad(CompoundTag savedData) { }
-
-	public CompoundTag OnSave() => DataTagMapper.ToTag(this);
-	public void OnDestroy() { }
 }
