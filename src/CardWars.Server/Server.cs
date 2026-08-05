@@ -8,6 +8,7 @@ using CardWars.ModLoader;
 using CardWars.Server.Session;
 using CardWars.Core.Storage;
 using CardWars.Core.Network.Packet;
+using CardWars.Core.Registry;
 
 namespace CardWars.Server;
 
@@ -19,7 +20,6 @@ public class Server
 	public ServerRegistry Registry { get; } = new();
 	public BattleEngineRegistry SharedBattleEngineRegistry { get; } = new();
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
-	public IReadOnlyDictionary<Guid, IServerInstance> Instances => _instances;
 
 	public StorageManager Storage { get; }
 	public SessionStorage Session { get; }
@@ -113,17 +113,10 @@ public class Server
 		OnRemovePlayer?.Invoke(player);
 	}
 
-	// --- Instance Handling ---
-	public void AddInstance(IServerInstance instance)
+	public void AddInstance()
 	{
-		lock (_sync) { _instances.Add(instance.InstanceId, instance); }
-		OnAddInstance?.Invoke(instance);
-	}
-
-	public void RemoveInstance(IServerInstance instance)
-	{
-		lock (_sync) { _instances.Remove(instance.InstanceId); }
-		OnRemoveInstance?.Invoke(instance);
+		// TODO
+		Registry.ServerInstanceProviders.Get(ResourceId.Vanilla("")).Create();
 	}
 
 
@@ -142,10 +135,10 @@ public class Server
 				ProcessPackets();
 			}
 
-			foreach (var instance in _instances.Values)
-			{
-				instance.Tick((float)_tickRate.TotalSeconds);
-			}
+			// foreach (var instance in _instances.Values)
+			// {
+			// 	instance.Tick((float)_tickRate.TotalSeconds);
+			// }
 
 			var remaining = _tickRate - stopwatch.Elapsed;
 			if (remaining > TimeSpan.Zero)

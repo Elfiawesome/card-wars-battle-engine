@@ -4,6 +4,7 @@ using CardWars.Core.Network.Transport;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
 using CardWars.Server.Vanilla.Packet;
+using CardWars.Server.Vanilla.Session;
 using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Server.Vanilla;
@@ -17,6 +18,11 @@ public class VanillaMod : IServerMod
 		RegisterEvents(server, worldRegistry);
 		LoadWorldDefinitions(worldRegistry, modContents);
 		DataTagTypeRegistry.ScanAssembly(GetType().Assembly);
+
+		var worldIsntanceResourceId = ResourceId.Vanilla("world");
+		var battleIsntanceResourceId = ResourceId.Vanilla("battle");
+		// server.Registry.ServerInstanceProviders.Register(worldIsntanceResourceId, ...);
+		// server.Registry.ServerInstanceProviders.Register(battleIsntanceResourceId, ...);
 	}
 
 	private void RegisterPackets(ServerRegistry registry)
