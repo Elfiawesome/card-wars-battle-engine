@@ -55,5 +55,5 @@ public class LocalFileProvider : IFileProvider
 
 	public static char PathSeparator => '/';
 	public string[] SplitPath(string path) => path.Split('/');
-	public string JoinPath(params string[] parts) => string.Join("/", parts.Where(p => p.Length > 0));
+	public string JoinPath(params string[] parts) => string.Join('/', parts.Where(p => p.Length > 0));
 }
