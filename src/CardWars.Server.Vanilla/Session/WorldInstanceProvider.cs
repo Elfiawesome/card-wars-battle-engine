@@ -1,4 +1,5 @@
 using CardWars.Core.Data;
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using CardWars.Core.Storage;
 using CardWars.Server.Session;
@@ -11,7 +12,13 @@ public class WorldInstanceProvider(WorldRegistry worlds, SessionStorage session)
 	protected override WorldInstance Create(ResourceId worldId)
 	{
 		var template = worlds.Templates.Get(worldId);
-		var savedData = session.LoadInstance(worldId.ToFlatString()) as CompoundTag;
+		var rawData = session.LoadInstance(worldId.ToFlatString());
+		var savedData = rawData is CompoundTag c ? c : null;
+		if (rawData != null && savedData == null)
+		{
+			Logger.Warn($"WorldInstance '{worldId}' has corrupted save data. loading defaults.");
+		}
+
 		return new WorldInstance
 		{
 			InstanceId = Guid.NewGuid(),
