@@ -16,11 +16,6 @@ public class TcpConnection : IConnection
 
 	public bool IsConnected => _tcpClient.Connected;
 
-	static TcpConnection()
-	{
-		DataTagTypeRegistry.ScanAssembly(typeof(IPacket).Assembly);
-	}
-
 	public TcpConnection(TcpClient tcpClient)
 	{
 		_tcpClient = tcpClient;

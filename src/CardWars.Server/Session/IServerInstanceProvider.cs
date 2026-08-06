@@ -1,12 +1,18 @@
 namespace CardWars.Server.Session;
 
-public interface IServerInstanceProvider<TId>
-	where TServerInstance : IServerInstance
-	where TId : notnull // So for worlds we can have a record or a resourceid/string to identify different worlds. Then battles can just be identified with guids.
+public interface IServerInstanceProvider
 {
-	IServerInstance Create(TId instanceId);
+	IServerInstance Create(object id);
 	void Save(IServerInstance instance);
 }
 
-// Some kind of strongly typed one here?
-// public interface IServerInstanceProvider<T>
+public abstract class ServerInstanceProvider<TServerInstance, TId> : IServerInstanceProvider
+	where TServerInstance : IServerInstance
+	where TId : notnull
+{
+	IServerInstance IServerInstanceProvider.Create(object id) => Create((TId)id);
+	void IServerInstanceProvider.Save(IServerInstance instance) => Save((TServerInstance)instance);
+
+	protected abstract TServerInstance Create(TId id);
+	protected abstract void Save(TServerInstance instance);
+}

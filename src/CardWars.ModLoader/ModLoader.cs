@@ -112,7 +112,9 @@ public class ModLoader
 				try
 				{
 					using var stream = dllPath.OpenRead();
-					mod.Assemblies.Add(loadContext.LoadFromStream(stream));
+					var assembly = loadContext.LoadFromStream(stream);
+					mod.Assemblies.Add(assembly);
+					DataTagTypeRegistry.ScanAssembly(assembly);
 					mod.State = ModLoadState.AssemblyLoaded;
 					Logger.Info($"Successfully loaded dll assembly for '{dllPath.FullPath}'");
 				}

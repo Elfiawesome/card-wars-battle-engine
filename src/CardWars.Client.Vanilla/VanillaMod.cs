@@ -16,7 +16,5 @@ public class VanillaMod : IClientMod
 		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());
 		registry.PacketHandlers.Register(new S2C_PlayerJoinedRequestPacketHandler());
 		registry.PacketHandlers.Register(new S2C_ConnectionConfirmedPacketHandler());
-
-		DataTagTypeRegistry.ScanAssembly(typeof(S2C_PlayerJoinedRequestPacket).Assembly);
 	}
 }

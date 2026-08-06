@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using CardWars.BattleEngine;
+using CardWars.Core.Data;
 using CardWars.Core.Logging;
 using CardWars.Server.Listener;
 using CardWars.Core.Network.Transport;
@@ -42,6 +43,7 @@ public class Server
 	{
 		Storage = storage;
 		Session = storage.OpenSession(sessionName);
+		ScanCoreAssemblies();
 	}
 
 	public void LoadMod(IServerMod mod, List<ModContentResult> modContents) => mod.OnLoad(this, modContents);
@@ -113,10 +115,15 @@ public class Server
 		OnRemovePlayer?.Invoke(player);
 	}
 
-	public void AddInstance()
+	public IServerInstance? CreateInstance(ResourceId providerKey, object id)
 	{
-		// TODO
-		Registry.ServerInstanceProviders.Get(ResourceId.Vanilla("")).Create();
+		var provider = Registry.ServerInstanceProviders.Get(providerKey);
+		if (provider == null) return null;
+
+		var instance = provider.Create(id);
+		_instances[instance.InstanceId] = instance;
+		OnAddInstance?.Invoke(instance);
+		return instance;
 	}
 
 
@@ -135,10 +142,10 @@ public class Server
 				ProcessPackets();
 			}
 
-			// foreach (var instance in _instances.Values)
-			// {
-			// 	instance.Tick((float)_tickRate.TotalSeconds);
-			// }
+			foreach (var instance in _instances.Values)
+			{
+				instance.Tick((float)_tickRate.TotalSeconds);
+			}
 
 			var remaining = _tickRate - stopwatch.Elapsed;
 			if (remaining > TimeSpan.Zero)
@@ -214,4 +221,13 @@ public class Server
 		=> Registry.PacketHandlers.Execute(
 			new PacketContextServer() { Server = this, PlayerSession = playerSession },
 			packet);
+
+
+	private void ScanCoreAssemblies()
+	{
+		DataTagTypeRegistry.ScanAssembly(typeof(DataTag).Assembly); // Load core
+		DataTagTypeRegistry.ScanAssembly(typeof(ModLoader.ModLoader).Assembly);
+		DataTagTypeRegistry.ScanAssembly(typeof(BattleEngine.BattleEngine).Assembly); // Already done in BattleEngine, but just in case
+		DataTagTypeRegistry.ScanAssembly(typeof(Server).Assembly);
+	}
 }

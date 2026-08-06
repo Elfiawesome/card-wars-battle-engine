@@ -17,12 +17,11 @@ public class VanillaMod : IServerMod
 		RegisterPackets(server.Registry);
 		RegisterEvents(server, worldRegistry);
 		LoadWorldDefinitions(worldRegistry, modContents);
-		DataTagTypeRegistry.ScanAssembly(GetType().Assembly);
 
-		var worldIsntanceResourceId = ResourceId.Vanilla("world");
-		var battleIsntanceResourceId = ResourceId.Vanilla("battle");
-		// server.Registry.ServerInstanceProviders.Register(worldIsntanceResourceId, ...);
-		// server.Registry.ServerInstanceProviders.Register(battleIsntanceResourceId, ...);
+		var worldInstanceResourceId = ResourceId.Vanilla("world");
+		var battleInstanceResourceId = ResourceId.Vanilla("battle");
+		server.Registry.ServerInstanceProviders.Register(worldInstanceResourceId, new WorldInstanceProvider(worldRegistry, server.Session));
+		server.Registry.ServerInstanceProviders.Register(battleInstanceResourceId, new BattleInstanceProvider());
 	}
 
 	private void RegisterPackets(ServerRegistry registry)

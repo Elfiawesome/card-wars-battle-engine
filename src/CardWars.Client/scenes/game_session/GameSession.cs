@@ -31,6 +31,9 @@ public partial class GameSession : Node
 		GetWindow().Title = ConnectingUsername;
 		Core.Logging.Logger.Identity = ConnectingUsername;
 
+		// Bootstrap type registration for base assemblies
+		ScanCoreAssemblies();
+
 		// Setup storage & providers
 		var provider = new LocalFileProvider();
 		var clientDir = System.Environment.CurrentDirectory;
@@ -112,5 +115,12 @@ public partial class GameSession : Node
 	{
 		Connection?.Disconnect();
 		IntegratedServer?.Stop();
+	}
+
+	private void ScanCoreAssemblies()
+	{
+		Core.Data.DataTagTypeRegistry.ScanAssembly(typeof(Core.Data.DataTag).Assembly); // Load core
+		Core.Data.DataTagTypeRegistry.ScanAssembly(typeof(ModLoader.ModLoader).Assembly);
+		Core.Data.DataTagTypeRegistry.ScanAssembly(typeof(BattleEngine.BattleEngine).Assembly); // Already done in BattleEngine, but just in case
 	}
 }

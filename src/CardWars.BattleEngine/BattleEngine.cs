@@ -15,14 +15,10 @@ public class BattleEngine
 
 	public BattleEngine()
 	{
-		// --- DataTag registry for base Battle Engine --- 
-		DataTagTypeRegistry.ScanAssembly(typeof(BattleEngine).Assembly);
 	}
 
 	public void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents)
 	{
-		// --- DataTag registry for mods --- 
-		DataTagTypeRegistry.ScanAssembly(mod.GetType().Assembly);
 		mod.OnLoad(Registry, modContents);
 	}
 

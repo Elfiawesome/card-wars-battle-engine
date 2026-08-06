@@ -8,5 +8,5 @@ public class ServerRegistry
 {
 	public HandlerRegistry<PacketContextServer> PacketHandlers = new();
 	public HandlerRegistry<PacketUnauthenticatedContextServer> UnauthenticatedPacketHandlers = new();
-	public Registry<ResourceId, IServerInstanceProvider> ServerInstanceProviders = new(); // HELP...
+	public Registry<ResourceId, IServerInstanceProvider> ServerInstanceProviders = new();
 }

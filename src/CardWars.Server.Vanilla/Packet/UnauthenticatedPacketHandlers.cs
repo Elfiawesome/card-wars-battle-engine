@@ -18,26 +18,26 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler() : IUnauthenticatedPa
 			Logger.Info("Mapping does not exist, making one now");
 		}
 
+		PlayerSession playerSession;
+
 		var data = context.Server.Session.LoadPlayer(persistentId);
 		if (data != null)
 		{
-			// Existing player & load data
-			PlayerSession playerSession = DataTagMapper.FromTag<PlayerSession>(data);
+			playerSession = DataTagMapper.FromTag<PlayerSession>(data);
 			playerSession.Connection = context.Connection;
-			context.Server.RemoveUnauthenticatedConnection(context.Connection);
-			context.Server.AddPlayer(playerSession);
 		}
 		else
 		{
-			// New player & create new data -> save
-			PlayerSession playerSession = new() { Connection = context.Connection, PlayerId = persistentId };
+			playerSession = new() { Connection = context.Connection, PlayerId = persistentId };
 			context.Server.Session.SavePlayer(persistentId, DataTagMapper.ToTag(playerSession, false));
-			context.Server.RemoveUnauthenticatedConnection(context.Connection);
-			context.Server.AddPlayer(playerSession);
 		}
 
-		// // TODO: Set player to their instance
-		// playerSession?.Connection.Send(new S2C_ConnectionConfirmedPacket() { Message = $"Welcome, {playerSession.Username}!" });
-		// Logger.Info($"[{playerSession?.Username}] [{playerSession?.PlayerId}] has connected!");
+		context.Server.RemoveUnauthenticatedConnection(context.Connection);
+		context.Server.AddPlayer(playerSession);
+
+		playerSession.Connection.Send(new S2C_ConnectionConfirmedPacket() { Message = $"Welcome, {playerSession.Username}!" });
+		Logger.Info($"[{playerSession.Username}] [{playerSession.PlayerId}] has connected!");
+
+		// TODO: Place player into default world instance
 	}
 }
