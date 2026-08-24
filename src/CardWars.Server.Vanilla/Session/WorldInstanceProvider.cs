@@ -15,9 +15,7 @@ public class WorldInstanceProvider(WorldRegistry worlds, SessionStorage session)
 		var rawData = session.LoadInstance(worldId.ToFlatString());
 		var savedData = rawData is CompoundTag c ? c : null;
 		if (rawData != null && savedData == null)
-		{
 			Logger.Warn($"WorldInstance '{worldId}' has corrupted save data. loading defaults.");
-		}
 
 		return new WorldInstance
 		{
@@ -28,6 +26,11 @@ public class WorldInstanceProvider(WorldRegistry worlds, SessionStorage session)
 		};
 	}
 
-	protected override void Save(WorldInstance instance)
-		=> session.SaveInstance(instance.WorldId.ToFlatString(), DataTagMapper.ToTag(instance, false));
+	protected override WorldInstance Deserialize(CompoundTag data, ResourceId id)
+		=> DataTagMapper.FromTag<WorldInstance>(data);
+
+	protected override CompoundTag Serialize(WorldInstance instance)
+		=> DataTagMapper.ToTag(instance, false);
+
+	protected override ResourceId Parse(string id) => ResourceId.Parse(id);
 }
