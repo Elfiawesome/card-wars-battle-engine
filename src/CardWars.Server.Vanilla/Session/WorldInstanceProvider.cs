@@ -7,30 +7,17 @@ using CardWars.Server.Session;
 namespace CardWars.Server.Vanilla.Session;
 
 public class WorldInstanceProvider(WorldRegistry worlds, SessionStorage session)
-	: ServerInstanceProvider<WorldInstance, ResourceId>
+	: ServerInstanceProvider<WorldInstance>   // note: only one generic argument
 {
-	protected override WorldInstance Create(ResourceId worldId)
+	public override WorldInstance Create(string id)
 	{
-		var template = worlds.Templates.Get(worldId);
-		var rawData = session.LoadInstance(worldId.ToFlatString());
-		var savedData = rawData is CompoundTag c ? c : null;
-		if (rawData != null && savedData == null)
-			Logger.Warn($"WorldInstance '{worldId}' has corrupted save data. loading defaults.");
-
-		return new WorldInstance
-		{
-			InstanceId = Guid.NewGuid(),
-			WorldId = worldId,
-			TemplateData = template ?? new CompoundTag(),
-			Data = savedData ?? new CompoundTag()
-		};
+		// Load the template if no save, or load the save
+		throw new Exception();
 	}
 
-	protected override WorldInstance Deserialize(CompoundTag data, ResourceId id)
-		=> DataTagMapper.FromTag<WorldInstance>(data);
-
-	protected override CompoundTag Serialize(WorldInstance instance)
-		=> DataTagMapper.ToTag(instance, false);
-
-	protected override ResourceId Parse(string id) => ResourceId.Parse(id);
+	public override string? Save(WorldInstance serverInstance, StoragePath InstanceStoragePath)
+	{
+		// We can save whatever and however we want under InstanceStoragePath
+		return "";
+	}
 }

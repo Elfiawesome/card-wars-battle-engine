@@ -1,46 +1,32 @@
-using CardWars.Core.Data;
+using CardWars.Core.Storage;
 
 namespace CardWars.Server.Session;
 
 public interface IServerInstanceProvider
 {
-	IServerInstance GetOrCreate(string id);
-	IServerInstance Deserialize(CompoundTag data, string id);
-	CompoundTag Serialize(IServerInstance instance);
+	// Pass Id -> get template/load instance
+	IServerInstance Create(string id);
+
+	// Saves the id and passes the reference (if have any)
+	string? Save(IServerInstance serverInstance, StoragePath InstanceStoragePath);
 }
 
-public abstract class ServerInstanceProvider<TServerInstance, TId> : IServerInstanceProvider
+public abstract class ServerInstanceProvider<TServerInstance> : IServerInstanceProvider
 	where TServerInstance : IServerInstance
-	where TId : notnull
 {
-	private readonly Dictionary<TId, TServerInstance> _cache = new();
+	public abstract TServerInstance Create(string id);
+	public abstract string? Save(TServerInstance serverInstance, StoragePath InstanceStoragePath);
 
-	IServerInstance IServerInstanceProvider.GetOrCreate(string id)
+	IServerInstance IServerInstanceProvider.Create(string id) => Create(id);
+
+	string? IServerInstanceProvider.Save(IServerInstance serverInstance, StoragePath InstanceStoragePath)
 	{
-		var typedId = Parse(id);
-		if (_cache.TryGetValue(typedId, out var existing))
-			return existing;
+		if (serverInstance is TServerInstance typedInstance)
+			return Save(typedInstance, InstanceStoragePath);
 
-		var instance = Create(typedId);
-		_cache[typedId] = instance;
-		return instance;
+		// Optional: throw an exception if the type doesn't match
+		throw new ArgumentException(
+			$"Expected instance of type {typeof(TServerInstance).Name}, " +
+			$"but got {serverInstance.GetType().Name}.");
 	}
-
-	IServerInstance IServerInstanceProvider.Deserialize(CompoundTag data, string id)
-	{
-		var typedId = Parse(id);
-		if (_cache.TryGetValue(typedId, out var cached))
-			return cached;
-
-		var instance = Deserialize(data, typedId);
-		_cache[typedId] = instance;
-		return instance;
-	}
-
-	CompoundTag IServerInstanceProvider.Serialize(IServerInstance instance) => Serialize((TServerInstance)instance);
-
-	protected abstract TServerInstance Create(TId id);
-	protected abstract TServerInstance Deserialize(CompoundTag data, TId id);
-	protected abstract CompoundTag Serialize(TServerInstance instance);
-	protected abstract TId Parse(string id);
 }

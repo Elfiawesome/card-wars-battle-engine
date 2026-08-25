@@ -6,12 +6,14 @@ using CardWars.Server.Session;
 namespace CardWars.Server.Vanilla.Session;
 
 [DataTagType()]
-public class WorldInstance : IServerInstance
+public class WorldInstance(ResourceId resourceId) : IServerInstance
 {
 	[DataTag] public Guid InstanceId { get; set; }
+	public ResourceId InstanceProviderId => resourceId;
 	[DataTag] public ResourceId WorldId { get; set; }
 	[DataTag] public CompoundTag Data { get; set; } = new(); // session related data
 	public CompoundTag TemplateData { get; set; } = new(); // For reference only
+
 
 	public void AddPlayer(PlayerSession player) { }
 	public void RemovePlayer(PlayerSession player) { }

@@ -1,18 +1,18 @@
 using CardWars.Core.Data;
+using CardWars.Core.Storage;
 using CardWars.Server.Session;
 
 namespace CardWars.Server.Vanilla.Session;
 
-public class BattleInstanceProvider : ServerInstanceProvider<BattleInstance, Guid>
+public class BattleInstanceProvider : ServerInstanceProvider<BattleInstance>
 {
-	protected override BattleInstance Create(Guid battleId)
-		=> new BattleInstance { InstanceId = battleId };
+	public override BattleInstance Create(string id)
+	{
+		throw new NotImplementedException();
+	}
 
-	protected override BattleInstance Deserialize(CompoundTag data, Guid id)
-		=> DataTagMapper.FromTag<BattleInstance>(data);
-
-	protected override CompoundTag Serialize(BattleInstance instance)
-		=> DataTagMapper.ToTag(instance, false);
-
-	protected override Guid Parse(string id) => Guid.Parse(id);
+	public override string? Save(BattleInstance serverInstance, StoragePath InstanceStoragePath)
+	{
+		throw new NotImplementedException();
+	}
 }

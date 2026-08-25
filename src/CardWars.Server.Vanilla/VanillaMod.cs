@@ -46,44 +46,12 @@ public class VanillaMod : IServerMod
 
 	private void OnPlayerJoined(Server server, WorldRegistry worldRegistry, PlayerSession player)
 	{
-		if (string.IsNullOrEmpty(player.CurrentInstanceSaveName))
-			player.CurrentInstanceSaveName = worldRegistry.DefaultWorld.ToFlatString();
 
-		var instance = server.LoadInstance(player.CurrentInstanceSaveName);
-
-		if (instance == null)
-		{
-			var instanceIdStr = worldRegistry.DefaultWorld.ToString();
-			instance = server.CreateInstance(WorldProviderKey, instanceIdStr);
-			if (instance == null)
-			{
-				Logger.Error($"Failed to create instance for player [{player.Username}]");
-				return;
-			}
-			server.SaveInstance(WorldProviderKey, instance, player.CurrentInstanceSaveName, instanceIdStr);
-		}
-
-		player.CurrentInstance = instance;
-		instance.AddPlayer(player);
-		server.Session.SavePlayer(player.PlayerId, DataTagMapper.ToTag(player, false));
-
-		Logger.Info($"[{player.Username}] joined instance '{instance.InstanceId}' ({player.CurrentInstanceSaveName})");
 	}
 
 	private void OnPlayerLeft(Server server, PlayerSession player)
 	{
-		var instance = player.CurrentInstance;
-		if (instance != null)
-		{
-			instance.RemovePlayer(player);
-			player.CurrentInstance = null;
 
-			if (!string.IsNullOrEmpty(player.CurrentInstanceSaveName))
-				server.SaveInstance(player.CurrentInstanceSaveName, instance);
-		}
-
-		server.Session.SavePlayer(player.PlayerId, DataTagMapper.ToTag(player, false));
-		Logger.Info($"[{player.Username}] left instance and data saved.");
 	}
 
 	private void LoadWorldDefinitions(WorldRegistry worldRegistry, List<ModContentResult> modContents)

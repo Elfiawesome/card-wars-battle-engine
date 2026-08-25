@@ -1,5 +1,6 @@
 using CardWars.Core.Data;
 using CardWars.Core.Network.Transport;
+using CardWars.Core.Registry;
 
 namespace CardWars.Server.Session;
 
@@ -13,5 +14,6 @@ public class PlayerSession()
 	public IServerInstance? CurrentInstance { get; set; }
 
 	[DataTag] public string CurrentInstanceSaveName { get; set; } = "";
+	[DataTag] public ResourceId CurrentInstanceProvider { get; set; } = ResourceId.Empty;
 	[DataTag] public CompoundTag CustomData { get; set; } = new();
 }

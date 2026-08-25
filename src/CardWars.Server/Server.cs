@@ -90,6 +90,23 @@ public class Server
 		AddUnauthenticatedConnection(connection);
 	}
 
+	// --- Instance Handling ---
+	public void SaveInstances()
+	{
+		lock (_sync)
+		{
+			foreach (var instance in _instances.Values)
+			{
+				var provider = Registry.ServerInstanceProviders.Get(instance.InstanceProviderId);
+				var saveName = provider?.Save(instance, Session.InstancesDir);
+				if (saveName != null)
+				{
+					// Set player's CurrentInstanceSaveName & CurrentInstanceProvider here.
+				}
+			}
+		}
+	}
+
 	// --- Player Session Handling ---
 	public void AddUnauthenticatedConnection(IConnection connection)
 	{
@@ -113,17 +130,6 @@ public class Server
 	{
 		lock (_sync) { _playerSessions.Remove(player.PlayerId); }
 		OnRemovePlayer?.Invoke(player);
-	}
-
-	public IServerInstance? CreateInstance(ResourceId providerKey, object id)
-	{
-		var provider = Registry.ServerInstanceProviders.Get(providerKey);
-		if (provider == null) return null;
-
-		var instance = provider.Create(id);
-		_instances[instance.InstanceId] = instance;
-		OnAddInstance?.Invoke(instance);
-		return instance;
 	}
 
 
