@@ -15,5 +15,6 @@ public class PlayerSession()
 
 	[DataTag] public string CurrentInstanceSaveName { get; set; } = "";
 	[DataTag] public ResourceId CurrentInstanceProvider { get; set; } = ResourceId.Empty;
+	[DataTag] public int TimePlayed { get; set; } = 0;
 	[DataTag] public CompoundTag CustomData { get; set; } = new();
 }

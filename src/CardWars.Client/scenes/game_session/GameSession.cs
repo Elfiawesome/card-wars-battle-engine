@@ -111,10 +111,19 @@ public partial class GameSession : Node
 	// TODO REMOVE LATER
 	public void SetDebugLabel(string text) { if (DebugLabel != null) { DebugLabel.Text = text; } }
 
-	public override void _ExitTree()
+	public override void _ExitTree() => ExitCleanup();
+
+	public override void _Notification(int what)
 	{
+		if (what == NotificationWMCloseRequest) { ExitCleanup(); }
+	}
+
+	private void ExitCleanup()
+	{
+		GD.Print("Cleaning up");
 		Connection?.Disconnect();
 		IntegratedServer?.Stop();
+		GetTree().Quit();
 	}
 
 	private void ScanCoreAssemblies()

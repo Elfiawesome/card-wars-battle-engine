@@ -31,6 +31,7 @@ public class Server
 	public Action<PlayerSession>? OnRemovePlayer { get; set; }
 	public Action<IServerInstance>? OnAddInstance { get; set; }
 	public Action<IServerInstance>? OnRemoveInstance { get; set; }
+	public Action<IServerInstance>? OnIntervalSave { get; set; }
 
 	private readonly object _sync = new();
 	private readonly List<IListener> _listeners = [];
@@ -65,9 +66,14 @@ public class Server
 
 	public void Stop()
 	{
+		// Save game states
+		SaveInstances();
+		SavePlayers();
+
 		_cts?.Cancel();
 		foreach (var listener in _listeners) listener.Stop();
 
+		// Disconnect
 		lock (_sync)
 		{
 			foreach (var (_, session) in _playerSessions)
@@ -132,6 +138,18 @@ public class Server
 		OnRemovePlayer?.Invoke(player);
 	}
 
+	public void SavePlayers()
+	{
+		lock (_sync)
+		{
+			foreach (var p in _playerSessions)
+			{
+				Logger.Debug(p.Key.ToString());
+				Logger.Debug(p.Value.TimePlayed.ToString());
+				Session.SavePlayer(p.Key, DataTagMapper.ToTag(p.Value, false));
+			}
+		}
+	}
 
 	// --- Loop ---
 	private void ServerLoop(CancellationToken token)
@@ -151,6 +169,10 @@ public class Server
 			foreach (var instance in _instances.Values)
 			{
 				instance.Tick((float)_tickRate.TotalSeconds);
+			}
+			foreach (var player in _playerSessions)
+			{
+				player.Value.TimePlayed += 1;
 			}
 
 			var remaining = _tickRate - stopwatch.Elapsed;
