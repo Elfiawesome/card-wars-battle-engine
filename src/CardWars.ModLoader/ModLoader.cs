@@ -100,6 +100,24 @@ public class ModLoader
 	{
 		var loadContext = AssemblyLoadContext.GetLoadContext(typeof(ModLoader).Assembly) ?? AssemblyLoadContext.Default;
 
+		var dllPathsBySimpleName = new Dictionary<string, StoragePath>(StringComparer.OrdinalIgnoreCase);
+		foreach (var modId in _loadOrder)
+		{
+			var codeDir = _mods[modId].RootPath.Combine("code");
+			if (!codeDir.Exists) continue;
+			foreach (var dllPath in codeDir.GetFiles("*.dll"))
+			{
+				dllPathsBySimpleName.TryAdd(dllPath.GetFileNameWithoutExtension(), dllPath);
+			}
+		}
+
+		loadContext.Resolving += (_, assemblyName) =>
+		{
+			if (!dllPathsBySimpleName.TryGetValue(assemblyName.Name!, out var dllPath)) return null;
+			using var stream = dllPath.OpenRead();
+			return loadContext.LoadFromStream(stream);
+		};
+
 		foreach (var modId in _loadOrder)
 		{
 			var mod = _mods[modId];
@@ -108,6 +126,7 @@ public class ModLoader
 
 			foreach (var dllPath in codeDir.GetFiles("*.dll"))
 			{
+				if (mod.Assemblies.Any(a => a.Location == dllPath.FullPath)) continue;
 				Logger.Info($"Loading mod dll from '{dllPath}'");
 				try
 				{
