@@ -6,18 +6,44 @@ using CardWars.Server.Session;
 
 namespace CardWars.Server.Vanilla.Session;
 
-public class WorldInstanceProvider(WorldRegistry worlds, SessionStorage session)
-	: ServerInstanceProvider<WorldInstance>   // note: only one generic argument
+public class WorldInstanceProvider(
+	WorldRegistry worlds,
+	SessionStorage session,
+	ResourceId providerId) : ServerInstanceProvider<WorldInstance>
 {
-	public override WorldInstance Create(string id)
+	public override WorldInstance Create(string saveId)
 	{
-		// Load the template if no save, or load the save
-		throw new Exception();
+		var worldId = ResourceId.Parse(saveId);
+
+		WorldInstance instance;
+		var save = session.LoadInstance(worldId.ToFlatString());
+		if (save is CompoundTag saveTag)
+		{
+			instance = DataTagMapper.FromTag<WorldInstance>(saveTag);
+		}
+		else
+		{
+			instance = new WorldInstance
+			{
+				InstanceId = Guid.NewGuid(),
+				InstanceProviderId = providerId,
+				WorldId = worldId,
+			};
+		}
+
+		instance.TemplateData = worlds.Templates.Get(worldId) is { } template
+			? (CompoundTag)template.Clone()
+			: new CompoundTag();
+
+		if (instance.TemplateData.Count == 0)
+			Logger.Warn($"No world template found for '{worldId}'. World instance will have no template data.");
+
+		return instance;
 	}
 
-	public override string? Save(WorldInstance serverInstance, StoragePath InstanceStoragePath)
+	public override string? Save(WorldInstance serverInstance, StoragePath instanceStoragePath)
 	{
-		// We can save whatever and however we want under InstanceStoragePath
-		return "";
+		session.SaveInstance(serverInstance.WorldId.ToFlatString(), DataTagMapper.ToTag(serverInstance, false));
+		return serverInstance.WorldId.ToString();
 	}
 }

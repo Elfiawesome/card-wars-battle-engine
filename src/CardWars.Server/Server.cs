@@ -31,13 +31,15 @@ public class Server
 	public Action<PlayerSession>? OnRemovePlayer { get; set; }
 	public Action<IServerInstance>? OnAddInstance { get; set; }
 	public Action<IServerInstance>? OnRemoveInstance { get; set; }
-	public Action<IServerInstance>? OnIntervalSave { get; set; }
+	// public Action<IServerInstance>? OnIntervalSave { get; set; }
 
 	private readonly object _sync = new();
 	private readonly List<IListener> _listeners = [];
 	private readonly Dictionary<Guid, PlayerSession> _playerSessions = [];
 	private readonly Dictionary<IConnection, DateTime> _unauthenticatedConnections = [];
 	private readonly Dictionary<Guid, IServerInstance> _instances = [];
+	private readonly Dictionary<(ResourceId ProviderId, string Id), Guid> _instanceMapping = [];
+	// private double _intervalSaveAccumulator = 0;
 	private CancellationTokenSource? _cts;
 
 	public Server(StorageManager storage, string sessionName = "default")
@@ -82,6 +84,8 @@ public class Server
 				session.Connection.Disconnect();
 			}
 			_playerSessions.Clear();
+			// _instances.Clear();
+			// _instanceKeys.Clear();
 
 			foreach (var (conn, _) in _unauthenticatedConnections)
 				conn.Disconnect();
@@ -97,6 +101,78 @@ public class Server
 	}
 
 	// --- Instance Handling ---
+	public IServerInstance CreateInstance(ResourceId providerId, string instanceSaveId)
+	{
+		IServerInstance instance;
+		lock (_sync)
+		{
+			var provider = Registry.ServerInstanceProviders.Get(providerId)
+						?? throw new InvalidOperationException($"No server instance provider registered for '{providerId}'.");
+
+			instance = provider.Create(instanceSaveId);
+			_instances[instance.InstanceId] = instance;
+			_instanceMapping[(providerId, instanceSaveId)] = instance.InstanceId;
+		}
+		OnAddInstance?.Invoke(instance);
+		return instance;
+	}
+
+	public void RemoveInstance(Guid instanceId)
+	{
+		// What if I remove an instance with players in it? TODO:...
+		lock (_sync)
+		{
+			if (_instances.TryGetValue(instanceId, out var instance))
+			{
+				var provider = Registry.ServerInstanceProviders.Get(instance.InstanceProviderId)
+						?? throw new InvalidOperationException($"No server instance provider registered for '{instance.InstanceProviderId}'.");
+
+				provider.Save(instance, Session.InstancesDir);
+
+				_instances.Remove(instanceId);
+				foreach (var key in _instanceMapping.Where(kv => kv.Value == instanceId).Select(kv => kv.Key).ToList())
+				{
+					_instanceMapping.Remove(key);
+				}
+				OnRemoveInstance?.Invoke(instance);
+			}
+		}
+	}
+
+	public Guid? GetInstanceMapped(ResourceId providerId, string instanceSaveId)
+	{
+		if (_instanceMapping.TryGetValue((providerId, instanceSaveId), out var instanceId))
+		{
+			return instanceId;
+		}
+		return null;
+	}
+
+	public void EnterInstance(PlayerSession player, ResourceId providerId, string instanceSaveId)
+	{
+		var instanceId = GetInstanceMapped(providerId, instanceSaveId)
+						?? CreateInstance(providerId, instanceSaveId).InstanceId;
+		EnterInstance(player, instanceId);
+	}
+
+	public void EnterInstance(PlayerSession player, Guid instanceId)
+	{
+		LeaveInstance(player);
+		lock (_sync)
+		{
+			if (_instances.TryGetValue(instanceId, out var instance))
+			{
+				instance.AddPlayer(player);
+				player.CurrentInstance = instance;
+			}
+		}
+	}
+
+	public void LeaveInstance(PlayerSession player)
+	{
+		player.CurrentInstance?.RemovePlayer(player);
+		player.CurrentInstance = null;
+	}
 	public void SaveInstances()
 	{
 		lock (_sync)
@@ -104,11 +180,7 @@ public class Server
 			foreach (var instance in _instances.Values)
 			{
 				var provider = Registry.ServerInstanceProviders.Get(instance.InstanceProviderId);
-				var saveName = provider?.Save(instance, Session.InstancesDir);
-				if (saveName != null)
-				{
-					// Set player's CurrentInstanceSaveName & CurrentInstanceProvider here.
-				}
+				provider?.Save(instance, Session.InstancesDir);
 			}
 		}
 	}
@@ -134,6 +206,8 @@ public class Server
 
 	public void RemovePlayer(PlayerSession player)
 	{
+		LeaveInstance(player);
+		Session.SavePlayer(player.PlayerId, DataTagMapper.ToTag(player, false));
 		lock (_sync) { _playerSessions.Remove(player.PlayerId); }
 		OnRemovePlayer?.Invoke(player);
 	}
@@ -205,9 +279,7 @@ public class Server
 			.ToList();
 		foreach (var (id, session) in disconnected)
 		{
-			session.CurrentInstance?.RemovePlayer(session);
-			_playerSessions.Remove(id);
-			OnRemovePlayer?.Invoke(session);
+			RemovePlayer(session);
 			Logger.Debug($"Server: Player [{id}] disconnected.");
 		}
 	}

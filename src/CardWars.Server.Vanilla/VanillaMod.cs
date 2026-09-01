@@ -22,8 +22,8 @@ public class VanillaMod : IServerMod
 		RegisterEvents(server, worldRegistry);
 		LoadWorldDefinitions(worldRegistry, modContents);
 
-		server.Registry.ServerInstanceProviders.Register(WorldProviderKey, new WorldInstanceProvider(worldRegistry, server.Session));
-		server.Registry.ServerInstanceProviders.Register(BattleProviderKey, new BattleInstanceProvider());
+		server.Registry.ServerInstanceProviders.Register(WorldProviderKey, new WorldInstanceProvider(worldRegistry, server.Session, WorldProviderKey));
+		server.Registry.ServerInstanceProviders.Register(BattleProviderKey, new BattleInstanceProvider(server.Session, server.SharedBattleEngineRegistry, BattleProviderKey));
 	}
 
 	private void RegisterPackets(ServerRegistry registry)
@@ -46,12 +46,18 @@ public class VanillaMod : IServerMod
 
 	private void OnPlayerJoined(Server server, WorldRegistry worldRegistry, PlayerSession player)
 	{
+		if (worldRegistry.DefaultWorld.IsEmpty)
+		{
+			Logger.Warn("No default world configured; player was not placed into a world.");
+			return;
+		}
 
+		server.EnterInstance(player, WorldProviderKey, worldRegistry.DefaultWorld.ToString());
 	}
 
 	private void OnPlayerLeft(Server server, PlayerSession player)
 	{
-
+		// Core teardown (leaving instance + saving player) is handled by Server.RemovePlayer.
 	}
 
 	private void LoadWorldDefinitions(WorldRegistry worldRegistry, List<ModContentResult> modContents)

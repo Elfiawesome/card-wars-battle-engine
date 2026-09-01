@@ -1,3 +1,4 @@
+using CardWars.BattleEngine;
 using CardWars.Core.Data;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
@@ -6,15 +7,14 @@ using CardWars.Server.Session;
 namespace CardWars.Server.Vanilla.Session;
 
 [DataTagType()]
-public class BattleInstance(ResourceId providerId) : IServerInstance
+public class BattleInstance : ServerInstance
 {
-	[DataTag] public Guid InstanceId { get; set; }
-	public ResourceId InstanceProviderId => providerId;
+	[DataTag] public override Guid InstanceId { get; set; }
+	[DataTag] public override ResourceId InstanceProviderId { get; set; }
 
-	public void AddPlayer(PlayerSession player) { }
-	public void RemovePlayer(PlayerSession player) { }
+	public BattleEngine.BattleEngine? Engine { get; set; }
 
-	public void HandlePacket(PlayerSession session, IPacket packet) { }
-	public void Tick(float deltaTime) { }
+	public override void HandlePacket(PlayerSession session, IPacket packet) { }
+
+	public override void Tick(float deltaTime) { }
 }
-

@@ -32,12 +32,12 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler() : IUnauthenticatedPa
 			context.Server.Session.SavePlayer(persistentId, DataTagMapper.ToTag(playerSession, false));
 		}
 
+		playerSession.Username = request.Username;
+
 		context.Server.RemoveUnauthenticatedConnection(context.Connection);
 		context.Server.AddPlayer(playerSession);
 
 		playerSession.Connection.Send(new S2C_ConnectionConfirmedPacket() { Message = $"Welcome, {playerSession.Username}!" });
 		Logger.Info($"[{playerSession.Username}] [{playerSession.PlayerId}] has connected!");
-
-		// TODO: Place player into default world instance
 	}
 }

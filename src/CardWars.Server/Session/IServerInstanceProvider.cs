@@ -5,7 +5,7 @@ namespace CardWars.Server.Session;
 public interface IServerInstanceProvider
 {
 	// Pass Id -> get template/load instance
-	IServerInstance Create(string id);
+	IServerInstance Create(string saveId);
 
 	// Saves the id and passes the reference (if have any)
 	string? Save(IServerInstance serverInstance, StoragePath InstanceStoragePath);
@@ -14,10 +14,10 @@ public interface IServerInstanceProvider
 public abstract class ServerInstanceProvider<TServerInstance> : IServerInstanceProvider
 	where TServerInstance : IServerInstance
 {
-	public abstract TServerInstance Create(string id);
+	public abstract TServerInstance Create(string saveId);
 	public abstract string? Save(TServerInstance serverInstance, StoragePath InstanceStoragePath);
 
-	IServerInstance IServerInstanceProvider.Create(string id) => Create(id);
+	IServerInstance IServerInstanceProvider.Create(string saveId) => Create(saveId);
 
 	string? IServerInstanceProvider.Save(IServerInstance serverInstance, StoragePath InstanceStoragePath)
 	{
