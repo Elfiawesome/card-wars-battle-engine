@@ -37,6 +37,8 @@ public class VanillaMod : IServerMod
 		server.OnUnauthenticatedConnectionReceived += OnUnauthenticatedConnectionReceived;
 		server.OnAddPlayer += player => OnPlayerJoined(server, worldRegistry, player);
 		server.OnRemovePlayer += player => OnPlayerLeft(server, player);
+		server.OnPlayerEnterInstance += OnPlayerEnterInstance;
+		server.OnPlayerLeaveInstance += OnPlayerLeaveInstance;
 	}
 
 	private void OnUnauthenticatedConnectionReceived(IConnection connection)
@@ -58,6 +60,16 @@ public class VanillaMod : IServerMod
 	private void OnPlayerLeft(Server server, PlayerSession player)
 	{
 		// Core teardown (leaving instance + saving player) is handled by Server.RemovePlayer.
+	}
+
+	private void OnPlayerEnterInstance(Server server, IServerInstance instance, PlayerSession player)
+	{
+		// TODO
+	}
+
+	private void OnPlayerLeaveInstance(Server server, IServerInstance instance, PlayerSession player)
+	{
+		// TODO
 	}
 
 	private void LoadWorldDefinitions(WorldRegistry worldRegistry, List<ModContentResult> modContents)

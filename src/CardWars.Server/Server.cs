@@ -31,6 +31,10 @@ public class Server
 	public Action<PlayerSession>? OnRemovePlayer { get; set; }
 	public Action<IServerInstance>? OnAddInstance { get; set; }
 	public Action<IServerInstance>? OnRemoveInstance { get; set; }
+	public Action<Server, IServerInstance, PlayerSession>? OnPlayerEnterInstance { get; set; }
+	public Action<Server, IServerInstance, PlayerSession>? OnPlayerLeaveInstance { get; set; }
+
+
 	// public Action<IServerInstance>? OnIntervalSave { get; set; }
 
 	private readonly object _sync = new();
@@ -164,6 +168,7 @@ public class Server
 			{
 				instance.AddPlayer(player);
 				player.CurrentInstance = instance;
+				OnPlayerEnterInstance?.Invoke(this, instance, player);
 			}
 		}
 	}
@@ -171,6 +176,10 @@ public class Server
 	public void LeaveInstance(PlayerSession player)
 	{
 		player.CurrentInstance?.RemovePlayer(player);
+		if (player.CurrentInstance != null)
+		{
+			OnPlayerLeaveInstance?.Invoke(this, player.CurrentInstance, player);
+		}
 		player.CurrentInstance = null;
 	}
 	public void SaveInstances()
