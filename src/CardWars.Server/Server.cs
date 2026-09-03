@@ -227,8 +227,8 @@ public class Server
 		{
 			foreach (var p in _playerSessions)
 			{
-				Logger.Debug(p.Key.ToString());
-				Logger.Debug(p.Value.TimePlayed.ToString());
+				// Logger.Debug(p.Key.ToString());
+				// Logger.Debug(p.Value.TimePlayed.ToString());
 				Session.SavePlayer(p.Key, DataTagMapper.ToTag(p.Value, false));
 			}
 		}

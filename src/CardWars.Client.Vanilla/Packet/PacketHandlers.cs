@@ -1,3 +1,5 @@
+using CardWars.Core.Data;
+using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Vanilla.Shared.Packet;
 
@@ -12,7 +14,7 @@ public class S2C_PlayerJoinedRequestPacketHandler : IPacketHandlerClient<S2C_Pla
 			Username = context.Session.ConnectingUsername
 		});
 
-		context.Session.SetDebugLabel("Sent player info, waiting for confirmation...");
+		context.Session.SetDebugStatus("Sent player info, waiting for confirmation...");
 	}
 }
 
@@ -20,14 +22,38 @@ public class S2C_ConnectionConfirmedPacketHandler : IPacketHandlerClient<S2C_Con
 {
 	public void Handle(PacketContextClient context, S2C_ConnectionConfirmedPacket request)
 	{
-		context.Session.SetDebugLabel($"Connected! {request.Message}");
+		context.Session.SetDebugStatus($"Connected! {request.Message}");
 	}
 }
 
-public class C2S_CustomModPacketHandler : IPacketHandlerClient<S2C_CustomModPacket>
+public class S2C_EnterInstancePacketHandler : IPacketHandlerClient<S2C_EnterInstancePacket>
 {
-	public void Handle(PacketContextClient context, S2C_CustomModPacket request)
+	public void Handle(PacketContextClient context, S2C_EnterInstancePacket request)
 	{
-		// TODO
+		context.Session.SetDebugStatus($"Entered instance {request.PlayerId}");
 	}
+}
+
+public class S2C_LeaveInstancePacketHandler : IPacketHandlerClient<S2C_LeaveInstancePacket>
+{
+	public void Handle(PacketContextClient context, S2C_LeaveInstancePacket request)
+	{
+		context.Session.SetDebugStatus($"Left instance {request.PlayerId}");
+	}
+}
+
+public class S2C_WorldSnapshotPacketHandler : IPacketHandlerClient<S2C_WorldInstanceSnapshot>
+{
+	public void Handle(PacketContextClient context, S2C_WorldInstanceSnapshot request)
+	{
+		context.Session.SetDebugStatus($"Received snapshot for world!");
+		Logger.Info($"Number of players in world: {request.WorldView.Players.First().Id}");
+	}
+}
+
+// Custom Handler
+
+public class S2C_CustomModPacketHandler : IPacketHandlerClient<S2C_CustomModPacket>
+{
+	public void Handle(PacketContextClient context, S2C_CustomModPacket request) { /* TODO */ }
 }

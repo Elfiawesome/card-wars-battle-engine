@@ -19,12 +19,10 @@ public partial class GameSession : Node
 	public StorageManager Storage { get; private set; } = null!;
 
 	public string ConnectingUsername = "";
-	public Label? DebugLabel;
 
 	public override void _Ready()
 	{
-		DebugLabel = GetNode<Label>("DebugLabel");
-		SetDebugLabel("Connecting to server...");
+
 
 		// Set username from cmd line args
 		ConnectingUsername = OS.GetCmdlineArgs()[2];
@@ -69,7 +67,7 @@ public partial class GameSession : Node
 		modLoader.LoadModEntry<IServerMod>().ForEach(m => IntegratedServer.LoadMod(m, serverContent));
 		modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry, clientContent));
 
-		var localListener = new LocalListener();
+		var localListener = new LocalListener() { IsSerialized = true };
 		var tcpListener = new TcpGameListener(5060);
 		IntegratedServer.Start(localListener, tcpListener);
 		Connection = localListener.ConnectClient();
@@ -109,7 +107,9 @@ public partial class GameSession : Node
 	}
 
 	// TODO REMOVE LATER
-	public void SetDebugLabel(string text) { if (DebugLabel != null) { DebugLabel.Text = text; } }
+	public void SetDebugStatus(string value) => GetNode<Node>("Control/VBoxContainer/Status").Set("content", value);
+	public void SetDebugWorld(string value) => GetNode<Node>("Control/VBoxContainer/World").Set("content", value);
+	public void SetDebugPlayers(string value) => GetNode<Node>("Control/VBoxContainer/Players").Set("content", value);
 
 	public override void _ExitTree() => ExitCleanup();
 

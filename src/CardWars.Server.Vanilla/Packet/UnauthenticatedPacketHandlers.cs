@@ -34,10 +34,12 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler() : IUnauthenticatedPa
 
 		playerSession.Username = request.Username;
 
+		// Send packet first before any links to adding/removing player is ran...
+		playerSession.Connection.Send(new S2C_ConnectionConfirmedPacket() { Message = $"Welcome, {playerSession.Username}!" });
+		
 		context.Server.RemoveUnauthenticatedConnection(context.Connection);
 		context.Server.AddPlayer(playerSession);
 
-		playerSession.Connection.Send(new S2C_ConnectionConfirmedPacket() { Message = $"Welcome, {playerSession.Username}!" });
 		Logger.Info($"[{playerSession.Username}] [{playerSession.PlayerId}] has connected!");
 	}
 }

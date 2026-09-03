@@ -7,6 +7,7 @@ using CardWars.Server.Session;
 using CardWars.Server.Vanilla.Packet;
 using CardWars.Server.Vanilla.Session;
 using CardWars.Vanilla.Shared.Packet;
+using CardWars.Vanilla.Shared.View;
 
 namespace CardWars.Server.Vanilla;
 
@@ -64,12 +65,31 @@ public class VanillaMod : IServerMod
 
 	private void OnPlayerEnterInstance(Server server, IServerInstance instance, PlayerSession player)
 	{
-		// TODO
+		// Tell everyone in that instance this player joined
+		foreach (var playerSession in instance.Players)
+		{
+			playerSession.Connection.Send(
+				new S2C_EnterInstancePacket() { PlayerId = player.PlayerId }
+			);
+		}
+		
+		if (instance is WorldInstance worldInstance)
+		{
+			player.Connection.Send(
+				new S2C_WorldInstanceSnapshot() { WorldView = worldInstance.GetWorldView() }
+			);
+		}
 	}
 
 	private void OnPlayerLeaveInstance(Server server, IServerInstance instance, PlayerSession player)
 	{
-		// TODO
+		// Tell everyone in that previous instance that this player left
+		foreach (var playerSession in instance.Players)
+		{
+			playerSession.Connection.Send(
+				new S2C_LeaveInstancePacket() { PlayerId = player.PlayerId }
+			);
+		}
 	}
 
 	private void LoadWorldDefinitions(WorldRegistry worldRegistry, List<ModContentResult> modContents)

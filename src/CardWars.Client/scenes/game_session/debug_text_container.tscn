@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://cr3rterhjff3n"]
+
+[ext_resource type="Script" uid="uid://dn4l2nt3q02k0" path="res://scenes/game_session/debug_text_container.gd" id="1_g825u"]
+
+[node name="StatusTextContainer" type="HBoxContainer" unique_id=333865405]
+script = ExtResource("1_g825u")
+
+[node name="Text" type="Label" parent="." unique_id=1582594021]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1384610401]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+
+[node name="Content" type="Label" parent="." unique_id=2135633812]
+layout_mode = 2

@@ -2,6 +2,7 @@ using CardWars.Core.Data;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Server.Session;
+using CardWars.Vanilla.Shared.View;
 
 namespace CardWars.Server.Vanilla.Session;
 
@@ -21,5 +22,13 @@ public class WorldInstance : ServerInstance
 	public override void Tick(float deltaTime)
 	{
 		DebugLifespan++;
+	}
+
+	public WorldView GetWorldView()
+	{
+		return new()
+		{
+			Players = [.. Players.Select(p => new PlayerView() { Id = p.PlayerId })]
+		};
 	}
 }
