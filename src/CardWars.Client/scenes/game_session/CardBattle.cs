@@ -12,7 +12,7 @@ public partial class CardBattle : CanvasLayer
 {
 	public IConnection? Connection { get; set; }
 	public Action<IInput>? OnInputSubmit;
-	private readonly List<IBlock> blocks = [];
+	private readonly List<IBlock> _blocks = [];
 
 	private Label _debugLabel;
 
@@ -25,9 +25,9 @@ public partial class CardBattle : CanvasLayer
 	{
 		foreach (var blk in batch.Blocks)
 		{
-			blocks.Add(blk);
+			_blocks.Add(blk);
 		}
-		_debugLabel.Text = string.Join(", ", blocks.Select(b => $"[{b.GetType().Name}]").ToList());
+		_debugLabel.Text = string.Join(", ", _blocks.Select(b => $"[{b.GetType().Name}]").ToList());
 	}
 
 	public override void _Process(double delta)
