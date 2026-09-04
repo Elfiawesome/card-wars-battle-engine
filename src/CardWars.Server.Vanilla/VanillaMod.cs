@@ -54,6 +54,8 @@ public class VanillaMod : IServerMod
 			Logger.Warn("No default world configured; player was not placed into a world.");
 			return;
 		}
+		// Initialize player
+		var worldPlayerData = player.GetSetComponent<WorldPlayerDataComponent>(WorldProviderKey);
 
 		server.EnterInstance(player, WorldProviderKey, worldRegistry.DefaultWorld.ToString());
 	}
@@ -72,7 +74,7 @@ public class VanillaMod : IServerMod
 				new S2C_EnterInstancePacket() { PlayerId = player.PlayerId }
 			);
 		}
-		
+
 		if (instance is WorldInstance worldInstance)
 		{
 			player.Connection.Send(

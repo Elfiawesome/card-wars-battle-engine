@@ -22,8 +22,6 @@ public partial class GameSession : Node
 
 	public override void _Ready()
 	{
-
-
 		// Set username from cmd line args
 		ConnectingUsername = OS.GetCmdlineArgs()[2];
 		GetWindow().Title = ConnectingUsername;
@@ -98,6 +96,8 @@ public partial class GameSession : Node
 				}
 			}
 		}
+
+		SetDebugPlayers("players here");
 	}
 
 	private void HandleIncomingPacket(IPacket packet)
