@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.Packet;
 using CardWars.Vanilla.Shared.View;
@@ -15,9 +16,11 @@ public class WorldClientState
 	private float _lastAxisX = 0f;
 	private float _lastAxisY = 0f;
 	private bool _prevWarpKey = false;
+	private bool _prevBattleKey = false;
 
 	public void Hook(GameSession session)
 	{
+		// Register events
 		session.OnProcess = () => PollInput(session);
 	}
 
@@ -38,6 +41,10 @@ public class WorldClientState
 		var warpPressed = warpDown && !_prevWarpKey;
 		_prevWarpKey = warpDown;
 
+		var battleDown = Input.IsKeyPressed(Key.B);
+		var battlePressed = battleDown && !_prevBattleKey;
+		_prevBattleKey = battleDown;
+
 		if (_moveInputX != _lastAxisX || _moveInputY != _lastAxisY)
 		{
 			_lastAxisX = _moveInputX;
@@ -50,6 +57,11 @@ public class WorldClientState
 			var target = WarpOptions[WarpIndex % WarpOptions.Count];
 			WarpIndex++;
 			session.Connection?.Send(new C2S_DEBUG_WarpRequestPacket { TargetWorld = target });
+		}
+
+		if (battlePressed)
+		{
+			session.Connection?.Send(new C2S_DEBUG_EnterBattle());
 		}
 	}
 }

@@ -1,4 +1,5 @@
 using CardWars.Core.Network.Packet;
+using CardWars.Vanilla.Shared;
 using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Client.Vanilla.Packet;
@@ -48,6 +49,14 @@ public class S2C_WorldSnapshotPacketHandler(WorldClientState world) : IPacketHan
 	{
 		world.OnSnapshot(request.WorldView, context.Session);
 		context.Session.SetDebugStatus($"Received snapshot for world {request.WorldView.WorldId}");
+	}
+}
+
+public class S2C_BattleBlockBatchHandler : IPacketHandlerClient<S2C_BattleBlockBatch>
+{
+	public void Handle(PacketContextClient context, S2C_BattleBlockBatch request)
+	{
+		context.Session.HandleBattleBlockBatch(request.Batch);
 	}
 }
 

@@ -14,6 +14,7 @@ public class VanillaMod : IServerMod
 {
 	private static readonly ResourceId WorldProviderKey = ResourceId.Vanilla("world");
 	private static readonly ResourceId BattleProviderKey = ResourceId.Vanilla("battle");
+	private Guid? _currentBattleInstanceId;
 
 	public void OnLoad(Server server, List<ModContentResult> modContents)
 	{
@@ -31,6 +32,19 @@ public class VanillaMod : IServerMod
 		registry.UnauthenticatedPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler());
 		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());
 		registry.PacketHandlers.Register(new C2S_DEBUG_WarpRequestPacketHandler());
+		registry.PacketHandlers.Register(new C2S_DEBUG_EnterBattlePacketHandler(this));
+	}
+
+	public Guid GetOrCreateCurrentBattle(Server server)
+	{
+		// TODO: Remove later. This is only testing battles
+		if (_currentBattleInstanceId is { } existing)
+			return existing;
+
+		// Battles are not persisted yet; generate a fresh id each session.
+		var battleId = Guid.NewGuid().ToString();
+		_currentBattleInstanceId = server.CreateInstance(BattleProviderKey, battleId).InstanceId;
+		return _currentBattleInstanceId.Value;
 	}
 
 	private void RegisterEvents(Server server, WorldRegistry worldRegistry)

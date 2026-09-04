@@ -1,3 +1,5 @@
+using CardWars.BattleEngine.Block;
+using CardWars.BattleEngine.Input;
 using CardWars.Core.Data;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
@@ -55,4 +57,21 @@ public class C2S_MoveInputPacket : IPacket
 public class C2S_DEBUG_WarpRequestPacket : IPacket
 {
 	[DataTag] public ResourceId TargetWorld { get; set; }
+}
+
+[DataTagType()]
+public class C2S_DEBUG_EnterBattle : IPacket
+{
+}
+
+[DataTagType()]
+public class C2S_BattleInput : IPacket
+{
+	[DataTag] required public IInput Input { get; set; }
+}
+
+[DataTagType()]
+public class S2C_BattleBlockBatch : IPacket
+{
+	[DataTag] public BlockBatch Batch { get; set; }
 }

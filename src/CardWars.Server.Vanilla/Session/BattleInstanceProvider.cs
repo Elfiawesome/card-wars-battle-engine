@@ -18,7 +18,11 @@ public class BattleInstanceProvider(
 			InstanceId = Guid.Parse(saveId),
 			InstanceProviderId = providerId,
 		};
-		instance.Engine = new BattleEngine.BattleEngine { Registry = sharedRegistry };
+		instance.Engine = new BattleEngine.BattleEngine
+		{
+			Registry = sharedRegistry,
+			OnBlockBatchEvent = instance.BroadcastBatch
+		};
 		return instance;
 	}
 

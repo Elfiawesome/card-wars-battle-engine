@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CardWars.Client\CardWars.Client.csproj" />
     <ProjectReference Include="..\CardWars.Vanilla.Shared\CardWars.Vanilla.Shared.csproj" />
+    <ProjectReference Include="..\CardWars.BattleEngine.Vanilla\CardWars.BattleEngine.Vanilla.csproj" />
   </ItemGroup>
 
   <Target Name="CopyModToVanillaFolder" AfterTargets="Build">

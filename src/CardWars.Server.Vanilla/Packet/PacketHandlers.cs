@@ -8,10 +8,7 @@ namespace CardWars.Server.Vanilla.Packet;
 
 public class C2S_CustomModPacketHandler : IPacketHandlerServer<C2S_CustomModPacket>
 {
-	public void Handle(PacketContextServer context, C2S_CustomModPacket request)
-	{
-		// TODO
-	}
+	public void Handle(PacketContextServer context, C2S_CustomModPacket request) { /* TODO */ }
 }
 
 public class C2S_DEBUG_WarpRequestPacketHandler : IPacketHandlerServer<C2S_DEBUG_WarpRequestPacket>
@@ -27,5 +24,14 @@ public class C2S_DEBUG_WarpRequestPacketHandler : IPacketHandlerServer<C2S_DEBUG
 		}
 
 		context.Server.EnterInstance(context.PlayerSession, world.InstanceProviderId, request.TargetWorld.ToString());
+	}
+}
+
+public class C2S_DEBUG_EnterBattlePacketHandler(VanillaMod mod) : IPacketHandlerServer<C2S_DEBUG_EnterBattle>
+{
+	public void Handle(PacketContextServer context, C2S_DEBUG_EnterBattle request)
+	{
+		var battleId = mod.GetOrCreateCurrentBattle(context.Server);
+		context.Server.EnterInstance(context.PlayerSession, battleId);
 	}
 }

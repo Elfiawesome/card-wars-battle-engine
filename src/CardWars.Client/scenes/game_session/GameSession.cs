@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Net.Sockets;
 using CardWars.BattleEngine;
+using CardWars.BattleEngine.Block;
+using CardWars.BattleEngine.Input;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;
@@ -22,6 +24,9 @@ public partial class GameSession : Node
 	public string ConnectingUsername = "";
 
 	public Action? OnProcess { get; set; }
+	public Action<IInput>? OnBattleInput { get; set; }
+
+	public CardBattle? BattleScene { get; private set; }
 
 	public override void _Ready()
 	{
@@ -108,6 +113,22 @@ public partial class GameSession : Node
 	{
 		Core.Logging.Logger.Debug($"Client received packet from server: {packet.GetType().Name}");
 		ClientRegistry.PacketHandlers.Execute(new PacketContextClient() { Session = this }, packet);
+	}
+
+	public void HandleBattleBlockBatch(BlockBatch batch)
+	{
+		EnsureBattleScene();
+		BattleScene?.OnBlockBatch(batch);
+	}
+
+	private void EnsureBattleScene()
+	{
+		if (BattleScene != null) return;
+		var scene = GD.Load<PackedScene>("res://scenes/game_session/card_battle.tscn").Instantiate<CardBattle>();
+		AddChild(scene);
+		BattleScene = scene;
+		BattleScene.Connection = Connection;
+		OnBattleInput += (input) => BattleScene.OnInputSubmit?.Invoke(input);
 	}
 
 	// TODO REMOVE LATER

@@ -19,5 +19,6 @@ public class VanillaMod : IClientMod
 		registry.PacketHandlers.Register(new S2C_EnterInstancePacketHandler());
 		registry.PacketHandlers.Register(new S2C_LeaveInstancePacketHandler());
 		registry.PacketHandlers.Register(new S2C_WorldSnapshotPacketHandler(_world));
+		registry.PacketHandlers.Register(new S2C_BattleBlockBatchHandler());
 	}
 }
