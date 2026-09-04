@@ -1,4 +1,7 @@
 {
 	"name": "Park",
-	"tile_data": []
+	"tile_data": [],
+	"warp_options_debug": [
+		"cardwars:worlds/city_square"
+	]
 }

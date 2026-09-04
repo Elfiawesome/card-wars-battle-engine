@@ -15,7 +15,7 @@ public class WorldInstance : ServerInstance
 	[DataTag] public ResourceId WorldId { get; set; }
 	[DataTag] public int DebugLifespan { get; set; } = 0;
 	[DataTag] public CompoundTag Data { get; set; } = new(); // session related data
-	public CompoundTag TemplateData { get; set; } = new(); // For reference only
+	public CompoundTag TemplateData { get; set; } = new(); // For reference only. We load the content/server/.../worlds/<file> here
 
 	public override void HandlePacket(PlayerSession session, IPacket packet) { }
 
