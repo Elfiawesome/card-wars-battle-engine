@@ -124,10 +124,11 @@ public partial class GameSession : Node
 	private void EnsureBattleScene()
 	{
 		if (BattleScene != null) return;
-		var scene = GD.Load<PackedScene>("res://scenes/game_session/card_battle.tscn").Instantiate<CardBattle>();
+		var scene = GD.Load<PackedScene>("res://scenes/game_session/card_battle/card_battle.tscn").Instantiate<CardBattle>();
 		AddChild(scene);
 		BattleScene = scene;
 		BattleScene.Connection = Connection;
+		GetNode<Control>("Control").Visible = false;
 		OnBattleInput += (input) => BattleScene.OnInputSubmit?.Invoke(input);
 	}
 

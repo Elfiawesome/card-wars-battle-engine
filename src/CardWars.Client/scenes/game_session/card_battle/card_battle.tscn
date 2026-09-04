@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bx6txppvm186f"]
 
-[ext_resource type="Script" uid="uid://wpuon4y4f7w5" path="res://scenes/game_session/CardBattle.cs" id="1_card"]
+[ext_resource type="Script" uid="uid://wpuon4y4f7w5" path="res://scenes/game_session/card_battle/CardBattle.cs" id="1_c64oc"]
 
 [node name="CanvasLayer" type="CanvasLayer" unique_id=1006478918]
-script = ExtResource("1_card")
+script = ExtResource("1_c64oc")
 
 [node name="Panel" type="Panel" parent="." unique_id=1039921079]
 anchors_preset = 15
