@@ -154,6 +154,8 @@ public class Server
 
 	public void EnterInstance(PlayerSession player, ResourceId providerId, string instanceSaveId)
 	{
+		player.CurrentInstanceProvider = providerId;
+		player.CurrentInstanceSaveName = instanceSaveId;
 		var instanceId = GetInstanceMapped(providerId, instanceSaveId)
 						?? CreateInstance(providerId, instanceSaveId).InstanceId;
 		EnterInstance(player, instanceId);
@@ -324,7 +326,7 @@ public class Server
 			packet);
 
 	public void HandleLocalPacket(PlayerSession playerSession, IPacket packet)
-		=> playerSession.CurrentInstance?.HandlePacket(playerSession, packet);
+		=> playerSession.CurrentInstance?.HandlePacket(new PacketContextServer() { Server = this, PlayerSession = playerSession }, packet);
 
 	public void HandleGlobalPacket(PlayerSession playerSession, IPacket packet)
 		=> Registry.PacketHandlers.Execute(

@@ -7,7 +7,6 @@ using CardWars.Server.Session;
 using CardWars.Server.Vanilla.Packet;
 using CardWars.Server.Vanilla.Session;
 using CardWars.Vanilla.Shared.Packet;
-using CardWars.Vanilla.Shared.View;
 
 namespace CardWars.Server.Vanilla;
 
@@ -31,6 +30,7 @@ public class VanillaMod : IServerMod
 	{
 		registry.UnauthenticatedPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler());
 		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());
+		registry.PacketHandlers.Register(new C2S_DEBUG_WarpRequestPacketHandler());
 	}
 
 	private void RegisterEvents(Server server, WorldRegistry worldRegistry)
@@ -49,13 +49,20 @@ public class VanillaMod : IServerMod
 
 	private void OnPlayerJoined(Server server, WorldRegistry worldRegistry, PlayerSession player)
 	{
+		// Rejoin the instance the player last left (world or battle) if known.
+		var providerId = player.CurrentInstanceProvider;
+		var saveName = player.CurrentInstanceSaveName;
+		if (!providerId.IsEmpty && !string.IsNullOrEmpty(saveName))
+		{
+			server.EnterInstance(player, providerId, saveName);
+			return;
+		}
+
 		if (worldRegistry.DefaultWorld.IsEmpty)
 		{
 			Logger.Warn("No default world configured; player was not placed into a world.");
 			return;
 		}
-		// Initialize player
-		var worldPlayerData = player.GetSetComponent<WorldPlayerDataComponent>(WorldProviderKey);
 
 		server.EnterInstance(player, WorldProviderKey, worldRegistry.DefaultWorld.ToString());
 	}
@@ -67,30 +74,35 @@ public class VanillaMod : IServerMod
 
 	private void OnPlayerEnterInstance(Server server, IServerInstance instance, PlayerSession player)
 	{
-		// Tell everyone in that instance this player joined
-		foreach (var playerSession in instance.Players)
-		{
-			playerSession.Connection.Send(
-				new S2C_EnterInstancePacket() { PlayerId = player.PlayerId }
-			);
-		}
-
 		if (instance is WorldInstance worldInstance)
 		{
-			player.Connection.Send(
-				new S2C_WorldInstanceSnapshot() { WorldView = worldInstance.GetWorldView() }
-			);
+			worldInstance.BroadcastSnapshot();
+		}
+		else
+		{
+			foreach (var playerSession in instance.Players)
+			{
+				playerSession.Connection.Send(
+					new S2C_EnterInstancePacket() { PlayerId = player.PlayerId }
+				);
+			}
 		}
 	}
 
 	private void OnPlayerLeaveInstance(Server server, IServerInstance instance, PlayerSession player)
 	{
-		// Tell everyone in that previous instance that this player left
-		foreach (var playerSession in instance.Players)
+		if (instance is WorldInstance worldInstance)
 		{
-			playerSession.Connection.Send(
-				new S2C_LeaveInstancePacket() { PlayerId = player.PlayerId }
-			);
+			worldInstance.BroadcastSnapshot();
+		}
+		else
+		{
+			foreach (var playerSession in instance.Players)
+			{
+				playerSession.Connection.Send(
+					new S2C_LeaveInstancePacket() { PlayerId = player.PlayerId }
+				);
+			}
 		}
 	}
 

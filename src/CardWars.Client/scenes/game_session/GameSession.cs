@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Net.Sockets;
 using CardWars.BattleEngine;
@@ -20,10 +21,13 @@ public partial class GameSession : Node
 
 	public string ConnectingUsername = "";
 
+	public Action? OnProcess { get; set; }
+
 	public override void _Ready()
 	{
 		// Set username from cmd line args
-		ConnectingUsername = OS.GetCmdlineArgs()[2];
+		var args = OS.GetCmdlineArgs();
+		ConnectingUsername = args.Length > 2 ? args[2] : (args.Length > 0 ? args[^1] : "Elfiawesome");
 		GetWindow().Title = ConnectingUsername;
 		Core.Logging.Logger.Identity = ConnectingUsername;
 
@@ -97,7 +101,7 @@ public partial class GameSession : Node
 			}
 		}
 
-		SetDebugPlayers("players here");
+		OnProcess?.Invoke();
 	}
 
 	private void HandleIncomingPacket(IPacket packet)

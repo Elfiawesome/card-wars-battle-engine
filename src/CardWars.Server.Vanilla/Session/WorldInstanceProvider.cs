@@ -20,6 +20,7 @@ public class WorldInstanceProvider(
 		if (save is CompoundTag saveTag)
 		{
 			instance = DataTagMapper.FromTag<WorldInstance>(saveTag);
+			instance.InstanceId = Guid.NewGuid();
 		}
 		else
 		{

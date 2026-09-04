@@ -1,5 +1,6 @@
 using CardWars.Core.Data;
 using CardWars.Core.Network.Packet;
+using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.View;
 
 namespace CardWars.Vanilla.Shared.Packet;
@@ -41,4 +42,17 @@ public class S2C_WorldInstanceSnapshot : IPacket
 {
 	[DataTag] public required WorldView WorldView { get; set; }
 	[DataTag] public int Time { get; set; } = 0;
+}
+
+[DataTagType()]
+public class C2S_MoveInputPacket : IPacket
+{
+	[DataTag] public float AxisX { get; set; } = 0;
+	[DataTag] public float AxisY { get; set; } = 0;
+}
+
+[DataTagType()]
+public class C2S_DEBUG_WarpRequestPacket : IPacket
+{
+	[DataTag] public ResourceId TargetWorld { get; set; }
 }

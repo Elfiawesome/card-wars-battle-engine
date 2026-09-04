@@ -10,4 +10,9 @@ public class WorldPlayerDataComponent : IPlayerDataComponent
 	[DataTag] public float X { get; set; } = 0;
 	[DataTag] public float Y { get; set; } = 0;
 	[DataTag] public float Z { get; set; } = 0;
+
+	// Server-authoritative movement state
+	[DataTag] public float AxisX { get; set; } = 0;
+	[DataTag] public float AxisY { get; set; } = 0;
+	[DataTag] public float MoveSpeed { get; set; } = 100f;
 }

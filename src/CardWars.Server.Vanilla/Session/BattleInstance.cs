@@ -2,6 +2,7 @@ using CardWars.BattleEngine;
 using CardWars.Core.Data;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
+using CardWars.Server.Packet;
 using CardWars.Server.Session;
 
 namespace CardWars.Server.Vanilla.Session;
@@ -14,7 +15,7 @@ public class BattleInstance : ServerInstance
 
 	public BattleEngine.BattleEngine? Engine { get; set; }
 
-	public override void HandlePacket(PlayerSession session, IPacket packet) { }
+	public override void HandlePacket(PacketContextServer context, IPacket packet) { }
 
 	public override void Tick(float deltaTime) { }
 }

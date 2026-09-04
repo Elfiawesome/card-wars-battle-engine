@@ -32,3 +32,11 @@ text = "World Id"
 [node name="Players" parent="Control/VBoxContainer" unique_id=1282360075 instance=ExtResource("2_ypo4w")]
 layout_mode = 2
 text = "Status"
+
+[node name="Button" type="Button" parent="Control" unique_id=892602689]
+layout_mode = 0
+offset_left = 359.0
+offset_top = 281.0
+offset_right = 1031.0
+offset_bottom = 420.0
+text = "Responsive"

@@ -1,14 +1,14 @@
-using CardWars.Core.Data;
-using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Client.Vanilla.Packet;
 
-public class S2C_PlayerJoinedRequestPacketHandler : IPacketHandlerClient<S2C_PlayerJoinedRequestPacket>
+public class S2C_PlayerJoinedRequestPacketHandler(WorldClientState world) : IPacketHandlerClient<S2C_PlayerJoinedRequestPacket>
 {
 	public void Handle(PacketContextClient context, S2C_PlayerJoinedRequestPacket request)
 	{
+		world.Hook(context.Session);
+
 		context.Connection.Send(new C2S_PlayerJoinedRequestResponsePacket()
 		{
 			Username = context.Session.ConnectingUsername
@@ -42,12 +42,12 @@ public class S2C_LeaveInstancePacketHandler : IPacketHandlerClient<S2C_LeaveInst
 	}
 }
 
-public class S2C_WorldSnapshotPacketHandler : IPacketHandlerClient<S2C_WorldInstanceSnapshot>
+public class S2C_WorldSnapshotPacketHandler(WorldClientState world) : IPacketHandlerClient<S2C_WorldInstanceSnapshot>
 {
 	public void Handle(PacketContextClient context, S2C_WorldInstanceSnapshot request)
 	{
-		context.Session.SetDebugStatus($"Received snapshot for world!");
-		Logger.Info($"Number of players in world: {request.WorldView.Players.First().Id}");
+		world.OnSnapshot(request.WorldView, context.Session);
+		context.Session.SetDebugStatus($"Received snapshot for world {request.WorldView.WorldId}");
 	}
 }
 
