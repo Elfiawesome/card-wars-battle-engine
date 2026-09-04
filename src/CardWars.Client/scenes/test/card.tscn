@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://blj46vn5o5q1v"]
+
+[node name="Card" type="Control" unique_id=319109640]
+custom_minimum_size = Vector2(261.5, 395.5)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 261.5
+offset_bottom = 395.5
+offset_transform_enabled = true
+offset_transform_position_ratio = Vector2(-0.5, -0.5)
+offset_transform_visual_only = false
+
+[node name="Panel" type="Panel" parent="." unique_id=2010923649]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=1210935472]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Label" type="Label" parent="Panel/MarginContainer" unique_id=2075067538]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Details"
+autowrap_mode = 1
