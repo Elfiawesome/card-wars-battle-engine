@@ -1,6 +1,4 @@
-using CardWars.BattleEngine;
 using CardWars.BattleEngine.Block;
-using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data;
@@ -8,7 +6,6 @@ using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Server.Packet;
 using CardWars.Server.Session;
-using CardWars.Vanilla.Shared;
 using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Server.Vanilla.Session;

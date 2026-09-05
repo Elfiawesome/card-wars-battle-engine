@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Input;
 using CardWars.Core.Network.Transport;

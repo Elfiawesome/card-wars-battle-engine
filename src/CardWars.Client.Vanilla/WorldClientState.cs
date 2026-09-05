@@ -1,4 +1,3 @@
-using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.Packet;
 using CardWars.Vanilla.Shared.View;

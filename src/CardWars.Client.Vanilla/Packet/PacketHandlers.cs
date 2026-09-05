@@ -1,5 +1,4 @@
 using CardWars.Core.Network.Packet;
-using CardWars.Vanilla.Shared;
 using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Client.Vanilla.Packet;
