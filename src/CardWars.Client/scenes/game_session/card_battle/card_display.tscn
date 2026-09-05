@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://bk7jiwgxicc04"]
+
+[ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/game_session/card_battle/CardDisplay.cs" id="1_8pb73"]
+[ext_resource type="Texture2D" uid="uid://h66vbs1kggw4" path="res://temp_asset/test_card.png" id="1_bw6t6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3al6n"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 30
+border_width_top = 30
+border_width_right = 30
+border_width_bottom = 30
+
+[node name="CardDisplay" type="Control" unique_id=397712715]
+custom_minimum_size = Vector2(211.2, 295.2)
+layout_mode = 3
+anchors_preset = 0
+pivot_offset_ratio = Vector2(0.5, 0.5)
+script = ExtResource("1_8pb73")
+
+[node name="Control" type="Control" parent="." unique_id=1744136400]
+custom_minimum_size = Vector2(1408, 1968)
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(0.15, 0.15)
+mouse_filter = 1
+
+[node name="TextureRect" type="TextureRect" parent="Control" unique_id=408841810]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_bw6t6")
+
+[node name="Panel" type="Panel" parent="Control" unique_id=370074597]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3al6n")

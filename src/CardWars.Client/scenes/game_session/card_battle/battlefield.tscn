@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://by6lkmtyyo8bo"]
+
+[ext_resource type="Script" uid="uid://dhiq0iiwr2q8f" path="res://scenes/game_session/card_battle/Battlefield.cs" id="1_2g610"]
+
+[node name="Battlefield" type="Node3D" unique_id=797312749]
+transform = Transform3D(1, -3.3087225e-24, 0, -4.440892e-16, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("1_2g610")
