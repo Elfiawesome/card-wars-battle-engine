@@ -3,7 +3,6 @@ using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.vanilla.packet;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
-using Godot;
 
 namespace CardWars.Client.scripts.vanilla;
 
