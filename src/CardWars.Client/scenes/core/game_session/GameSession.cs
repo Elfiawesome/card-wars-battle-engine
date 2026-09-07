@@ -114,12 +114,13 @@ public partial class GameSession : Node
 		OnProcess?.Invoke();
 	}
 
-	public void SwitchInstance(ClientInstance instance)
+	public void SwitchInstance(ClientInstance newInstance)
 	{
-		if (Instance != null) { RemoveChild(Instance); instance.onPacketSent -= SendPacket; return; }
-		instance.onPacketSent += SendPacket;
-		Instance = instance;
-		AddChild(instance);
+		if (Instance != null) { RemoveChild(Instance); Instance.onPacketSent -= SendPacket; }
+
+		newInstance.onPacketSent += SendPacket;
+		Instance = newInstance;
+		AddChild(newInstance);
 	}
 
 	public void SendPacket(IPacket packet)
