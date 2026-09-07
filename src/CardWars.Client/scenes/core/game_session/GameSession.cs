@@ -91,6 +91,7 @@ public partial class GameSession : Node
 		modLoader.Setup();
 
 		var clientContent = modLoader.GetContentClient().ToList();
+		new VanillaMod().OnLoad(ClientRegistry, clientContent); // TODO: Load dynamically via scanning current assembly bruh
 		modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry, clientContent));
 
 		var tcpClient = new TcpClient("127.0.0.1", 5060);
@@ -115,10 +116,14 @@ public partial class GameSession : Node
 
 	public void SwitchInstance(ClientInstance instance)
 	{
-		if (Instance != null) { RemoveChild(Instance); return; }
+		if (Instance != null) { RemoveChild(Instance); instance.onPacketSent -= SendPacket; return; }
+		instance.onPacketSent += SendPacket;
 		Instance = instance;
 		AddChild(instance);
 	}
+
+	public void SendPacket(IPacket packet)
+		=> Connection?.Send(packet);
 
 	private void HandleIncomingPacket(IPacket packet)
 	{

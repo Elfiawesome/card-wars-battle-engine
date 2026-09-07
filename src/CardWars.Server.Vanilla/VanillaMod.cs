@@ -98,10 +98,7 @@ public class VanillaMod : IServerMod
 		switch (instance)
 		{
 			case WorldInstance world:
-				// player.Connection.Send(new S2C_EnterWorldInstancePacket
-				// {
-				// 	WorldId = world.WorldId
-				// });
+				world.BroadcastSnapshot();
 				break;
 			case BattleInstance battle:
 				// player.Connection.Send(new S2C_EnterBattleInstancePacket
