@@ -30,7 +30,6 @@ public partial class GameSession : Node
 	public Action<IInput>? OnBattleInput { get; set; }
 
 	public ClientInstance? Instance;
-	// public CardBattle? BattleScene { get; private set; }
 
 	public override void _Ready()
 	{
@@ -116,7 +115,7 @@ public partial class GameSession : Node
 
 	public void SwitchInstance(ClientInstance instance)
 	{
-		if (instance != null) { RemoveChild(instance); return; }
+		if (Instance != null) { RemoveChild(Instance); return; }
 		Instance = instance;
 		AddChild(instance);
 	}
@@ -124,7 +123,9 @@ public partial class GameSession : Node
 	private void HandleIncomingPacket(IPacket packet)
 	{
 		Core.Logging.Logger.Debug($"Client received packet from server: {packet.GetType().Name}");
-		ClientRegistry.PacketHandlers.Execute(new PacketContextClient() { Session = this }, packet);
+		PacketContextClient ctx = new() { Session = this };
+		Instance?.OnPacket(packet, ctx);
+		ClientRegistry.PacketHandlers.Execute(ctx, packet);
 	}
 
 

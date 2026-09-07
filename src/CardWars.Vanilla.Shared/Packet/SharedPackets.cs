@@ -31,6 +31,7 @@ public class S2C_ConnectionConfirmedPacket : IPacket
 public class S2C_EnterInstancePacket : IPacket
 {
 	[DataTag] public required Guid PlayerId { get; set; }
+	[DataTag] public required ResourceId ProviderId { get; set; }
 }
 
 [DataTagType()]

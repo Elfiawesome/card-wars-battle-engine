@@ -88,19 +88,30 @@ public class VanillaMod : IServerMod
 
 	private void OnPlayerEnterInstance(Server server, IServerInstance instance, PlayerSession player)
 	{
-		if (instance is WorldInstance worldInstance)
+		var enterPacket = new S2C_EnterInstancePacket
 		{
-			worldInstance.BroadcastSnapshot();
-		}
-		else
+			ProviderId = instance.InstanceProviderId,
+			PlayerId = player.PlayerId
+		};
+		player.Connection.Send(enterPacket);
+
+		switch (instance)
 		{
-			foreach (var playerSession in instance.Players)
-			{
-				playerSession.Connection.Send(
-					new S2C_EnterInstancePacket() { PlayerId = player.PlayerId }
-				);
-			}
+			case WorldInstance world:
+				// player.Connection.Send(new S2C_EnterWorldInstancePacket
+				// {
+				// 	WorldId = world.WorldId
+				// });
+				break;
+			case BattleInstance battle:
+				// player.Connection.Send(new S2C_EnterBattleInstancePacket
+				// {
+				// 	BattleId = battle.InstanceId.ToString()
+				// });
+				break;
+
 		}
+
 	}
 
 	private void OnPlayerLeaveInstance(Server server, IServerInstance instance, PlayerSession player)

@@ -5,12 +5,10 @@ using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Client.scripts.vanilla.packet;
 
-public class S2C_PlayerJoinedRequestPacketHandler(WorldClientState world) : IPacketHandlerClient<S2C_PlayerJoinedRequestPacket>
+public class S2C_PlayerJoinedRequestPacketHandler() : IPacketHandlerClient<S2C_PlayerJoinedRequestPacket>
 {
 	public void Handle(PacketContextClient context, S2C_PlayerJoinedRequestPacket request)
 	{
-		world.Hook(context.Session);
-
 		context.Connection.Send(new C2S_PlayerJoinedRequestResponsePacket()
 		{
 			Username = context.Session.ConnectingUsername
@@ -32,11 +30,10 @@ public class S2C_EnterInstancePacketHandler : IPacketHandlerClient<S2C_EnterInst
 {
 	public void Handle(PacketContextClient context, S2C_EnterInstancePacket request)
 	{
-		context.Session.SetDebugStatus($"Entered instance {request.PlayerId}");
-
-		// var newInstance = context.Session.ClientRegistry.Instances.Get("")?.Instantiate<ClientInstance>();
-		// if (newInstance == null) return;
-		// context.Session.SwitchInstance(newInstance);
+		var scene = context.Session.ClientRegistry.Instances.Get(request.ProviderId);
+		if (scene == null) { return; }
+		var instance = scene.Instantiate<ClientInstance>();
+		context.Session.SwitchInstance(instance);
 	}
 }
 
@@ -45,15 +42,6 @@ public class S2C_LeaveInstancePacketHandler : IPacketHandlerClient<S2C_LeaveInst
 	public void Handle(PacketContextClient context, S2C_LeaveInstancePacket request)
 	{
 		context.Session.SetDebugStatus($"Left instance {request.PlayerId}");
-	}
-}
-
-public class S2C_WorldSnapshotPacketHandler(WorldClientState world) : IPacketHandlerClient<S2C_WorldInstanceSnapshot>
-{
-	public void Handle(PacketContextClient context, S2C_WorldInstanceSnapshot request)
-	{
-		world.OnSnapshot(request.WorldView, context.Session);
-		context.Session.SetDebugStatus($"Received snapshot for world {request.WorldView.WorldId}");
 	}
 }
 
@@ -66,7 +54,6 @@ public class S2C_BattleBlockBatchHandler : IPacketHandlerClient<S2C_BattleBlockB
 }
 
 // Custom Handler
-
 public class S2C_CustomModPacketHandler : IPacketHandlerClient<S2C_CustomModPacket>
 {
 	public void Handle(PacketContextClient context, S2C_CustomModPacket request) { /* TODO */ }
