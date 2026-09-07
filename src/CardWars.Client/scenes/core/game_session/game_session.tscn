@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ck85drgp1us8a"]
 
-[ext_resource type="Script" uid="uid://di8flqsuj5467" path="res://scenes/game_session/GameSession.cs" id="1_w08w2"]
-[ext_resource type="PackedScene" uid="uid://cr3rterhjff3n" path="res://scenes/game_session/debug_text_container.tscn" id="2_ypo4w"]
+[ext_resource type="Script" uid="uid://di8flqsuj5467" path="res://scenes/core/game_session/GameSession.cs" id="1_w08w2"]
+[ext_resource type="PackedScene" uid="uid://cr3rterhjff3n" path="res://scenes/core/game_session/debug_text_container.tscn" id="2_ypo4w"]
 
 [node name="GameSession" type="Node" unique_id=1973640705]
 script = ExtResource("1_w08w2")
@@ -32,3 +32,5 @@ text = "World Id"
 [node name="Players" parent="Control/VBoxContainer" unique_id=1282360075 instance=ExtResource("2_ypo4w")]
 layout_mode = 2
 text = "Status"
+
+[node name="Instances" type="Node" parent="." unique_id=1298944175]

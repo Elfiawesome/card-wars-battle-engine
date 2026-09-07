@@ -1,7 +1,9 @@
+using CardWars.Client.scenes.core.game_session;
+using CardWars.Client.scripts.core.packet;
 using CardWars.Core.Network.Packet;
 using CardWars.Vanilla.Shared.Packet;
 
-namespace CardWars.Client.Vanilla.Packet;
+namespace CardWars.Client.scripts.vanilla.packet;
 
 public class S2C_PlayerJoinedRequestPacketHandler(WorldClientState world) : IPacketHandlerClient<S2C_PlayerJoinedRequestPacket>
 {
@@ -31,6 +33,10 @@ public class S2C_EnterInstancePacketHandler : IPacketHandlerClient<S2C_EnterInst
 	public void Handle(PacketContextClient context, S2C_EnterInstancePacket request)
 	{
 		context.Session.SetDebugStatus($"Entered instance {request.PlayerId}");
+
+		// var newInstance = context.Session.ClientRegistry.Instances.Get("")?.Instantiate<ClientInstance>();
+		// if (newInstance == null) return;
+		// context.Session.SwitchInstance(newInstance);
 	}
 }
 

@@ -1,9 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
+using CardWars.Client.scenes.core.game_session;
 using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.Packet;
 using CardWars.Vanilla.Shared.View;
 using Godot;
 
-namespace CardWars.Client.Vanilla;
+namespace CardWars.Client.scripts.vanilla;
 
 public class WorldClientState
 {

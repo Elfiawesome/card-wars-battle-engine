@@ -1,6 +1,6 @@
 using Godot;
 
-namespace CardWars.Client;
+namespace CardWars.Client.scripts.core.global;
 
 public partial class LoggerHook : Node
 {

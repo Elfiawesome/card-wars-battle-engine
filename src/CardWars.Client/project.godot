@@ -20,7 +20,7 @@ config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 
 [autoload]
 
-LoggerHook="*uid://bkqlqn8uqs1di"
+LoggerHook="res://scripts/core/global/LoggerHook.cs"
 
 [dotnet]
 

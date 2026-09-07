@@ -1,15 +1,16 @@
-using CardWars.Client.Vanilla.Packet;
+using System.Collections.Generic;
+using CardWars.Client.scripts.core;
+using CardWars.Client.scripts.vanilla.packet;
 using CardWars.ModLoader;
 
-namespace CardWars.Client.Vanilla;
+namespace CardWars.Client.scripts.vanilla;
 
 public class VanillaMod : IClientMod
 {
-	public string ModName => "Vanilla";
+	public string ModName => throw new System.NotImplementedException();
+	public string Version => throw new System.NotImplementedException();
 
-	public string Version => "";
-
-	private readonly WorldClientState _world = new();
+	private WorldClientState _world = new();
 
 	public void OnLoad(ClientRegistry registry, List<ModContentResult> modContents)
 	{
@@ -20,5 +21,7 @@ public class VanillaMod : IClientMod
 		registry.PacketHandlers.Register(new S2C_LeaveInstancePacketHandler());
 		registry.PacketHandlers.Register(new S2C_WorldSnapshotPacketHandler(_world));
 		registry.PacketHandlers.Register(new S2C_BattleBlockBatchHandler());
+
+		
 	}
 }

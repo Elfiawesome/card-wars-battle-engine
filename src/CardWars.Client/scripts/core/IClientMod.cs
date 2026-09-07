@@ -1,7 +1,7 @@
 using CardWars.ModLoader;
 using System.Collections.Generic;
 
-namespace CardWars.Client;
+namespace CardWars.Client.scripts.core;
 
 public interface IClientMod : IModEntry
 {
