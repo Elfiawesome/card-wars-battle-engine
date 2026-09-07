@@ -7,7 +7,7 @@ using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.Packet;
 using Godot;
 
-namespace CardWars.Client.scenes.vanilla.instance;
+namespace CardWars.Client.scenes.vanilla.instance.world;
 
 public partial class WorldInstance : ClientInstance
 {

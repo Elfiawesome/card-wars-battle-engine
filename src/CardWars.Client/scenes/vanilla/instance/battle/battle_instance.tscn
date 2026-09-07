@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://nrh7kym0s13h"]
+
+[ext_resource type="Script" uid="uid://bpemhsxwfw37p" path="res://scenes/vanilla/instance/battle/BattleInstance.cs" id="1_kka0g"]
+
+[node name="BattleScene" type="Node" unique_id=587125568]
+script = ExtResource("1_kka0g")
+
+[node name="Control" type="Control" parent="." unique_id=187991382]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Control" unique_id=697549421]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

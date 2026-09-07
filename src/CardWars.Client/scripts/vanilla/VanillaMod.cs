@@ -21,6 +21,7 @@ public class VanillaMod : IClientMod
 		registry.PacketHandlers.Register(new S2C_LeaveInstancePacketHandler());
 		registry.PacketHandlers.Register(new S2C_BattleBlockBatchHandler());
 
-		registry.Instances.Register(Constant.WorldInstanceId, "res://scenes/vanilla/instance/world_instance.tscn");
+		registry.Instances.Register(Constant.WorldInstanceId, "res://scenes/vanilla/instance/world/world_instance.tscn");
+		registry.Instances.Register(Constant.BattleInstanceId, "res://scenes/vanilla/instance/battle/battle_instance.tscn");
 	}
 }
