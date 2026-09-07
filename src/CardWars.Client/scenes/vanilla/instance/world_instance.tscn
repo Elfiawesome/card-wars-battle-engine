@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://dnpsedw1c5orn"]
+
+[ext_resource type="Script" uid="uid://bcpqfnfagu2e3" path="res://scenes/vanilla/instance/WorldInstance.cs" id="1_3a43d"]
+
+[node name="WorldInstance" type="Node" unique_id=2008696743]
+script = ExtResource("1_3a43d")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=2146105515]
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0, 1, 1, 1)
