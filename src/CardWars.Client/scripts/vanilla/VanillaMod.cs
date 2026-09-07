@@ -3,6 +3,7 @@ using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.vanilla.packet;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
+using CardWars.Vanilla.Shared;
 
 namespace CardWars.Client.scripts.vanilla;
 
@@ -20,6 +21,6 @@ public class VanillaMod : IClientMod
 		registry.PacketHandlers.Register(new S2C_LeaveInstancePacketHandler());
 		registry.PacketHandlers.Register(new S2C_BattleBlockBatchHandler());
 
-		registry.Instances.Register(ResourceId.Vanilla("world"), "res://scenes/vanilla/instance/world_instance.tscn");
+		registry.Instances.Register(Constant.WorldInstanceId, "res://scenes/vanilla/instance/world_instance.tscn");
 	}
 }

@@ -19,7 +19,7 @@ public partial class WorldInstance : ClientInstance
 			case S2C_WorldInstanceSnapshot worldInstanceSnapshot:
 				context.Session.SetDebugWorld(worldInstanceSnapshot.WorldView.WorldId.ToString());
 				context.Session.SetDebugPlayers(string.Join("\n", worldInstanceSnapshot.WorldView.Players.Select(p => $"{p.Username} ({p.X:0.0}, {p.Y:0.0})")));
-				
+
 				_warpOtions.Clear();
 				_warpOtions.AddRange(worldInstanceSnapshot.WorldView.WarpOptions);
 				break;
@@ -37,6 +37,11 @@ public partial class WorldInstance : ClientInstance
 					SendPacket(new C2S_DEBUG_WarpRequestPacket() { TargetWorld = _warpOtions.First() });
 				}
 			}
+			if (inputEventKey.Pressed && inputEventKey.Keycode == Key.B)
+			{
+				SendPacket(new C2S_DEBUG_EnterBattle());
+			}
+
 		}
 	}
 
@@ -53,7 +58,6 @@ public partial class WorldInstance : ClientInstance
 		{
 			_axis = newAxis;
 			var packet = new C2S_MoveInputPacket { AxisX = _axis.X, AxisY = _axis.Y };
-			Core.Logging.Logger.Info($"SEND! {_axis}");
 			SendPacket(packet);
 		}
 	}

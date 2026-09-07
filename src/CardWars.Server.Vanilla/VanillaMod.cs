@@ -6,14 +6,13 @@ using CardWars.ModLoader;
 using CardWars.Server.Session;
 using CardWars.Server.Vanilla.Packet;
 using CardWars.Server.Vanilla.Session;
+using CardWars.Vanilla.Shared;
 using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Server.Vanilla;
 
 public class VanillaMod : IServerMod
 {
-	private static readonly ResourceId WorldProviderKey = ResourceId.Vanilla("world");
-	private static readonly ResourceId BattleProviderKey = ResourceId.Vanilla("battle");
 	private Guid? _currentBattleInstanceId;
 
 	public void OnLoad(Server server, List<ModContentResult> modContents)
@@ -23,8 +22,8 @@ public class VanillaMod : IServerMod
 		RegisterEvents(server, worldRegistry);
 		LoadWorldDefinitions(worldRegistry, modContents);
 
-		server.Registry.ServerInstanceProviders.Register(WorldProviderKey, new WorldInstanceProvider(worldRegistry, server.Session, WorldProviderKey));
-		server.Registry.ServerInstanceProviders.Register(BattleProviderKey, new BattleInstanceProvider(server.Session, server.SharedBattleEngineRegistry, BattleProviderKey));
+		server.Registry.ServerInstanceProviders.Register(Constant.WorldInstanceId, new WorldInstanceProvider(worldRegistry, server.Session, Constant.WorldInstanceId));
+		server.Registry.ServerInstanceProviders.Register(Constant.BattleInstanceId, new BattleInstanceProvider(server.Session, server.SharedBattleEngineRegistry, Constant.BattleInstanceId));
 	}
 
 	private void RegisterPackets(ServerRegistry registry)
@@ -43,7 +42,7 @@ public class VanillaMod : IServerMod
 
 		// Battles are not persisted yet; generate a fresh id each session.
 		var battleId = Guid.NewGuid().ToString();
-		_currentBattleInstanceId = server.CreateInstance(BattleProviderKey, battleId).InstanceId;
+		_currentBattleInstanceId = server.CreateInstance(Constant.BattleInstanceId, battleId).InstanceId;
 		return _currentBattleInstanceId.Value;
 	}
 
@@ -78,7 +77,7 @@ public class VanillaMod : IServerMod
 			return;
 		}
 
-		server.EnterInstance(player, WorldProviderKey, worldRegistry.DefaultWorld.ToString());
+		server.EnterInstance(player, Constant.WorldInstanceId, worldRegistry.DefaultWorld.ToString());
 	}
 
 	private void OnPlayerLeft(Server server, PlayerSession player)
