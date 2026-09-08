@@ -22,8 +22,8 @@ public class VanillaMod : IServerMod
 		RegisterEvents(server, worldRegistry);
 		LoadWorldDefinitions(worldRegistry, modContents);
 
-		server.Registry.ServerInstanceProviders.Register(Constant.WorldInstanceId, new WorldInstanceProvider(worldRegistry, server.Session, Constant.WorldInstanceId));
-		server.Registry.ServerInstanceProviders.Register(Constant.BattleInstanceId, new BattleInstanceProvider(server.Session, server.SharedBattleEngineRegistry, Constant.BattleInstanceId));
+		server.Registry.ServerInstanceProviders.Register(SharedIds.WorldInstanceId, new WorldInstanceProvider(worldRegistry, server.Session, SharedIds.WorldInstanceId));
+		server.Registry.ServerInstanceProviders.Register(SharedIds.BattleInstanceId, new BattleInstanceProvider(server.Session, server.SharedBattleEngineRegistry, SharedIds.BattleInstanceId));
 	}
 
 	private void RegisterPackets(ServerRegistry registry)
@@ -42,7 +42,7 @@ public class VanillaMod : IServerMod
 
 		// Battles are not persisted yet; generate a fresh id each session.
 		var battleId = Guid.NewGuid().ToString();
-		_currentBattleInstanceId = server.CreateInstance(Constant.BattleInstanceId, battleId).InstanceId;
+		_currentBattleInstanceId = server.CreateInstance(SharedIds.BattleInstanceId, battleId).InstanceId;
 		return _currentBattleInstanceId.Value;
 	}
 
@@ -77,7 +77,7 @@ public class VanillaMod : IServerMod
 			return;
 		}
 
-		server.EnterInstance(player, Constant.WorldInstanceId, worldRegistry.DefaultWorld.ToString());
+		server.EnterInstance(player, SharedIds.WorldInstanceId, worldRegistry.DefaultWorld.ToString());
 	}
 
 	private void OnPlayerLeft(Server server, PlayerSession player)

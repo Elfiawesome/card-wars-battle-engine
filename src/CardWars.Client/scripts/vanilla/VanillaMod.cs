@@ -22,14 +22,14 @@ public class VanillaMod : IClientMod
 		registry.PacketHandlers.Register(new S2C_BattleBlockBatchHandler());
 
 		// Instances
-		registry.Instances.Register(Constant.WorldInstanceId, "res://scenes/vanilla/instance/world/world_instance.tscn");
-		registry.Instances.Register(Constant.BattleInstanceId, "res://scenes/vanilla/instance/battle/battle_instance.tscn");
+		registry.Instances.Register(SharedIds.WorldInstanceId, "res://scenes/vanilla/instance/world/world_instance.tscn");
+		registry.Instances.Register(SharedIds.BattleInstanceId, "res://scenes/vanilla/instance/battle/battle_instance.tscn");
 
 		// UI
-		registry.UserInterface.Register(Constant.CardDisplay, "res://scenes/vanilla/instance/battle/card_display.tscn");
+		registry.UserInterface.Register(SharedIds.CardDisplay, "res://scenes/vanilla/instance/battle/card_display.tscn");
 
 		// Game Objects
-		registry.GameObjects.Register(Constant.Battlefield, "res://scenes/vanilla/instance/battle/battlefield.tscn");
-		registry.GameObjects.Register(Constant.UnitSlot, "res://scenes/vanilla/instance/battle/unit_slot.tscn");
+		registry.GameObjects.Register(SharedIds.Battlefield, "res://scenes/vanilla/instance/battle/battlefield.tscn");
+		registry.GameObjects.Register(SharedIds.UnitSlot, "res://scenes/vanilla/instance/battle/unit_slot.tscn");
 	}
 }
