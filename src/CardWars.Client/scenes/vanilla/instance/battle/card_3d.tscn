@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://c2nb0vt775p1x"]
+
+[ext_resource type="PackedScene" uid="uid://bk7jiwgxicc04" path="res://scenes/vanilla/instance/battle/card_display.tscn" id="1_0eavq"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_30tpu"]
+viewport_path = NodePath("SubViewport")
+
+[node name="Card3D" type="Node3D" unique_id=543971027]
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=1230562523]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
+texture = SubResource("ViewportTexture_30tpu")
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=1053155082]
+size = Vector2i(1408, 1968)
+
+[node name="CardDisplay" parent="SubViewport" unique_id=397712715 instance=ExtResource("1_0eavq")]

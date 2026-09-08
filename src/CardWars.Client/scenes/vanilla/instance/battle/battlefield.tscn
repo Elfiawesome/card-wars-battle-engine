@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://chm7whc23krys"]
+
+[node name="Battlefield" type="Node3D" unique_id=1437153473]
+
+[node name="Node3D" type="Node3D" parent="." unique_id=1862621274]
+
+[node name="Sprite3D" type="Sprite3D" parent="Node3D" unique_id=1025295187]

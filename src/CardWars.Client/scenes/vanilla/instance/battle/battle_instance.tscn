@@ -1,11 +1,27 @@
 [gd_scene format=3 uid="uid://nrh7kym0s13h"]
 
 [ext_resource type="Script" uid="uid://bpemhsxwfw37p" path="res://scenes/vanilla/instance/battle/BattleInstance.cs" id="1_kka0g"]
+[ext_resource type="Script" uid="uid://b7e2pum6t8sfj" path="res://scenes/vanilla/instance/battle/HandManager.cs" id="2_4cb27"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_82brb"]
+size = Vector2(4, 4)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kka0g"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_kmrvt"]
+sky_material = SubResource("ProceduralSkyMaterial_kka0g")
+
+[sub_resource type="Environment" id="Environment_4cb27"]
+background_mode = 2
+sky = SubResource("Sky_kmrvt")
+glow_enabled = true
 
 [node name="BattleScene" type="Node" unique_id=587125568]
 script = ExtResource("1_kka0g")
 
-[node name="Control" type="Control" parent="." unique_id=187991382]
+[node name="UI" type="Control" parent="." unique_id=187991382]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,10 +29,27 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="Control" unique_id=697549421]
+[node name="HandManager" type="Control" parent="UI" unique_id=235383924]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("2_4cb27")
+
+[node name="Playspace" type="MeshInstance3D" parent="." unique_id=1356511361]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("PlaneMesh_82brb")
+
+[node name="Environment" type="Node3D" parent="." unique_id=256484965]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment" unique_id=1733430442]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=359768641]
+environment = SubResource("Environment_4cb27")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1427412567]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)

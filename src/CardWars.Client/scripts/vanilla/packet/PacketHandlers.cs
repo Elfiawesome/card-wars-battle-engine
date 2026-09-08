@@ -30,9 +30,8 @@ public class S2C_EnterInstancePacketHandler : IPacketHandlerClient<S2C_EnterInst
 {
 	public void Handle(PacketContextClient context, S2C_EnterInstancePacket request)
 	{
-		var scene = context.Session.ClientRegistry.Instances.Get(request.ProviderId);
-		if (scene == null) { return; }
-		var instance = scene.Instantiate<ClientInstance>();
+		var instance = context.Session.ClientRegistry.Instances.InstantiateInstance<ClientInstance>(request.ProviderId);
+		if (instance == null) { return; }
 		context.Session.SwitchInstance(instance);
 	}
 }

@@ -1,9 +1,12 @@
+using System;
 using Godot;
 
 namespace CardWars.Client;
 
-public partial class UnitSlot : Node3D
+public partial class CardDisplay : Control
 {
+	public Tween? currentAnimationTween;
+
 	public override void _Ready()
 	{
 	}

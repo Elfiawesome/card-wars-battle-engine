@@ -1,14 +1,21 @@
 using System;
+using CardWars.Core.Registry;
+using CardWars.Vanilla.Shared;
 using Godot;
 
-namespace CardWars.Client;
+namespace CardWars.Client.scenes.vanilla.instance.battle;
 
-public partial class HandCardContainer : Control
+public partial class HandManager : Control
 {
-	public const float HoverRaiseAmount = 100;
+	public const float HandAngleDeg = 100.0f;
+	public const float CardAngleDeg = 180.0f;
+	public const float HoverRaiseAmount = 60.0f;
 	public const int HoverZIndex = 10;
-	PackedScene CardDisplayScene = GD.Load<PackedScene>("res://scenes/game_session/card_battle/card_display.tscn");
-	CardDisplay? hoveredCard = null;
+
+	public Vector2 CardScale = Vector2.One * 0.15f;
+
+	public CardDisplay? HoveredCard = null;
+	public BattleInstance? BattleInstance = null;
 
 	public override void _Ready()
 	{
@@ -19,7 +26,7 @@ public partial class HandCardContainer : Control
 	{
 		if (@event is InputEventKey inputEventKey)
 		{
-			if (inputEventKey.Keycode == Key.Q && inputEventKey.Pressed)
+			if (inputEventKey.Keycode == Key.C && inputEventKey.Pressed)
 			{
 				AddCard();
 			}
@@ -28,23 +35,40 @@ public partial class HandCardContainer : Control
 
 	public void AddCard()
 	{
-		var card = CardDisplayScene.Instantiate<CardDisplay>();
+		var card = BattleInstance?.registry?.UserInterface.Instantiate<CardDisplay>(Constant.CardDisplay);
+		if (card == null) return;
+		card.Scale = Vector2.Zero;
+		card.Position = new(Size.X / 2, Size.Y);
+
+		card.MouseEntered += () => OnCardMouseEntered(card);
+		card.MouseExited += () => OnCardMouseExited(card);
 		AddChild(card);
-		card.OnCardMouseEntered += (c) => { hoveredCard = c; ArrangeCard(); };
-		card.OnCardMouseExited += (c) => { hoveredCard = null; ArrangeCard(); };
 		ArrangeCard();
 	}
 
-	public void ArrangeCard()
+	private void OnCardMouseEntered(CardDisplay card)
+	{
+		HoveredCard = card;
+		ArrangeCard();
+	}
+
+	private void OnCardMouseExited(CardDisplay card)
+	{
+		if (HoveredCard == card) { HoveredCard = null; ArrangeCard(); }
+	}
+
+	private void ArrangeCard()
 	{
 		var cards = GetChildren();
 		int totalCard = cards.Count;
 		if (totalCard == 0) return;
 
-		Vector2 handCenter = new(Size.X / 2, Size.Y - 60);
+		Vector2 cardSize = Vector2.Zero;
+		foreach (var c in cards) { if (c is CardDisplay cd) { cardSize = cd.Size; break; } }
+		float cardWidth = cardSize.X * CardScale.X;
+		float cardHeight = cardSize.X * CardScale.X;
 
-		Vector2 cardSize = ((CardDisplay)cards[0]).Size;
-		float cardWidth = cardSize.X;
+		Vector2 handCenter = new(Size.X / 2, Size.Y - cardHeight / 2);
 
 		float margin = 200f;
 		float availableWidth = Size.X - margin * 2;
@@ -74,12 +98,14 @@ public partial class HandCardContainer : Control
 
 				Vector2 newPos = new Vector2(x, y) - c.Size / 2;
 				float newRot = float.DegreesToRadians(rotDeg);
+				Vector2 newScale = CardScale;
 
-				if (c == hoveredCard)
+				if (c == HoveredCard)
 				{
 					newPos.Y -= HoverRaiseAmount;
 					newRot = 0;
 					c.ZIndex = HoverZIndex;
+					newScale *= 1.2f;
 				}
 				else
 				{
@@ -89,9 +115,10 @@ public partial class HandCardContainer : Control
 				c.currentAnimationTween?.Kill();
 				c.currentAnimationTween = null;
 				var t = c.CreateTween();
-				t.SetParallel(true).SetTrans(Tween.TransitionType.Back).SetEase(Tween.EaseType.InOut);
+				t.SetParallel(true).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
 				t.TweenProperty(c, "position", newPos, 0.2);
 				t.TweenProperty(c, "rotation", newRot, 0.2);
+				t.TweenProperty(c, "scale", newScale, 0.2);
 				c.currentAnimationTween = t;
 			}
 		}
