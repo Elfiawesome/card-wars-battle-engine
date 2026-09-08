@@ -133,7 +133,6 @@ public class ModLoader
 					using var stream = dllPath.OpenRead();
 					var assembly = loadContext.LoadFromStream(stream);
 					mod.Assemblies.Add(assembly);
-					DataTagTypeRegistry.ScanAssembly(assembly);
 					mod.State = ModLoadState.AssemblyLoaded;
 					Logger.Info($"Successfully loaded dll assembly for '{dllPath.FullPath}'");
 				}
@@ -142,6 +141,12 @@ public class ModLoader
 					mod.State = ModLoadState.Failed;
 					Logger.Error($"Failed to load dll assembly for '{dllPath}': {ex.Message}");
 				}
+			}
+			
+			// Load data registry AFTER
+			foreach (var assembly in loadContext.Assemblies)
+			{
+				DataTagTypeRegistry.ScanAssembly(assembly);
 			}
 		}
 	}
