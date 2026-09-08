@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using CardWars.BattleEngine.Block;
+using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
@@ -11,21 +13,17 @@ namespace CardWars.Client.scenes.vanilla.instance.battle;
 
 public partial class BattleInstance : ClientInstance
 {
-	public Control? UI;
-	public HandManager? HandManager;
+	public Control? UINode;
+	public HandManager? HandManagerNode;
+	public Node3D? PlayspaceNode;
+	public Dictionary<EntityId, Node> EntityNodes = [];
 
 	public override void _Ready()
 	{
-		UI = GetNode<Control>("UI");
-		HandManager = GetNode<HandManager>("UI/HandManager");
-		HandManager.BattleInstance = this;
-	}
-
-	public void CreateBattlefield()
-	{
-		var battlefield = registry?.GameObjects.Instantiate<Node3D>(SharedIds.Battlefield);
-		if (battlefield == null) { return; }
-		AddChild(battlefield);
+		UINode = GetNode<Control>("UI");
+		HandManagerNode = GetNode<HandManager>("UI/HandManager");
+		PlayspaceNode = GetNode<Node3D>("Playspace");
+		HandManagerNode.BattleInstance = this;
 	}
 
 	public override void OnPacket(IPacket packet, PacketContextClient context)
@@ -52,7 +50,13 @@ public partial class BattleInstance : ClientInstance
 				case DetachCardFromUnitSlotBlock detachCardFromUnitSlot: break;
 				case DetachDeckFromPlayerBlock detachDeckFromPlayer: break;
 				case DetachUnitSlotFromBattlefieldBlock detachUnitSlotFromBattlefield: break;
-				case InstantiateBattlefieldBlock instantiateBattlefield: break;
+				case InstantiateBattlefieldBlock instantiateBattlefield:
+					var bfNode = registry?.GameObjects.Instantiate<Node3D>(SharedIds.Battlefield);
+					if (bfNode == null) break;
+
+					EntityNodes[instantiateBattlefield.Id] = bfNode;
+					PlayspaceNode?.AddChild(bfNode);
+					break;
 				case InstantiateCardBlock instantiateCard: break;
 				case InstantiateDeckBlock instantiateDeck: break;
 				case InstantiatePlayerBlock instantiatePlayer: break;
@@ -60,8 +64,7 @@ public partial class BattleInstance : ClientInstance
 				case ModifyUnitSlotPositionBlock modifyUnitSlotPosition: break;
 				case SetCardDataBlock setCardDataBlock: break;
 				case UpdateTurnStateBlock updateTurnState: break;
-				default:
-					break;
+				default: break;
 			}
 		}
 
