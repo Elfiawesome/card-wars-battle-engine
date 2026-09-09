@@ -68,7 +68,7 @@ public class Server
 
 		_cts = new CancellationTokenSource();
 		Task.Run(() => ServerLoop(_cts.Token));
-		Logger.Info("Server started successfully.");
+		Log.Info("Server started successfully.");
 	}
 
 	public void Stop()
@@ -96,12 +96,12 @@ public class Server
 				conn.Disconnect();
 			_unauthenticatedConnections.Clear();
 		}
-		Logger.Info("Server stopped.");
+		Log.Info("Server stopped.");
 	}
 
 	private void OnConnectionReceived(IConnection connection)
 	{
-		Logger.Debug($"Server: A new unauthenticated connection was received.");
+		Log.Debug($"Server: A new unauthenticated connection was received.");
 		AddUnauthenticatedConnection(connection);
 	}
 
@@ -277,14 +277,14 @@ public class Server
 		{
 			_unauthenticatedConnections.Remove(conn);
 			conn.Disconnect();
-			Logger.Debug($"Server: An unauthenticated connection timed out and was closed.");
+			Log.Debug($"Server: An unauthenticated connection timed out and was closed.");
 		}
 
 		var deadUnauthenticated = _unauthenticatedConnections.Where(kv => !kv.Key.IsConnected).ToList();
 		foreach (var (conn, _) in deadUnauthenticated)
 		{
 			_unauthenticatedConnections.Remove(conn);
-			Logger.Debug($"Server: An unauthenticated connection disconnected.");
+			Log.Debug($"Server: An unauthenticated connection disconnected.");
 		}
 
 		var disconnected = _playerSessions
@@ -293,7 +293,7 @@ public class Server
 		foreach (var (id, session) in disconnected)
 		{
 			RemovePlayer(session);
-			Logger.Debug($"Server: Player [{id}] disconnected.");
+			Log.Debug($"Server: Player [{id}] disconnected.");
 		}
 	}
 

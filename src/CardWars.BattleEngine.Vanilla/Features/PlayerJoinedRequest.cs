@@ -17,7 +17,7 @@ public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequest
 {
 	public void Handle(InputContext context, PlayerJoinedRequestInput request)
 	{
-		if (context.Transaction.State.Get(request.Id) != null) { Logger.Warn($"Player [{request.Id}] already exists, ignoring join request"); return; }
+		if (context.Transaction.State.Get(request.Id) != null) { Log.Warn($"Player [{request.Id}] already exists, ignoring join request"); return; }
 		BlockBatch batch = new([]);
 		batch.Blocks.Add(new InstantiatePlayerBlock(request.Id));
 

@@ -6,11 +6,12 @@ public partial class LoggerHook : Node
 {
 	public override void _Ready()
 	{
-		Core.Logging.Logger.OnLog += (_, level, msg) =>
+		Core.Logging.Log.OnLog += (logEntry) =>
 		{
-			string newMsg = Core.Logging.Logger.BuildLine(msg, level);
+
+			string newMsg = Core.Logging.Log.BuildLine(logEntry.Message, logEntry.Level);
 			static void printColor(string color, string m) => GD.PrintRich($"[color={color}]" + m + "[/color]");
-			switch (level)
+			switch (logEntry.Level)
 			{
 				case "INFO": printColor("white", newMsg); break;
 				case "DEBUG": printColor("grey", newMsg); break;

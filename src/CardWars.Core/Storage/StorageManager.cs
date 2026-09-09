@@ -43,7 +43,7 @@ public class StorageManager
 
 		CurrentSession = new SessionStorage(this, sessionName, sessionRoot);
 		CurrentSession.EnsureDirectories();
-		Logger.Info($"Storage: Opened session '{sessionName}' at '{sessionRoot.FullPath}'");
+		Log.Info($"Storage: Opened session '{sessionName}' at '{sessionRoot.FullPath}'");
 		return CurrentSession;
 	}
 
@@ -51,7 +51,7 @@ public class StorageManager
 	{
 		if (CurrentSession != null)
 		{
-			Logger.Info($"Storage: Closed session '{CurrentSession.SessionName}'");
+			Log.Info($"Storage: Closed session '{CurrentSession.SessionName}'");
 			CurrentSession = null;
 		}
 	}

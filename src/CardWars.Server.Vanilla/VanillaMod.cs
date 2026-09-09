@@ -74,7 +74,7 @@ public class VanillaMod : IServerMod
 
 		if (worldRegistry.DefaultWorld.IsEmpty)
 		{
-			Logger.Warn("No default world configured; player was not placed into a world.");
+			Log.Warn("No default world configured; player was not placed into a world.");
 			return;
 		}
 
@@ -134,7 +134,7 @@ public class VanillaMod : IServerMod
 				case ["worlds"]:
 					var worldDataTag = content.ReadAs<CompoundTag>();
 					if (worldDataTag == null) continue;
-					Logger.Info("Registered World: " + content.Id.ToString());
+					Log.Info("Registered World: " + content.Id.ToString());
 					worldRegistry.Templates.Register(content.Id, worldDataTag);
 					break;
 				case []:
@@ -144,7 +144,7 @@ public class VanillaMod : IServerMod
 						if (configDataTag == null) continue;
 
 						worldRegistry.DefaultWorld = ResourceId.Parse(configDataTag.GetString("default_world"));
-						Logger.Info("Registered default_world as: " + worldRegistry.DefaultWorld);
+						Log.Info("Registered default_world as: " + worldRegistry.DefaultWorld);
 					}
 					break;
 			}

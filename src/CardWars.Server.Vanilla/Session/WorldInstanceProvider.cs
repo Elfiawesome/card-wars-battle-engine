@@ -37,7 +37,7 @@ public class WorldInstanceProvider(
 			: new CompoundTag();
 
 		if (instance.TemplateData.Count == 0)
-			Logger.Warn($"No world template found for '{worldId}'. World instance will have no template data.");
+			Log.Warn($"No world template found for '{worldId}'. World instance will have no template data.");
 
 		return instance;
 	}

@@ -4,6 +4,7 @@ using CardWars.BattleEngine.State;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.vanilla.registry;
+using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Vanilla.Shared.Packet;
 using Godot;

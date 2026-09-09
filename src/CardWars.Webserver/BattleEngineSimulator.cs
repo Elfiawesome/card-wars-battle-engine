@@ -42,15 +42,15 @@ public class Simulator
 	public void Step(string description, Action action)
 	{
 		_stepCount++;
-		Logger.Info($"┌─ Step {_stepCount}: {description}");
+		Log.Info($"┌─ Step {_stepCount}: {description}");
 		try
 		{
 			action();
-			Logger.Info("└─ ✓ OK");
+			Log.Info("└─ ✓ OK");
 		}
 		catch (Exception ex)
 		{
-			Logger.Error($"└─ ✗ FAILED: {ex.Message}");
+			Log.Error($"└─ ✗ FAILED: {ex.Message}");
 			throw;
 		}
 	}
@@ -58,16 +58,16 @@ public class Simulator
 	public T Step<T>(string description, Func<T> action)
 	{
 		_stepCount++;
-		Logger.Info($"┌─ Step {_stepCount}: {description}");
+		Log.Info($"┌─ Step {_stepCount}: {description}");
 		try
 		{
 			var result = action();
-			Logger.Info($"└─ ✓ → {result}");
+			Log.Info($"└─ ✓ → {result}");
 			return result;
 		}
 		catch (Exception ex)
 		{
-			Logger.Error($"└─ ✗ FAILED: {ex.Message}");
+			Log.Error($"└─ ✗ FAILED: {ex.Message}");
 			throw;
 		}
 	}
@@ -211,21 +211,21 @@ public class Simulator
 
 	public void DumpState()
 	{
-		Logger.Info("═══ State Dump ═══");
+		Log.Info("═══ State Dump ═══");
 		Console.WriteLine(Helper.GameStateDump(State));
 	}
 
 	public void PrintHand(string playerAlias)
 	{
 		var cards = Hand(playerAlias);
-		Logger.Info($"── {playerAlias}'s Hand ({cards.Count} cards) ──");
+		Log.Info($"── {playerAlias}'s Hand ({cards.Count} cards) ──");
 		for (var i = 0; i < cards.Count; i++)
-			Logger.Info($"  [{i}] {cards[i].Name}  ATK:{cards[i].Atk}  HP:{cards[i].Hp}  PT:{cards[i].Pt}");
+			Log.Info($"  [{i}] {cards[i].Name}  ATK:{cards[i].Atk}  HP:{cards[i].Hp}  PT:{cards[i].Pt}");
 	}
 
 	public void PrintBoard(string playerAlias)
 	{
-		Logger.Info($"── {playerAlias}'s Board ──");
+		Log.Info($"── {playerAlias}'s Board ──");
 		foreach (var slot in Slots(playerAlias)
 					 .OrderBy(s => s.Position.Y).ThenBy(s => s.Position.X))
 		{
@@ -234,7 +234,7 @@ public class Simulator
 			var label = card != null
 				? $"{card.Name}  ATK:{card.Atk}  HP:{card.Hp}"
 				: "[empty]";
-			Logger.Info($"  ({slot.Position.X},{slot.Position.Y}) {label}");
+			Log.Info($"  ({slot.Position.X},{slot.Position.Y}) {label}");
 		}
 	}
 }

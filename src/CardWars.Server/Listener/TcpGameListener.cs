@@ -18,7 +18,7 @@ public class TcpGameListener(int port = 5060) : IListener
 		_listener.Start();
 		_cts = new CancellationTokenSource();
 		Task.Run(() => AcceptLoop(_cts.Token));
-		Logger.Info($"TcpGameListener: Listening on port {port}");
+		Log.Info($"TcpGameListener: Listening on port {port}");
 	}
 
 	public void Stop()
@@ -37,7 +37,7 @@ public class TcpGameListener(int port = 5060) : IListener
 				OnNewConnection?.Invoke(new TcpConnection(client));
 			}
 			catch when (token.IsCancellationRequested) { break; }
-			catch (Exception ex) { Logger.Error($"TCP accept failed: {ex.Message}"); }
+			catch (Exception ex) { Log.Error($"TCP accept failed: {ex.Message}"); }
 		}
 	}
 }

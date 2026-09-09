@@ -17,7 +17,7 @@ public class InstantiatePlayerBlockHandler : IBlockHandler<InstantiatePlayerBloc
 	{
 		if (context.Get(request.Id) != null)
 		{
-			Logger.Warn($"Entity [{request.Id}] already exists, skipping InstantiatePlayerBlock"); return;
+			Log.Warn($"Entity [{request.Id}] already exists, skipping InstantiatePlayerBlock"); return;
 		}
 		context.Add(new Player(request.Id));
 	}

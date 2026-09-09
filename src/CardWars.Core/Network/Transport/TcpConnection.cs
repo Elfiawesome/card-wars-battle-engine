@@ -43,7 +43,7 @@ public class TcpConnection : IConnection
 		}
 		catch (Exception ex)
 		{
-			Logger.Error($"TcpConnection: Send failed: {ex.Message}");
+			Log.Error($"TcpConnection: Send failed: {ex.Message}");
 			Disconnect();
 		}
 	}
@@ -89,7 +89,7 @@ public class TcpConnection : IConnection
 			catch when (token.IsCancellationRequested) { break; }
 			catch (Exception ex)
 			{
-				Logger.Error($"TcpConnection: Receive failed: {ex.Message}");
+				Log.Error($"TcpConnection: Receive failed: {ex.Message}");
 			}
 		}
 

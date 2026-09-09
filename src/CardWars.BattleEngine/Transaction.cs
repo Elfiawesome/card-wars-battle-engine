@@ -36,7 +36,7 @@ public class Transaction
 			}
 			else
 			{
-				Logger.Error($"Input received cannot be processed because the attached Player Id [{playerId}] is not allowed to be processed. Could be because AllowedPlayerInputs does not contain it.");
+				Log.Error($"Input received cannot be processed because the attached Player Id [{playerId}] is not allowed to be processed. Could be because AllowedPlayerInputs does not contain it.");
 			}
 		}
 
@@ -49,7 +49,7 @@ public class Transaction
 		foreach (var block in batch.Blocks ?? [])
 		{
 			Registry.BlockHandlers.Execute(State, block);
-			Logger.Debug($"Executing Block [{block.GetType().Name}]: {Helper.SerializeBlock(block)}");
+			Log.Debug($"Executing Block [{block.GetType().Name}]: {Helper.SerializeBlock(block)}");
 		}
 		OnBlockBatchEvent?.Invoke(batch);
 	}
@@ -109,7 +109,7 @@ public class Transaction
 		// Cleanup if infinite loop
 		if (count > ProcessStackLimit)
 		{
-			Logger.Error($"Game process stack exceeded stack limit of {ProcessStackLimit}");
+			Log.Error($"Game process stack exceeded stack limit of {ProcessStackLimit}");
 			_eventQueue.Clear();
 			_behaviourQueue.Clear();
 			_activeEvent = null;
@@ -134,7 +134,7 @@ public class Transaction
 			var entity = State.Get(entityId);
 			if (entity == null)
 			{
-				Logger.Warn($"Behaviour pointer references missing entity [{entityId}], skipping");
+				Log.Warn($"Behaviour pointer references missing entity [{entityId}], skipping");
 				continue;
 			}
 			var behaviourContext = new BehaviourContext(this, State, entityId);

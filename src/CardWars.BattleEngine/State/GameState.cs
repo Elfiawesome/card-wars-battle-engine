@@ -30,11 +30,11 @@ public class GameState
 		// Slow path — only on failure, only then do we build strings
 		var source = $"{Path.GetFileNameWithoutExtension(file)}.{member}";
 		if (id == EntityId.None)
-			Logger.Warn($"[{source}] Require<{typeof(T).Name}> called with EntityId.None");
+			Log.Warn($"[{source}] Require<{typeof(T).Name}> called with EntityId.None");
 		else if (entity == null)
-			Logger.Warn($"[{source}] Entity not found: {typeof(T).Name} [{id}]");
+			Log.Warn($"[{source}] Entity not found: {typeof(T).Name} [{id}]");
 		else
-			Logger.Warn($"[{source}] Type mismatch: [{id}] is {entity.GetType().Name}, expected {typeof(T).Name}");
+			Log.Warn($"[{source}] Type mismatch: [{id}] is {entity.GetType().Name}, expected {typeof(T).Name}");
 
 		return null;
 	}

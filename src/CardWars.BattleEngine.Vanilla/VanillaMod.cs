@@ -75,7 +75,7 @@ public class VanillaMod : IBattleEngineMod
 				case ["cards", "units"]:
 					var unitDataTag = content.ReadAs<CompoundTag>();
 					if (unitDataTag == null) continue;
-					Logger.Info("Registered Unit: " + content.Id.ToString());
+					Log.Info("Registered Unit: " + content.Id.ToString());
 
 					unitDataTag.Set("card_type", "unit");
 					unitDataTag.Set("intrinsic_behaviours", new ListTag().Add(new CompoundTag().Set("resource", "cardwars:summon_unit_card_to_unit_slot_behaviour")));
@@ -88,7 +88,7 @@ public class VanillaMod : IBattleEngineMod
 				case ["cards", "heroes"]:
 					var heroDataTag = content.ReadAs<CompoundTag>();
 					if (heroDataTag == null) continue;
-					Logger.Info("Registered Hero: " + content.Id.ToString());
+					Log.Info("Registered Hero: " + content.Id.ToString());
 
 					heroDataTag.Set("card_type", "hero");
 

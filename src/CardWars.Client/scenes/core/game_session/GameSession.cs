@@ -39,7 +39,7 @@ public partial class GameSession : Node
 		var args = OS.GetCmdlineArgs();
 		ConnectingUsername = args.Length > 2 ? args[2] : (args.Length > 0 ? args[^1] : "Elfiawesome");
 		GetWindow().Title = ConnectingUsername;
-		Core.Logging.Logger.Identity = ConnectingUsername;
+		Core.Logging.Log.Identity = ConnectingUsername;
 
 		// Bootstrap type registration for base assemblies
 		ScanCoreAssemblies();
@@ -52,7 +52,7 @@ public partial class GameSession : Node
 		Storage = new StorageManager(gamedataPath, provider);
 
 		// Start!
-		Core.Logging.Logger.Info(ConnectingUsername);
+		Core.Logging.Log.Info(ConnectingUsername);
 		if (ConnectingUsername == "Elfiawesome")
 		{
 			StartIntegratedServer();
@@ -125,7 +125,7 @@ public partial class GameSession : Node
 
 	private void HandleIncomingPacket(IPacket packet)
 	{
-		Core.Logging.Logger.Debug($"Client received packet from server: {packet.GetType().Name}");
+		Core.Logging.Log.Debug($"Client received packet from server: {packet.GetType().Name}");
 		PacketContextClient ctx = new() { Session = this };
 		Instance?.OnPacket(packet, ctx);
 		ClientRegistry.PacketHandlers.Execute(ctx, packet);

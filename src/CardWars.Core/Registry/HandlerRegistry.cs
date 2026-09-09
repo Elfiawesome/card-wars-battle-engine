@@ -16,7 +16,7 @@ public class HandlerRegistry<TContext> : Registry<Type, Action<TContext, IReques
 				handler.Handle(context, specificReqeust);
 			}
 			else { 
-				Logger.Error($"Handler for {typeof(TRequest)} received a request of type {request.GetType()}");
+				Log.Error($"Handler for {typeof(TRequest)} received a request of type {request.GetType()}");
 			}
 		};
 		base.Register(typeof(TRequest), action);
@@ -26,9 +26,9 @@ public class HandlerRegistry<TContext> : Registry<Type, Action<TContext, IReques
 		where TRequest : IRequest
 	{
 		var requestType = request.GetType();
-		Logger.Debug($"Running handler {request.GetType().Name}");
+		Log.Debug($"Running handler {request.GetType().Name}");
 		var action = Get(requestType);
-		if (action == null) { Logger.Error($"No handler found for {requestType}"); return; } /* TODO: Bad request*/
+		if (action == null) { Log.Error($"No handler found for {requestType}"); return; } /* TODO: Bad request*/
 		action.Invoke(context, request);
 	}
 }
