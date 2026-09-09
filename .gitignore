@@ -1,5 +1,6 @@
 .vscode/
 .tools/
+.doc/
 
 # Game data (deployed mods, saves, settings)
 /gamedata/saves
