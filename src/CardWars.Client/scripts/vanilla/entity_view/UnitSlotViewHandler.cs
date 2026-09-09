@@ -15,6 +15,6 @@ public class UnitSlotViewHandler : IEntityViewHandler<UnitSlot>
 
 		instance.AttachNodeToOwner(node, entity.OwnerBattlefieldId);
 
-		node.Position = new Vector3(entity.Position.X * 0.95f, 0, -entity.Position.Y * 0.95f);
+		node.Position = new Vector3(entity.Position.X * 0.9f, 0, -entity.Position.Y * 1.1f);
 	}
 }

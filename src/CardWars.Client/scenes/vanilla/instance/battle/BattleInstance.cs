@@ -24,7 +24,9 @@ public partial class BattleInstance : ClientInstance
 	public Control? MouseControlNode;
 
 	public GameState State = new();
+	public IReadOnlyDictionary<EntityId, Node3D> EntityNodes => _entityNodes;
 	private readonly Dictionary<EntityId, Node3D> _entityNodes = [];
+
 
 
 	public override void _Ready()
@@ -78,6 +80,8 @@ public partial class BattleInstance : ClientInstance
 	public Node3D? GetEntityNode(EntityId id)
 		=> _entityNodes.TryGetValue(id, out var node) ? node : null;
 
+	
+	
 	// Returns the existing node, or creates + tracks a fresh one (unparented).
 	public Node3D? GetOrCreateEntityNode(ResourceId sceneId, EntityId id)
 	{
