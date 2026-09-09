@@ -2,13 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
-using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.vanilla.registry;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
-using CardWars.Vanilla.Shared;
+using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.Packet;
 using Godot;
 
@@ -21,6 +20,9 @@ public partial class BattleInstance : ClientInstance
 	public Control? UINode;
 	public HandManager? HandManagerNode;
 	public Node3D? PlayspaceNode;
+	public Camera3D? CameraNode;
+	public Control? MouseControlNode;
+
 	public GameState State = new();
 	private readonly Dictionary<EntityId, Node3D> _entityNodes = [];
 
@@ -30,6 +32,9 @@ public partial class BattleInstance : ClientInstance
 		UINode = GetNode<Control>("UI");
 		HandManagerNode = GetNode<HandManager>("UI/HandManager");
 		PlayspaceNode = GetNode<Node3D>("Playspace");
+		CameraNode = GetNode<Camera3D>("Camera3D");
+		MouseControlNode = GetNode<Control>("UI/HandManager/MouseControl");
+
 		HandManagerNode.BattleInstance = this;
 	}
 
@@ -61,65 +66,39 @@ public partial class BattleInstance : ClientInstance
 
 
 		if (PlayspaceNode == null) return;
+
 		foreach (var entity in State.All)
 		{
-			switch (entity)
-			{
-				case Battlefield battlefield:
-					{
-						var hasNode = PlayspaceNode.HasNode(battlefield.Id.ToString());
-						if (hasNode)
-						{
-							// Update
-							var node = PlayspaceNode.GetNode(battlefield.Id.ToString());
-							if (node == null) { return; }
-						}
-						else
-						{
-							// Create
-							var battlefieldNode = ClientRegistry?.GetExtension<BattleRegistry>()?.EntityScene.Instantiate<Node3D>(SharedIds.Battlefield);
-							if (battlefieldNode == null) { return; }
-
-							battlefieldNode.Name = battlefield.Id.ToString();
-							_entityNodes.Add(battlefield.Id, battlefieldNode);
-							PlayspaceNode.AddChild(battlefieldNode);
-						}
-					}
-					break;
-				case GenericCard card:
-
-					break;
-				case Deck deck:
-					break;
-				case Player player:
-					break;
-				case UnitSlot unitSlot:
-					{
-						var hasNode = PlayspaceNode.HasNode(unitSlot.Id.ToString());
-						if (hasNode)
-						{
-							// Update
-							var node = PlayspaceNode.GetNode(unitSlot.Id.ToString());
-							if (node == null) { return; }
-						}
-						else
-						{
-							if (unitSlot.OwnerBattlefieldId == null) { return; }
-
-							// Create
-							var unitSlotNode = ClientRegistry?.GetExtension<BattleRegistry>()?.EntityScene.Instantiate<Node3D>(SharedIds.UnitSlot);
-							if (unitSlotNode == null) { return; }
-
-							unitSlotNode.Name = entity.Id.ToString();
-							_entityNodes.Add(unitSlot.Id, unitSlotNode);
-							if (_entityNodes.TryGetValue((EntityId)unitSlot.OwnerBattlefieldId, out var battlefield))
-							{
-								battlefield.AddChild(unitSlotNode);
-							}
-						}
-					}
-					break;
-			}
+			BattleRegistry?.EntityViewHandlers.Execute(this, entity);
 		}
+	}
+
+	public bool HasEntityNode(EntityId id) => _entityNodes.ContainsKey(id);
+
+	public Node3D? GetEntityNode(EntityId id)
+		=> _entityNodes.TryGetValue(id, out var node) ? node : null;
+
+	// Returns the existing node, or creates + tracks a fresh one (unparented).
+	public Node3D? GetOrCreateEntityNode(ResourceId sceneId, EntityId id)
+	{
+		if (GetEntityNode(id) is { } existing) return existing;
+		var node = BattleRegistry?.EntityScene.Instantiate<Node3D>(sceneId);
+		if (node == null) return null;
+
+		node.Name = id.ToString();
+		_entityNodes[id] = node;
+		return node;
+	}
+
+	// Keeps a node under its owner's node; falls back to the playspace.
+	public void AttachNodeToOwner(Node3D node, EntityId? ownerId)
+	{
+		if (PlayspaceNode == null) return;
+		var target = ownerId is { } id && GetEntityNode(id) is { } ownerNode ? ownerNode : PlayspaceNode;
+		var current = node.GetParent();
+		if (current == target) return;
+
+		if (current is Node formerParent) formerParent.RemoveChild(node);
+		target.AddChild(node);
 	}
 }

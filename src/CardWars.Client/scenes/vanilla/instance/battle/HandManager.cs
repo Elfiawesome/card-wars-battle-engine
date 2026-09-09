@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CardWars.Vanilla.Shared;
 using Godot;
 
@@ -15,6 +16,8 @@ public partial class HandManager : Control
 
 	public CardDisplay? HoveredCard = null;
 	public BattleInstance? BattleInstance = null;
+
+	private List<CardDisplay> _cards = [];
 
 	public override void _Ready()
 	{
@@ -42,6 +45,7 @@ public partial class HandManager : Control
 		card.MouseEntered += () => OnCardMouseEntered(card);
 		card.MouseExited += () => OnCardMouseExited(card);
 		AddChild(card);
+		_cards.Add(card);
 		ArrangeCard();
 	}
 
@@ -58,7 +62,7 @@ public partial class HandManager : Control
 
 	private void ArrangeCard()
 	{
-		var cards = GetChildren();
+		var cards = _cards;
 		int totalCard = cards.Count;
 		if (totalCard == 0) return;
 

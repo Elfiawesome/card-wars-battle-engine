@@ -7,4 +7,5 @@ namespace CardWars.Client.scripts.vanilla.registry;
 public class BattleRegistry : IClientRegistryExtension
 {
 	public SceneRegistry<ResourceId> EntityScene = new();
+	public EntityViewHandlerRegistry EntityViewHandlers = new();
 }
