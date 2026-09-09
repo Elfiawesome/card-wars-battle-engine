@@ -1,3 +1,4 @@
+using CardWars.BattleEngine;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.registry;
@@ -14,7 +15,7 @@ public class InstanceSceneRegistry<TId>(ClientRegistry clientRegistry) : SceneRe
 	{
 		var instance = Instantiate<TInstance>(id);
 		if (instance == null) { return null; }
-		instance.registry = _clientRegistry;
+		instance.ClientRegistry = _clientRegistry;
 		return instance;
 	}
 }

@@ -34,7 +34,7 @@ public partial class HandManager : Control
 
 	public void AddCard()
 	{
-		var card = BattleInstance?.registry?.UserInterface.Instantiate<CardDisplay>(SharedIds.CardDisplay);
+		var card = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<CardDisplay>(SharedIds.CardDisplay);
 		if (card == null) return;
 		card.Scale = Vector2.Zero;
 		card.Position = new(Size.X / 2, Size.Y);

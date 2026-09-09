@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using CardWars.BattleEngine;
-using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Input;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
@@ -10,6 +10,7 @@ using CardWars.Client.scripts.vanilla;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;
+using CardWars.ModLoader;
 using CardWars.Server;
 using CardWars.Server.Listener;
 using Godot;
@@ -19,6 +20,7 @@ namespace CardWars.Client.scenes.core.game_session;
 public partial class GameSession : Node
 {
 	public ClientRegistry ClientRegistry { get; init; } = new();
+	public BattleEngineRegistry BattleEngineRegistry { get; init; } = new();
 
 	public Server.Server? IntegratedServer { get; private set; }
 	public IConnection? Connection { get; private set; }
@@ -70,13 +72,8 @@ public partial class GameSession : Node
 		ModLoader.ModLoader modLoader = new(modDirs);
 		modLoader.Setup();
 
-		var clientContent = modLoader.GetContentClient().ToList();
-		var serverContent = modLoader.GetContentServer().ToList();
-
-		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => IntegratedServer.LoadMod(m, serverContent));
-		modLoader.LoadModEntry<IServerMod>().ForEach(m => IntegratedServer.LoadMod(m, serverContent));
-		new VanillaMod().OnLoad(ClientRegistry, clientContent); // TODO: Load dynamically via scanning current assembly bruh
-		modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry, clientContent));
+		SetupModClient(modLoader);
+		SetupModServer(modLoader, IntegratedServer);
 
 		var localListener = new LocalListener() { IsSerialized = true };
 		var tcpListener = new TcpGameListener(5060);
@@ -90,9 +87,7 @@ public partial class GameSession : Node
 		ModLoader.ModLoader modLoader = new(modDirs);
 		modLoader.Setup();
 
-		var clientContent = modLoader.GetContentClient().ToList();
-		new VanillaMod().OnLoad(ClientRegistry, clientContent); // TODO: Load dynamically via scanning current assembly bruh
-		modLoader.LoadModEntry<IClientMod>().ForEach(m => m.OnLoad(ClientRegistry, clientContent));
+		SetupModClient(modLoader);
 
 		var tcpClient = new TcpClient("127.0.0.1", 5060);
 		Connection = new TcpConnection(tcpClient);
@@ -134,24 +129,6 @@ public partial class GameSession : Node
 		ClientRegistry.PacketHandlers.Execute(ctx, packet);
 	}
 
-
-	public void HandleBattleBlockBatch(BlockBatch batch)
-	{
-		// EnsureBattleScene();
-		// BattleScene?.OnBlockBatch(batch);
-	}
-
-	private void EnsureBattleScene()
-	{
-		// if (BattleScene != null) return;
-		// var scene = GD.Load<PackedScene>("res://scenes/game_session/card_battle/card_battle.tscn").Instantiate<CardBattle>();
-		// AddChild(scene);
-		// BattleScene = scene;
-		// BattleScene.Connection = Connection;
-		// GetNode<Control>("Control").Visible = false;
-		// OnBattleInput += (input) => BattleScene.OnInputSubmit?.Invoke(input);
-	}
-
 	// TODO REMOVE LATER
 	public void SetDebugStatus(string value) => GetNode<Node>("Control/VBoxContainer/Status").Set("content", value);
 	public void SetDebugWorld(string value) => GetNode<Node>("Control/VBoxContainer/World").Set("content", value);
@@ -178,4 +155,30 @@ public partial class GameSession : Node
 		Core.Data.DataTagTypeRegistry.ScanAssembly(typeof(ModLoader.ModLoader).Assembly);
 		Core.Data.DataTagTypeRegistry.ScanAssembly(typeof(BattleEngine.BattleEngine).Assembly); // Already done in BattleEngine, but just in case
 	}
+
+	private void SetupModServer(ModLoader.ModLoader modLoader, Server.Server server)
+	{
+		var serverContent = modLoader.GetContentServer().ToList();
+
+		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => server.LoadMod(m, serverContent));
+		modLoader.LoadModEntry<IServerMod>().ForEach(m => server.LoadMod(m, serverContent));
+	}
+
+	private void SetupModClient(ModLoader.ModLoader modLoader)
+	{
+		var clientContent = modLoader.GetContentClient().ToList();
+
+		new VanillaMod().OnLoad(ClientRegistry, clientContent); // TODO: Load dynamically via scanning current assembly bruh
+		modLoader.LoadModEntry<IClientMod>().ForEach(m => LoadMod(m, clientContent));
+		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => LoadMod(m, clientContent));
+
+		// If loaded client, use its shared battle engine registry to save on memory
+		IntegratedServer?.OverrideRegistry(BattleEngineRegistry);
+	}
+
+	private void LoadMod(IClientMod mod, List<ModContentResult> modContents)
+		=> mod.OnLoad(ClientRegistry, modContents);
+
+	private void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents)
+		=> mod.OnLoad(BattleEngineRegistry, modContents);
 }

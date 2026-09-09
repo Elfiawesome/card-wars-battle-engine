@@ -48,7 +48,7 @@ public class S2C_BattleBlockBatchHandler : IPacketHandlerClient<S2C_BattleBlockB
 {
 	public void Handle(PacketContextClient context, S2C_BattleBlockBatch request)
 	{
-		context.Session.HandleBattleBlockBatch(request.Batch);
+		// NO LONGER USED. HANDLED IN INSTANCE
 	}
 }
 

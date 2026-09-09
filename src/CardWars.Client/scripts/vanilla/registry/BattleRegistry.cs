@@ -1,4 +1,3 @@
-using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.registry;
 using CardWars.Core.Registry;

@@ -19,7 +19,7 @@ public class Server
 	private static readonly TimeSpan _unauthenticatedTimeout = TimeSpan.FromSeconds(30);
 
 	public ServerRegistry Registry { get; } = new();
-	public BattleEngineRegistry SharedBattleEngineRegistry { get; } = new();
+	public BattleEngineRegistry SharedBattleEngineRegistry { get; private set; } = new();
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
 
 	public StorageManager Storage { get; }
@@ -335,6 +335,9 @@ public class Server
 			new PacketContextServer() { Server = this, PlayerSession = playerSession },
 			packet);
 
+
+	public void OverrideRegistry(BattleEngineRegistry registry)
+		=> SharedBattleEngineRegistry = registry;
 
 	private void ScanCoreAssemblies()
 	{

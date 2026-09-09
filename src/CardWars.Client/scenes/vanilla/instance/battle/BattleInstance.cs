@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using CardWars.BattleEngine;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.Client.scenes.core.game_session;
@@ -12,7 +12,7 @@ namespace CardWars.Client.scenes.vanilla.instance.battle;
 
 public partial class BattleInstance : ClientInstance
 {
-	public BattleRegistry? BattleRegistry => registry?.GetExtension<BattleRegistry>();
+	public BattleRegistry? BattleRegistry => ClientRegistry?.GetExtension<BattleRegistry>();
 
 	public Control? UINode;
 	public HandManager? HandManagerNode;
@@ -34,11 +34,11 @@ public partial class BattleInstance : ClientInstance
 
 	public void ProcessBlockBatch(BlockBatch batch)
 	{
-		var battleRegsitry = registry?.GetExtension<BattleRegistry>();
+		var battleRegsitry = ClientRegistry?.GetExtension<BattleRegistry>();
 		foreach (var block in batch.Blocks)
 		{
 			// TODO: RUN
-			
+
 		}
 	}
 }
