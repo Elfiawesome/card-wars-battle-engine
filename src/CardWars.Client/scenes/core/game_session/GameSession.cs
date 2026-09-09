@@ -112,10 +112,12 @@ public partial class GameSession : Node
 	public void SwitchInstance(ClientInstance newInstance)
 	{
 		if (Instance != null) { RemoveChild(Instance); Instance.onPacketSent -= SendPacket; }
-
-		newInstance.onPacketSent += SendPacket;
+		
 		Instance = newInstance;
-		AddChild(newInstance);
+		Instance.onPacketSent += SendPacket;
+		Instance.ClientRegistry = ClientRegistry;
+		Instance.BattleEngineRegistry = BattleEngineRegistry;
+		AddChild(Instance);
 	}
 
 	public void SendPacket(IPacket packet)

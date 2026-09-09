@@ -10,13 +10,11 @@ namespace CardWars.Client.scripts.core;
 public class ClientRegistry
 {
 	public HandlerRegistry<PacketContextClient> PacketHandlers = new();
-	public InstanceSceneRegistry<ResourceId> Instances;
+	public SceneRegistry<ResourceId> Instances = new();
 	public SceneRegistry<ResourceId> UserInterface = new();
 	public SceneRegistry<ResourceId> GameObjects = new();
 
 	private readonly Dictionary<Type, IClientRegistryExtension> _extensions = [];
-
-	public ClientRegistry() { Instances = new(this); }
 
 	public void RegisterExtension<T>(T registryExtension) where T : IClientRegistryExtension
 		=> _extensions[typeof(T)] = registryExtension;
