@@ -38,7 +38,7 @@ public partial class BattleInstance : ClientInstance
 		foreach (var block in batch.Blocks)
 		{
 			// TODO: RUN
-
+			BattleEngineRegistry?.BlockHandlers.Execute(State, block);
 		}
 	}
 }
