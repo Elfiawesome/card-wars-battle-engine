@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.vanilla.packet;
 using CardWars.Client.scripts.vanilla.registry;
-using CardWars.Core.Registry;
 using CardWars.ModLoader;
 using CardWars.Vanilla.Shared;
 
@@ -31,9 +30,10 @@ public class VanillaMod : IClientMod
 		// UI
 		registry.UserInterface.Register(SharedIds.CardDisplay, "res://scenes/vanilla/instance/battle/card_display.tscn");
 
-		// Game Objects
-		registry.GameObjects.Register(SharedIds.Battlefield, "res://scenes/vanilla/instance/battle/battlefield.tscn");
-		registry.GameObjects.Register(SharedIds.UnitSlot, "res://scenes/vanilla/instance/battle/unit_slot.tscn");
+		// --- Battle ---
+		// Entities
+		BattleRegistry.EntityScene.Register(SharedIds.Battlefield, "res://scenes/vanilla/instance/battle/battlefield.tscn");
+		BattleRegistry.EntityScene.Register(SharedIds.UnitSlot, "res://scenes/vanilla/instance/battle/unit_slot.tscn");
 
 		// See later if i want to use it
 		registry.RegisterExtension(BattleRegistry);

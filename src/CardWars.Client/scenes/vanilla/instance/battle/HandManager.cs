@@ -1,5 +1,4 @@
 using System;
-using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared;
 using Godot;
 

@@ -51,7 +51,8 @@ public class VanillaMod : IServerMod
 		server.OnUnauthenticatedConnectionReceived += OnUnauthenticatedConnectionReceived;
 		server.OnAddPlayer += player => OnPlayerJoined(server, worldRegistry, player);
 		server.OnRemovePlayer += player => OnPlayerLeft(server, player);
-		server.OnPlayerEnterInstance += OnPlayerEnterInstance;
+		server.OnPlayerPreEnterInstance += OnPlayerPreEnterInstance;
+		server.OnPlayerPostEnterInstance += OnPlayerPostEnterInstance;
 		server.OnPlayerLeaveInstance += OnPlayerLeaveInstance;
 	}
 
@@ -85,7 +86,7 @@ public class VanillaMod : IServerMod
 		// Core teardown (leaving instance + saving player) is handled by Server.RemovePlayer.
 	}
 
-	private void OnPlayerEnterInstance(Server server, IServerInstance instance, PlayerSession player)
+	private void OnPlayerPreEnterInstance(Server server, IServerInstance instance, PlayerSession player)
 	{
 		var enterPacket = new S2C_EnterInstancePacket
 		{
@@ -93,21 +94,18 @@ public class VanillaMod : IServerMod
 			PlayerId = player.PlayerId
 		};
 		player.Connection.Send(enterPacket);
+	}
 
+	private void OnPlayerPostEnterInstance(Server server, IServerInstance instance, PlayerSession player)
+	{
 		switch (instance)
 		{
 			case WorldInstance world:
 				world.BroadcastSnapshot();
 				break;
 			case BattleInstance battle:
-				// player.Connection.Send(new S2C_EnterBattleInstancePacket
-				// {
-				// 	BattleId = battle.InstanceId.ToString()
-				// });
 				break;
-
 		}
-
 	}
 
 	private void OnPlayerLeaveInstance(Server server, IServerInstance instance, PlayerSession player)

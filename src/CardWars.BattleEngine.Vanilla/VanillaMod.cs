@@ -39,8 +39,8 @@ public class VanillaMod : IBattleEngineMod
 		// --- Block Handlers ---
 		registry.BlockHandlers.Register(new AttachBattlefieldToPlayerBlockHandler());
 		registry.BlockHandlers.Register(new AttachCardToDeckBlockHandler());
-		registry.BlockHandlers.Register(new AttachCardToPlayerBlockHandler());
 		registry.BlockHandlers.Register(new AttachCardToUnitSlotBlockHandler());
+		registry.BlockHandlers.Register(new AttachCardToPlayerBlockHandler());
 		registry.BlockHandlers.Register(new AttachDeckToPlayerBlockHandler());
 		registry.BlockHandlers.Register(new AttachUnitSlotToBattlefieldBlockHandler());
 		registry.BlockHandlers.Register(new DetachBattlefieldFromPlayerHandler());

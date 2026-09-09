@@ -31,7 +31,8 @@ public class Server
 	public Action<PlayerSession>? OnRemovePlayer { get; set; }
 	public Action<IServerInstance>? OnAddInstance { get; set; }
 	public Action<IServerInstance>? OnRemoveInstance { get; set; }
-	public Action<Server, IServerInstance, PlayerSession>? OnPlayerEnterInstance { get; set; }
+	public Action<Server, IServerInstance, PlayerSession>? OnPlayerPreEnterInstance { get; set; }
+	public Action<Server, IServerInstance, PlayerSession>? OnPlayerPostEnterInstance { get; set; }
 	public Action<Server, IServerInstance, PlayerSession>? OnPlayerLeaveInstance { get; set; }
 
 
@@ -168,9 +169,10 @@ public class Server
 		{
 			if (_instances.TryGetValue(instanceId, out var instance))
 			{
+				OnPlayerPreEnterInstance?.Invoke(this, instance, player);
 				instance.AddPlayer(player);
 				player.CurrentInstance = instance;
-				OnPlayerEnterInstance?.Invoke(this, instance, player);
+				OnPlayerPostEnterInstance?.Invoke(this, instance, player);
 			}
 		}
 	}
