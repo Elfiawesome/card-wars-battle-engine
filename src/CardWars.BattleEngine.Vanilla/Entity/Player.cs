@@ -3,7 +3,7 @@ using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Entity;
 
-[DataTagType()]
+[DataTagType("battle/entity/player")]
 public class Player(EntityId id) : IEntity
 {
 	[DataTag] public EntityId Id { get; init; } = id;

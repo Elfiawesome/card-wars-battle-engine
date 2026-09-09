@@ -4,7 +4,7 @@ using CardWars.Core.Data;
 namespace CardWars.BattleEngine.Vanilla.Entity;
 
 // TODO: Do the datatag here
-[DataTagType()]
+[DataTagType("battle/entity/card")]
 public class GenericCard(EntityId id) : IEntity
 {
 	[DataTag] public EntityId Id { get; init; } = id;

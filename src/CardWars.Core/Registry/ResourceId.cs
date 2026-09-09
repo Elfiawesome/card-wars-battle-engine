@@ -24,6 +24,7 @@ public readonly record struct ResourceId(string Namespace, string Path)
 	public bool IsEmpty => string.IsNullOrEmpty(Namespace) && string.IsNullOrEmpty(Path);
 
 	public static implicit operator ResourceId(string value) { return Parse(value); }
+	public static implicit operator string(ResourceId value) { return value.ToString(); }
 }
 
 public class ResourceIdTagConverter : DataTagConverter<ResourceId>
