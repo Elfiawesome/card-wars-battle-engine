@@ -13,7 +13,7 @@ public class Simulator
 	public BattleEngine.BattleEngine Engine { get; }
 	public GameState State => Engine.State;
 
-	private readonly Dictionary<string, EntityId> _aliases = new();
+	private readonly Dictionary<string, EntityId> _aliases = [];
 	private int _stepCount;
 
 	public Simulator()

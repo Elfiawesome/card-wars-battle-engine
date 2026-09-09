@@ -7,7 +7,7 @@ namespace CardWars.BattleEngine.Behaviour;
 public class BehaviourContext
 {
 	private readonly Transaction _transaction;
-	private readonly List<BlockBatch> _stagedBlocks = new();
+	private readonly List<BlockBatch> _stagedBlocks = [];
 
 	public GameState State { get; }
 	public EntityId OwnerEntityId { get; init; }
