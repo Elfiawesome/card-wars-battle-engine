@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using CardWars.Core.Data;
 using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.State;
@@ -41,7 +42,7 @@ public class GameState
 
 	// --- Queries ---
 
-	public IEnumerable<IEntity> All => _entities.Values;
+	[DataTag] public IEnumerable<IEntity> All => _entities.Values;
 
 	public IEnumerable<T> OfType<T>() where T : class, IEntity
 		=> _entities.Values.OfType<T>();
@@ -49,6 +50,7 @@ public class GameState
 	public IEnumerable<IEntity> Where(Func<IEntity, bool> predicate)
 		=> _entities.Values.Where(predicate);
 
+	[DataTag]
 	public TurnState Turn { get; set; } = new()
 	{
 		TurnOrder = [],

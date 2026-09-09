@@ -1,4 +1,4 @@
-using CardWars.BattleEngine;
+using System.Collections.Generic;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.Client.scenes.core.game_session;
@@ -19,6 +19,8 @@ public partial class BattleInstance : ClientInstance
 	public HandManager? HandManagerNode;
 	public Node3D? PlayspaceNode;
 	public GameState State = new();
+	private readonly Dictionary<EntityId, Node3D> _entityNodes = new();
+
 
 	public override void _Ready()
 	{
@@ -35,11 +37,15 @@ public partial class BattleInstance : ClientInstance
 
 	public void ProcessBlockBatch(BlockBatch batch)
 	{
-		var battleRegsitry = ClientRegistry?.GetExtension<BattleRegistry>();
 		foreach (var block in batch.Blocks)
 		{
-			// TODO: RUN
 			BattleEngineRegistry?.BlockHandlers.Execute(State, block);
+			SyncState();
 		}
+	}
+
+	public void SyncState()
+	{
+		// State;
 	}
 }
