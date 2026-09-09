@@ -37,7 +37,7 @@ public partial class HandManager : Control
 		var card = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<CardDisplay>(SharedIds.CardDisplay);
 		if (card == null) return;
 		card.Scale = Vector2.Zero;
-		card.Position = new(Size.X / 2, Size.Y);
+		card.Position = new(0, 0);
 
 		card.MouseEntered += () => OnCardMouseEntered(card);
 		card.MouseExited += () => OnCardMouseExited(card);
