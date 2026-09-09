@@ -6,7 +6,7 @@ namespace CardWars.BattleEngine.State;
 
 public class GameState
 {
-	private readonly Dictionary<EntityId, IEntity> _entities = [];
+	private Dictionary<EntityId, IEntity> _entities { get; set; } = [];
 
 	// --- CRUD ---
 
@@ -42,7 +42,7 @@ public class GameState
 
 	// --- Queries ---
 
-	[DataTag] public IEnumerable<IEntity> All => _entities.Values;
+	public IEnumerable<IEntity> All => _entities.Values;
 
 	public IEnumerable<T> OfType<T>() where T : class, IEntity
 		=> _entities.Values.OfType<T>();
@@ -59,6 +59,8 @@ public class GameState
 		TurnNumber = 0,
 		Phase = TurnPhase.Setup
 	};
+
+	[DataTag] public IReadOnlyDictionary<EntityId, IEntity> Entities => _entities;
 
 	public IEnumerable<(EntityId entityId, BehaviourPointer pointer)> GetAllBehaviourPointers()
 	{
