@@ -1,10 +1,7 @@
-using System.Linq;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Client.scripts.vanilla.registry;
-using CardWars.Core.Logging;
 using CardWars.Vanilla.Shared;
-using Godot;
 
 namespace CardWars.Client.scripts.vanilla.entity_view;
 

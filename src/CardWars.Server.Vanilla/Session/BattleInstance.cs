@@ -22,6 +22,10 @@ public class BattleInstance : ServerInstance
 	{
 		base.AddPlayer(player);
 
+		if (Engine == null) return;
+		// Send Player current State
+		player.Connection.Send(new S2C_BattleSyncSnapshot() { GameStateSnapshot = Engine.State.ToSnapshot() });
+
 		// Bind the battle player identity to the session identity so they map 1:1.
 		var entityId = new EntityId(player.PlayerId);
 		Engine?.HandleInput(EntityId.None, new PlayerJoinedRequestInput(entityId));

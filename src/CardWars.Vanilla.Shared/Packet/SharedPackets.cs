@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Input;
+using CardWars.BattleEngine.State;
 using CardWars.Core.Data;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
@@ -75,4 +76,10 @@ public class C2S_BattleInput : IPacket
 public class S2C_BattleBlockBatch : IPacket
 {
 	[DataTag] public BlockBatch Batch { get; set; }
+}
+
+[DataTagType()]
+public class S2C_BattleSyncSnapshot : IPacket
+{
+	[DataTag] required public GameStateSnapshot GameStateSnapshot { get; set; }
 }

@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.vanilla.entity_view;
+using CardWars.Client.scripts.vanilla.layout;
 using CardWars.Client.scripts.vanilla.packet;
 using CardWars.Client.scripts.vanilla.registry;
+using CardWars.Core.Registry;
 using CardWars.ModLoader;
 using CardWars.Vanilla.Shared;
 
@@ -39,6 +41,10 @@ public class VanillaMod : IClientMod
 		// Entity View Handlers
 		BattleRegistry.EntityViewHandlers.Register(new BattlefieldViewHandler());
 		BattleRegistry.EntityViewHandlers.Register(new UnitSlotViewHandler());
+
+		// Layout Handler
+		BattleRegistry.DefaultLayoutId = ResourceId.Vanilla("default");
+		BattleRegistry.LayoutHandler.Register(ResourceId.Vanilla("default"), new DefaultLayout());
 
 		// See later if i want to use it
 		registry.RegisterExtension(BattleRegistry);

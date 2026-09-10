@@ -4,8 +4,8 @@ using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
+using CardWars.Client.scripts.vanilla.layout;
 using CardWars.Client.scripts.vanilla.registry;
-using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.Packet;
@@ -42,7 +42,18 @@ public partial class BattleInstance : ClientInstance
 
 	public override void OnPacket(IPacket packet, PacketContextClient context)
 	{
-		if (packet is S2C_BattleBlockBatch battleBlockBatch) { ProcessBlockBatch(battleBlockBatch.Batch); }
+		switch (packet)
+		{
+			case S2C_BattleBlockBatch battleBlockBatch:
+				ProcessBlockBatch(battleBlockBatch.Batch);
+				break;
+			case S2C_BattleSyncSnapshot battleSyncSnapshot:
+				// USe packet here since snapshot is not really a atomic change but a snapshot. The team switching
+				// we can ignore first since even if switch team we can assume the next cards on enemy will be covered
+				State.FromSnapshot(battleSyncSnapshot.GameStateSnapshot);
+				SyncState();
+				break;
+		}
 	}
 
 	public void ProcessBlockBatch(BlockBatch batch)
@@ -52,7 +63,6 @@ public partial class BattleInstance : ClientInstance
 			BattleEngineRegistry?.BlockHandlers.Execute(State, block);
 		}
 		SyncState();
-		Log.Info(State);
 	}
 
 	public void SyncState()
@@ -73,6 +83,15 @@ public partial class BattleInstance : ClientInstance
 		{
 			BattleRegistry?.EntityViewHandlers.Execute(this, entity);
 		}
+
+		if (BattleRegistry == null) { return; }
+		var defaultId = BattleRegistry?.DefaultLayoutId ?? ResourceId.Empty;
+		IBattleLayoutHandler? layoutHandler = BattleRegistry?.LayoutHandler.Get(State.Layout.Layout)
+											 ?? BattleRegistry?.LayoutHandler.Get(defaultId);
+		if (layoutHandler == null) { return; }
+		layoutHandler.Compute(this);
+
+		// Log.Info(State.Entities.ToList().Select(s => s.Value));
 	}
 
 	public bool HasEntityNode(EntityId id) => _entityNodes.ContainsKey(id);
@@ -80,8 +99,8 @@ public partial class BattleInstance : ClientInstance
 	public Node3D? GetEntityNode(EntityId id)
 		=> _entityNodes.TryGetValue(id, out var node) ? node : null;
 
-	
-	
+
+
 	// Returns the existing node, or creates + tracks a fresh one (unparented).
 	public Node3D? GetOrCreateEntityNode(ResourceId sceneId, EntityId id)
 	{

@@ -55,6 +55,7 @@ public class VanillaMod : IBattleEngineMod
 		registry.BlockHandlers.Register(new InstantiatePlayerBlockHandler());
 		registry.BlockHandlers.Register(new InstantiateUnitSlotBlockHandler());
 		registry.BlockHandlers.Register(new ModifyUnitSlotPositionBlockHandler());
+		registry.BlockHandlers.Register(new ModifyLayoutBlockHandler());
 		registry.BlockHandlers.Register(new ModifyPlayerTeamBlockHandler());
 		registry.BlockHandlers.Register(new SetCardDataBlockHandler());
 		registry.BlockHandlers.Register(new UpdateTurnStateBlockHandler());

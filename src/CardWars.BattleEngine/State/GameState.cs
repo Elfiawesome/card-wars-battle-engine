@@ -1,12 +1,13 @@
 using System.Runtime.CompilerServices;
 using CardWars.Core.Data;
 using CardWars.Core.Logging;
+using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.State;
 
 public class GameState
 {
-	private Dictionary<EntityId, IEntity> _entities { get; set; } = [];
+	private readonly Dictionary<EntityId, IEntity> _entities = [];
 
 	// --- CRUD ---
 
@@ -60,6 +61,13 @@ public class GameState
 		Phase = TurnPhase.Setup
 	};
 
+	[DataTag]
+	public LayoutState Layout { get; set; } = new()
+	{
+		Layout = ResourceId.Vanilla("TODO: haha wrong layout id"),
+		LayoutConfig = new CompoundTag()
+	};
+
 	[DataTag] public IReadOnlyDictionary<EntityId, IEntity> Entities => _entities;
 
 	public IEnumerable<(EntityId entityId, BehaviourPointer pointer)> GetAllBehaviourPointers()
@@ -70,4 +78,41 @@ public class GameState
 				.OrderBy(b => 0) // Will be sorted by behaviour priority after instantiation
 				.Select(b => (e.Id, b)));
 	}
+
+	public void Clear()
+	{
+		_entities.Clear();
+		Turn = default;
+		Layout = default;
+	}
+
+	public GameStateSnapshot ToSnapshot()
+	{
+		var snapshot = new GameStateSnapshot
+		{
+			Entities = [.. Entities.Select(s => s.Value)],
+			Turn = Turn.Copy(),
+			Layout = Layout,
+		};
+		return snapshot;
+	}
+
+	public void FromSnapshot(GameStateSnapshot snapshot)
+	{
+		Clear();
+		foreach (var e in snapshot.Entities)
+		{
+			_entities.Add(e.Id, e);
+		}
+		Turn = snapshot.Turn.Copy();
+		Layout = snapshot.Layout.Copy();
+	}
+}
+
+
+public class GameStateSnapshot
+{
+	[DataTag] public List<IEntity> Entities { get; set; } = [];
+	[DataTag] public LayoutState Layout { get; set; } = default;
+	[DataTag] public TurnState Turn { get; set; } = default;
 }
