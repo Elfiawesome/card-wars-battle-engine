@@ -23,8 +23,8 @@ public partial class BattleInstance : ClientInstance
 	public Control? UINode;
 	public HandManager? HandManagerNode;
 	public Node3D? PlayspaceNode;
-	public Camera3D? CameraNode;
-	public Control? MouseControlNode;
+	public Camera? CameraNode;
+	public MouseControl? MouseControlNode;
 
 	public GameState State = new();
 	public IReadOnlyDictionary<EntityId, Node3D> EntityNodes => _entityNodes;
@@ -35,11 +35,11 @@ public partial class BattleInstance : ClientInstance
 	{
 		if (@event is InputEventKey inputEventKey)
 		{
-			if (inputEventKey.Keycode == Key.Space)
+			if (inputEventKey.Keycode == Key.Space && inputEventKey.Pressed)
 			{
 				var options = State.All.Where(s => s is Battlefield).ToList();
 				var n = options[Random.Shared.Next(options.Count)];
-				MouseControlNode?.Set("target_node", _entityNodes[n.Id]);
+				FocusOn(n.Id);
 			}
 		}
 	}
@@ -49,10 +49,16 @@ public partial class BattleInstance : ClientInstance
 		UINode = GetNode<Control>("UI");
 		HandManagerNode = GetNode<HandManager>("UI/HandManager");
 		PlayspaceNode = GetNode<Node3D>("Playspace");
-		CameraNode = GetNode<Camera3D>("Camera");
-		MouseControlNode = GetNode<Control>("UI/HandManager/MouseControl");
+		CameraNode = GetNode<Camera>("Camera");
+		MouseControlNode = GetNode<MouseControl>("UI/HandManager/MouseControl");
 
 		HandManagerNode.BattleInstance = this;
+	}
+
+	public void FocusOn(EntityId entityId)
+	{
+		if (MouseControlNode == null) return;
+		MouseControlNode.FocusOn(GetEntityNode<Node3D>(entityId));
 	}
 
 	public override void OnPacket(IPacket packet, PacketContextClient context)
