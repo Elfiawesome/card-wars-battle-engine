@@ -35,7 +35,7 @@ public partial class BattleInstance : ClientInstance
 		UINode = GetNode<Control>("UI");
 		HandManagerNode = GetNode<HandManager>("UI/HandManager");
 		PlayspaceNode = GetNode<Node3D>("Playspace");
-		CameraNode = GetNode<Camera3D>("Camera3D");
+		CameraNode = GetNode<Camera3D>("Camera");
 		MouseControlNode = GetNode<Control>("UI/HandManager/MouseControl");
 
 		HandManagerNode.BattleInstance = this;

@@ -21,6 +21,29 @@ public class BattleInstance : ServerInstance
 	public override void Ready()
 	{
 		base.Ready();
+		// if (Engine != null) Engine.State.Layout = new(ResourceId.Vanilla("line"), new());
+		SetupTestBattle();
+	}
+
+	private void SetupTestBattle()
+	{
+		void addTestPlayer(int team) => Engine?.HandleInput(EntityId.None, new PlayerJoinedRequestInput(new EntityId(Guid.NewGuid()), team));
+		// 1v1
+		// addTestPlayer(2);
+
+		// 2v2
+		// addTestPlayer(1);
+		// addTestPlayer(2); addTestPlayer(2);
+
+		// 3v2v1
+		// addTestPlayer(2); addTestPlayer(2);
+		// addTestPlayer(2); addTestPlayer(2); addTestPlayer(3);
+
+		// FFA
+		// addTestPlayer(2); addTestPlayer(3); addTestPlayer(4); addTestPlayer(5);
+
+		// Absurd Testing
+		// for (var i = 0; i < 6; i++) { addTestPlayer(2); }
 	}
 
 	public override void AddPlayer(PlayerSession player)
