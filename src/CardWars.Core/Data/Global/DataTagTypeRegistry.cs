@@ -3,6 +3,7 @@ using System.Reflection;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Registry;
+using CardWars.Core.Utilities;
 
 namespace CardWars.Core.Data.Global;
 
@@ -24,7 +25,7 @@ public static class DataTagTypeRegistry
 			{
 				if (attr.Id == null)
 				{
-					Register(type, ResourceId.Vanilla(DataTagMapper.ToSnakeCase(type.Name)).ToString());
+					Register(type, ResourceId.Vanilla(NamingUtils.ToSnakeCase(type.Name)).ToString());
 				}
 				else
 				{

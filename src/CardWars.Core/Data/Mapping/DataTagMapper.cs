@@ -6,6 +6,7 @@ using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Converters;
 using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Utilities;
 
 namespace CardWars.Core.Data.Mapping;
 
@@ -372,7 +373,7 @@ public static class DataTagMapper
 			var attr = prop.GetCustomAttribute<DataTagAttribute>();
 			if (attr == null || attr.Ignore) continue;
 
-			var key = attr.Key ?? ToSnakeCase(prop.Name);
+			var key = attr.Key ?? NamingUtils.ToSnakeCase(prop.Name);
 			taggedProps.Add(new PropertyMeta(prop, key, IsConstructorBound: false));
 		}
 
@@ -407,7 +408,7 @@ public static class DataTagMapper
 				{
 					matchingProp = taggedProps.FirstOrDefault(p =>
 						string.Equals(p.PropertyInfo.Name, param.Name, StringComparison.OrdinalIgnoreCase));
-					paramKey = matchingProp?.Key ?? ToSnakeCase(param.Name ?? "");
+					paramKey = matchingProp?.Key ?? NamingUtils.ToSnakeCase(param.Name ?? "");
 				}
 
 				// Check if matchingProp works
@@ -453,27 +454,6 @@ public static class DataTagMapper
 		return new TypeMeta(taggedProps.ToArray(), bestCtor, bestCtorParams);
 	}
 
-	// ======================== HELPERS ========================
-
-	internal static string ToSnakeCase(string name)
-	{
-		if (string.IsNullOrEmpty(name)) return name;
-
-		var sb = new StringBuilder(name.Length + 4);
-		for (int i = 0; i < name.Length; i++)
-		{
-			var c = name[i];
-			if (i > 0 && char.IsUpper(c))
-			{
-				bool prevIsLower = char.IsLower(name[i - 1]);
-				bool nextIsLower = i + 1 < name.Length && char.IsLower(name[i + 1]);
-				if (prevIsLower || nextIsLower)
-					sb.Append('_');
-			}
-			sb.Append(char.ToLowerInvariant(c));
-		}
-		return sb.ToString();
-	}
 
 	private static object? GetDefault(Type type)
 		=> type.IsValueType ? Activator.CreateInstance(type) : null;
