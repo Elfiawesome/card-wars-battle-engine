@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.vanilla.layout;
@@ -28,7 +30,19 @@ public partial class BattleInstance : ClientInstance
 	public IReadOnlyDictionary<EntityId, Node3D> EntityNodes => _entityNodes;
 	private readonly Dictionary<EntityId, Node3D> _entityNodes = [];
 
-
+	// Test random node
+	public override void _Input(InputEvent @event)
+	{
+		if (@event is InputEventKey inputEventKey)
+		{
+			if (inputEventKey.Keycode == Key.Space)
+			{
+				var options = State.All.Where(s => s is Battlefield).ToList();
+				var n = options[Random.Shared.Next(options.Count)];
+				MouseControlNode?.Set("target_node", _entityNodes[n.Id]);
+			}
+		}
+	}
 
 	public override void _Ready()
 	{

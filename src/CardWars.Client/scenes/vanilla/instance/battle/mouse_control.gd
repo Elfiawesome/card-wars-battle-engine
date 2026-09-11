@@ -1,6 +1,7 @@
 extends Control
 
 @export var camera_node: Camera3D
+@export var target_node: Node3D
 @export var smooth_speed: float = 10.0
 @export var zoom_speed: float = 5.0
 @export var zoom_step: float = 0.2

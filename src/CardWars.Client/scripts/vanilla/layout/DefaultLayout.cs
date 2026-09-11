@@ -81,7 +81,6 @@ public sealed class DefaultLayout : BattlefieldLayout
 			var bow = curvature * half;
 
 			var angle = Mathf.Pi * 0.5f + Mathf.Tau * i / sideCount;
-			var facing = Mathf.Pi * 0.5f - angle;
 			var normal = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
 			var tangent = new Vector3(Mathf.Sin(angle), 0f, -Mathf.Cos(angle));
 
@@ -91,11 +90,11 @@ public sealed class DefaultLayout : BattlefieldLayout
 				var offset = inner + node.Width * 0.5f;
 				inner += node.Width + gap;
 
-				// Bend the side's position, but keep every battlefield in the
-				// team facing the same way.
+				// Bend the side's position and angle each battlefield along the
+				// curve so it faces the centre.
 				var bowOffset = half > 0f ? -bow * (offset / half) * (offset / half) : 0f;
 				var position = (apothem + bowOffset) * normal + offset * tangent;
-				node.PlaceAt(position, facing);
+				node.PlaceAt(position, Mathf.Atan2(position.X, position.Z));
 			}
 		}
 	}
