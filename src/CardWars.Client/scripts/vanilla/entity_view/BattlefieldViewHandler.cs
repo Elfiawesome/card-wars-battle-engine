@@ -9,23 +9,9 @@ public class BattlefieldViewHandler : IEntityViewHandler<Battlefield>
 {
 	public void Sync(BattleInstance instance, Battlefield entity)
 	{
-		var node = instance.GetOrCreateEntityNode(SharedIds.Battlefield, entity.Id);
+		var node = instance.GetOrCreateEntityNode<BattlefieldNode>(SharedIds.Battlefield, entity.Id);
 		if (node == null) return;
 
 		instance.AttachNodeToOwner(node, entity.OwnerPlayerId);
-
-
-		// Reposition all battles
-		RearrangeBattles(instance);
-	}
-
-	private void RearrangeBattles(BattleInstance instance)
-	{
-		// Log.Info("All Battlefields");
-		// foreach(var b in instance.EntityNodes)
-		// {
-		// 	Log.Info("Battlefields:");
-		// 	Log.Info(b);
-		// }
 	}
 }

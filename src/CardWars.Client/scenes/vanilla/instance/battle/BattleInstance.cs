@@ -96,16 +96,14 @@ public partial class BattleInstance : ClientInstance
 
 	public bool HasEntityNode(EntityId id) => _entityNodes.ContainsKey(id);
 
-	public Node3D? GetEntityNode(EntityId id)
-		=> _entityNodes.TryGetValue(id, out var node) ? node : null;
-
-
+	public T? GetEntityNode<T>(EntityId id) where T : Node3D
+		=> _entityNodes.TryGetValue(id, out var node) ? node as T : null;
 
 	// Returns the existing node, or creates + tracks a fresh one (unparented).
-	public Node3D? GetOrCreateEntityNode(ResourceId sceneId, EntityId id)
+	public T? GetOrCreateEntityNode<T>(ResourceId sceneId, EntityId id) where T : Node3D
 	{
-		if (GetEntityNode(id) is { } existing) return existing;
-		var node = BattleRegistry?.EntityScene.Instantiate<Node3D>(sceneId);
+		if (_entityNodes.TryGetValue(id, out var existing)) return existing as T;
+		var node = BattleRegistry?.EntityScene.Instantiate<T>(sceneId);
 		if (node == null) return null;
 
 		node.Name = id.ToString();
@@ -117,7 +115,7 @@ public partial class BattleInstance : ClientInstance
 	public void AttachNodeToOwner(Node3D node, EntityId? ownerId)
 	{
 		if (PlayspaceNode == null) return;
-		var target = ownerId is { } id && GetEntityNode(id) is { } ownerNode ? ownerNode : PlayspaceNode;
+		var target = ownerId is { } id && GetEntityNode<Node3D>(id) is { } ownerNode ? ownerNode : PlayspaceNode;
 		var current = node.GetParent();
 		if (current == target) return;
 

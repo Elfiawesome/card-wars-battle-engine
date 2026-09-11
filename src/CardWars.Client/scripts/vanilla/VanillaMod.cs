@@ -35,8 +35,8 @@ public class VanillaMod : IClientMod
 
 		// --- Battle ---
 		// Entities
-		BattleRegistry.EntityScene.Register(SharedIds.Battlefield, "res://scenes/vanilla/instance/battle/battlefield.tscn");
-		BattleRegistry.EntityScene.Register(SharedIds.UnitSlot, "res://scenes/vanilla/instance/battle/unit_slot.tscn");
+		BattleRegistry.EntityScene.Register(SharedIds.Battlefield, "res://scenes/vanilla/instance/battle/battlefield_node.tscn");
+		BattleRegistry.EntityScene.Register(SharedIds.UnitSlot, "res://scenes/vanilla/instance/battle/unit_slot_node.tscn");
 
 		// Entity View Handlers
 		BattleRegistry.EntityViewHandlers.Register(new BattlefieldViewHandler());
@@ -45,6 +45,7 @@ public class VanillaMod : IClientMod
 		// Layout Handler
 		BattleRegistry.DefaultLayoutId = ResourceId.Vanilla("default");
 		BattleRegistry.LayoutHandler.Register(ResourceId.Vanilla("default"), new DefaultLayout());
+		BattleRegistry.LayoutHandler.Register(ResourceId.Vanilla("line"), new LineLayout());
 
 		// See later if i want to use it
 		registry.RegisterExtension(BattleRegistry);
