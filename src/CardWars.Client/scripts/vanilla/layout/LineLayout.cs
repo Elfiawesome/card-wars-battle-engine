@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Client.scenes.vanilla.instance.battle;
 using Godot;

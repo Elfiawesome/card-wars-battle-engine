@@ -2,6 +2,7 @@ using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data.Attributes;
+using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Server.Packet;
@@ -43,7 +44,7 @@ public class BattleInstance : ServerInstance
 		// AddTestPlayer(2); AddTestPlayer(3); AddTestPlayer(4); AddTestPlayer(5);
 
 		// Absurd Testing
-		for (var i = 0; i < 6; i++) { AddTestPlayer(2); }
+		// for (var i = 0; i < 6; i++) { AddTestPlayer(2); }
 	}
 
 	public override void AddPlayer(PlayerSession player)

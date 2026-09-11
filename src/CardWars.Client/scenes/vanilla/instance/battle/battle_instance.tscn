@@ -59,7 +59,7 @@ mouse_filter = 1
 script = ExtResource("2_3esg4")
 CameraNode = NodePath("../../../../Camera")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/ButtonsOverlay" unique_id=1027722110]
+[node name="MarginContainer" type="MarginContainer" parent="UI/ButtonsOverlay" unique_id=1749518099]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -67,10 +67,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/ButtonsOverlay/MarginContainer" unique_id=1027722110]
+layout_mode = 2
+mouse_filter = 2
 alignment = 2
 
-[node name="Button" type="Button" parent="UI/ButtonsOverlay/VBoxContainer" unique_id=873942029]
+[node name="EndTurnButton" type="Button" parent="UI/ButtonsOverlay/MarginContainer/VBoxContainer" unique_id=873942029]
 layout_mode = 2
+size_flags_horizontal = 8
 text = "End Turn"
 
 [node name="Overlay" type="Control" parent="UI" unique_id=1144512325]
@@ -101,7 +110,7 @@ layout_mode = 2
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 
 [node name="Mesh" type="MeshInstance3D" parent="Playspace" unique_id=1356511361]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.345, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0)
 mesh = SubResource("PlaneMesh_4cb27")
 skeleton = NodePath("../..")
 metadata/_edit_lock_ = true

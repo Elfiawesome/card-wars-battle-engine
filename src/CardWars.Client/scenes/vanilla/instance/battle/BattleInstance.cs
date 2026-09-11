@@ -1,9 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using CardWars.BattleEngine.Block;
+using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.vanilla.layout;
@@ -37,16 +38,14 @@ public partial class BattleInstance : ClientInstance
 		{
 			if (inputEventKey.Keycode == Key.Space && inputEventKey.Pressed)
 			{
-				var options = State.All.Where(s => s is Battlefield).ToList();
-				var n = options[Random.Shared.Next(options.Count)];
-				FocusOn(n.Id);
+				SendInput(new EndTurnRequestInput());
 			}
 		}
 	}
 
 	public override void _Ready()
 	{
-		HandManagerNode.BattleInstance = this;
+		if (HandManagerNode != null) HandManagerNode.BattleInstance = this;
 	}
 
 	public void FocusOn(EntityId entityId)
@@ -82,6 +81,7 @@ public partial class BattleInstance : ClientInstance
 
 	public void SyncState()
 	{
+		// Set free on not used entities
 		var currentIds = State.All.Select(e => e.Id).ToHashSet();
 		var toRemove = _entityNodes.Keys.Except(currentIds).ToList();
 		foreach (var id in toRemove)
@@ -93,18 +93,27 @@ public partial class BattleInstance : ClientInstance
 
 
 		if (PlayspaceNode == null) return;
+		if (BattleRegistry == null) { return; }
 
+		// Overview handlers
 		foreach (var entity in State.All)
 		{
 			BattleRegistry?.EntityViewHandlers.Execute(this, entity);
 		}
-
-		if (BattleRegistry == null) { return; }
 		var defaultId = BattleRegistry?.DefaultLayoutId ?? ResourceId.Empty;
 		IBattleLayoutHandler? layoutHandler = BattleRegistry?.LayoutHandler.Get(State.Layout.Layout)
 											 ?? BattleRegistry?.LayoutHandler.Get(defaultId);
 		if (layoutHandler == null) { return; }
 		layoutHandler.Compute(this);
+
+		// Set Camera
+		var playerTurnId = State.Turn.TurnOrder[State.Turn.TurnIndex];
+		var e = State.Get(playerTurnId);
+		if (e is Player player)
+		{
+			var battlefieldId = player.BattlefieldIds.FirstOrDefault();
+			FocusOn(battlefieldId);
+		}
 
 		Log.Info(State);
 	}
@@ -137,4 +146,7 @@ public partial class BattleInstance : ClientInstance
 		if (current is Node formerParent) formerParent.RemoveChild(node);
 		target.AddChild(node);
 	}
+
+	public void SendInput(IInput input)
+		=> SendPacket(new C2S_BattleInput() { Input = input });
 }
