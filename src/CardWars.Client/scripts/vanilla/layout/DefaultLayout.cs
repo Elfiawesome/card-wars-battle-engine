@@ -11,7 +11,8 @@ namespace CardWars.Client.scripts.vanilla.layout;
 
 public sealed class DefaultLayout : BattlefieldLayout
 {
-	private const float DefaultGap = 1f;
+	private const float DefaultGap = 0.3f;
+	private const float DefaultCurvature = 0.2f;
 
 	public override void Compute(BattleInstance battle)
 	{
@@ -19,6 +20,7 @@ public sealed class DefaultLayout : BattlefieldLayout
 		var config = state.Layout.LayoutConfig;
 		var gap = config.GetFloat("gap", DefaultGap);
 		var teamGap = config.GetFloat("team_gap", gap * 2f);
+		var curvature = Mathf.Clamp(config.GetFloat("curvature", DefaultCurvature), 0f, 1f);
 		var centerIds = ReadCenterIds(config);
 
 		var centered = new List<BattlefieldNode>();
@@ -52,33 +54,49 @@ public sealed class DefaultLayout : BattlefieldLayout
 			return;
 		}
 
-		// Every team owns an arc proportional to its total width, so a wider
-		// team curves around the ring instead of spilling past its neighbours.
-		var arcLength = teams.Sum(row => RowWidth(row, gap) + teamGap);
-		var maxDepth = teams.Max(row => row.Max(node => node.Depth));
-
-		var radius = Mathf.Max(arcLength / Mathf.Tau, maxDepth * 0.5f + gap * 0.5f);
-		if (centerRadius > 0f)
-			radius = Mathf.Max(radius, centerRadius + maxDepth * 0.5f + gap);
-
-		var startAngle = Mathf.Pi * 0.5f - Mathf.Tau * (RowWidth(teams[0], gap) * 0.5f) / arcLength;
-		var cursor = 0f;
+		// Each team is a curved side of a regular polygon. The distance to each
+		// side is derived from the widest team so no team spills past its
+		// neighbours; the bow (curvature) bends the side itself.
+		var sideCount = teams.Count;
+		var apothem = 0f;
 
 		foreach (var row in teams)
 		{
-			var rowStart = cursor;
-			var inner = 0f;
+			var half = RowWidth(row, gap) * 0.5f;
+			var rowDepth = row.Max(node => node.Depth);
+			var need = curvature * half + rowDepth * 0.5f + gap * 0.5f;
 
+			if (sideCount >= 3)
+				need = Mathf.Max(need, half / Mathf.Tan(Mathf.Pi / sideCount) + teamGap);
+			if (centerRadius > 0f)
+				need = Mathf.Max(need, centerRadius + rowDepth * 0.5f + gap);
+
+			apothem = Mathf.Max(apothem, need);
+		}
+
+		for (var i = 0; i < sideCount; i++)
+		{
+			var row = teams[i];
+			var half = RowWidth(row, gap) * 0.5f;
+			var bow = curvature * half;
+
+			var angle = Mathf.Pi * 0.5f + Mathf.Tau * i / sideCount;
+			var facing = Mathf.Pi * 0.5f - angle;
+			var normal = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+			var tangent = new Vector3(Mathf.Sin(angle), 0f, -Mathf.Cos(angle));
+
+			var inner = -half;
 			foreach (var node in row)
 			{
-				var arc = rowStart + inner + node.Width * 0.5f;
-				var angle = startAngle + Mathf.Tau * arc / arcLength;
-				var normal = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
-				node.PlaceAt(normal * radius, Mathf.Pi * 0.5f - angle);
+				var offset = inner + node.Width * 0.5f;
 				inner += node.Width + gap;
-			}
 
-			cursor = rowStart + RowWidth(row, gap) + teamGap;
+				// Bend the side's position, but keep every battlefield in the
+				// team facing the same way.
+				var bowOffset = half > 0f ? -bow * (offset / half) * (offset / half) : 0f;
+				var position = (apothem + bowOffset) * normal + offset * tangent;
+				node.PlaceAt(position, facing);
+			}
 		}
 	}
 

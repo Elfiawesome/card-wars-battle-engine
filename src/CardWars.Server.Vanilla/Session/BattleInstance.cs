@@ -29,11 +29,11 @@ public class BattleInstance : ServerInstance
 	{
 		void addTestPlayer(int team) => Engine?.HandleInput(EntityId.None, new PlayerJoinedRequestInput(new EntityId(Guid.NewGuid()), team));
 		// 1v1
-		// addTestPlayer(2);
+		addTestPlayer(2);
 
 		// 2v2
-		addTestPlayer(1);
-		addTestPlayer(2); addTestPlayer(2);
+		// addTestPlayer(1);
+		// addTestPlayer(2); addTestPlayer(2);
 
 		// 3v2v1
 		// addTestPlayer(2); addTestPlayer(2);
