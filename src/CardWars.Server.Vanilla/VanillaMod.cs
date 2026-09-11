@@ -1,4 +1,4 @@
-using CardWars.Core.Data;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Registry;

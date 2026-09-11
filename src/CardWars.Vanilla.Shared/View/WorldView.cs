@@ -1,4 +1,4 @@
-using CardWars.Core.Data;
+using CardWars.Core.Data.Attributes;
 using CardWars.Core.Registry;
 
 namespace CardWars.Vanilla.Shared.View;

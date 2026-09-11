@@ -1,4 +1,4 @@
-using CardWars.Core.Data;
+using CardWars.Core.Data.Attributes;
 using CardWars.Server.Session;
 
 namespace CardWars.Server.Vanilla.Session;

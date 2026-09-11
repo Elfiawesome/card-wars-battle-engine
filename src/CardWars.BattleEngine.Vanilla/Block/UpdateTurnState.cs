@@ -1,6 +1,6 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
-using CardWars.Core.Data;
+using CardWars.Core.Data.Attributes;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
 

@@ -1,10 +1,6 @@
-namespace CardWars.Core.Data;
+using CardWars.Core.Data.Tags;
 
-public interface IDataTagConverter
-{
-	DataTag? ToTag(object value);
-	object? FromTag(DataTag tag);
-}
+namespace CardWars.Core.Data.Converters;
 
 public abstract class DataTagConverter<T> : IDataTagConverter
 {

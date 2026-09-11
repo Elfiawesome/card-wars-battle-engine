@@ -1,4 +1,7 @@
-using CardWars.Core.Data;
+using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data.Serialization.Json;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Storage;
 
 namespace CardWars.ModLoader;

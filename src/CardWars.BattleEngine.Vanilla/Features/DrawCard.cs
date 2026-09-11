@@ -1,5 +1,5 @@
 using CardWars.BattleEngine.Event;
-using CardWars.Core.Data;
+using CardWars.Core.Data.Attributes;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 

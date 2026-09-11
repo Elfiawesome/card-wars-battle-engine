@@ -1,6 +1,6 @@
 using CardWars.Core.Registry;
 
-namespace CardWars.Core.Data;
+namespace CardWars.Core.Data.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 public class DataTagTypeAttribute : Attribute

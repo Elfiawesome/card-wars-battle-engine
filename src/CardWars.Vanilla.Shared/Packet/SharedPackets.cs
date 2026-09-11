@@ -1,7 +1,7 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
-using CardWars.Core.Data;
+using CardWars.Core.Data.Attributes;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.View;

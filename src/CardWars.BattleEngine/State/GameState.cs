@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
-using CardWars.Core.Data;
+using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 

@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text;
+using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Converters;
+using CardWars.Core.Data.Global;
+using CardWars.Core.Data.Tags;
 
-namespace CardWars.Core.Data;
+namespace CardWars.Core.Data.Mapping;
 
 public static class DataTagMapper
 {

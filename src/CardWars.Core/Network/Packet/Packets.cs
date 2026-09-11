@@ -1,4 +1,5 @@
-using CardWars.Core.Data;
+using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Tags;
 
 namespace CardWars.Core.Network.Packet;
 

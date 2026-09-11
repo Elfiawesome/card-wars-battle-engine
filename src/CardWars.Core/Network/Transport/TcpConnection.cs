@@ -1,7 +1,9 @@
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Text;
-using CardWars.Core.Data;
+using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data.Serialization.Json;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 

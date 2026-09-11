@@ -1,4 +1,4 @@
-namespace CardWars.Core.Data;
+namespace CardWars.Core.Data.Attributes;
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 public class DataTagAttribute : Attribute

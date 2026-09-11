@@ -1,4 +1,5 @@
-using CardWars.Core.Data;
+using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using CardWars.Core.Storage;

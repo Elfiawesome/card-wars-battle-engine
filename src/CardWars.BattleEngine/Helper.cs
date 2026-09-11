@@ -1,7 +1,9 @@
 using System.Text.Json;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
-using CardWars.Core.Data;
+using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data.Serialization.Json;
+using CardWars.Core.Data.Tags;
 
 namespace CardWars.BattleEngine;
 

@@ -1,4 +1,4 @@
-using CardWars.Core.Data;
+using CardWars.Core.Data.Mapping;
 using CardWars.Core.Logging;
 using CardWars.Server.Packet;
 using CardWars.Server.Session;

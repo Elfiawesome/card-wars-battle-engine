@@ -1,6 +1,7 @@
 using System.Text.Json;
+using CardWars.Core.Data.Tags;
 
-namespace CardWars.Core.Data;
+namespace CardWars.Core.Data.Serialization.Json;
 
 public static class DataTagSerializer
 {

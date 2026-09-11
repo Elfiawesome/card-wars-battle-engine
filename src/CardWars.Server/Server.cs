@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using CardWars.BattleEngine;
-using CardWars.Core.Data;
 using CardWars.Core.Logging;
 using CardWars.Server.Listener;
 using CardWars.Core.Network.Transport;
@@ -10,6 +9,9 @@ using CardWars.Server.Session;
 using CardWars.Core.Storage;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
+using CardWars.Core.Data.Tags;
+using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data.Global;
 
 namespace CardWars.Server;
 

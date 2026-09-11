@@ -7,6 +7,8 @@ using CardWars.BattleEngine.Input;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.vanilla;
+using CardWars.Core.Data.Global;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;
@@ -153,9 +155,9 @@ public partial class GameSession : Node
 
 	private void ScanCoreAssemblies()
 	{
-		Core.Data.DataTagTypeRegistry.ScanAssembly(typeof(Core.Data.DataTag).Assembly); // Load core
-		Core.Data.DataTagTypeRegistry.ScanAssembly(typeof(ModLoader.ModLoader).Assembly);
-		Core.Data.DataTagTypeRegistry.ScanAssembly(typeof(BattleEngine.BattleEngine).Assembly); // Already done in BattleEngine, but just in case
+		DataTagTypeRegistry.ScanAssembly(typeof(DataTag).Assembly); // Load core
+		DataTagTypeRegistry.ScanAssembly(typeof(ModLoader.ModLoader).Assembly);
+		DataTagTypeRegistry.ScanAssembly(typeof(BattleEngine.BattleEngine).Assembly); // Already done in BattleEngine, but just in case
 	}
 
 	private void SetupModServer(ModLoader.ModLoader modLoader, Server.Server server)

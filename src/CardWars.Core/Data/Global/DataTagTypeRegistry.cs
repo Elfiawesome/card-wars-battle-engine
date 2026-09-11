@@ -1,8 +1,10 @@
 using System.Collections.Concurrent;
 using System.Reflection;
+using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Mapping;
 using CardWars.Core.Registry;
 
-namespace CardWars.Core.Data;
+namespace CardWars.Core.Data.Global;
 
 public static class DataTagTypeRegistry
 {

@@ -1,7 +1,7 @@
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
-using CardWars.Core.Data;
+using CardWars.Core.Data.Attributes;
 using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
