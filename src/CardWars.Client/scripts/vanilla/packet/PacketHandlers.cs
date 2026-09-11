@@ -32,7 +32,7 @@ public class S2C_EnterInstancePacketHandler : IPacketHandlerClient<S2C_EnterInst
 	{
 		var instance = context.Session.ClientRegistry.Instances.Instantiate<ClientInstance>(request.ProviderId);
 		if (instance == null) { return; }
-		context.Session.SwitchInstance(instance);
+		context.Session.SwitchInstance(instance, request.PlayerId);
 	}
 }
 

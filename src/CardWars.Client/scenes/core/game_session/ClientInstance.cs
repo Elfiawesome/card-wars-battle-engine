@@ -10,6 +10,7 @@ namespace CardWars.Client.scenes.core.game_session;
 
 public partial class ClientInstance : Node
 {
+	public Guid MyPlayerId = Guid.Empty;
 	public Action<IPacket>? onPacketSent;
 	public ClientRegistry? ClientRegistry;
 	public BattleEngineRegistry? BattleEngineRegistry;

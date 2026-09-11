@@ -40,6 +40,7 @@ public class VanillaMod : IClientMod
 
 		// Entity View Handlers
 		BattleRegistry.EntityViewHandlers.Register(new BattlefieldViewHandler());
+		BattleRegistry.EntityViewHandlers.Register(new CardViewHandler());
 		BattleRegistry.EntityViewHandlers.Register(new UnitSlotViewHandler());
 
 		// Layout Handler

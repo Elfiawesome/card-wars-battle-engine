@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CardWars.BattleEngine.State;
 using CardWars.Vanilla.Shared;
 using Godot;
 
@@ -18,24 +19,17 @@ public partial class HandManager : Control
 	public BattleInstance? BattleInstance = null;
 
 	private List<CardDisplay> _cards = [];
+	private Dictionary<EntityId, CardDisplay> _cardsIdMap = [];
 
 	public override void _Ready()
 	{
 		Resized += ArrangeCard;
 	}
 
-	public override void _Input(InputEvent @event)
-	{
-		if (@event is InputEventKey inputEventKey)
-		{
-			if (inputEventKey.Keycode == Key.C && inputEventKey.Pressed)
-			{
-				AddCard();
-			}
-		}
-	}
 
-	public void AddCard()
+	public CardDisplay? GetCard(EntityId entityId) => _cardsIdMap.TryGetValue(entityId, out var card) ? card : null;
+
+	public void AddCard(EntityId id)
 	{
 		var card = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<CardDisplay>(SharedIds.CardDisplay);
 		if (card == null) return;
@@ -46,7 +40,13 @@ public partial class HandManager : Control
 		card.MouseExited += () => OnCardMouseExited(card);
 		AddChild(card);
 		_cards.Add(card);
+		_cardsIdMap[id] = card;
 		ArrangeCard();
+	}
+
+	public void RemoveCard(EntityId id)
+	{
+		
 	}
 
 	private void OnCardMouseEntered(CardDisplay card)

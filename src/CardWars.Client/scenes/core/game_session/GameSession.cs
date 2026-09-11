@@ -111,14 +111,15 @@ public partial class GameSession : Node
 		OnProcess?.Invoke();
 	}
 
-	public void SwitchInstance(ClientInstance newInstance)
+	public void SwitchInstance(ClientInstance newInstance, Guid? playerId)
 	{
 		if (Instance != null) { RemoveChild(Instance); Instance.onPacketSent -= SendPacket; }
-		
+
 		Instance = newInstance;
 		Instance.onPacketSent += SendPacket;
 		Instance.ClientRegistry = ClientRegistry;
 		Instance.BattleEngineRegistry = BattleEngineRegistry;
+		Instance.MyPlayerId = playerId ?? Guid.Empty;
 		AddChild(Instance);
 	}
 

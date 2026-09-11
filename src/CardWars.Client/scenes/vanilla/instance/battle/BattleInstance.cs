@@ -28,6 +28,8 @@ public partial class BattleInstance : ClientInstance
 	[Export] public Camera? CameraNode;
 
 	public GameState State = new();
+	private TurnState _oldTurnState = new();
+
 	public IReadOnlyDictionary<EntityId, Node3D> EntityNodes => _entityNodes;
 	private readonly Dictionary<EntityId, Node3D> _entityNodes = [];
 
@@ -39,6 +41,12 @@ public partial class BattleInstance : ClientInstance
 			if (inputEventKey.Keycode == Key.Space && inputEventKey.Pressed)
 			{
 				SendInput(new EndTurnRequestInput());
+			}
+			if (inputEventKey.Keycode == Key.Q && inputEventKey.Pressed)
+			{
+				var decks = State.Where(e => e is Deck);
+				var myDeck = decks.First(d => ((Deck)d).OwnerPlayerId == MyPlayerId);
+				SendInput(new DrawCardRequestInput(myDeck.Id, MyPlayerId));
 			}
 		}
 	}
@@ -108,14 +116,19 @@ public partial class BattleInstance : ClientInstance
 
 		// Set Camera
 		var playerTurnId = State.Turn.TurnOrder[State.Turn.TurnIndex];
-		var e = State.Get(playerTurnId);
-		if (e is Player player)
+		if (_oldTurnState.TurnIndex != State.Turn.TurnIndex) //TODO: oldTurnState feels wrong and not a good way?
 		{
-			var battlefieldId = player.BattlefieldIds.FirstOrDefault();
-			FocusOn(battlefieldId);
+			var e = State.Get(playerTurnId);
+			if (e is Player player)
+			{
+				var battlefieldId = player.BattlefieldIds.FirstOrDefault();
+				FocusOn(battlefieldId);
+			}
+			_oldTurnState = State.Turn.Copy();
 		}
-
-		Log.Info(State);
+		else
+		{
+		}
 	}
 
 	public bool HasEntityNode(EntityId id) => _entityNodes.ContainsKey(id);
