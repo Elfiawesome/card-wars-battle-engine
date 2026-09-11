@@ -6,6 +6,7 @@ using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.vanilla.layout;
 using CardWars.Client.scripts.vanilla.registry;
+using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.Packet;
@@ -91,7 +92,7 @@ public partial class BattleInstance : ClientInstance
 		if (layoutHandler == null) { return; }
 		layoutHandler.Compute(this);
 
-		// Log.Info(State.Entities.ToList().Select(s => s.Value));
+		Log.Info(State);
 	}
 
 	public bool HasEntityNode(EntityId id) => _entityNodes.ContainsKey(id);

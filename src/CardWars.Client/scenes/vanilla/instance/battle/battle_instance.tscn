@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dbprbwsxbw1dm" path="res://scenes/vanilla/instance/battle/mouse_control.gd" id="2_3esg4"]
 [ext_resource type="Script" uid="uid://b7e2pum6t8sfj" path="res://scenes/vanilla/instance/battle/HandManager.cs" id="2_4cb27"]
 [ext_resource type="Texture2D" uid="uid://c2n6a1kcehf1m" path="res://assets/vanilla/wood_texture.jpg" id="4_3esg4"]
+[ext_resource type="Script" uid="uid://d0bhmtleyro4k" path="res://scenes/vanilla/instance/battle/Camera.cs" id="5_4jex4"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4jex4"]
 albedo_texture = ExtResource("4_3esg4")
@@ -54,7 +55,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("2_3esg4")
-camera_node = NodePath("../../../Camera3D")
+camera_node = NodePath("../../../Camera")
 
 [node name="Overlay" type="Control" parent="UI" unique_id=1144512325]
 visible = false
@@ -72,10 +73,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
 
 [node name="Panel" type="Panel" parent="UI/Overlay/MarginContainer" unique_id=1553497442]
 layout_mode = 2
@@ -97,5 +98,6 @@ shadow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=359768641]
 environment = SubResource("Environment_4cb27")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1427412567]
+[node name="Camera" type="Camera3D" parent="." unique_id=1427412567]
 transform = Transform3D(1, 0, 0, 0, 0.9905765, 0.13696073, 0, -0.13696073, 0.9905765, 0, 0, 2)
+script = ExtResource("5_4jex4")
