@@ -13,6 +13,7 @@ public sealed class DefaultLayout : BattlefieldLayout
 {
 	private const float DefaultGap = 0.3f;
 	private const float DefaultCurvature = 0.2f;
+	private const float DefaultFacingCurve = 0.2f;
 
 	public override void Compute(BattleInstance battle)
 	{
@@ -21,6 +22,7 @@ public sealed class DefaultLayout : BattlefieldLayout
 		var gap = config.GetFloat("gap", DefaultGap);
 		var teamGap = config.GetFloat("team_gap", gap * 2f);
 		var curvature = Mathf.Clamp(config.GetFloat("curvature", DefaultCurvature), 0f, 1f);
+		var facingCurve = Mathf.Clamp(config.GetFloat("facing_curve", DefaultFacingCurve), 0f, 1f);
 		var centerIds = ReadCenterIds(config);
 
 		var centered = new List<BattlefieldNode>();
@@ -84,17 +86,20 @@ public sealed class DefaultLayout : BattlefieldLayout
 			var normal = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
 			var tangent = new Vector3(Mathf.Sin(angle), 0f, -Mathf.Cos(angle));
 
+			// facing_curve: 0 = every battlefield faces along the line (the
+			// team's overall facing), 1 = each one turns to follow the curve.
+			var lineFacing = Mathf.Pi * 0.5f - angle;
+
 			var inner = -half;
 			foreach (var node in row)
 			{
 				var offset = inner + node.Width * 0.5f;
 				inner += node.Width + gap;
 
-				// Bend the side's position and angle each battlefield along the
-				// curve so it faces the centre.
 				var bowOffset = half > 0f ? -bow * (offset / half) * (offset / half) : 0f;
 				var position = (apothem + bowOffset) * normal + offset * tangent;
-				node.PlaceAt(position, Mathf.Atan2(position.X, position.Z));
+				var curveFacing = Mathf.Atan2(position.X, position.Z);
+				node.PlaceAt(position, Mathf.LerpAngle(lineFacing, curveFacing, facingCurve));
 			}
 		}
 	}
