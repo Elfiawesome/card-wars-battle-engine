@@ -20,11 +20,11 @@ public partial class BattleInstance : ClientInstance
 {
 	public BattleRegistry? BattleRegistry => ClientRegistry?.GetExtension<BattleRegistry>();
 
-	public Control? UINode;
-	public HandManager? HandManagerNode;
-	public Node3D? PlayspaceNode;
-	public Camera? CameraNode;
-	public MouseControl? MouseControlNode;
+	[Export] public HandManager? ButtonsOverlayNode;
+	[Export] public HandManager? HandManagerNode;
+	[Export] public MouseControl? MouseControlNode;
+	[Export] public Node3D? PlayspaceNode;
+	[Export] public Camera? CameraNode;
 
 	public GameState State = new();
 	public IReadOnlyDictionary<EntityId, Node3D> EntityNodes => _entityNodes;
@@ -46,12 +46,6 @@ public partial class BattleInstance : ClientInstance
 
 	public override void _Ready()
 	{
-		UINode = GetNode<Control>("UI");
-		HandManagerNode = GetNode<HandManager>("UI/HandManager");
-		PlayspaceNode = GetNode<Node3D>("Playspace");
-		CameraNode = GetNode<Camera>("Camera");
-		MouseControlNode = GetNode<MouseControl>("UI/HandManager/MouseControl");
-
 		HandManagerNode.BattleInstance = this;
 	}
 

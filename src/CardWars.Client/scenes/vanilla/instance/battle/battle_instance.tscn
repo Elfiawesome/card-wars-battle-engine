@@ -13,8 +13,13 @@ albedo_texture = ExtResource("4_3esg4")
 material = SubResource("StandardMaterial3D_4jex4")
 size = Vector2(32, 32)
 
-[node name="BattleScene" type="Node" unique_id=587125568]
+[node name="BattleScene" type="Node" unique_id=587125568 node_paths=PackedStringArray("ButtonsOverlayNode", "HandManagerNode", "MouseControlNode", "PlayspaceNode", "CameraNode")]
 script = ExtResource("1_kka0g")
+ButtonsOverlayNode = NodePath("UI/ButtonsOverlay")
+HandManagerNode = NodePath("UI/ButtonsOverlay/HandManager")
+MouseControlNode = NodePath("UI/ButtonsOverlay/HandManager/MouseControl")
+PlayspaceNode = NodePath("Playspace")
+CameraNode = NodePath("Camera")
 
 [node name="UI" type="Control" parent="." unique_id=187991382]
 layout_mode = 3
@@ -25,7 +30,16 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="HandManager" type="Control" parent="UI" unique_id=235383924]
+[node name="ButtonsOverlay" type="Control" parent="UI" unique_id=1300867907]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="HandManager" type="Control" parent="UI/ButtonsOverlay" unique_id=235383924]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,7 +48,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_4cb27")
 
-[node name="MouseControl" type="Control" parent="UI/HandManager" unique_id=1854197603 node_paths=PackedStringArray("CameraNode")]
+[node name="MouseControl" type="Control" parent="UI/ButtonsOverlay/HandManager" unique_id=1854197603 node_paths=PackedStringArray("CameraNode")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -43,7 +57,21 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("2_3esg4")
-CameraNode = NodePath("../../../Camera")
+CameraNode = NodePath("../../../../Camera")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/ButtonsOverlay" unique_id=1027722110]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 2
+
+[node name="Button" type="Button" parent="UI/ButtonsOverlay/VBoxContainer" unique_id=873942029]
+layout_mode = 2
+text = "End Turn"
 
 [node name="Overlay" type="Control" parent="UI" unique_id=1144512325]
 visible = false
@@ -73,7 +101,7 @@ layout_mode = 2
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 
 [node name="Mesh" type="MeshInstance3D" parent="Playspace" unique_id=1356511361]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.345, 0)
 mesh = SubResource("PlaneMesh_4cb27")
 skeleton = NodePath("../..")
 metadata/_edit_lock_ = true
