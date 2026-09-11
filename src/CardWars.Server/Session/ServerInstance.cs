@@ -11,6 +11,7 @@ public interface IServerInstance
 
 	IReadOnlyCollection<PlayerSession> Players { get; }
 
+	void Ready();
 	void AddPlayer(PlayerSession player);
 	void RemovePlayer(PlayerSession player);
 
@@ -26,6 +27,8 @@ public abstract class ServerInstance : IServerInstance
 	public abstract ResourceId InstanceProviderId { get; set; }
 
 	public IReadOnlyCollection<PlayerSession> Players => _players;
+
+	public virtual void Ready() { }
 
 	public virtual void AddPlayer(PlayerSession player)
 	{

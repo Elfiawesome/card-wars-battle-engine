@@ -10,7 +10,8 @@ namespace CardWars.BattleEngine.Vanilla.Features;
 
 [DataTagType()]
 public record struct PlayerJoinedRequestInput(
-	[property: DataTag] EntityId Id
+	[property: DataTag] EntityId Id,
+	[property: DataTag] int RequestedTeam = 1
 ) : IInput;
 
 public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequestInput>
@@ -20,7 +21,7 @@ public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequest
 		if (context.Transaction.State.Get(request.Id) != null) { Log.Warn($"Player [{request.Id}] already exists, ignoring join request"); return; }
 		BlockBatch batch = new([]);
 		batch.Blocks.Add(new InstantiatePlayerBlock(request.Id));
-		batch.Blocks.Add(new ModifyPlayerTeamBlock(request.Id, 1));
+		batch.Blocks.Add(new ModifyPlayerTeamBlock(request.Id, request.RequestedTeam));
 
 		var turnState = context.Transaction.State.Turn.Copy();
 		turnState.TurnOrder.Add(request.Id);

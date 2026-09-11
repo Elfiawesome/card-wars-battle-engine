@@ -18,6 +18,16 @@ public class BattleInstance : ServerInstance
 
 	public BattleEngine.BattleEngine? Engine { get; set; }
 
+	public override void Ready()
+	{
+		base.Ready();
+		for (var i = 0; i < 3; i++)
+		{
+			var enemyId = new EntityId(Guid.NewGuid());
+			Engine?.HandleInput(EntityId.None, new PlayerJoinedRequestInput(enemyId, 3));
+		}
+	}
+
 	public override void AddPlayer(PlayerSession player)
 	{
 		base.AddPlayer(player);

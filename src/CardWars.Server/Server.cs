@@ -120,6 +120,7 @@ public class Server
 			_instances[instance.InstanceId] = instance;
 			_instanceMapping[(providerId, instanceSaveId)] = instance.InstanceId;
 		}
+		instance.Ready();
 		OnAddInstance?.Invoke(instance);
 		return instance;
 	}
