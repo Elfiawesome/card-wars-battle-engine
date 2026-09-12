@@ -92,13 +92,16 @@ public partial class BattleInstance : ClientInstance
 		// Set free on not used entities
 		var currentIds = State.All.Select(e => e.Id).ToHashSet();
 		var toRemove = _entityNodes.Keys.Except(currentIds).ToList();
+
+		// var currentIds2 = HandManagerNode?.Cards.Select(s => s.Key).ToHashSet() ?? [];
+		// var toRemove2 = State.All.Where(s => s is GenericCard && !currentIds2.Contains(s.Id)).Select(c => c.Id).ToList();
+
 		foreach (var id in toRemove)
 		{
 			var node = _entityNodes[id];
 			node.QueueFree(); // DONT DO THIS!! Set this to make it run animations first then get rid of it
 			_entityNodes.Remove(id);
 		}
-
 
 		if (PlayspaceNode == null) return;
 		if (BattleRegistry == null) { return; }

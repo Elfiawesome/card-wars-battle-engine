@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CardWars.BattleEngine.State;
 using CardWars.Vanilla.Shared;
 using Godot;
@@ -18,8 +19,9 @@ public partial class HandManager : Control
 	public CardDisplay? HoveredCard = null;
 	public BattleInstance? BattleInstance = null;
 
-	private List<CardDisplay> _cards = [];
-	private Dictionary<EntityId, CardDisplay> _cardsIdMap = [];
+	// private List<CardDisplay> _cards = [];
+	private Dictionary<EntityId, CardDisplay> _cards = [];
+	public IReadOnlyDictionary<EntityId, CardDisplay> Cards => _cards;
 
 	public override void _Ready()
 	{
@@ -27,7 +29,7 @@ public partial class HandManager : Control
 	}
 
 
-	public CardDisplay? GetCard(EntityId entityId) => _cardsIdMap.TryGetValue(entityId, out var card) ? card : null;
+	public CardDisplay? GetCard(EntityId entityId) => _cards.TryGetValue(entityId, out var card) ? card : null;
 
 	public void AddCard(EntityId id)
 	{
@@ -39,14 +41,17 @@ public partial class HandManager : Control
 		card.MouseEntered += () => OnCardMouseEntered(card);
 		card.MouseExited += () => OnCardMouseExited(card);
 		AddChild(card);
-		_cards.Add(card);
-		_cardsIdMap[id] = card;
+		_cards[id] = card;
 		ArrangeCard();
 	}
 
 	public void RemoveCard(EntityId id)
 	{
-		
+		if (_cards.TryGetValue(id, out var c))
+		{
+			_cards.Remove(id);
+			c.QueueFree(); // TODO: Make it animate away
+		}
 	}
 
 	private void OnCardMouseEntered(CardDisplay card)
@@ -62,7 +67,7 @@ public partial class HandManager : Control
 
 	private void ArrangeCard()
 	{
-		var cards = _cards;
+		var cards = _cards.Select(s => s.Value).ToList();
 		int totalCard = cards.Count;
 		if (totalCard == 0) return;
 
