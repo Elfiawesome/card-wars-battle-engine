@@ -21,11 +21,13 @@ public partial class BattleInstance : ClientInstance
 {
 	public BattleRegistry? BattleRegistry => ClientRegistry?.GetExtension<BattleRegistry>();
 
-	[Export] public HandManager? ButtonsOverlayNode;
+	[Export] public Control? ButtonsOverlayNode;
 	[Export] public HandManager? HandManagerNode;
 	[Export] public MouseControl? MouseControlNode;
 	[Export] public Node3D? PlayspaceNode;
 	[Export] public Camera? CameraNode;
+
+	public BattleAnimationHandler AnimationHandler = new();
 
 	public GameState State = new();
 	private TurnState _oldTurnState = new();
@@ -54,6 +56,12 @@ public partial class BattleInstance : ClientInstance
 	public override void _Ready()
 	{
 		if (HandManagerNode != null) HandManagerNode.BattleInstance = this;
+	}
+
+	public override void _Process(double delta)
+	{
+		base._Process(delta);
+		AnimationHandler?.Process(this, delta);
 	}
 
 	public void FocusOn(EntityId entityId)
@@ -85,6 +93,13 @@ public partial class BattleInstance : ClientInstance
 			BattleEngineRegistry?.BlockHandlers.Execute(State, block);
 		}
 		SyncState();
+		// Play animation
+		var parsedAnimationId = ResourceId.Parse(batch.AnimationId);
+		if (!parsedAnimationId.IsEmpty)
+		{
+			var animation = BattleRegistry?.Animations.Create(parsedAnimationId);
+			if (animation != null) { animation.Data = batch.AnimationArgs; AnimationHandler.QueueAnimation(animation); }
+		}
 	}
 
 	public void SyncState()
@@ -92,10 +107,6 @@ public partial class BattleInstance : ClientInstance
 		// Set free on not used entities
 		var currentIds = State.All.Select(e => e.Id).ToHashSet();
 		var toRemove = _entityNodes.Keys.Except(currentIds).ToList();
-
-		// var currentIds2 = HandManagerNode?.Cards.Select(s => s.Key).ToHashSet() ?? [];
-		// var toRemove2 = State.All.Where(s => s is GenericCard && !currentIds2.Contains(s.Id)).Select(c => c.Id).ToList();
-
 		foreach (var id in toRemove)
 		{
 			var node = _entityNodes[id];
@@ -109,28 +120,31 @@ public partial class BattleInstance : ClientInstance
 		// Overview handlers
 		foreach (var entity in State.All)
 		{
-			BattleRegistry?.EntityViewHandlers.Execute(this, entity);
+			// Change name of EntityViewHandlers to something more fitting. Maybe rather than single 
+			BattleRegistry.EntityViewHandlers.Execute(this, entity);
 		}
-		var defaultId = BattleRegistry?.DefaultLayoutId ?? ResourceId.Empty;
-		IBattleLayoutHandler? layoutHandler = BattleRegistry?.LayoutHandler.Get(State.Layout.Layout)
-											 ?? BattleRegistry?.LayoutHandler.Get(defaultId);
-		if (layoutHandler == null) { return; }
-		layoutHandler.Compute(this);
+		
+		var defaultId = BattleRegistry.DefaultLayoutId;
+		var layoutHandler = BattleRegistry.LayoutHandler.Get(State.Layout.Layout) ?? BattleRegistry?.LayoutHandler.Get(defaultId);
+		layoutHandler?.Compute(this);
 
 		// Set Camera
-		var playerTurnId = State.Turn.TurnOrder[State.Turn.TurnIndex];
-		if (_oldTurnState.TurnIndex != State.Turn.TurnIndex) //TODO: oldTurnState feels wrong and not a good way?
+		if (State.Turn.TurnOrder.Count > 0 && State.Turn.TurnIndex < State.Turn.TurnOrder.Count)
 		{
-			var e = State.Get(playerTurnId);
-			if (e is Player player)
+			var playerTurnId = State.Turn.TurnOrder[State.Turn.TurnIndex];
+			if (_oldTurnState.TurnIndex != State.Turn.TurnIndex) //TODO: oldTurnState feels wrong and not a good way?
 			{
-				var battlefieldId = player.BattlefieldIds.FirstOrDefault();
-				FocusOn(battlefieldId);
+				var e = State.Get(playerTurnId);
+				if (e is Player player)
+				{
+					var battlefieldId = player.BattlefieldIds.FirstOrDefault();
+					FocusOn(battlefieldId);
+				}
+				_oldTurnState = State.Turn.Copy();
 			}
-			_oldTurnState = State.Turn.Copy();
-		}
-		else
-		{
+			else
+			{
+			}
 		}
 	}
 

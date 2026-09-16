@@ -89,6 +89,8 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		}
 		addUnitSlot(batch, battlefieldId, new(0, -1));
 
+		// REMOVE LTR!!!
+		batch.AnimationId = ResourceId.Vanilla("test");
 		context.ApplyBlockBatch(batch);
 	}
 }

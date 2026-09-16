@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bk7jiwgxicc04"]
 
 [ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/vanilla/instance/battle/CardDisplay.cs" id="1_8pb73"]
-[ext_resource type="Texture2D" uid="uid://h66vbs1kggw4" path="res://assets/vanilla/test.png" id="1_bw6t6"]
+[ext_resource type="Texture2D" uid="uid://h66vbs1kggw4" path="res://assets/vanilla/texture/test.png" id="1_bw6t6"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3al6n"]
 bg_color = Color(0.6, 0.6, 0.6, 0)

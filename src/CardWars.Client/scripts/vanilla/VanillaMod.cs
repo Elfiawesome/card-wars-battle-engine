@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using CardWars.Client.scripts.core;
+using CardWars.Client.scripts.vanilla.animation;
 using CardWars.Client.scripts.vanilla.entity_view;
 using CardWars.Client.scripts.vanilla.layout;
 using CardWars.Client.scripts.vanilla.packet;
@@ -38,15 +39,17 @@ public class VanillaMod : IClientMod
 		BattleRegistry.EntityScene.Register(SharedIds.Battlefield, "res://scenes/vanilla/instance/battle/battlefield_node.tscn");
 		BattleRegistry.EntityScene.Register(SharedIds.UnitSlot, "res://scenes/vanilla/instance/battle/unit_slot_node.tscn");
 
-		// Entity View Handlers
+		// Entity View Handlers: How the node structure/heritance is like
 		BattleRegistry.EntityViewHandlers.Register(new BattlefieldViewHandler());
 		BattleRegistry.EntityViewHandlers.Register(new CardViewHandler());
 		BattleRegistry.EntityViewHandlers.Register(new UnitSlotViewHandler());
 
-		// Layout Handler
+		// Layout Handler: Sets default positions, no animation
 		BattleRegistry.DefaultLayoutId = ResourceId.Vanilla("default");
 		BattleRegistry.LayoutHandler.Register(ResourceId.Vanilla("default"), new DefaultLayout());
 		BattleRegistry.LayoutHandler.Register(ResourceId.Vanilla("line"), new LineLayout());
+
+		BattleRegistry.Animations.Register<TestAnimation>(ResourceId.Vanilla("test"));
 
 		// See later if i want to use it
 		registry.RegisterExtension(BattleRegistry);

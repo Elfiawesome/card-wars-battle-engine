@@ -1,3 +1,4 @@
+using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.registry;
 using CardWars.Client.scripts.vanilla.layout;
@@ -12,4 +13,5 @@ public class BattleRegistry : IClientRegistryExtension
 	
 	public ResourceId DefaultLayoutId;
 	public Registry<ResourceId, IBattleLayoutHandler> LayoutHandler = new();
+	public RegistryFactory<ResourceId, BattleAnimation> Animations = new();
 }
