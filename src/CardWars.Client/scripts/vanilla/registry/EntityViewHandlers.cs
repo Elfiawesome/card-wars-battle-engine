@@ -1,33 +1,28 @@
 using System;
+using System.Collections.Generic;
 using CardWars.BattleEngine.State;
 using CardWars.Client.scenes.vanilla.instance.battle;
-using CardWars.Core.Logging;
-using CardWars.Core.Registry;
 
 namespace CardWars.Client.scripts.vanilla.registry;
 
-public interface IEntityViewHandler<in TEntity>
-	where TEntity : IEntity
+public interface IEntityViewHandler<TEntity>
+	where TEntity : class, IEntity
 {
-	public void Sync(BattleInstance instance, TEntity entity);
+	public void Sync(BattleInstance instance, IReadOnlyCollection<TEntity> entities);
 }
 
-public class EntityViewHandlerRegistry : Registry<Type, Action<BattleInstance, IEntity>>
+public class EntityViewHandlerRegistry
 {
+	private readonly List<Action<BattleInstance, GameState>> _handlers = [];
+
 	public void Register<TEntity>(IEntityViewHandler<TEntity> handler)
-		where TEntity : IEntity
+		where TEntity : class, IEntity
 	{
-		base.Register(typeof(TEntity), (instance, entity) =>
-		{
-			if (entity is TEntity typed) handler.Sync(instance, typed);
-			else Log.Error($"Entity view handler for {typeof(TEntity)} received an entity of type {entity.GetType().Name}");
-		});
+		_handlers.Add((instance, state) => handler.Sync(instance, [.. state.OfType<TEntity>()]));
 	}
 
-	public void Execute(BattleInstance instance, IEntity entity)
+	public void Execute(BattleInstance instance, GameState state)
 	{
-		var handler = Get(entity.GetType());
-		if (handler == null) { Log.Debug($"No entity view handler for {entity.GetType().Name}"); return; }
-		handler.Invoke(instance, entity);
+		foreach (var handler in _handlers) handler.Invoke(instance, state);
 	}
 }

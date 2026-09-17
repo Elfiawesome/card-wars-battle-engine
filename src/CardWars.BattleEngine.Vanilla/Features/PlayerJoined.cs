@@ -4,6 +4,7 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
@@ -75,12 +76,14 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		batch.Blocks.Add(new AttachBattlefieldToPlayerBlock(request.PlayerId, battlefieldId));
 
 
+		ListTag unitLists = new();
 		var addUnitSlot = (BlockBatch b, EntityId bid, UnitSlotPos pos = default) =>
 		{
 			var usid = EntityId.New();
 			b.Blocks.Add(new InstantiateUnitSlotBlock(usid));
 			b.Blocks.Add(new ModifyUnitSlotPositionBlock(usid, pos));
 			b.Blocks.Add(new AttachUnitSlotToBattlefieldBlock(bid, usid));
+			unitLists.Add(new GuidTag(usid.Value));
 		};
 		// Create a 4 unit slot (3 front row, 1 back unit)
 		for (int i = 0; i < 3; i++)
@@ -90,6 +93,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		addUnitSlot(batch, battlefieldId, new(0, -1));
 
 		// REMOVE LTR!!!
+		batch.AnimationArgs.Set("unit_slots", unitLists);
 		batch.AnimationId = ResourceId.Vanilla("test");
 		context.ApplyBlockBatch(batch);
 	}

@@ -16,10 +16,10 @@ public class GameState
 
 	public bool Remove(EntityId id) => _entities.Remove(id);
 
-	public IEntity? Get(EntityId id)
-		=> _entities.TryGetValue(id, out var e) ? e : null;
+	public IEntity? Get(EntityId? id)
+		=> id is { } key && _entities.TryGetValue(key, out var e) ? e : null;
 
-	public T? Get<T>(EntityId id) where T : class, IEntity
+	public T? Get<T>(EntityId? id) where T : class, IEntity
 		=> Get(id) as T;
 
 	public T? Require<T>(EntityId id,

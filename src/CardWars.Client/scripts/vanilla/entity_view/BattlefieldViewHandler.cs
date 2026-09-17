@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Client.scripts.vanilla.registry;
@@ -7,11 +9,21 @@ namespace CardWars.Client.scripts.vanilla.entity_view;
 
 public class BattlefieldViewHandler : IEntityViewHandler<Battlefield>
 {
-	public void Sync(BattleInstance instance, Battlefield entity)
+	public void Sync(BattleInstance instance, IReadOnlyCollection<Battlefield> entities)
 	{
-		var node = instance.GetOrCreateEntityNode<BattlefieldNode>(SharedIds.Battlefield, entity.Id);
-		if (node == null) return;
+		var activeIds = entities.Select(e => e.Id).ToHashSet();
 
-		instance.AttachNodeToOwner(node, entity.OwnerPlayerId);
+		foreach (var id in instance.GetEntityNodeIds<BattlefieldNode>())
+		{
+			if (!activeIds.Contains(id)) instance.FreeEntityNode(id);
+		}
+
+		foreach (var entity in entities)
+		{
+			var node = instance.GetOrCreateEntityNode<BattlefieldNode>(SharedIds.Battlefield, entity.Id);
+			if (node == null) continue;
+
+			instance.AttachNodeToOwner(node, entity.OwnerPlayerId);
+		}
 	}
 }

@@ -7,9 +7,7 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
-using CardWars.Client.scripts.vanilla.layout;
 using CardWars.Client.scripts.vanilla.registry;
-using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.Packet;
@@ -35,7 +33,7 @@ public partial class BattleInstance : ClientInstance
 	public IReadOnlyDictionary<EntityId, Node3D> EntityNodes => _entityNodes;
 	private readonly Dictionary<EntityId, Node3D> _entityNodes = [];
 
-	// Test random node
+	// Test random node TODO: REMOVE LTR
 	public override void _Input(InputEvent @event)
 	{
 		if (@event is InputEventKey inputEventKey)
@@ -104,26 +102,13 @@ public partial class BattleInstance : ClientInstance
 
 	public void SyncState()
 	{
-		// Set free on not used entities
-		var currentIds = State.All.Select(e => e.Id).ToHashSet();
-		var toRemove = _entityNodes.Keys.Except(currentIds).ToList();
-		foreach (var id in toRemove)
-		{
-			var node = _entityNodes[id];
-			node.QueueFree(); // DONT DO THIS!! Set this to make it run animations first then get rid of it
-			_entityNodes.Remove(id);
-		}
-
+		if (BattleRegistry == null) return;
 		if (PlayspaceNode == null) return;
-		if (BattleRegistry == null) { return; }
 
-		// Overview handlers
-		foreach (var entity in State.All)
-		{
-			// Change name of EntityViewHandlers to something more fitting. Maybe rather than single 
-			BattleRegistry.EntityViewHandlers.Execute(this, entity);
-		}
-		
+		// Handle Entity Clenup & Handling
+		BattleRegistry.EntityViewHandlers.Execute(this, State);
+
+		// Handle Layout
 		var defaultId = BattleRegistry.DefaultLayoutId;
 		var layoutHandler = BattleRegistry.LayoutHandler.Get(State.Layout.Layout) ?? BattleRegistry?.LayoutHandler.Get(defaultId);
 		layoutHandler?.Compute(this);
@@ -150,10 +135,15 @@ public partial class BattleInstance : ClientInstance
 
 	public bool HasEntityNode(EntityId id) => _entityNodes.ContainsKey(id);
 
+	public IReadOnlyList<EntityId> GetEntityNodeIds<T>() where T : Node3D
+		=> [.. _entityNodes.Where(kv => kv.Value is T).Select(kv => kv.Key)];
+
+	public IReadOnlyList<T> GetEntityNodes<T>() where T : Node3D
+		=> [.. _entityNodes.Where(kv => kv.Value is T).Select(kv => kv.Value).Cast<T>()];
+
 	public T? GetEntityNode<T>(EntityId id) where T : Node3D
 		=> _entityNodes.TryGetValue(id, out var node) ? node as T : null;
 
-	// Returns the existing node, or creates + tracks a fresh one (unparented).
 	public T? GetOrCreateEntityNode<T>(ResourceId sceneId, EntityId id) where T : Node3D
 	{
 		if (_entityNodes.TryGetValue(id, out var existing)) return existing as T;
@@ -163,6 +153,14 @@ public partial class BattleInstance : ClientInstance
 		node.Name = id.ToString();
 		_entityNodes[id] = node;
 		return node;
+	}
+
+	public bool FreeEntityNode(EntityId id)
+	{
+		// For now Idk if i want to handle at a handler level or instance level
+		if (!_entityNodes.Remove(id, out var node)) return false;
+		node.QueueFree();
+		return true;
 	}
 
 	// Keeps a node under its owner's node; falls back to the playspace.

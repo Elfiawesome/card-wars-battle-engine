@@ -1,31 +1,31 @@
+using System.Collections.Generic;
+using System.Linq;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Client.scripts.vanilla.registry;
-using CardWars.Vanilla.Shared;
-using Godot;
 
 namespace CardWars.Client.scripts.vanilla.entity_view;
 
 public class CardViewHandler : IEntityViewHandler<GenericCard>
 {
-	public void Sync(BattleInstance instance, GenericCard entity)
+	public void Sync(BattleInstance instance, IReadOnlyCollection<GenericCard> entities)
 	{
-		if (entity.OwnerUnitSlotId != null && entity.OwnerPlayerId == null)
-		{
-			var node = instance.GetOrCreateEntityNode<Node3D>(SharedIds.Card, entity.Id);
-			if (node == null)
-			{
+		var hand = instance.HandManagerNode;
+		if (hand == null) return;
 
-			}
+		var handIds = entities
+			.Where(e => e.OwnerPlayerId == instance.MyPlayerId && e.OwnerUnitSlotId == null)
+			.Select(e => e.Id)
+			.ToHashSet();
+
+		foreach (var id in hand.Cards.Keys.ToList())
+		{
+			if (!handIds.Contains(id)) hand.RemoveCard(id);
 		}
 
-		if (entity.OwnerPlayerId == instance.MyPlayerId && entity.OwnerUnitSlotId == null)
+		foreach (var id in handIds)
 		{
-			var card = instance?.HandManagerNode?.GetCard(entity.Id);
-			if (card == null)
-			{
-				instance?.HandManagerNode?.AddCard(entity.Id);
-			}
+			if (hand.GetCard(id) == null) hand.AddCard(id);
 		}
 	}
 }

@@ -1,6 +1,8 @@
+using System.Collections;
+
 namespace CardWars.Core.Data.Tags;
 
-public sealed class ListTag : DataTag
+public sealed class ListTag : DataTag, IEnumerable<DataTag>
 {
 	private readonly List<DataTag> _items = [];
 	public override DataTagKind Type => DataTagKind.List;
@@ -32,4 +34,10 @@ public sealed class ListTag : DataTag
 		foreach (var item in _items) clone.Add(item.Clone());
 		return clone;
 	}
+
+	public IEnumerable<T> Enumerate<T>() where T : DataTag => _items.Cast<T>();
+
+	public IEnumerator<DataTag> GetEnumerator() => _items.GetEnumerator();
+
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

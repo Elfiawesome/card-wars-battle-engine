@@ -1,5 +1,6 @@
-using System.Collections.Generic;
+using CardWars.BattleEngine.State;
 using CardWars.Client.scenes.vanilla.instance.battle;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using Godot;
 
@@ -14,17 +15,16 @@ public class TestAnimation : BattleAnimation
 
 		Log.Info("Running test animation");
 		float delay = 0.0f;
-		foreach (var e in instance.EntityNodes)
+		var unitSlots = Data.Get<ListTag>("unit_slots") ?? [];
+		foreach (var unitSlotGuidTag in unitSlots.Enumerate<GuidTag>())
 		{
-			Log.Info(e);
-			if (e.Value is UnitSlotNode unitSlotNode)
-			{
-				tween.TweenProperty(unitSlotNode, "position", unitSlotNode.Position, 1.0).SetDelay(delay);
-				tween.TweenProperty(unitSlotNode, "scale", unitSlotNode.Scale, 1.0).SetDelay(delay);
-				unitSlotNode.Position = new(0, 0, 0);
-				unitSlotNode.Scale = new(0, 0, 0);
-				delay += 0.1f;
-			}
+			var unitSlotNode = instance.GetEntityNode<UnitSlotNode>(new EntityId(unitSlotGuidTag.Value));
+			if (unitSlotNode == null) continue;
+			tween.TweenProperty(unitSlotNode, "position", unitSlotNode.Position, 1.0).SetDelay(delay);
+			tween.TweenProperty(unitSlotNode, "scale", unitSlotNode.Scale, 1.0).SetDelay(delay);
+			unitSlotNode.Position = new(0, 0, 0);
+			unitSlotNode.Scale = new(0, 0, 0);
+			delay += 0.1f;
 		}
 		tween.Finished += Complete;
 	}
