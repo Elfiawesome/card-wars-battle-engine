@@ -33,7 +33,7 @@ public partial class HandManager : Control
 
 	public void AddCard(EntityId id)
 	{
-		var card = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<CardDisplay>(SharedIds.CardDisplay);
+		var card = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<CardDisplay>(SharedIds.UI.CardDisplay);
 		if (card == null) return;
 		card.Scale = Vector2.Zero;
 		card.Position = new(0, 0);

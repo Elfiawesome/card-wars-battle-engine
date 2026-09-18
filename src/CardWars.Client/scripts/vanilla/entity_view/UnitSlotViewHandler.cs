@@ -20,7 +20,7 @@ public class UnitSlotViewHandler : IEntityViewHandler<UnitSlot>
 
 		foreach (var entity in entities)
 		{
-			var node = instance.GetOrCreateEntityNode<UnitSlotNode>(SharedIds.UnitSlot, entity.Id);
+			var node = instance.GetOrCreateEntityNode<UnitSlotNode>(SharedIds.Entities.UnitSlot, entity.Id);
 			if (node == null) continue;
 
 			instance.AttachNodeToOwner(node, entity.OwnerBattlefieldId);

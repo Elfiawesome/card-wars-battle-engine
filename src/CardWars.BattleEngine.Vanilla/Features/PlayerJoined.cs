@@ -95,7 +95,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 
 		// REMOVE LTR!!!
 		batch.AnimationArgs.Set("unit_slots", unitLists);
-		batch.AnimationId = SharedIds.Animation.PlayerIntroductionAnimation;
+		batch.AnimationId = SharedIds.Animations.PlayerIntroduction;
 		context.ApplyBlockBatch(batch);
 	}
 }

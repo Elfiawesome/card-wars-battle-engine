@@ -20,7 +20,7 @@ public class BattlefieldViewHandler : IEntityViewHandler<Battlefield>
 
 		foreach (var entity in entities)
 		{
-			var node = instance.GetOrCreateEntityNode<BattlefieldNode>(SharedIds.Battlefield, entity.Id);
+			var node = instance.GetOrCreateEntityNode<BattlefieldNode>(SharedIds.Entities.Battlefield, entity.Id);
 			if (node == null) continue;
 
 			instance.AttachNodeToOwner(node, entity.OwnerPlayerId);

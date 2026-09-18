@@ -28,16 +28,16 @@ public class VanillaMod : IClientMod
 		registry.PacketHandlers.Register(new S2C_BattleBlockBatchHandler());
 
 		// Instances
-		registry.Instances.Register(SharedIds.WorldInstanceId, "res://scenes/vanilla/instance/world/world_instance.tscn");
-		registry.Instances.Register(SharedIds.BattleInstanceId, "res://scenes/vanilla/instance/battle/battle_instance.tscn");
+		registry.Instances.Register(SharedIds.Instances.World, "res://scenes/vanilla/instance/world/world_instance.tscn");
+		registry.Instances.Register(SharedIds.Instances.Battle, "res://scenes/vanilla/instance/battle/battle_instance.tscn");
 
 		// UI
-		registry.UserInterface.Register(SharedIds.CardDisplay, "res://scenes/vanilla/instance/battle/card_display.tscn");
+		registry.UserInterface.Register(SharedIds.UI.CardDisplay, "res://scenes/vanilla/instance/battle/card_display.tscn");
 
 		// --- Battle ---
 		// Entities
-		BattleRegistry.EntityScene.Register(SharedIds.Battlefield, "res://scenes/vanilla/instance/battle/battlefield_node.tscn");
-		BattleRegistry.EntityScene.Register(SharedIds.UnitSlot, "res://scenes/vanilla/instance/battle/unit_slot_node.tscn");
+		BattleRegistry.EntityScene.Register(SharedIds.Entities.Battlefield, "res://scenes/vanilla/instance/battle/battlefield_node.tscn");
+		BattleRegistry.EntityScene.Register(SharedIds.Entities.UnitSlot, "res://scenes/vanilla/instance/battle/unit_slot_node.tscn");
 
 		// Entity View Handlers: How the node structure/heritance is like
 		BattleRegistry.EntityViewHandlers.Register(new BattlefieldViewHandler());
@@ -50,7 +50,7 @@ public class VanillaMod : IClientMod
 		BattleRegistry.LayoutHandler.Register(ResourceId.Vanilla("line"), new LineLayout());
 
 		// Battle Animation
-		BattleRegistry.Animations.Register<PlayerIntroductionAnimation>(SharedIds.Animation.PlayerIntroductionAnimation);
+		BattleRegistry.Animations.Register<PlayerIntroductionAnimation>(SharedIds.Animations.PlayerIntroduction);
 
 		// See later if i want to use it
 		registry.RegisterExtension(BattleRegistry);
