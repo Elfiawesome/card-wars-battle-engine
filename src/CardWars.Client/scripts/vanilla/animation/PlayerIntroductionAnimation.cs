@@ -6,14 +6,13 @@ using Godot;
 
 namespace CardWars.Client.scripts.vanilla.animation;
 
-public class TestAnimation : BattleAnimation
+public class PlayerIntroductionAnimation : BattleAnimation
 {
 	public override void Start(BattleInstance instance)
 	{
 		var tween = instance.CreateTween();
 		tween.SetParallel(true).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
 
-		Log.Info("Running test animation");
 		float delay = 0.0f;
 		var unitSlots = Data.Get<ListTag>("unit_slots") ?? [];
 		foreach (var unitSlotGuidTag in unitSlots.Enumerate<GuidTag>())

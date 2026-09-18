@@ -49,7 +49,8 @@ public class VanillaMod : IClientMod
 		BattleRegistry.LayoutHandler.Register(ResourceId.Vanilla("default"), new DefaultLayout());
 		BattleRegistry.LayoutHandler.Register(ResourceId.Vanilla("line"), new LineLayout());
 
-		BattleRegistry.Animations.Register<TestAnimation>(ResourceId.Vanilla("test"));
+		// Battle Animation
+		BattleRegistry.Animations.Register<PlayerIntroductionAnimation>(SharedIds.Animation.PlayerIntroductionAnimation);
 
 		// See later if i want to use it
 		registry.RegisterExtension(BattleRegistry);

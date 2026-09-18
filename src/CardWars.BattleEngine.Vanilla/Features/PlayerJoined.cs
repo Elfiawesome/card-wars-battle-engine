@@ -6,6 +6,7 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
+using CardWars.Vanilla.Shared;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
@@ -94,7 +95,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 
 		// REMOVE LTR!!!
 		batch.AnimationArgs.Set("unit_slots", unitLists);
-		batch.AnimationId = ResourceId.Vanilla("test");
+		batch.AnimationId = SharedIds.Animation.PlayerIntroductionAnimation;
 		context.ApplyBlockBatch(batch);
 	}
 }
