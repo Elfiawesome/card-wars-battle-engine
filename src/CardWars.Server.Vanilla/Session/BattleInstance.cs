@@ -27,7 +27,7 @@ public class BattleInstance : ServerInstance
 
 	private void SetupTestBattle()
 	{
-		void AddTestPlayer(int team) => Engine?.HandleInput(EntityId.None, new PlayerJoinedRequestInput(new EntityId(Guid.NewGuid()), team));
+		// void AddTestPlayer(int team) => Engine?.HandleInput(EntityId.None, new PlayerJoinedRequestInput(new EntityId(Guid.NewGuid()), team));
 		// 1v1
 		// AddTestPlayer(2);
 

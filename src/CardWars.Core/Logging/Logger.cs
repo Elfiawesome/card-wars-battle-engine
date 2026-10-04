@@ -58,6 +58,7 @@ public static class Log
 			return DataTagSerializer.Serialize(tag);  // compact JSON
 
 		var compound = DataTagMapper.ToTag(obj, includeType: true);
+		if (compound.Count == 0) return obj.ToString() ?? "<NULL INSTANCE>";
 		return DataTagSerializer.Serialize(compound);
 	}
 }

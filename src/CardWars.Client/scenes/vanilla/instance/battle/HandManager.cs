@@ -12,11 +12,14 @@ public partial class HandManager : Control
 	public const float HandAngleDeg = 100.0f;
 	public const float CardAngleDeg = 180.0f;
 	public const float HoverRaiseAmount = 60.0f;
+	public const float SelectedLowerAmount = 180.0f;
 	public const int HoverZIndex = 10;
 
 	public Vector2 CardScale = Vector2.One * 0.15f;
 
 	public CardDisplay? HoveredCard = null;
+	public CardDisplay? SelectedCard = null;
+	public Node2D? LineArrow = null;
 	public BattleInstance? BattleInstance = null;
 
 	// private List<CardDisplay> _cards = [];
@@ -26,6 +29,28 @@ public partial class HandManager : Control
 	public override void _Ready()
 	{
 		Resized += ArrangeCard;
+	}
+
+	public override void _Process(double delta)
+	{
+		if (LineArrow != null)
+		{
+			// TODO: does any other code use XXX is { } XXX style? We should use this more...
+			if (BattleInstance?.Hovered3DTarget is { } target3D
+				&& BattleInstance.CameraNode is { } cam
+				&& LineArrow != null)
+			{
+				var viewportPoint = cam.UnprojectPosition(target3D.GlobalPosition);
+				var localPoint = LineArrow.GetGlobalTransformWithCanvas().AffineInverse() * viewportPoint;
+				LineArrow.Set("target", localPoint);
+				LineArrow.Set("smoothness", 0.2);
+			}
+			else
+			{
+				LineArrow?.Set("smoothness", 0.8);
+				LineArrow?.Set("target", LineArrow.GetLocalMousePosition());
+			}
+		}
 	}
 
 
@@ -40,6 +65,7 @@ public partial class HandManager : Control
 
 		card.MouseEntered += () => OnCardMouseEntered(card);
 		card.MouseExited += () => OnCardMouseExited(card);
+		card.GuiInput += (e) => OnCardGuiInput(e, card);
 		AddChild(card);
 		_cards[id] = card;
 		ArrangeCard();
@@ -64,6 +90,47 @@ public partial class HandManager : Control
 	{
 		if (HoveredCard == card) { HoveredCard = null; ArrangeCard(); }
 	}
+
+	private void OnCardGuiInput(InputEvent @event, CardDisplay card)
+	{
+		if (@event is InputEventMouseButton inputEventMouseButton)
+		{
+			if (inputEventMouseButton.ButtonIndex == MouseButton.Left)
+			{
+				if (inputEventMouseButton.Pressed)
+				{
+					if (SelectedCard == null)
+					{
+						SelectedCard = card;
+
+						LineArrow?.QueueFree();
+						LineArrow = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<Node2D>(SharedIds.UI.LineArrow);
+						AddChild(LineArrow);
+					}
+				}
+				ArrangeCard();
+			}
+		}
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		if (@event is InputEventMouseButton inputEventMouseButton)
+		{
+			if (inputEventMouseButton.Pressed)
+			{
+				if (SelectedCard != null)
+				{
+					SelectedCard = null;
+
+					LineArrow?.QueueFree();
+					LineArrow = null;
+				}
+			}
+			ArrangeCard();
+		}
+	}
+
 
 	private void ArrangeCard()
 	{
@@ -108,16 +175,42 @@ public partial class HandManager : Control
 				float newRot = float.DegreesToRadians(rotDeg);
 				Vector2 newScale = CardScale;
 
-				if (c == HoveredCard)
+				c.Modulate = new Color(Modulate, 1.0f);
+				if (c == SelectedCard)
 				{
-					newPos.Y -= HoverRaiseAmount;
+					newPos.Y = handCenter.Y / 2;
+					newPos.X = handCenter.X + handCenter.X / 2;
+					newPos -= c.Size / 2;
+
 					newRot = 0;
 					c.ZIndex = HoverZIndex;
+					// c.Modulate = new Color(Modulate, 0.5f);
 					newScale *= 1.2f;
+
+					if (LineArrow != null) LineArrow.Position = newPos + c.Size / 2;
 				}
 				else
 				{
-					c.ZIndex = 0;
+					if (SelectedCard == null)
+					{
+						if (c == HoveredCard)
+						{
+							newPos.Y -= HoverRaiseAmount;
+							newRot = 0;
+							c.ZIndex = HoverZIndex;
+							newScale *= 1.2f;
+						}
+						else
+						{
+							c.ZIndex = 0;
+						}
+					}
+					else
+					{
+						newPos.Y += SelectedLowerAmount;
+						newPos.X += 0;
+						// c.Modulate = new Color(Modulate, 0.5f);
+					}
 				}
 
 				c.currentAnimationTween?.Kill();

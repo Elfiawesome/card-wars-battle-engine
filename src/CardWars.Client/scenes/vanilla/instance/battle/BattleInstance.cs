@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CardWars.BattleEngine.Block;
@@ -32,6 +33,9 @@ public partial class BattleInstance : ClientInstance
 
 	public IReadOnlyDictionary<EntityId, Node3D> EntityNodes => _entityNodes;
 	private readonly Dictionary<EntityId, Node3D> _entityNodes = [];
+
+	public Node3D? Hovered3DTarget;
+	public Action<Node3D>? OnHovered3DTargetClicked;
 
 	// Test random node TODO: REMOVE LTR
 	public override void _Input(InputEvent @event)

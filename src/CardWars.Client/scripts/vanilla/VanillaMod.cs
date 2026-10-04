@@ -33,6 +33,7 @@ public class VanillaMod : IClientMod
 
 		// UI
 		registry.UserInterface.Register(SharedIds.UI.CardDisplay, "res://scenes/vanilla/instance/battle/card_display.tscn");
+		registry.UserInterface.Register(SharedIds.UI.LineArrow, "res://scenes/vanilla/instance/battle/ui/line_arrow.tscn");
 
 		// --- Battle ---
 		// Entities
