@@ -49,7 +49,7 @@ public static class Log
 
 		if (obj is string s) return s;
 		if (obj is int || obj is float || obj is bool || obj is Guid)
-			return obj.ToString()!;
+			return obj.ToString() ?? "";
 
 		if (obj is System.Collections.IEnumerable enumerable)
 			return "[" + string.Join(", ", enumerable.Cast<object>().Select(ToReadable)) + "]";

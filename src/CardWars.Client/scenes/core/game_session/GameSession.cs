@@ -26,7 +26,7 @@ public partial class GameSession : Node
 
 	public Server.Server? IntegratedServer { get; private set; }
 	public IConnection? Connection { get; private set; }
-	public StorageManager Storage { get; private set; } = null!;
+	public StorageManager? Storage { get; private set; } = null;
 
 	public string ConnectingUsername = "";
 
@@ -67,6 +67,7 @@ public partial class GameSession : Node
 
 	private void StartIntegratedServer()
 	{
+		if (Storage == null) { return; }
 		var sessionName = "session_1";
 		IntegratedServer = new Server.Server(Storage, sessionName);
 
@@ -85,6 +86,7 @@ public partial class GameSession : Node
 
 	private void JoinServer()
 	{
+		if (Storage == null) { return; }
 		var modDirs = Storage.AllModDirectories;
 		ModLoader.ModLoader modLoader = new(modDirs);
 		modLoader.Setup();
