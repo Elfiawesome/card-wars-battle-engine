@@ -61,6 +61,7 @@ public partial class BattleInstance : ClientInstance
 
 	public override void _Ready()
 	{
+		if (HandManagerNode != null) HandManagerNode.BattleInstance = this;
 	}
 
 	public override void _Process(double delta)
