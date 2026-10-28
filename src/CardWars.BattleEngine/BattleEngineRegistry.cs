@@ -1,4 +1,5 @@
 using CardWars.BattleEngine.Behaviour;
+using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Tags;
@@ -11,6 +12,7 @@ public class BattleEngineRegistry
 	public HandlerRegistry<InputContext> InputHandlers = new();
 	public HandlerRegistry<GameState> BlockHandlers = new();
 	public HandlerRegistry<Transaction> EventHandlers = new();
+	public DataDrivenRegistry DataDriven { get; } = new();
 	public RegistryFactory<ResourceId, IBehaviour> Behaviours { get; } = new();
 	public RegistryFactory<ResourceId, EntityId, IEntity> Entities { get; } = new();
 

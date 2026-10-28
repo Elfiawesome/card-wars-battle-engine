@@ -53,6 +53,17 @@ public static class DataTagMapper
 		return TagDeserializer.Deserialize(tag, targetType);
 	}
 
+	// ======================== SINGLE VALUES ========================
+
+	public static DataTag? ToValueTag(object? value, Type? declaredType = null)
+	{
+		if (value == null) return null;
+		return TagSerializer.SerializeValue(value, declaredType ?? value.GetType());
+	}
+
+	public static object? FromValueTag(DataTag? tag, Type targetType)
+		=> TagDeserializer.Deserialize(tag, targetType);
+
 	// ======================== CONVERTERS ========================
 
 	public static void RegisterConverter<T>(DataTagConverter<T> converter) => _globalConverters[typeof(T)] = converter;

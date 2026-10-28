@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
 
 namespace CardWars.Core.Data.Serialization.Json;
 
@@ -75,6 +76,13 @@ public class DataTagJsonConverter : JsonConverter<DataTag>
 				writer.WriteStartArray();
 				foreach (var item in t.Items) Write(writer, item, options);
 				writer.WriteEndArray();
+				break;
+			case NullTag:
+				writer.WriteNullValue();
+				break;
+			case ObjectRefTag t:
+				Log.Warn($"Cannot serialize runtime object reference [{t.Value.GetType().Name}], writing null");
+				writer.WriteNullValue();
 				break;
 		}
 	}

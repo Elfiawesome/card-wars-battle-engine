@@ -4,4 +4,5 @@ public abstract class DataTag
 {
 	public abstract DataTagKind Type { get; }
 	public abstract DataTag Clone();
+	public virtual bool IsTruthy => false;
 }

@@ -11,6 +11,7 @@ public class BehaviourContext
 
 	public GameState State { get; }
 	public EntityId OwnerEntityId { get; init; }
+	public BattleEngineRegistry Registry => _transaction.Registry;
 
 	internal BehaviourContext(Transaction transaction, GameState state, EntityId owner)
 	{

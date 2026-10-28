@@ -1,0 +1,22 @@
+using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
+using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
+using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
+
+namespace CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
+
+[DataTagType("script/expression/less_than_or_equal")]
+public record struct LessThanOrEqualExpression(
+	[property: DataTag] IExpression Left,
+	[property: DataTag] IExpression Right
+) : IExpression;
+
+public sealed class LessThanOrEqualExpressionHandler : IExpressionHandler<LessThanOrEqualExpression>
+{
+	public DataTag Handle(ScriptRuntimeContext context, LessThanOrEqualExpression request)
+	{
+		Log.Error("LessThanOrEqualExpression is not implemented");
+		return new NullTag();
+	}
+}

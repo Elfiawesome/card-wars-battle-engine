@@ -40,4 +40,6 @@ public sealed class ListTag : DataTag, IEnumerable<DataTag>
 	public IEnumerator<DataTag> GetEnumerator() => _items.GetEnumerator();
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+	public override bool IsTruthy => Count > 0;
 }

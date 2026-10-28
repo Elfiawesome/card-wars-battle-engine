@@ -103,4 +103,7 @@ public sealed class CompoundTag : DataTag
 			clone.Set(key, tag.Clone());
 		return clone;
 	}
+
+	public override bool IsTruthy => Count > 0;
+
 }

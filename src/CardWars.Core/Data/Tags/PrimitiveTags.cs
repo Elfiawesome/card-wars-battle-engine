@@ -21,6 +21,7 @@ public sealed class IntTag(int value) : DataTag
 
 	// public static implicit operator int(IntTag v) => v.Value;
 	// public static implicit operator IntTag(int v) => new(v);
+	public override bool IsTruthy => Value != 0;
 }
 
 public sealed class FloatTag(float value) : DataTag
@@ -44,6 +45,7 @@ public sealed class FloatTag(float value) : DataTag
 
 	// public static implicit operator float(FloatTag v) => v.Value;
 	// public static implicit operator FloatTag(float v) => new(v);
+	public override bool IsTruthy => Value != 0;
 }
 
 public sealed class StringTag(string value) : DataTag
@@ -60,6 +62,8 @@ public sealed class StringTag(string value) : DataTag
 
 	// public static implicit operator string(StringTag v) => v.Value;
 	// public static implicit operator StringTag(string v) => new(v);
+
+	public override bool IsTruthy => !string.IsNullOrEmpty(Value);
 }
 
 public sealed class BoolTag(bool value) : DataTag
@@ -74,6 +78,8 @@ public sealed class BoolTag(bool value) : DataTag
 
 	// public static implicit operator bool(BoolTag v) => v.Value;
 	// public static implicit operator BoolTag(bool v) => new(v);
+
+	public override bool IsTruthy => Value;
 }
 
 public sealed class GuidTag(Guid value) : DataTag
@@ -84,4 +90,14 @@ public sealed class GuidTag(Guid value) : DataTag
 
 	// public static implicit operator Guid(GuidTag v) => v.Value;
 	// public static implicit operator GuidTag(Guid v) => new(v);
+
+	public override bool IsTruthy => Value != Guid.Empty;
+
+}
+
+public sealed class NullTag : DataTag
+{
+	public override DataTagKind Type => DataTagKind.Null;
+	public override DataTag Clone() => new NullTag();
+	public override bool IsTruthy => false;
 }

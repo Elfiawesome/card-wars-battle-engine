@@ -1,8 +1,10 @@
 using CardWars.BattleEngine.Behaviour;
+using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data.Mapping;
 using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine;
@@ -179,7 +181,15 @@ public class Transaction
 		}
 		else if (pointer.BehaviourDefinition != null)
 		{
-			// TODO: Data-driven behaviour creation
+			try
+			{
+				var definition = DataTagMapper.FromTag<BehaviourDefinition>(pointer.BehaviourDefinition);
+				behaviour = new ScriptBehaviour(definition, Registry.DataDriven);
+			}
+			catch (Exception ex)
+			{
+				Log.Error($"Could not create data-driven behaviour: {ex.Message}");
+			}
 		}
 
 		if (behaviour != null && !behaviour.ListeningEventType.IsAssignableFrom(eventType)) return null;

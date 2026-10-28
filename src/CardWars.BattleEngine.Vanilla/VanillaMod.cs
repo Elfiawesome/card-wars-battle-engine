@@ -1,4 +1,6 @@
 ﻿using CardWars.BattleEngine.Vanilla.Behaviour;
+using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
+using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data.Tags;
@@ -63,8 +65,59 @@ public class VanillaMod : IBattleEngineMod
 		// --- Behaviours ---
 		registry.Behaviours.Register<SummonUnitCardToUnitSlotBehaviour>(ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour"));
 
+		// --- Data-Driven Behaviours ---
+		RegisterDataDriven(registry);
+
 		// --- Card Definitions ---
 		RegisterCardDefinitions(registry, modContents);
+	}
+
+	private static void RegisterDataDriven(BattleEngineRegistry registry)
+	{
+		var dataDriven = registry.DataDriven;
+
+		dataDriven.ExpressionHandlers.Register(new LiteralExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new VariableExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new MemberExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new IndexExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new AddExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new SubtractExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new MultiplyExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new DivideExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new ModuloExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new EqualsExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new NotEqualsExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new LessThanExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new LessThanOrEqualExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new GreaterThanExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new GreaterThanOrEqualExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new AndExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new OrExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new NotExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new NegateExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new CoalesceExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new ConditionalExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new ListExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new ObjectExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new ConstructExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new CallExpressionHandler());
+
+		dataDriven.InstructionHandlers.Register(new DeclarationInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new SetInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new IfInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new WhileInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new ForInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new ForEachInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new StageBlockInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new StageBlocksInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new CommitInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new RaiseInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new ReturnInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new BreakInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new ContinueInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new WaitInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new CancelInstructionHandler());
+		dataDriven.InstructionHandlers.Register(new LogInstructionHandler());
 	}
 
 
