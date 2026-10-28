@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CardWars.BattleEngine.Behaviour.DataDriven;
+using CardWars.BattleEngine.Behaviour.DataDriven.Expression;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
@@ -9,6 +11,10 @@ using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.vanilla.registry;
+using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data.Serialization.Json;
+using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.Packet;
@@ -57,7 +63,36 @@ public partial class BattleInstance : ClientInstance
 
 	public override void _Ready()
 	{
-		if (HandManagerNode != null) HandManagerNode.BattleInstance = this;
+		// // Start of TEST DEBUG
+		// if (HandManagerNode != null) HandManagerNode.BattleInstance = this;
+
+		// var o = new BehaviourInstruction(
+		// 	[
+		// 		new EventInstructions(
+		// 			ResourceId.Vanilla("huh"),
+		// 			[
+		// 				new DeclarationLine("i",
+		// 					new AddExpressionSpec(
+		// 						new GivenValueExpressionSpec(new StringTag("Hello World: Times: ")),
+		// 						new MultiplyExpressionSpec(
+		// 							new GivenValueExpressionSpec(new IntTag(5)),
+		// 							new GivenValueExpressionSpec(new IntTag(3))
+		// 						)
+		// 					)
+		// 				),
+		// 			]
+		// 		)
+		// 	],
+		// []
+		// );
+		// var s = DataTagSerializer.Serialize(DataTagMapper.ToTag(o));
+		// Log.Info("deserialized value");
+		// Log.Info(s);
+
+		// var d = DataTagMapper.FromTag<BehaviourInstruction>(DataTagSerializer.Deserialize<CompoundTag>(s) ?? new CompoundTag());
+		// Log.Info("serialized value");
+		// Log.Info(d);
+		// // End of TEST DEBUG
 	}
 
 	public override void _Process(double delta)
