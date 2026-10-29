@@ -14,7 +14,7 @@ public record struct ConditionalExpression(
 
 public sealed class ConditionalExpressionHandler : IExpressionHandler<ConditionalExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, ConditionalExpression request)
+	public DataTag Handle(ScriptContext context, ConditionalExpression request)
 	{
 		var condition = context.Evaluate(request.Condition);
 		return condition.IsTruthy

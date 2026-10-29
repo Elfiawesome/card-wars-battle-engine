@@ -9,7 +9,7 @@ namespace CardWars.BattleEngine.Behaviour.DataDriven;
 
 public sealed class DataDrivenRegistry
 {
-	public HandlerRegistry<ScriptRuntimeContext, DataTag> ExpressionHandlers { get; } = new();
+	public HandlerRegistry<ScriptContext, DataTag> ExpressionHandlers { get; } = new();
 	public HandlerRegistry<ScriptRuntimeContext, IEnumerable<InstructionOutcome>> InstructionHandlers { get; } = new();
 	public ObjectAccessRegistry ObjectAccessors { get; } = new();
 	public Registry<ResourceId, IDataDrivenFunction> Functions { get; } = new();
@@ -19,6 +19,6 @@ public sealed class DataDrivenRegistry
 		ObjectAccessors.Register<GameState>(new GameStateObjectAccessor());
 		ObjectAccessors.Register<CompoundTag>(new TagObjectAccessor());
 		ObjectAccessors.Register<ListTag>(new TagObjectAccessor());
-		ObjectAccessors.Register<ScriptRuntimeContext>(new RuntimeVariablesObjectAccessor());
+		ObjectAccessors.Register<ScriptContext>(new RuntimeVariablesObjectAccessor());
 	}
 }

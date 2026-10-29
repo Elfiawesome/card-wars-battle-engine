@@ -14,7 +14,7 @@ public record struct VariableExpression(
 
 public sealed class VariableExpressionHandler : IExpressionHandler<VariableExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, VariableExpression request)
+	public DataTag Handle(ScriptContext context, VariableExpression request)
 	{
 		if (context.TryGetVariable(request.Name, out var variable)) return variable ?? new NullTag();
 

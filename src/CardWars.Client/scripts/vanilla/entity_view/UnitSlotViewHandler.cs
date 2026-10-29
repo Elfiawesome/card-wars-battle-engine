@@ -25,8 +25,8 @@ public class UnitSlotViewHandler : IEntityViewHandler<UnitSlot>
 			if (node == null) continue;
 
 			instance.AttachNodeToOwner(node, entity.OwnerBattlefieldId);
-			node.OnMouseEntered += () => { instance.Hovered3DTarget = node; Log.Info($"Entered: {node}"); };
-			node.OnMouseExited += () => { instance.Hovered3DTarget = null; };
+			node.OnMouseEntered += () => { instance.Hovered3DTarget.Node = node; Log.Info($"Entered: {node}"); };
+			node.OnMouseExited += () => { instance.Hovered3DTarget.Node = null; };
 			node.OnMouseClicked += () => { instance.OnHovered3DTargetClicked?.Invoke(node); };
 			node.SetGridPosition(entity.Position);
 		}

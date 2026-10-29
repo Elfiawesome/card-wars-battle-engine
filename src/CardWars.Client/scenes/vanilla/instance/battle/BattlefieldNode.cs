@@ -1,3 +1,5 @@
+using System;
+using CardWars.Core.Logging;
 using Godot;
 
 namespace CardWars.Client.scenes.vanilla.instance.battle;
@@ -8,7 +10,25 @@ public partial class BattlefieldNode : Node3D
 	public float Depth { get; private set; } = UnitSlotNode.CellDepth;
 	public Vector3 BoundsCenter { get; private set; } = Vector3.Zero;
 
+	public Action? OnMouseEntered;
+	public Action? OnMouseExited;
+	public Action? OnMouseClicked;
+
+	private Area3D? _collisionBox;
+	private CollisionShape3D? _collisionBoxShape;
+
+
 	public float Radius => Mathf.Sqrt(Width * Width + Depth * Depth) * 0.5f;
+
+	public override void _Ready()
+	{
+		_collisionBox = GetNode<Area3D>("Area3D");
+		_collisionBoxShape = GetNode<CollisionShape3D>("Area3D/CollisionShape3D");
+		// _collisionBox.InputEvent += onCollisionInputEvent;
+		_collisionBox.MouseEntered += () => { OnMouseEntered?.Invoke(); Log.Info("Entered"); };
+		_collisionBox.MouseExited += () => { OnMouseExited?.Invoke(); Log.Info("Exited"); };
+	}
+
 
 	public void RefreshBounds()
 	{
@@ -41,6 +61,17 @@ public partial class BattlefieldNode : Node3D
 		Width = maxX - minX;
 		Depth = maxZ - minZ;
 		BoundsCenter = new Vector3((minX + maxX) * 0.5f, 0f, (minZ + maxZ) * 0.5f);
+
+		// How to amke this work?
+		if (_collisionBoxShape != null)
+		{
+			_collisionBoxShape.Shape ??= new BoxShape3D();
+			if (_collisionBoxShape.Shape is BoxShape3D boxShape3D)
+			{
+				boxShape3D.Size = new Vector3(Width, 0.05f, Depth);
+				_collisionBoxShape.Position = BoundsCenter - new Vector3(0, 0.01f, 0);
+			}
+		}
 	}
 
 	public void PlaceAt(Vector3 targetCenter, float facing)

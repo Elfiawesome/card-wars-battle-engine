@@ -14,7 +14,7 @@ public record struct CoalesceExpression(
 
 public sealed class CoalesceExpressionHandler : IExpressionHandler<CoalesceExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, CoalesceExpression request)
+	public DataTag Handle(ScriptContext context, CoalesceExpression request)
 	{
 		var left = context.Evaluate(request.Left);
 		return left is NullTag ? context.Evaluate(request.Right) : left;

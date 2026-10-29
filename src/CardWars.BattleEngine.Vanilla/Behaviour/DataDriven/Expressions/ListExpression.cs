@@ -12,7 +12,7 @@ public record struct ListExpression(
 
 public sealed class ListExpressionHandler : IExpressionHandler<ListExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, ListExpression request)
+	public DataTag Handle(ScriptContext context, ListExpression request)
 	{
 		var list = new ListTag();
 		foreach (var item in request.Items ?? [])

@@ -14,7 +14,7 @@ public record struct LessThanOrEqualExpression(
 
 public sealed class LessThanOrEqualExpressionHandler : IExpressionHandler<LessThanOrEqualExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, LessThanOrEqualExpression request)
+	public DataTag Handle(ScriptContext context, LessThanOrEqualExpression request)
 	{
 		var left = context.Evaluate(request.Left);
 		var right = context.Evaluate(request.Right);

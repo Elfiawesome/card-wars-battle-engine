@@ -3,6 +3,7 @@ using System.Linq;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Client.scripts.vanilla.registry;
+using CardWars.Core.Logging;
 using CardWars.Vanilla.Shared;
 
 namespace CardWars.Client.scripts.vanilla.entity_view;
@@ -24,6 +25,9 @@ public class BattlefieldViewHandler : IEntityViewHandler<Battlefield>
 			if (node == null) continue;
 
 			instance.AttachNodeToOwner(node, entity.OwnerPlayerId);
+			node.OnMouseEntered += () => { instance.Hovered3DTarget.Node = node; Log.Info($"Entered: {node}"); };
+			node.OnMouseExited += () => { instance.Hovered3DTarget.Node = null; };
+			node.OnMouseClicked += () => { instance.OnHovered3DTargetClicked?.Invoke(node); };
 		}
 	}
 }

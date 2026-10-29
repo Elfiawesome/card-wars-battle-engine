@@ -13,7 +13,7 @@ public record struct NegateExpression(
 
 public sealed class NegateExpressionHandler : IExpressionHandler<NegateExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, NegateExpression request)
+	public DataTag Handle(ScriptContext context, NegateExpression request)
 	{
 		var value = context.Evaluate(request.Value);
 		return value switch

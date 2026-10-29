@@ -14,7 +14,7 @@ public record struct IndexExpression(
 
 public sealed class IndexExpressionHandler : IExpressionHandler<IndexExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, IndexExpression request)
+	public DataTag Handle(ScriptContext context, IndexExpression request)
 	{
 		var target = context.Evaluate(request.Target);
 		var index = context.Evaluate(request.Index);

@@ -38,7 +38,7 @@ public partial class BattleInstance : ClientInstance
 	public IReadOnlyDictionary<EntityId, Node3D> EntityNodes => _entityNodes;
 	private readonly Dictionary<EntityId, Node3D> _entityNodes = [];
 
-	public Node3D? Hovered3DTarget;
+	public HoveredTarget Hovered3DTarget = new();
 	public Action<Node3D>? OnHovered3DTargetClicked;
 
 	// Test random node TODO: REMOVE LTR
@@ -186,3 +186,6 @@ public partial class BattleInstance : ClientInstance
 	public void SendInput(IInput input)
 		=> SendPacket(new C2S_BattleInput() { Input = input });
 }
+
+
+public record struct HoveredTarget(Node3D? Node, EntityId Id);

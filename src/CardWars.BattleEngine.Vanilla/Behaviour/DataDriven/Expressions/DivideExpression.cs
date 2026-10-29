@@ -14,7 +14,7 @@ public record struct DivideExpression(
 
 public sealed class DivideExpressionHandler : IExpressionHandler<DivideExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, DivideExpression request)
+	public DataTag Handle(ScriptContext context, DivideExpression request)
 	{
 		var left = context.Evaluate(request.Left);
 		var right = context.Evaluate(request.Right);

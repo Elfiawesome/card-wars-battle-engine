@@ -14,7 +14,7 @@ public record struct SubtractExpression(
 
 public sealed class SubtractExpressionHandler : IExpressionHandler<SubtractExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, SubtractExpression request)
+	public DataTag Handle(ScriptContext context, SubtractExpression request)
 	{
 		var left = context.Evaluate(request.Left);
 		var right = context.Evaluate(request.Right);

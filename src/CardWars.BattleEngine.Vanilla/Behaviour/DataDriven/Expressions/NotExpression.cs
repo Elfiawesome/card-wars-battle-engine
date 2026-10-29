@@ -12,7 +12,7 @@ public record struct NotExpression(
 
 public sealed class NotExpressionHandler : IExpressionHandler<NotExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, NotExpression request)
+	public DataTag Handle(ScriptContext context, NotExpression request)
 	{
 		var value = context.Evaluate(request.Value);
 		return new BoolTag(!value.IsTruthy);

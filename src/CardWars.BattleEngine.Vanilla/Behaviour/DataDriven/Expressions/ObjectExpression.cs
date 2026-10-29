@@ -12,7 +12,7 @@ public record struct ObjectExpression(
 
 public sealed class ObjectExpressionHandler : IExpressionHandler<ObjectExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, ObjectExpression request)
+	public DataTag Handle(ScriptContext context, ObjectExpression request)
 	{
 		var compound = new CompoundTag();
 		foreach (var (key, item) in request.Entries ?? [])

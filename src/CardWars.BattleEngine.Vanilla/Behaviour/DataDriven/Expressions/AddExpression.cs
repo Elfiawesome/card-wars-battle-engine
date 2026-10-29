@@ -14,7 +14,7 @@ public record struct AddExpression(
 
 public sealed class AddExpressionHandler : IExpressionHandler<AddExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, AddExpression request)
+	public DataTag Handle(ScriptContext context, AddExpression request)
 	{
 		var left = context.Evaluate(request.Left);
 		var right = context.Evaluate(request.Right);

@@ -14,7 +14,7 @@ public record struct MemberExpression(
 
 public sealed class MemberExpressionHandler : IExpressionHandler<MemberExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, MemberExpression request)
+	public DataTag Handle(ScriptContext context, MemberExpression request)
 	{
 		var target = context.Evaluate(request.Target);
 		var targetObject = target is ObjectRefTag objectRef ? objectRef.Value : target;

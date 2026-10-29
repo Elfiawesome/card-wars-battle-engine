@@ -8,3 +8,7 @@ script = ExtResource("1_f6vas")
 [node name="Node3D" type="Node3D" parent="." unique_id=1862621274]
 
 [node name="Sprite3D" type="Sprite3D" parent="Node3D" unique_id=1025295187]
+
+[node name="Area3D" type="Area3D" parent="." unique_id=616491327]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=223303380]

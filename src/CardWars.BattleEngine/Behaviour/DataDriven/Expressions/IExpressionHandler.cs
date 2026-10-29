@@ -4,5 +4,5 @@ using CardWars.Core.Request;
 
 namespace CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 
-public interface IExpressionHandler<TExpression> : IRequestHandler<ScriptRuntimeContext, TExpression, DataTag>
+public interface IExpressionHandler<TExpression> : IRequestHandler<ScriptContext, TExpression, DataTag>
 	where TExpression : IExpression;

@@ -3,6 +3,8 @@ using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.BattleEngine.Vanilla.Targeting;
+using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
@@ -133,6 +135,8 @@ public class VanillaMod : IBattleEngineMod
 
 					unitDataTag.Set("card_type", "unit");
 					unitDataTag.Set("intrinsic_behaviours", new ListTag().Add(new CompoundTag().Set("resource", "cardwars:summon_unit_card_to_unit_slot_behaviour")));
+					if (!unitDataTag.Has("target_filter"))
+						unitDataTag.Set("target_filter", DataTagMapper.ToTag(UnitTargetFilter.Create()));
 
 					registry.CardDefinitions.Register(content.Id, unitDataTag);
 

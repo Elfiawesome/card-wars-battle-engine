@@ -17,7 +17,7 @@ public record struct ConstructExpression(
 
 public sealed class ConstructExpressionHandler : IExpressionHandler<ConstructExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, ConstructExpression request)
+	public DataTag Handle(ScriptContext context, ConstructExpression request)
 	{
 		var type = DataTagTypeRegistry.GetType(request.Type.ToString());
 		if (type == null)

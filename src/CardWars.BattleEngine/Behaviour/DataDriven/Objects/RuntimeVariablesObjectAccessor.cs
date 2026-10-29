@@ -8,7 +8,7 @@ public sealed class RuntimeVariablesObjectAccessor : IObjectAccessor
 {
 	public bool TryGetMember(object target, string member, out DataTag? value)
 	{
-		if (target is not ScriptRuntimeContext context)
+		if (target is not ScriptContext context)
 		{
 			value = null;
 			return false;
@@ -25,11 +25,11 @@ public sealed class RuntimeVariablesObjectAccessor : IObjectAccessor
 	}
 
 	public bool TrySetMember(object target, string member, DataTag value)
-		=> target is ScriptRuntimeContext context && context.TrySetVariable(ResourceId.Parse(member), value);
+		=> target is ScriptContext context && context.TrySetVariable(ResourceId.Parse(member), value);
 
 	public bool TryGetIndex(object target, DataTag index, out DataTag? value)
 	{
-		if (target is not ScriptRuntimeContext context || index is not StringTag stringTag)
+		if (target is not ScriptContext context || index is not StringTag stringTag)
 		{
 			value = null;
 			return false;
@@ -39,7 +39,7 @@ public sealed class RuntimeVariablesObjectAccessor : IObjectAccessor
 	}
 
 	public bool TrySetIndex(object target, DataTag index, DataTag value)
-		=> target is ScriptRuntimeContext context
+		=> target is ScriptContext context
 			&& index is StringTag stringTag
 			&& context.TrySetVariable(ResourceId.Parse(stringTag.Value), value);
 }

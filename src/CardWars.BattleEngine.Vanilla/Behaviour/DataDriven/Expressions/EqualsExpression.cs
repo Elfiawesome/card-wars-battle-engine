@@ -14,7 +14,7 @@ public record struct EqualsExpression(
 
 public sealed class EqualsExpressionHandler : IExpressionHandler<EqualsExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, EqualsExpression request)
+	public DataTag Handle(ScriptContext context, EqualsExpression request)
 	{
 		var left = context.Evaluate(request.Left);
 		var right = context.Evaluate(request.Right);

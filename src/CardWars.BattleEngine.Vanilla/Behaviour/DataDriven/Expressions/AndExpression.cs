@@ -13,7 +13,7 @@ public record struct AndExpression(
 
 public sealed class AndExpressionHandler : IExpressionHandler<AndExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, AndExpression request)
+	public DataTag Handle(ScriptContext context, AndExpression request)
 	{
 		if (!context.Evaluate(request.Left).IsTruthy)
 			return new BoolTag(false);

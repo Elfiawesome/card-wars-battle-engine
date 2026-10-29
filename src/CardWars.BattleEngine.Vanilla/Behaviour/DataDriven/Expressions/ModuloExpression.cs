@@ -14,7 +14,7 @@ public record struct ModuloExpression(
 
 public sealed class ModuloExpressionHandler : IExpressionHandler<ModuloExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, ModuloExpression request)
+	public DataTag Handle(ScriptContext context, ModuloExpression request)
 	{
 		var left = context.Evaluate(request.Left);
 		var right = context.Evaluate(request.Right);

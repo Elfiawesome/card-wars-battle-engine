@@ -2,6 +2,7 @@ using System.Collections;
 using System.Reflection;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
@@ -12,6 +13,16 @@ public sealed class ReflectionObjectAccessor : IObjectAccessor
 {
 	public bool TryGetMember(object target, string member, out DataTag? value)
 	{
+		if (member == "_type")
+		{
+			var typeId = DataTagTypeRegistry.GetTypeId(target.GetType());
+			if (typeId != null)
+			{
+				value = new StringTag(typeId);
+				return true;
+			}
+		}
+
 		var property = FindProperty(target.GetType(), member);
 		if (property != null)
 		{

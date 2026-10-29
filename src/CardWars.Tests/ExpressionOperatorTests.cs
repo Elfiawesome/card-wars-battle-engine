@@ -155,7 +155,7 @@ public sealed class ExpressionOperatorTests
 
 	private sealed class SumFunction : IDataDrivenFunction
 	{
-		public DataTag Invoke(ScriptRuntimeContext context, IReadOnlyList<DataTag> arguments)
+		public DataTag Invoke(ScriptContext context, IReadOnlyList<DataTag> arguments)
 			=> new IntTag(arguments.OfType<IntTag>().Sum(tag => tag.Value));
 	}
 }

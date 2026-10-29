@@ -12,6 +12,6 @@ public record struct LiteralExpression(
 
 public sealed class LiteralExpressionHandler : IExpressionHandler<LiteralExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, LiteralExpression request)
+	public DataTag Handle(ScriptContext context, LiteralExpression request)
 		=> request.Value.Clone();
 }

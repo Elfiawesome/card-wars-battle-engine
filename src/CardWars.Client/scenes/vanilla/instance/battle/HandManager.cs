@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.BattleEngine.Vanilla.Targeting;
+using CardWars.Core.Logging;
 using CardWars.Vanilla.Shared;
 using Godot;
 
@@ -20,6 +23,7 @@ public partial class HandManager : Control
 	public CardDisplay? HoveredCard = null;
 	public CardDisplay? SelectedCard = null;
 	public Node2D? LineArrow = null;
+	public HashSet<EntityId> ArrowTargets = [];
 	public BattleInstance? BattleInstance = null;
 
 	// private List<CardDisplay> _cards = [];
@@ -36,10 +40,10 @@ public partial class HandManager : Control
 		if (LineArrow != null)
 		{
 			// TODO: does any other code use XXX is { } XXX style? We should use this more...
-			if (BattleInstance?.Hovered3DTarget is { } target3D
+			// Fella its called 'Property Pattern' :|
+			if (BattleInstance?.Hovered3DTarget.Node is { } target3D
 				&& BattleInstance.CameraNode is { } cam
-				&& LineArrow != null
-			)
+				&& LineArrow != null)
 			{
 				var viewportPoint = cam.UnprojectPosition(target3D.GlobalPosition);
 				var localPoint = LineArrow.GetGlobalTransformWithCanvas().AffineInverse() * viewportPoint;

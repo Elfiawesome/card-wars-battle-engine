@@ -14,7 +14,7 @@ public record struct GreaterThanExpression(
 
 public sealed class GreaterThanExpressionHandler : IExpressionHandler<GreaterThanExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, GreaterThanExpression request)
+	public DataTag Handle(ScriptContext context, GreaterThanExpression request)
 	{
 		var left = context.Evaluate(request.Left);
 		var right = context.Evaluate(request.Right);

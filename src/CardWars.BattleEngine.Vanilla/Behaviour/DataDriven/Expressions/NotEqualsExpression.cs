@@ -14,7 +14,7 @@ public record struct NotEqualsExpression(
 
 public sealed class NotEqualsExpressionHandler : IExpressionHandler<NotEqualsExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, NotEqualsExpression request)
+	public DataTag Handle(ScriptContext context, NotEqualsExpression request)
 	{
 		var left = context.Evaluate(request.Left);
 		var right = context.Evaluate(request.Right);

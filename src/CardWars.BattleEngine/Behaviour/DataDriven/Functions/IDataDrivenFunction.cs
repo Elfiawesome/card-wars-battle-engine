@@ -5,5 +5,5 @@ namespace CardWars.BattleEngine.Behaviour.DataDriven.Functions;
 
 public interface IDataDrivenFunction
 {
-	DataTag Invoke(ScriptRuntimeContext context, IReadOnlyList<DataTag> arguments);
+	DataTag Invoke(ScriptContext context, IReadOnlyList<DataTag> arguments);
 }

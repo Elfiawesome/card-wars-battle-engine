@@ -13,7 +13,7 @@ public record struct OrExpression(
 
 public sealed class OrExpressionHandler : IExpressionHandler<OrExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, OrExpression request)
+	public DataTag Handle(ScriptContext context, OrExpression request)
 	{
 		if (context.Evaluate(request.Left).IsTruthy)
 			return new BoolTag(true);

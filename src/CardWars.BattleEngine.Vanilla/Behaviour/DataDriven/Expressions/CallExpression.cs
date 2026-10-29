@@ -15,7 +15,7 @@ public record struct CallExpression(
 
 public sealed class CallExpressionHandler : IExpressionHandler<CallExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, CallExpression request)
+	public DataTag Handle(ScriptContext context, CallExpression request)
 	{
 		var function = context.DataDriven.Functions.Get(request.Function);
 		if (function == null)

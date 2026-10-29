@@ -109,7 +109,7 @@ public sealed class CountingFunction : IDataDrivenFunction
 {
 	public int Calls { get; private set; }
 
-	public DataTag Invoke(ScriptRuntimeContext context, IReadOnlyList<DataTag> arguments)
+	public DataTag Invoke(ScriptContext context, IReadOnlyList<DataTag> arguments)
 	{
 		Calls++;
 		return new IntTag(1);

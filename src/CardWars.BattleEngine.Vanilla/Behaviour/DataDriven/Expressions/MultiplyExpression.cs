@@ -14,7 +14,7 @@ public record struct MultiplyExpression(
 
 public sealed class MultiplyExpressionHandler : IExpressionHandler<MultiplyExpression>
 {
-	public DataTag Handle(ScriptRuntimeContext context, MultiplyExpression request)
+	public DataTag Handle(ScriptContext context, MultiplyExpression request)
 	{
 		var left = context.Evaluate(request.Left);
 		var right = context.Evaluate(request.Right);
