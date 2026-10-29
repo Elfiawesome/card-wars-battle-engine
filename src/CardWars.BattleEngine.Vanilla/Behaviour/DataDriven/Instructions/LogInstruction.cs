@@ -14,10 +14,10 @@ public record struct LogInstruction(
 
 public sealed class LogInstructionHandler : IInstructionHandler<LogInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, LogInstruction request)
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, LogInstruction request)
 	{
 		var value = context.Evaluate(request.Value);
 		Log.Info(value is ObjectRefTag objectRef ? objectRef.Value : value);
-		return InstructionOutcome.Continue;
+		yield return InstructionOutcome.Continue;
 	}
 }

@@ -14,7 +14,7 @@ public record struct IfInstruction(
 
 public sealed class IfInstructionHandler : IInstructionHandler<IfInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, IfInstruction request)
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, IfInstruction request)
 	{
 		var condition = context.Evaluate(request.Condition);
 		var instructions = condition.IsTruthy ? request.Then : request.Else;

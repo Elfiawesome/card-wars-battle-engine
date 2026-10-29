@@ -3,5 +3,5 @@ using CardWars.Core.Request;
 
 namespace CardWars.BattleEngine.Behaviour.DataDriven.Instructions;
 
-public interface IInstructionHandler<TInstruction> : IRequestHandler<ScriptRuntimeContext, TInstruction, InstructionOutcome>
+public interface IInstructionHandler<TInstruction> : IRequestHandler<ScriptRuntimeContext, TInstruction, IEnumerable<InstructionOutcome>>
 	where TInstruction : IInstruction;

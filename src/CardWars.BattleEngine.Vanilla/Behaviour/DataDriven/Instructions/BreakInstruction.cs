@@ -9,6 +9,8 @@ public record struct BreakInstruction() : IInstruction;
 
 public sealed class BreakInstructionHandler : IInstructionHandler<BreakInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, BreakInstruction request)
-		=> InstructionOutcome.Break;
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, BreakInstruction request)
+	{
+		yield return InstructionOutcome.Break;
+	}
 }

@@ -16,15 +16,18 @@ public record struct ForInstruction(
 
 public sealed class ForInstructionHandler : IInstructionHandler<ForInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, ForInstruction request)
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, ForInstruction request)
 	{
 		context.PushScope();
 		try
 		{
 			if (request.Init != null)
 			{
-				var init = context.Executor.Execute([request.Init]);
-				if (init != InstructionOutcome.Continue) return init;
+				foreach (var outcome in ExecuteSingle(context, request.Init))
+				{
+					yield return outcome;
+					if (outcome != InstructionOutcome.Continue && outcome != InstructionOutcome.WaitForInput) yield break;
+				}
 			}
 
 			var iterations = 0;
@@ -33,25 +36,42 @@ public sealed class ForInstructionHandler : IInstructionHandler<ForInstruction>
 				if (++iterations > context.MaxLoopIterations)
 				{
 					Log.Error($"For loop exceeded [{context.MaxLoopIterations}] iterations");
-					return InstructionOutcome.Continue;
+					yield break;
 				}
 
-				var outcome = context.ExecuteBlock(request.Body);
-				if (outcome == InstructionOutcome.Break) break;
-				if (outcome != InstructionOutcome.Continue && outcome != InstructionOutcome.ContinueLoop) return outcome;
+				var shouldBreak = false;
+				foreach (var outcome in context.ExecuteBlock(request.Body))
+				{
+					if (outcome == InstructionOutcome.Continue) continue;
+					if (outcome == InstructionOutcome.Break)
+					{
+						shouldBreak = true;
+						break;
+					}
+
+					if (outcome == InstructionOutcome.ContinueLoop) break;
+
+					yield return outcome;
+				}
+
+				if (shouldBreak) yield break;
 
 				if (request.Step != null)
 				{
-					var step = context.Executor.Execute([request.Step]);
-					if (step != InstructionOutcome.Continue && step != InstructionOutcome.ContinueLoop) return step;
+					foreach (var outcome in ExecuteSingle(context, request.Step))
+					{
+						yield return outcome;
+						if (outcome != InstructionOutcome.Continue && outcome != InstructionOutcome.WaitForInput) yield break;
+					}
 				}
 			}
-
-			return InstructionOutcome.Continue;
 		}
 		finally
 		{
 			context.PopScope();
 		}
 	}
+
+	private static IEnumerable<InstructionOutcome> ExecuteSingle(ScriptRuntimeContext context, IInstruction instruction)
+		=> context.Executor.Execute([instruction]);
 }

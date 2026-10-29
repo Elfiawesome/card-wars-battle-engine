@@ -2,6 +2,7 @@ using CardWars.BattleEngine;
 using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
+using CardWars.BattleEngine.Behaviour.DataDriven.Instructions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
@@ -21,7 +22,7 @@ public sealed class InstructionHandlerTests
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
 
-		var outcome = runtime.Executor.Execute(
+		var outcome = Execute(runtime, 
 		[
 			new DeclarationInstruction(ResourceId.Vanilla("x"), new LiteralExpression(new IntTag(1))),
 			new SetInstruction(ResourceId.Vanilla("x"), new LiteralExpression(new IntTag(2)))
@@ -42,7 +43,7 @@ public sealed class InstructionHandlerTests
 
 		runtime.DeclareVariable(x, new IntTag(0));
 
-		runtime.Executor.Execute(
+		Execute(runtime, 
 		[
 			new IfInstruction(
 				new LiteralExpression(new BoolTag(true)),
@@ -52,7 +53,7 @@ public sealed class InstructionHandlerTests
 		Assert.True(runtime.TryGetVariable(x, out var value));
 		Assert.Equal(1, Assert.IsType<IntTag>(value).Value);
 
-		runtime.Executor.Execute(
+		Execute(runtime, 
 		[
 			new IfInstruction(
 				new LiteralExpression(new BoolTag(false)),
@@ -75,7 +76,7 @@ public sealed class InstructionHandlerTests
 		runtime.DeclareVariable(flag, new BoolTag(true));
 		runtime.DeclareVariable(count, new IntTag(0));
 
-		var outcome = runtime.Executor.Execute(
+		var outcome = Execute(runtime, 
 		[
 			new WhileInstruction(
 				new VariableExpression(flag),
@@ -102,7 +103,7 @@ public sealed class InstructionHandlerTests
 		runtime.DeclareVariable(flag, new BoolTag(true));
 		runtime.DeclareVariable(steps, new IntTag(0));
 
-		var outcome = runtime.Executor.Execute(
+		var outcome = Execute(runtime, 
 		[
 			new ForInstruction(
 				new SetInstruction(steps, new LiteralExpression(new IntTag(1))),
@@ -127,7 +128,7 @@ public sealed class InstructionHandlerTests
 
 		runtime.DeclareVariable(last, new IntTag(0));
 
-		var outcome = runtime.Executor.Execute(
+		var outcome = Execute(runtime, 
 		[
 			new ForEachInstruction(
 				item,
@@ -158,13 +159,13 @@ public sealed class InstructionHandlerTests
 		runtime.DeclareVariable(flag, new BoolTag(true));
 		runtime.DeclareVariable(last, new IntTag(0));
 
-		var breakOutcome = runtime.Executor.Execute(
+		var breakOutcome = Execute(runtime, 
 		[
 			new WhileInstruction(new VariableExpression(flag), [new BreakInstruction()])
 		]);
 		Assert.Equal(InstructionOutcome.Continue, breakOutcome);
 
-		var continueOutcome = runtime.Executor.Execute(
+		var continueOutcome = Execute(runtime, 
 		[
 			new ForEachInstruction(
 				item,
@@ -186,7 +187,7 @@ public sealed class InstructionHandlerTests
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
 
-		var outcome = runtime.Executor.Execute(
+		var outcome = Execute(runtime, 
 		[
 			new ReturnInstruction(new LiteralExpression(new IntTag(1))),
 			new DeclarationInstruction(ResourceId.Vanilla("x"), new LiteralExpression(new IntTag(2)))
@@ -206,7 +207,7 @@ public sealed class InstructionHandlerTests
 		var flag = ResourceId.Vanilla("flag");
 		runtime.DeclareVariable(flag, new BoolTag(true));
 
-		var outcome = runtime.Executor.Execute(
+		var outcome = Execute(runtime, 
 		[
 			new WhileInstruction(new VariableExpression(flag), [new ContinueInstruction()])
 		]);
@@ -226,7 +227,7 @@ public sealed class InstructionHandlerTests
 		var behaviourContext = new BehaviourContext(transaction, state, EntityId.None);
 		var runtime = new ScriptRuntimeContext(behaviourContext, registry.DataDriven);
 
-		runtime.Executor.Execute(
+		Execute(runtime, 
 		[
 			new RaiseInstruction(new ConstructExpression(
 				ResourceId.Vanilla("test/event"),
@@ -247,7 +248,7 @@ public sealed class InstructionHandlerTests
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
 
-		var outcome = runtime.Executor.Execute(
+		var outcome = Execute(runtime, 
 		[
 			new StageBlockInstruction(ConstructBlock(5)),
 			new CommitInstruction()
@@ -267,7 +268,7 @@ public sealed class InstructionHandlerTests
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
 
-		var outcome = runtime.Executor.Execute(
+		var outcome = Execute(runtime, 
 		[
 			new StageBlocksInstruction(
 				new ListExpression([ConstructBlock(1), ConstructBlock(2)])),
@@ -278,6 +279,18 @@ public sealed class InstructionHandlerTests
 		Assert.Equal(2, blockHandler.Blocks.Count);
 		Assert.Equal(1, blockHandler.Blocks[0].Value);
 		Assert.Equal(2, blockHandler.Blocks[1].Value);
+	}
+
+	private static InstructionOutcome Execute(ScriptRuntimeContext runtime, IReadOnlyList<IInstruction> instructions)
+	{
+		using var execution = runtime.Executor.Execute(instructions).GetEnumerator();
+		while (execution.MoveNext())
+		{
+			var outcome = execution.Current;
+			if (outcome != InstructionOutcome.Continue) return outcome;
+		}
+
+		return InstructionOutcome.Continue;
 	}
 
 	private static ConstructExpression ConstructBlock(int value)

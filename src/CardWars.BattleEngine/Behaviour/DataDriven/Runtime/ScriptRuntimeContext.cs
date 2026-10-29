@@ -35,7 +35,12 @@ public sealed class ScriptRuntimeContext
 		return new NullTag();
 	}
 
-	public void PushScope() => _scopes.Add(new ScriptScope());
+	public ScriptScope PushScope()
+	{
+		var scope = new ScriptScope();
+		_scopes.Add(scope);
+		return scope;
+	}
 
 	public void PopScope()
 	{
@@ -43,8 +48,10 @@ public sealed class ScriptRuntimeContext
 	}
 
 	public void DeclareVariable(ResourceId name, DataTag value, bool isConstant = false, bool isGlobal = false)
+		=> DeclareVariable(isGlobal ? GlobalScope : CurrentScope, name, value, isConstant);
+
+	public void DeclareVariable(ScriptScope scope, ResourceId name, DataTag value, bool isConstant = false)
 	{
-		var scope = isGlobal ? GlobalScope : CurrentScope;
 		if (scope.Constants.Contains(name))
 		{
 			Log.Warn($"Cannot redeclare constant variable [{name}]");
@@ -123,12 +130,15 @@ public sealed class ScriptRuntimeContext
 		}
 	}
 
-	public InstructionOutcome ExecuteBlock(IReadOnlyList<IInstruction>? instructions)
+	public IEnumerable<InstructionOutcome> ExecuteBlock(IReadOnlyList<IInstruction>? instructions)
 	{
+		if (instructions == null) yield break;
+
 		PushScope();
 		try
 		{
-			return Executor.Execute(instructions);
+			foreach (var outcome in Executor.Execute(instructions))
+				yield return outcome;
 		}
 		finally
 		{

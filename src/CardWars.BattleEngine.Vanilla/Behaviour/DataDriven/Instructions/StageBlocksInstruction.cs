@@ -16,18 +16,19 @@ public record struct StageBlocksInstruction(
 
 public sealed class StageBlocksInstructionHandler : IInstructionHandler<StageBlocksInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, StageBlocksInstruction request)
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, StageBlocksInstruction request)
 	{
 		var value = context.Evaluate(request.Blocks);
 		var blocks = ResolveBlocks(context, value);
 		if (blocks.Count == 0)
 		{
 			Log.Error($"stage_blocks expected blocks but received [{value.Type}]");
-			return InstructionOutcome.Continue;
+			yield return InstructionOutcome.Continue;
+			yield break;
 		}
 
 		context.Behaviour.StageBlocks(new BlockBatch(blocks, context.Behaviour.OwnerEntityId));
-		return InstructionOutcome.Continue;
+		yield return InstructionOutcome.Continue;
 	}
 
 	private static List<IBlock> ResolveBlocks(ScriptRuntimeContext context, DataTag value)

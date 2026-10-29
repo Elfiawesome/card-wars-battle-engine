@@ -9,9 +9,9 @@ public record struct WaitInstruction() : IInstruction;
 
 public sealed class WaitInstructionHandler : IInstructionHandler<WaitInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, WaitInstruction request)
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, WaitInstruction request)
 	{
 		context.Behaviour.CommitStagedBlocks();
-		return InstructionOutcome.WaitForInput;
+		yield return InstructionOutcome.WaitForInput;
 	}
 }

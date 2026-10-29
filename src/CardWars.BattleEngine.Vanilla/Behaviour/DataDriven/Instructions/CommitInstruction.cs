@@ -9,9 +9,9 @@ public record struct CommitInstruction() : IInstruction;
 
 public sealed class CommitInstructionHandler : IInstructionHandler<CommitInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, CommitInstruction request)
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, CommitInstruction request)
 	{
 		context.Behaviour.CommitStagedBlocks();
-		return InstructionOutcome.Continue;
+		yield return InstructionOutcome.Continue;
 	}
 }

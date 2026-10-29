@@ -14,7 +14,7 @@ public record struct WhileInstruction(
 
 public sealed class WhileInstructionHandler : IInstructionHandler<WhileInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, WhileInstruction request)
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, WhileInstruction request)
 	{
 		var iterations = 0;
 		while (context.Evaluate(request.Condition).IsTruthy)
@@ -22,15 +22,31 @@ public sealed class WhileInstructionHandler : IInstructionHandler<WhileInstructi
 			if (++iterations > context.MaxLoopIterations)
 			{
 				Log.Error($"While loop exceeded [{context.MaxLoopIterations}] iterations");
-				return InstructionOutcome.Continue;
+				yield break;
 			}
 
-			var outcome = context.ExecuteBlock(request.Body);
-			if (outcome == InstructionOutcome.Break) break;
-			if (outcome == InstructionOutcome.ContinueLoop) continue;
-			if (outcome != InstructionOutcome.Continue) return outcome;
-		}
+			var shouldBreak = false;
+			var shouldContinue = false;
+			foreach (var outcome in context.ExecuteBlock(request.Body))
+			{
+				if (outcome == InstructionOutcome.Continue) continue;
+				if (outcome == InstructionOutcome.Break)
+				{
+					shouldBreak = true;
+					break;
+				}
 
-		return InstructionOutcome.Continue;
+				if (outcome == InstructionOutcome.ContinueLoop)
+				{
+					shouldContinue = true;
+					break;
+				}
+
+				yield return outcome;
+			}
+
+			if (shouldBreak) yield break;
+			if (shouldContinue) continue;
+		}
 	}
 }

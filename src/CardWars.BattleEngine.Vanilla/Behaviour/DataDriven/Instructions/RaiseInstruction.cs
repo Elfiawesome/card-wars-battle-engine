@@ -14,17 +14,18 @@ public record struct RaiseInstruction(
 
 public sealed class RaiseInstructionHandler : IInstructionHandler<RaiseInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, RaiseInstruction request)
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, RaiseInstruction request)
 	{
 		var value = context.Evaluate(request.Event);
 		var evnt = context.ResolveObject<IEvent>(value);
 		if (evnt == null)
 		{
 			Log.Error($"raise expected an event but received [{value.Type}]");
-			return InstructionOutcome.Continue;
+			yield return InstructionOutcome.Continue;
+			yield break;
 		}
 
 		context.Behaviour.RaiseEvent(evnt);
-		return InstructionOutcome.Continue;
+		yield return InstructionOutcome.Continue;
 	}
 }

@@ -5,18 +5,24 @@ namespace CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 
 public sealed class ScriptExecutor(
 	ScriptRuntimeContext context,
-	HandlerRegistry<ScriptRuntimeContext, InstructionOutcome> handlers)
+	HandlerRegistry<ScriptRuntimeContext, IEnumerable<InstructionOutcome>> handlers)
 {
-	public InstructionOutcome Execute(IReadOnlyList<IInstruction>? instructions)
+	public IEnumerable<InstructionOutcome> Execute(IReadOnlyList<IInstruction>? instructions)
 	{
-		if (instructions == null) return InstructionOutcome.Continue;
+		if (instructions == null) yield break;
 
 		foreach (var instruction in instructions)
 		{
-			var outcome = handlers.Execute(context, instruction);
-			if (outcome != InstructionOutcome.Continue) return outcome;
-		}
+			if (!handlers.TryExecute(context, instruction, out var outcomes) || outcomes == null)
+				yield break;
 
-		return InstructionOutcome.Continue;
+			foreach (var outcome in outcomes)
+			{
+				yield return outcome;
+
+				if (outcome == InstructionOutcome.WaitForInput) continue;
+				if (outcome != InstructionOutcome.Continue) yield break;
+			}
+		}
 	}
 }

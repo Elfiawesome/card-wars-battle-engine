@@ -9,6 +9,8 @@ public record struct ContinueInstruction() : IInstruction;
 
 public sealed class ContinueInstructionHandler : IInstructionHandler<ContinueInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, ContinueInstruction request)
-		=> InstructionOutcome.ContinueLoop;
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, ContinueInstruction request)
+	{
+		yield return InstructionOutcome.ContinueLoop;
+	}
 }

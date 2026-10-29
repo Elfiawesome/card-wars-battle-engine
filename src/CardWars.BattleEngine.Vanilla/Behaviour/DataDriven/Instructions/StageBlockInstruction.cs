@@ -14,17 +14,18 @@ public record struct StageBlockInstruction(
 
 public sealed class StageBlockInstructionHandler : IInstructionHandler<StageBlockInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, StageBlockInstruction request)
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, StageBlockInstruction request)
 	{
 		var value = context.Evaluate(request.Block);
 		var block = context.ResolveObject<IBlock>(value);
 		if (block == null)
 		{
 			Log.Error($"stage_block expected a block but received [{value.Type}]");
-			return InstructionOutcome.Continue;
+			yield return InstructionOutcome.Continue;
+			yield break;
 		}
 
 		context.Behaviour.StageBlock(block, context.Behaviour.OwnerEntityId);
-		return InstructionOutcome.Continue;
+		yield return InstructionOutcome.Continue;
 	}
 }

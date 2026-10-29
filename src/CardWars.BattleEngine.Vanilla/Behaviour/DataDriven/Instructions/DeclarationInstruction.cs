@@ -16,9 +16,9 @@ public record struct DeclarationInstruction(
 
 public sealed class DeclarationInstructionHandler : IInstructionHandler<DeclarationInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, DeclarationInstruction request)
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, DeclarationInstruction request)
 	{
 		context.DeclareVariable(request.Name, context.Evaluate(request.Value), request.IsConstant, request.IsGlobal);
-		return InstructionOutcome.Continue;
+		yield return InstructionOutcome.Continue;
 	}
 }

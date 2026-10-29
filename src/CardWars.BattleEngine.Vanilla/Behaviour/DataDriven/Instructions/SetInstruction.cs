@@ -14,9 +14,9 @@ public record struct SetInstruction(
 
 public sealed class SetInstructionHandler : IInstructionHandler<SetInstruction>
 {
-	public InstructionOutcome Handle(ScriptRuntimeContext context, SetInstruction request)
+	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, SetInstruction request)
 	{
 		context.TrySetVariable(request.Name, context.Evaluate(request.Value));
-		return InstructionOutcome.Continue;
+		yield return InstructionOutcome.Continue;
 	}
 }

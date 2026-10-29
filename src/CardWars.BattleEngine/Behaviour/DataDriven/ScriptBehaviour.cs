@@ -1,8 +1,9 @@
 using CardWars.BattleEngine.Behaviour;
+using CardWars.BattleEngine.Behaviour.DataDriven.Instructions;
+using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
-using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
@@ -13,12 +14,17 @@ namespace CardWars.BattleEngine.Behaviour.DataDriven;
 public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRegistry dataDriven) : IBehaviour
 {
 	private ScriptRuntimeContext? _waitingRuntime;
+	private ScriptScope? _inputScope;
+	private IEnumerator<InstructionOutcome>? _eventExecution;
+	private IEnumerator<InstructionOutcome>? _inputExecution;
 
 	public Type ListeningEventType => typeof(IEvent);
 	public int Priority => definition.Priority;
 
 	public BehaviourResult Start(IEvent evnt, BehaviourContext context)
 	{
+		ResetExecution();
+
 		var eventId = GetRequestId(evnt.GetType());
 		if (eventId == null) return BehaviourResult.Complete;
 
@@ -31,25 +37,41 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 		var runtime = new ScriptRuntimeContext(context, dataDriven);
 		runtime.PushScope();
 		SeedEventBindings(runtime, evnt, context);
+		_eventExecution = ExecuteHooks(runtime, hooks.Select(hook => hook.Instructions)).GetEnumerator();
 
-		foreach (var hook in hooks)
+		var outcome = Advance(_eventExecution);
+		if (outcome == InstructionOutcome.WaitForInput)
 		{
-			var outcome = runtime.Executor.Execute(hook.Instructions);
-			if (outcome == InstructionOutcome.WaitForInput)
-			{
-				_waitingRuntime = runtime;
-				return BehaviourResult.WaitForInput;
-			}
-
-			if (outcome == InstructionOutcome.Return) break;
+			_waitingRuntime = runtime;
+			return BehaviourResult.WaitForInput;
 		}
 
+		ResetExecution();
 		return BehaviourResult.Complete;
 	}
 
 	public BehaviourResult Resume(EntityId playerId, IInput input, BehaviourContext context)
 	{
 		if (_waitingRuntime == null) return BehaviourResult.Complete;
+
+		if (_inputExecution != null)
+		{
+			SeedInputBindings(_waitingRuntime, _inputScope, playerId, input);
+			var pausedOutcome = Advance(_inputExecution);
+			if (pausedOutcome == InstructionOutcome.WaitForInput) return BehaviourResult.WaitForInput;
+
+			_inputExecution.Dispose();
+			_inputExecution = null;
+			_inputScope = null;
+
+			if (pausedOutcome != null)
+			{
+				ResetExecution();
+				return BehaviourResult.Complete;
+			}
+
+			return ContinueEvent();
+		}
 
 		var inputId = GetRequestId(input.GetType());
 		if (inputId == null) return BehaviourResult.WaitForInput;
@@ -60,18 +82,62 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 
 		if (hooks.Count == 0) return BehaviourResult.WaitForInput;
 
-		_waitingRuntime.PushScope();
-		SeedInputBindings(_waitingRuntime, playerId, input);
+		_inputScope = _waitingRuntime.PushScope();
+		SeedInputBindings(_waitingRuntime, _inputScope, playerId, input);
+		_inputExecution = ExecuteHooks(_waitingRuntime, hooks.Select(hook => hook.Instructions)).GetEnumerator();
 
-		foreach (var hook in hooks)
+		var outcome = Advance(_inputExecution);
+		if (outcome == InstructionOutcome.WaitForInput) return BehaviourResult.WaitForInput;
+
+		_inputExecution.Dispose();
+		_inputExecution = null;
+		_inputScope = null;
+
+		if (outcome != null)
 		{
-			var outcome = _waitingRuntime.Executor.Execute(hook.Instructions);
-			if (outcome == InstructionOutcome.WaitForInput) return BehaviourResult.WaitForInput;
-			if (outcome == InstructionOutcome.Return) break;
+			ResetExecution();
+			return BehaviourResult.Complete;
 		}
 
-		_waitingRuntime = null;
+		return ContinueEvent();
+	}
+
+	private BehaviourResult ContinueEvent()
+	{
+		if (_eventExecution == null)
+		{
+			ResetExecution();
+			return BehaviourResult.Complete;
+		}
+
+		var outcome = Advance(_eventExecution);
+		if (outcome == InstructionOutcome.WaitForInput) return BehaviourResult.WaitForInput;
+
+		ResetExecution();
 		return BehaviourResult.Complete;
+	}
+
+	private static InstructionOutcome? Advance(IEnumerator<InstructionOutcome> execution)
+	{
+		while (execution.MoveNext())
+		{
+			var outcome = execution.Current;
+			if (outcome == InstructionOutcome.Continue) continue;
+			return outcome;
+		}
+
+		return null;
+	}
+
+	private static IEnumerable<InstructionOutcome> ExecuteHooks(
+		ScriptRuntimeContext runtime,
+		IEnumerable<IReadOnlyList<IInstruction>?> hooks)
+	{
+		foreach (var instructions in hooks)
+		{
+			foreach (var outcome in runtime.Executor.Execute(instructions))
+				yield return outcome;
+		}
 	}
 
 	private static void SeedEventBindings(ScriptRuntimeContext runtime, IEvent evnt, BehaviourContext context)
@@ -87,12 +153,24 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 		runtime.DeclareVariable(ScriptBindings.Vars, new ObjectRefTag(runtime));
 	}
 
-	private static void SeedInputBindings(ScriptRuntimeContext runtime, EntityId playerId, IInput input)
+	private static void SeedInputBindings(ScriptRuntimeContext runtime, ScriptScope? scope, EntityId playerId, IInput input)
 	{
+		if (scope == null) return;
+
 		var inputTag = new ObjectRefTag(input);
-		runtime.DeclareVariable(ScriptBindings.Input, inputTag);
-		runtime.DeclareVariable(ScriptBindings.InputArgs, inputTag);
-		runtime.DeclareVariable(ScriptBindings.InputPlayer, playerId.IsNone ? new NullTag() : new GuidTag(playerId.Value));
+		runtime.DeclareVariable(scope, ScriptBindings.Input, inputTag);
+		runtime.DeclareVariable(scope, ScriptBindings.InputArgs, inputTag);
+		runtime.DeclareVariable(scope, ScriptBindings.InputPlayer, playerId.IsNone ? new NullTag() : new GuidTag(playerId.Value));
+	}
+
+	private void ResetExecution()
+	{
+		_inputExecution?.Dispose();
+		_eventExecution?.Dispose();
+		_inputExecution = null;
+		_eventExecution = null;
+		_inputScope = null;
+		_waitingRuntime = null;
 	}
 
 	private static ResourceId? GetRequestId(Type type)
