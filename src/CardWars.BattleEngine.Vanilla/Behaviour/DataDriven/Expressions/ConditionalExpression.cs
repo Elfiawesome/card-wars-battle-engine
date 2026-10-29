@@ -2,7 +2,6 @@ using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 
@@ -17,7 +16,9 @@ public sealed class ConditionalExpressionHandler : IExpressionHandler<Conditiona
 {
 	public DataTag Handle(ScriptRuntimeContext context, ConditionalExpression request)
 	{
-		Log.Error("ConditionalExpression is not implemented");
-		return new NullTag();
+		var condition = context.Evaluate(request.Condition);
+		return condition.IsTruthy
+			? context.Evaluate(request.Then)
+			: context.Evaluate(request.Else);
 	}
 }

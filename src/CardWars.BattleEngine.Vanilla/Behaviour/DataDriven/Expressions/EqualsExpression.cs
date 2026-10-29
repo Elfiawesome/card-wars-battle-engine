@@ -16,7 +16,8 @@ public sealed class EqualsExpressionHandler : IExpressionHandler<EqualsExpressio
 {
 	public DataTag Handle(ScriptRuntimeContext context, EqualsExpression request)
 	{
-		Log.Error("EqualsExpression is not implemented");
-		return new NullTag();
+		var left = context.Evaluate(request.Left);
+		var right = context.Evaluate(request.Right);
+		return new BoolTag(ExpressionValue.AreEqual(left, right));
 	}
 }

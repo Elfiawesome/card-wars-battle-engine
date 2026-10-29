@@ -2,7 +2,6 @@ using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 
@@ -15,7 +14,7 @@ public sealed class NotExpressionHandler : IExpressionHandler<NotExpression>
 {
 	public DataTag Handle(ScriptRuntimeContext context, NotExpression request)
 	{
-		Log.Error("NotExpression is not implemented");
-		return new NullTag();
+		var value = context.Evaluate(request.Value);
+		return new BoolTag(!value.IsTruthy);
 	}
 }

@@ -116,7 +116,6 @@ public class VanillaMod : IBattleEngineMod
 		dataDriven.InstructionHandlers.Register(new BreakInstructionHandler());
 		dataDriven.InstructionHandlers.Register(new ContinueInstructionHandler());
 		dataDriven.InstructionHandlers.Register(new WaitInstructionHandler());
-		dataDriven.InstructionHandlers.Register(new CancelInstructionHandler());
 		dataDriven.InstructionHandlers.Register(new LogInstructionHandler());
 	}
 

@@ -16,7 +16,15 @@ public sealed class LessThanOrEqualExpressionHandler : IExpressionHandler<LessTh
 {
 	public DataTag Handle(ScriptRuntimeContext context, LessThanOrEqualExpression request)
 	{
-		Log.Error("LessThanOrEqualExpression is not implemented");
-		return new NullTag();
+		var left = context.Evaluate(request.Left);
+		var right = context.Evaluate(request.Right);
+		var comparison = ExpressionValue.Compare(left, right);
+		if (comparison == null)
+		{
+			Log.Error($"Cannot compare [{left.Type}] and [{right.Type}]");
+			return new NullTag();
+		}
+
+		return new BoolTag(comparison <= 0);
 	}
 }

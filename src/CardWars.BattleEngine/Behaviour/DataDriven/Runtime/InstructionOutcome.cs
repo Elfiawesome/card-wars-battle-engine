@@ -6,6 +6,5 @@ public enum InstructionOutcome
 	Break,
 	ContinueLoop,
 	Return,
-	WaitForInput,
-	Cancel
+	WaitForInput
 }

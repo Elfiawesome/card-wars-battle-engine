@@ -15,14 +15,17 @@ public sealed class ScriptRuntimeContext
 	public BehaviourContext Behaviour { get; }
 	public DataDrivenRegistry DataDriven { get; }
 	public ScriptExecutor Executor { get; }
+	public ScriptScope GlobalScope { get; }
 	public ScriptScope CurrentScope => _scopes[^1];
 	public IReadOnlyDictionary<ResourceId, DataTag> Variables => CurrentScope.Variables;
+	public IReadOnlyDictionary<ResourceId, DataTag> GlobalVariables => GlobalScope.Variables;
 	public int MaxLoopIterations { get; set; } = 10_000;
 
 	public ScriptRuntimeContext(BehaviourContext behaviour, DataDrivenRegistry dataDriven)
 	{
 		Behaviour = behaviour;
 		DataDriven = dataDriven;
+		GlobalScope = behaviour.State.GlobalScope;
 		Executor = new ScriptExecutor(this, dataDriven.InstructionHandlers);
 	}
 
@@ -39,10 +42,17 @@ public sealed class ScriptRuntimeContext
 		if (_scopes.Count > 1) _scopes.RemoveAt(_scopes.Count - 1);
 	}
 
-	public void DeclareVariable(ResourceId name, DataTag value, bool isConstant = false)
+	public void DeclareVariable(ResourceId name, DataTag value, bool isConstant = false, bool isGlobal = false)
 	{
-		CurrentScope.Variables[name] = value;
-		if (isConstant) CurrentScope.Constants.Add(name);
+		var scope = isGlobal ? GlobalScope : CurrentScope;
+		if (scope.Constants.Contains(name))
+		{
+			Log.Warn($"Cannot redeclare constant variable [{name}]");
+			return;
+		}
+
+		scope.Variables[name] = value;
+		if (isConstant) scope.Constants.Add(name);
 	}
 
 	public bool TryGetVariable(ResourceId name, out DataTag? value)
@@ -51,6 +61,8 @@ public sealed class ScriptRuntimeContext
 		{
 			if (_scopes[i].Variables.TryGetValue(name, out value)) return true;
 		}
+
+		if (GlobalScope.Variables.TryGetValue(name, out value)) return true;
 
 		value = null;
 		return false;
@@ -69,6 +81,18 @@ public sealed class ScriptRuntimeContext
 			}
 
 			scope.Variables[name] = value;
+			return true;
+		}
+
+		if (GlobalScope.Variables.ContainsKey(name))
+		{
+			if (GlobalScope.Constants.Contains(name))
+			{
+				Log.Warn($"Cannot assign to constant variable [{name}]");
+				return false;
+			}
+
+			GlobalScope.Variables[name] = value;
 			return true;
 		}
 

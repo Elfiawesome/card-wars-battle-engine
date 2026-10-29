@@ -15,7 +15,18 @@ public sealed class NegateExpressionHandler : IExpressionHandler<NegateExpressio
 {
 	public DataTag Handle(ScriptRuntimeContext context, NegateExpression request)
 	{
-		Log.Error("NegateExpression is not implemented");
+		var value = context.Evaluate(request.Value);
+		return value switch
+		{
+			IntTag intTag => new IntTag(-intTag.Value),
+			FloatTag floatTag => new FloatTag(-floatTag.Value),
+			_ => NegateFailed(value)
+		};
+	}
+
+	private static DataTag NegateFailed(DataTag value)
+	{
+		Log.Error($"Cannot negate [{value.Type}]");
 		return new NullTag();
 	}
 }

@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
@@ -71,6 +72,9 @@ public class GameState
 
 	[DataTag] public IReadOnlyDictionary<EntityId, IEntity> Entities => _entities;
 
+	// For modding?
+	public ScriptScope GlobalScope { get; } = new();
+
 	public IEnumerable<(EntityId entityId, BehaviourPointer pointer)> GetAllBehaviourPointers()
 	{
 		return _entities.Values
@@ -83,6 +87,7 @@ public class GameState
 	public void Clear()
 	{
 		_entities.Clear();
+		GlobalScope.Clear();
 		Turn = default;
 		Layout = default;
 	}

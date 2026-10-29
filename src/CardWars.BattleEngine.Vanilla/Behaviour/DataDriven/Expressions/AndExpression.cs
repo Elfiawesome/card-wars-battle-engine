@@ -2,7 +2,6 @@ using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 
@@ -16,7 +15,9 @@ public sealed class AndExpressionHandler : IExpressionHandler<AndExpression>
 {
 	public DataTag Handle(ScriptRuntimeContext context, AndExpression request)
 	{
-		Log.Error("AndExpression is not implemented");
-		return new NullTag();
+		if (!context.Evaluate(request.Left).IsTruthy)
+			return new BoolTag(false);
+
+		return new BoolTag(context.Evaluate(request.Right).IsTruthy);
 	}
 }

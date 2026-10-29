@@ -10,14 +10,15 @@ namespace CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
 public record struct DeclarationInstruction(
 	[property: DataTag] ResourceId Name,
 	[property: DataTag] IExpression Value,
-	[property: DataTag] bool IsConstant = false
+	[property: DataTag] bool IsConstant = false,
+	[property: DataTag] bool IsGlobal = false
 ) : IInstruction;
 
 public sealed class DeclarationInstructionHandler : IInstructionHandler<DeclarationInstruction>
 {
 	public InstructionOutcome Handle(ScriptRuntimeContext context, DeclarationInstruction request)
 	{
-		context.DeclareVariable(request.Name, context.Evaluate(request.Value), request.IsConstant);
+		context.DeclareVariable(request.Name, context.Evaluate(request.Value), request.IsConstant, request.IsGlobal);
 		return InstructionOutcome.Continue;
 	}
 }

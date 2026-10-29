@@ -16,7 +16,16 @@ public sealed class MultiplyExpressionHandler : IExpressionHandler<MultiplyExpre
 {
 	public DataTag Handle(ScriptRuntimeContext context, MultiplyExpression request)
 	{
-		Log.Error("MultiplyExpression is not implemented");
-		return new NullTag();
+		var left = context.Evaluate(request.Left);
+		var right = context.Evaluate(request.Right);
+
+		if (!ExpressionValue.TryGetNumber(left, out var leftNumber) ||
+			!ExpressionValue.TryGetNumber(right, out var rightNumber))
+		{
+			Log.Error($"Cannot multiply [{left.Type}] and [{right.Type}]");
+			return new NullTag();
+		}
+
+		return ExpressionValue.Number(leftNumber * rightNumber, ExpressionValue.PrefersFloat(left, right));
 	}
 }

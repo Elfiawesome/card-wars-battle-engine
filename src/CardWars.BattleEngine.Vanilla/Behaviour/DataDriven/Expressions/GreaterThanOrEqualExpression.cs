@@ -16,7 +16,15 @@ public sealed class GreaterThanOrEqualExpressionHandler : IExpressionHandler<Gre
 {
 	public DataTag Handle(ScriptRuntimeContext context, GreaterThanOrEqualExpression request)
 	{
-		Log.Error("GreaterThanOrEqualExpression is not implemented");
-		return new NullTag();
+		var left = context.Evaluate(request.Left);
+		var right = context.Evaluate(request.Right);
+		var comparison = ExpressionValue.Compare(left, right);
+		if (comparison == null)
+		{
+			Log.Error($"Cannot compare [{left.Type}] and [{right.Type}]");
+			return new NullTag();
+		}
+
+		return new BoolTag(comparison >= 0);
 	}
 }

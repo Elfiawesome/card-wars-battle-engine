@@ -16,7 +16,19 @@ public sealed class AddExpressionHandler : IExpressionHandler<AddExpression>
 {
 	public DataTag Handle(ScriptRuntimeContext context, AddExpression request)
 	{
-		Log.Error("AddExpression is not implemented");
-		return new NullTag();
+		var left = context.Evaluate(request.Left);
+		var right = context.Evaluate(request.Right);
+
+		if (left is StringTag || right is StringTag)
+			return new StringTag(ExpressionValue.ToText(left) + ExpressionValue.ToText(right));
+
+		if (!ExpressionValue.TryGetNumber(left, out var leftNumber) ||
+			!ExpressionValue.TryGetNumber(right, out var rightNumber))
+		{
+			Log.Error($"Cannot add [{left.Type}] and [{right.Type}]");
+			return new NullTag();
+		}
+
+		return ExpressionValue.Number(leftNumber + rightNumber, ExpressionValue.PrefersFloat(left, right));
 	}
 }

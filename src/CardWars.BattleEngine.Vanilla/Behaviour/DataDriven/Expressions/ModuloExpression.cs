@@ -16,7 +16,22 @@ public sealed class ModuloExpressionHandler : IExpressionHandler<ModuloExpressio
 {
 	public DataTag Handle(ScriptRuntimeContext context, ModuloExpression request)
 	{
-		Log.Error("ModuloExpression is not implemented");
-		return new NullTag();
+		var left = context.Evaluate(request.Left);
+		var right = context.Evaluate(request.Right);
+
+		if (!ExpressionValue.TryGetNumber(left, out var leftNumber) ||
+			!ExpressionValue.TryGetNumber(right, out var rightNumber))
+		{
+			Log.Error($"Cannot modulo [{left.Type}] by [{right.Type}]");
+			return new NullTag();
+		}
+
+		if (rightNumber == 0)
+		{
+			Log.Error("Cannot modulo by zero");
+			return new NullTag();
+		}
+
+		return ExpressionValue.Number(leftNumber % rightNumber, ExpressionValue.PrefersFloat(left, right));
 	}
 }

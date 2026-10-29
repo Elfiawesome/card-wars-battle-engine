@@ -16,7 +16,8 @@ public sealed class NotEqualsExpressionHandler : IExpressionHandler<NotEqualsExp
 {
 	public DataTag Handle(ScriptRuntimeContext context, NotEqualsExpression request)
 	{
-		Log.Error("NotEqualsExpression is not implemented");
-		return new NullTag();
+		var left = context.Evaluate(request.Left);
+		var right = context.Evaluate(request.Right);
+		return new BoolTag(!ExpressionValue.AreEqual(left, right));
 	}
 }

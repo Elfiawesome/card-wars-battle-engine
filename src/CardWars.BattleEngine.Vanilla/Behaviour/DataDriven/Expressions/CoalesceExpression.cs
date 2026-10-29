@@ -16,7 +16,7 @@ public sealed class CoalesceExpressionHandler : IExpressionHandler<CoalesceExpre
 {
 	public DataTag Handle(ScriptRuntimeContext context, CoalesceExpression request)
 	{
-		Log.Error("CoalesceExpression is not implemented");
-		return new NullTag();
+		var left = context.Evaluate(request.Left);
+		return left is NullTag ? context.Evaluate(request.Right) : left;
 	}
 }

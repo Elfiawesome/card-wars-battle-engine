@@ -2,7 +2,6 @@ using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 
@@ -16,7 +15,9 @@ public sealed class OrExpressionHandler : IExpressionHandler<OrExpression>
 {
 	public DataTag Handle(ScriptRuntimeContext context, OrExpression request)
 	{
-		Log.Error("OrExpression is not implemented");
-		return new NullTag();
+		if (context.Evaluate(request.Left).IsTruthy)
+			return new BoolTag(true);
+
+		return new BoolTag(context.Evaluate(request.Right).IsTruthy);
 	}
 }
