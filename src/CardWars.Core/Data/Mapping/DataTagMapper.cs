@@ -69,6 +69,8 @@ public static class DataTagMapper
 	public static void RegisterConverter<T>(DataTagConverter<T> converter) => _globalConverters[typeof(T)] = converter;
 	public static void RegisterConverter(Type type, IDataTagConverter converter) => _globalConverters[type] = converter;
 
+	public static bool HasConverter(Type type) => TryGetConverter(type, out _);
+
 	internal static bool TryGetConverter(Type type, out IDataTagConverter converter)
 	{
 		if (_globalConverters.TryGetValue(type, out converter!)) return true;

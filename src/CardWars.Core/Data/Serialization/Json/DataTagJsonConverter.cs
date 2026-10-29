@@ -16,7 +16,7 @@ public class DataTagJsonConverter : JsonConverter<DataTag>
 			JsonTokenType.Number => reader.TryGetInt32(out var i) ? new IntTag(i) : new FloatTag(reader.GetSingle()),
 			JsonTokenType.StartObject => ReadCompound(ref reader, options),
 			JsonTokenType.StartArray => ReadList(ref reader, options),
-			JsonTokenType.Null => null,
+			JsonTokenType.Null => new NullTag(),
 			_ => throw new JsonException($"Unexpected token: {reader.TokenType}")
 		};
 	}

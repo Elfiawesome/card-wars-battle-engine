@@ -150,11 +150,11 @@ public partial class BattleInstance : ClientInstance
 		=> [.. _entityNodes.Where(kv => kv.Value is T).Select(kv => kv.Value).Cast<T>()];
 
 	public T? GetEntityNode<T>(EntityId id) where T : Node3D
-		=> _entityNodes.TryGetValue(id, out var node) ? node as T : null;
+		=> _entityNodes.TryGetValue(id, out var node) && node is T typed ? typed : null;
 
 	public T? GetOrCreateEntityNode<T>(ResourceId sceneId, EntityId id) where T : Node3D
 	{
-		if (_entityNodes.TryGetValue(id, out var existing)) return existing as T;
+		if (_entityNodes.TryGetValue(id, out var existing) && existing is T existingTyped) return existingTyped;
 		var node = BattleRegistry?.EntityScene.Instantiate<T>(sceneId);
 		if (node == null) return null;
 

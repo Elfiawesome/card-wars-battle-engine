@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data.Access;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
@@ -7,7 +8,7 @@ using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 
-public class ScriptContext
+public class ScriptContext : IDataTagAccessible
 {
 	private readonly List<ScriptScope> _scopes = [new()];
 
@@ -103,6 +104,32 @@ public class ScriptContext
 		Log.Warn($"Unknown variable [{name}]");
 		return false;
 	}
+
+	public bool TryGetMember(string member, out DataTag? value)
+	{
+		if (TryGetVariable(ResourceId.Parse(member), out var variable))
+		{
+			value = variable;
+			return true;
+		}
+
+		value = null;
+		return false;
+	}
+
+	public bool TrySetMember(string member, DataTag value)
+		=> TrySetVariable(ResourceId.Parse(member), value);
+
+	public bool TryGetIndex(DataTag index, out DataTag? value)
+	{
+		if (index is StringTag key) return TryGetMember(key.Value, out value);
+
+		value = null;
+		return false;
+	}
+
+	public bool TrySetIndex(DataTag index, DataTag value)
+		=> index is StringTag key && TrySetVariable(ResourceId.Parse(key.Value), value);
 
 	public T? ResolveObject<T>(DataTag? tag) where T : class
 	{

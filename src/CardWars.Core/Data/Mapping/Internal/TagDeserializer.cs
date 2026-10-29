@@ -10,9 +10,17 @@ internal static class TagDeserializer
 	public static object? Deserialize(DataTag? tag, Type targetType)
 	{
 		if (tag == null) return GetDefault(targetType);
-		if (typeof(DataTag).IsAssignableFrom(targetType)) return tag.Clone();
 
 		var actualType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+		if (tag is NullTag)
+		{
+			if (Nullable.GetUnderlyingType(targetType) != null) return null;
+			if (targetType == typeof(DataTag)) return tag.Clone();
+			return GetDefault(targetType);
+		}
+
+		if (typeof(DataTag).IsAssignableFrom(targetType)) return tag.Clone();
 
 		// 1. Dynamic object resolution
 		if (actualType == typeof(object)) return DeserializeDynamic(tag);
@@ -307,5 +315,9 @@ internal static class TagDeserializer
 		return typeof(IEnumerable).IsAssignableFrom(type);
 	}
 
-	private static object? GetDefault(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
+	private static object? GetDefault(Type type)
+	{
+		if (type == typeof(DataTag)) return new NullTag();
+		return type.IsValueType ? Activator.CreateInstance(type) : null;
+	}
 }

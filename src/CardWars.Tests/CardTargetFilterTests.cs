@@ -167,10 +167,10 @@ public sealed class CardTargetFilterTests
 	{
 		var candidate = new VariableExpression(TargetBindings.Candidate);
 		var player = new VariableExpression(TargetBindings.Player);
-		var state = new VariableExpression(CardWars.BattleEngine.Behaviour.DataDriven.ScriptBindings.State);
+		var state = new VariableExpression(BattleEngine.Behaviour.DataDriven.ScriptBindings.State);
 
 		var isUnitSlot = new EqualsExpression(
-			new MemberExpression(candidate, "_type"),
+			new MemberExpression(candidate, DataTagMapper.TypeDiscriminatorKey),
 			new LiteralExpression(new StringTag(ResourceId.Vanilla("battle/entity/unit_slot").ToString())));
 
 		var ownBattlefield = new EqualsExpression(

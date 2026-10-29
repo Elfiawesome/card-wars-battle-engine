@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
+using CardWars.Core.Data.Access;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
@@ -26,7 +27,7 @@ public sealed class IndexExpressionHandler : IExpressionHandler<IndexExpression>
 			return new NullTag();
 		}
 
-		if (context.DataDriven.ObjectAccessors.TryGetIndex(targetObject, index, out var value))
+		if (DataTagAccess.TryGetIndex(targetObject, index, out var value))
 			return value ?? new NullTag();
 
 		Log.Warn($"Index [{index.Type}] was not found on [{targetObject.GetType().Name}]");

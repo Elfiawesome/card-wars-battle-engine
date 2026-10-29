@@ -16,7 +16,8 @@ public static class DataTagSerializer
 		where T : DataTag
 	{
 		var tag = JsonSerializer.Deserialize<DataTag>(json, JsonSerializerOptions);
-		if (tag == null) return null;
+		if (tag == null && string.Equals(json.Trim(), "null", StringComparison.Ordinal))
+			tag = new NullTag();
 		return tag as T;
 	}
 

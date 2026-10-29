@@ -37,24 +37,20 @@ public partial class HandManager : Control
 
 	public override void _Process(double delta)
 	{
-		if (LineArrow != null)
+		if (LineArrow is not { } lineArrow) return;
+
+		if (BattleInstance?.Hovered3DTarget.Node is { } target3D
+			&& BattleInstance.CameraNode is { } camera)
 		{
-			// TODO: does any other code use XXX is { } XXX style? We should use this more...
-			// Fella its called 'Property Pattern' :|
-			if (BattleInstance?.Hovered3DTarget.Node is { } target3D
-				&& BattleInstance.CameraNode is { } cam
-				&& LineArrow != null)
-			{
-				var viewportPoint = cam.UnprojectPosition(target3D.GlobalPosition);
-				var localPoint = LineArrow.GetGlobalTransformWithCanvas().AffineInverse() * viewportPoint;
-				LineArrow.Set("target", localPoint);
-				LineArrow.Set("smoothness", 0.2);
-			}
-			else
-			{
-				LineArrow?.Set("smoothness", 0.8);
-				LineArrow?.Set("target", LineArrow.GetLocalMousePosition());
-			}
+			var viewportPoint = camera.UnprojectPosition(target3D.GlobalPosition);
+			var localPoint = lineArrow.GetGlobalTransformWithCanvas().AffineInverse() * viewportPoint;
+			lineArrow.Set("target", localPoint);
+			lineArrow.Set("smoothness", 0.2);
+		}
+		else
+		{
+			lineArrow.Set("smoothness", 0.8);
+			lineArrow.Set("target", lineArrow.GetLocalMousePosition());
 		}
 	}
 

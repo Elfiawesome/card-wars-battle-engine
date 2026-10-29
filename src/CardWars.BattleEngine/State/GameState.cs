@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
+using CardWars.Core.Data.Access;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
@@ -7,7 +8,7 @@ using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.State;
 
-public class GameState
+public class GameState : IDataTagAccessible
 {
 	private readonly Dictionary<EntityId, IEntity> _entities = [];
 
@@ -21,7 +22,7 @@ public class GameState
 		=> id is { } key && _entities.TryGetValue(key, out var e) ? e : null;
 
 	public T? Get<T>(EntityId? id) where T : class, IEntity
-		=> Get(id) as T;
+		=> Get(id) is T typed ? typed : null;
 
 	public T? Require<T>(EntityId id,
 		[CallerFilePath] string file = "",
@@ -74,6 +75,30 @@ public class GameState
 
 	// For modding?
 	public ScriptScope GlobalScope { get; } = new();
+
+	public bool TryGetMember(string member, out DataTag? value)
+	{
+		value = null;
+		return false;
+	}
+
+	public bool TrySetMember(string member, DataTag value) => false;
+
+	public bool TryGetIndex(DataTag index, out DataTag? value)
+	{
+		var entityId = index switch
+		{
+			GuidTag guidTag => new EntityId(guidTag.Value),
+			StringTag stringTag when Guid.TryParse(stringTag.Value, out var guid) => new EntityId(guid),
+			_ => EntityId.None
+		};
+
+		var entity = Get(entityId);
+		value = entity is null ? null : new ObjectRefTag(entity);
+		return entity is not null;
+	}
+
+	public bool TrySetIndex(DataTag index, DataTag value) => false;
 
 	public IEnumerable<(EntityId entityId, BehaviourPointer pointer)> GetAllBehaviourPointers()
 	{
