@@ -38,7 +38,8 @@ public partial class HandManager : Control
 			// TODO: does any other code use XXX is { } XXX style? We should use this more...
 			if (BattleInstance?.Hovered3DTarget is { } target3D
 				&& BattleInstance.CameraNode is { } cam
-				&& LineArrow != null)
+				&& LineArrow != null
+			)
 			{
 				var viewportPoint = cam.UnprojectPosition(target3D.GlobalPosition);
 				var localPoint = LineArrow.GetGlobalTransformWithCanvas().AffineInverse() * viewportPoint;
