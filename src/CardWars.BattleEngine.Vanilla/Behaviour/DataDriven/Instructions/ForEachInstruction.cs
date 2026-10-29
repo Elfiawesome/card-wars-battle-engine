@@ -1,6 +1,5 @@
 using System.Collections;
 using CardWars.BattleEngine.Behaviour.DataDriven.Instructions;
-using System.Collections.Generic;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.Core.Data.Attributes;
@@ -24,7 +23,7 @@ public sealed class ForEachInstructionHandler : IInstructionHandler<ForEachInstr
 	{
 		var collection = context.Evaluate(request.Collection);
 		var items = GetItems(collection);
-		if (items == null)
+		if (items is null)
 		{
 			Log.Error($"ForEach collection type [{collection.Type}] is not enumerable");
 			yield return InstructionOutcome.Continue;

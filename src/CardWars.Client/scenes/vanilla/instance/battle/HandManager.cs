@@ -60,7 +60,7 @@ public partial class HandManager : Control
 	public void AddCard(EntityId id)
 	{
 		var card = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<CardDisplay>(SharedIds.UI.CardDisplay);
-		if (card == null) return;
+		if (card is null) return;
 		card.Scale = Vector2.Zero;
 		card.Position = new(0, 0);
 
@@ -100,7 +100,7 @@ public partial class HandManager : Control
 			{
 				if (inputEventMouseButton.Pressed)
 				{
-					if (SelectedCard == null)
+					if (SelectedCard is null)
 					{
 						SelectedCard = card;
 
@@ -120,7 +120,7 @@ public partial class HandManager : Control
 		{
 			if (inputEventMouseButton.Pressed)
 			{
-				if (SelectedCard != null)
+				if (SelectedCard is not null)
 				{
 					SelectedCard = null;
 
@@ -188,11 +188,11 @@ public partial class HandManager : Control
 					// c.Modulate = new Color(Modulate, 0.5f);
 					newScale *= 1.2f;
 
-					if (LineArrow != null) LineArrow.Position = newPos + c.Size / 2;
+					if (LineArrow is not null) LineArrow.Position = newPos + c.Size / 2;
 				}
 				else
 				{
-					if (SelectedCard == null)
+					if (SelectedCard is null)
 					{
 						if (c == HoveredCard)
 						{

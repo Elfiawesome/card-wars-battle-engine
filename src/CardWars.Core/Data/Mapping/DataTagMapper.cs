@@ -57,7 +57,7 @@ public static class DataTagMapper
 
 	public static DataTag? ToValueTag(object? value, Type? declaredType = null)
 	{
-		if (value == null) return null;
+		if (value is null) return null;
 		return TagSerializer.SerializeValue(value, declaredType ?? value.GetType());
 	}
 
@@ -76,7 +76,7 @@ public static class DataTagMapper
 		if (_globalConverters.TryGetValue(type, out converter!)) return true;
 
 		var attr = type.GetCustomAttribute<DataTagConverterAttribute>();
-		if (attr != null)
+		if (attr is not null)
 		{
 			converter = TypeMetadataCache.GetConverterInstance(attr.ConverterType);
 			return true;

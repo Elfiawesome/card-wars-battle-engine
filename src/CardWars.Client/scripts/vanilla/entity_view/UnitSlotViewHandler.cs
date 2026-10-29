@@ -22,7 +22,7 @@ public class UnitSlotViewHandler : IEntityViewHandler<UnitSlot>
 		foreach (var entity in entities)
 		{
 			var node = instance.GetOrCreateEntityNode<UnitSlotNode>(SharedIds.Entities.UnitSlot, entity.Id);
-			if (node == null) continue;
+			if (node is null) continue;
 
 			instance.AttachNodeToOwner(node, entity.OwnerBattlefieldId);
 			node.OnMouseEntered += () => { instance.Hovered3DTarget.Node = node; Log.Info($"Entered: {node}"); };

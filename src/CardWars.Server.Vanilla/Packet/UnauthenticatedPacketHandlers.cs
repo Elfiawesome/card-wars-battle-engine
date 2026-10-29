@@ -21,7 +21,7 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler() : IUnauthenticatedPa
 		PlayerSession playerSession;
 
 		var data = context.Server.Session.LoadPlayer(persistentId);
-		if (data != null)
+		if (data is not null)
 		{
 			playerSession = DataTagMapper.FromTag<PlayerSession>(data);
 			playerSession.Connection = context.Connection;

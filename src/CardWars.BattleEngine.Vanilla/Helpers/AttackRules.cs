@@ -12,10 +12,10 @@ public static class AttackRules
 	public static bool CanTargetSlot(GameState state, EntityId targetSlotId)
 	{
 		if (state.Require<UnitSlot>(targetSlotId) is not { } targetSlot) return false;
-		if (targetSlot.OwnerBattlefieldId == null) return false;
+		if (targetSlot.OwnerBattlefieldId is null) return false;
 
 		var battlefield = state.Get<Battlefield>(targetSlot.OwnerBattlefieldId.Value);
-		if (battlefield == null) return false;
+		if (battlefield is null) return false;
 
 		int targetRow = targetSlot.Position.Y;
 
@@ -24,12 +24,12 @@ public static class AttackRules
 			if (slotId == targetSlotId) continue;
 
 			var slot = state.Get<UnitSlot>(slotId);
-			if (slot == null || slot.Position.Y <= targetRow) continue; // same or behind
+			if (slot is null || slot.Position.Y <= targetRow) continue; // same or behind
 
-			if (slot.HoldingCardId == null) continue;
+			if (slot.HoldingCardId is null) continue;
 
 			var card = state.Get<GenericCard>(slot.HoldingCardId.Value);
-			if (card != null && !card.IsFatal)
+			if (card is not null && !card.IsFatal)
 				return false; // blocked by a living unit in a front row
 		}
 
@@ -49,10 +49,10 @@ public static class AttackRules
 			foreach (var slotId in bf.UnitSlotIds)
 			{
 				var slot = state.Get<UnitSlot>(slotId);
-				if (slot?.HoldingCardId == null) continue;
+				if (slot?.HoldingCardId is null) continue;
 
 				var card = state.Get<GenericCard>(slot.HoldingCardId.Value);
-				if (card != null && !card.IsFatal)
+				if (card is not null && !card.IsFatal)
 					return false;
 			}
 
@@ -83,7 +83,7 @@ public static class AttackRules
 			{
 				if (state.Require<UnitSlot>(slotId) is not { } slot) continue;
 
-				GenericCard? card = slot.HoldingCardId != null
+				GenericCard? card = slot.HoldingCardId is not null
 					? state.Get<GenericCard>(slot.HoldingCardId.Value)
 					: null;
 
@@ -97,7 +97,7 @@ public static class AttackRules
 			{
 				foreach (var (_, card) in rowSlots)
 				{
-					if (card != null && !card.IsFatal)
+					if (card is not null && !card.IsFatal)
 					{
 						targets.Add(card.Id);
 						blocked = true;
@@ -112,7 +112,7 @@ public static class AttackRules
 				foreach (var heroId in bf.HeroCardIds)
 				{
 					var hero = state.Get<GenericCard>(heroId);
-					if (hero != null) targets.Add(heroId);
+					if (hero is not null) targets.Add(heroId);
 				}
 			}
 		}

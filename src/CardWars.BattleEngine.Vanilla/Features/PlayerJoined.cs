@@ -47,7 +47,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 			var cardId = EntityId.New();
 
 			// Add other data in a card that may not exist
-			if (def != null)
+			if (def is not null)
 			{
 				switch (def.GetString("card_type"))
 				{

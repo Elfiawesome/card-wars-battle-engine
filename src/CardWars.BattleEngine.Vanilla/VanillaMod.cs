@@ -1,4 +1,4 @@
-﻿using CardWars.BattleEngine.Vanilla.Behaviour;
+using CardWars.BattleEngine.Vanilla.Behaviour;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
 using CardWars.BattleEngine.Vanilla.Block;
@@ -130,7 +130,7 @@ public class VanillaMod : IBattleEngineMod
 			{
 				case ["cards", "units"]:
 					var unitDataTag = content.ReadAs<CompoundTag>();
-					if (unitDataTag == null) continue;
+					if (unitDataTag is null) continue;
 					Log.Info("Registered Unit: " + content.Id.ToString());
 
 					unitDataTag.Set("card_type", "unit");
@@ -145,7 +145,7 @@ public class VanillaMod : IBattleEngineMod
 					break;
 				case ["cards", "heroes"]:
 					var heroDataTag = content.ReadAs<CompoundTag>();
-					if (heroDataTag == null) continue;
+					if (heroDataTag is null) continue;
 					Log.Info("Registered Hero: " + content.Id.ToString());
 
 					heroDataTag.Set("card_type", "hero");

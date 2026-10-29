@@ -31,7 +31,7 @@ public class S2C_EnterInstancePacketHandler : IPacketHandlerClient<S2C_EnterInst
 	public void Handle(PacketContextClient context, S2C_EnterInstancePacket request)
 	{
 		var instance = context.Session.ClientRegistry.Instances.Instantiate<ClientInstance>(request.ProviderId);
-		if (instance == null) { return; }
+		if (instance is null) { return; }
 		context.Session.SwitchInstance(instance, request.PlayerId);
 	}
 }

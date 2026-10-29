@@ -18,7 +18,7 @@ internal static class TagSerializer
 		if (includeType)
 		{
 			var runtimeTypeId = DataTagTypeRegistry.GetTypeId(runtimeType);
-			if (runtimeTypeId != null)
+			if (runtimeTypeId is not null)
 			{
 				compound.Set(DataTagMapper.TypeDiscriminatorKey, runtimeTypeId);
 			}
@@ -30,10 +30,10 @@ internal static class TagSerializer
 			if (!prop.PropertyInfo.CanRead) continue;
 
 			var val = prop.PropertyInfo.GetValue(obj);
-			if (val == null) continue;
+			if (val is null) continue;
 
 			var tag = SerializeValue(val, prop.PropertyInfo.PropertyType, prop.Converter);
-			if (tag != null)
+			if (tag is not null)
 			{
 				compound.Set(prop.TagKey, tag);
 			}
@@ -44,13 +44,13 @@ internal static class TagSerializer
 
 	public static DataTag? SerializeValue(object? value, Type declaredType, IDataTagConverter? propertyConverter = null)
 	{
-		if (value == null) return null;
+		if (value is null) return null;
 		if (value is DataTag directTag) return directTag.Clone();
 
 		var actualType = Nullable.GetUnderlyingType(declaredType) ?? declaredType;
 
 		// 1. Property or Type Converters
-		if (propertyConverter != null) return propertyConverter.ToTag(value);
+		if (propertyConverter is not null) return propertyConverter.ToTag(value);
 		if (DataTagMapper.TryGetConverter(actualType, out var typeConverter) ||
 			DataTagMapper.TryGetConverter(value.GetType(), out typeConverter))
 		{
@@ -101,7 +101,7 @@ internal static class TagSerializer
 				if (entry.Key is string keyStr)
 				{
 					var valTag = SerializeValue(entry.Value, entry.Value?.GetType() ?? typeof(object));
-					if (valTag != null) compound.Set(keyStr, valTag);
+					if (valTag is not null) compound.Set(keyStr, valTag);
 				}
 			}
 			return compound;
@@ -114,7 +114,7 @@ internal static class TagSerializer
 			var kTag = SerializeValue(entry.Key, entry.Key?.GetType() ?? typeof(object));
 			var vTag = SerializeValue(entry.Value, entry.Value?.GetType() ?? typeof(object));
 
-			if (kTag != null && vTag != null)
+			if (kTag is not null && vTag is not null)
 			{
 				listTag.Add(new CompoundTag().Set("k", kTag).Set("v", vTag));
 			}
@@ -128,9 +128,9 @@ internal static class TagSerializer
 		var tagList = new ListTag();
 		foreach (var item in list)
 		{
-			if (item == null) continue;
+			if (item is null) continue;
 			var tag = SerializeValue(item, elemType);
-			if (tag != null) tagList.Add(tag);
+			if (tag is not null) tagList.Add(tag);
 		}
 		return tagList;
 	}
@@ -144,7 +144,7 @@ internal static class TagSerializer
 		if (props.Length == 1 && props[0].PropertyType == typeof(Guid))
 			return new GuidTag((Guid)props[0].GetValue(value)!);
 
-		if (type.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, [typeof(string)]) != null)
+		if (type.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, [typeof(string)]) is not null)
 			return new StringTag(value.ToString() ?? string.Empty);
 
 		return SerializeObject(value, type);

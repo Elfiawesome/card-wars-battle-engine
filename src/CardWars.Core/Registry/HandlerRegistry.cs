@@ -29,7 +29,7 @@ public class HandlerRegistry<TContext> : Registry<Type, Action<TContext, IReques
 		var requestType = request.GetType();
 		Log.Debug($"Running handler {request.GetType().Name}");
 		var action = Get(requestType);
-		if (action == null) { Log.Error($"No handler found for {requestType}"); return; } /* TODO: Bad request*/
+		if (action is null) { Log.Error($"No handler found for {requestType}"); return; } /* TODO: Bad request*/
 		action.Invoke(context, request);
 	}
 }
@@ -58,7 +58,7 @@ public class HandlerRegistry<TContext, TResult> : Registry<Type, Func<TContext, 
 	{
 		var requestType = request.GetType();
 		var action = Get(requestType);
-		if (action == null)
+		if (action is null)
 		{
 			Log.Error($"No handler found for {requestType}");
 			result = default;

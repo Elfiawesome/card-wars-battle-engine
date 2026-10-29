@@ -1,4 +1,3 @@
-using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Behaviour.DataDriven.Instructions;
 
 namespace CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
@@ -17,7 +16,7 @@ public sealed class ScriptRuntimeContext : ScriptContext
 
 	public IEnumerable<InstructionOutcome> ExecuteBlock(IReadOnlyList<IInstruction>? instructions)
 	{
-		if (instructions == null) yield break;
+		if (instructions is null) yield break;
 
 		PushScope();
 		try

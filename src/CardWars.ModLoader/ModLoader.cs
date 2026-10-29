@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.Loader;
 using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Mapping;
@@ -173,7 +173,7 @@ public class ModLoader
 					{
 						Log.Info($"Found mod entry type '{typeof(TModEntry)}': '{t.FullName}'");
 						var modeEntry = (TModEntry?)Activator.CreateInstance(t);
-						if (modeEntry != null)
+						if (modeEntry is not null)
 						{
 							modEntries.Add(modeEntry);
 						}

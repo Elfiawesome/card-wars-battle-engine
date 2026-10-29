@@ -17,7 +17,7 @@ public class PlayerIntroductionAnimation : BattleAnimation
 		foreach (var unitSlotGuidTag in unitSlots.Enumerate<GuidTag>())
 		{
 			var unitSlotNode = instance.GetEntityNode<UnitSlotNode>(new EntityId(unitSlotGuidTag.Value));
-			if (unitSlotNode == null) continue;
+			if (unitSlotNode is null) continue;
 			tween.TweenProperty(unitSlotNode, "position", unitSlotNode.Position, 1.0).SetDelay(delay);
 			tween.TweenProperty(unitSlotNode, "scale", unitSlotNode.Scale, 1.0).SetDelay(delay);
 			unitSlotNode.Position = new(0, 0, 0);

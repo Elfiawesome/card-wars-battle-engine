@@ -21,7 +21,7 @@ public class BattleInstance : ServerInstance
 	public override void Ready()
 	{
 		base.Ready();
-		// if (Engine != null) Engine.State.Layout = new(ResourceId.Vanilla("line"), new());
+		// if (Engine is not null) Engine.State.Layout = new(ResourceId.Vanilla("line"), new());
 		SetupTestBattle();
 	}
 
@@ -50,7 +50,7 @@ public class BattleInstance : ServerInstance
 	{
 		base.AddPlayer(player);
 
-		if (Engine == null) return;
+		if (Engine is null) return;
 		// Send Player current State
 		player.Connection.Send(new S2C_BattleSyncSnapshot() { GameStateSnapshot = Engine.State.ToSnapshot() });
 

@@ -18,7 +18,7 @@ public sealed class RaiseInstructionHandler : IInstructionHandler<RaiseInstructi
 	{
 		var value = context.Evaluate(request.Event);
 		var evnt = context.ResolveObject<IEvent>(value);
-		if (evnt == null)
+		if (evnt is null)
 		{
 			Log.Error($"raise expected an event but received [{value.Type}]");
 			yield return InstructionOutcome.Continue;

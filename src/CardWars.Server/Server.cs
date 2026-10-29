@@ -183,7 +183,7 @@ public class Server
 	public void LeaveInstance(PlayerSession player)
 	{
 		player.CurrentInstance?.RemovePlayer(player);
-		if (player.CurrentInstance != null)
+		if (player.CurrentInstance is not null)
 		{
 			OnPlayerLeaveInstance?.Invoke(this, player.CurrentInstance, player);
 		}
@@ -307,7 +307,7 @@ public class Server
 			var conn = playerSession.Connection;
 			while (conn.TryReceive(out var packet))
 			{
-				if (packet == null) continue;
+				if (packet is null) continue;
 				HandleLocalPacket(playerSession, packet);
 				HandleGlobalPacket(playerSession, packet);
 			}
@@ -317,7 +317,7 @@ public class Server
 		{
 			while (conn.TryReceive(out var packet))
 			{
-				if (packet == null) continue;
+				if (packet is null) continue;
 				HandleUnauthenticatedPacket(conn, packet);
 			}
 		}

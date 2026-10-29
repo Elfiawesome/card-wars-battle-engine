@@ -46,7 +46,7 @@ public class EndTurnRequestEventHandler : IEventHandler<EndTurnRequestEvent>
 		}
 
 		EntityId? currentPlayerId = newTurnState.TurnOrder.ElementAtOrDefault(newTurnState.TurnIndex);
-		if (currentPlayerId == null || currentPlayerId == EntityId.None)
+		if (currentPlayerId is null || currentPlayerId == EntityId.None)
 		{
 			// Something wrong probably happened, so we advance to the next turn
 			Log.Warn($"TurnOrder[{newTurnState.TurnIndex}] is null/empty, advancing to next turn");

@@ -9,11 +9,11 @@ public sealed class ScriptExecutor(
 {
 	public IEnumerable<InstructionOutcome> Execute(IReadOnlyList<IInstruction>? instructions)
 	{
-		if (instructions == null) yield break;
+		if (instructions is null) yield break;
 
 		foreach (var instruction in instructions)
 		{
-			if (!handlers.TryExecute(context, instruction, out var outcomes) || outcomes == null)
+			if (!handlers.TryExecute(context, instruction, out var outcomes) || outcomes is null)
 				yield break;
 
 			foreach (var outcome in outcomes)

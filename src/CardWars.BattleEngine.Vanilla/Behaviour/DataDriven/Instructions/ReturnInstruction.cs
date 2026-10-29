@@ -14,7 +14,7 @@ public sealed class ReturnInstructionHandler : IInstructionHandler<ReturnInstruc
 {
 	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, ReturnInstruction request)
 	{
-		if (request.Value != null) context.Evaluate(request.Value);
+		if (request.Value is not null) context.Evaluate(request.Value);
 		yield return InstructionOutcome.Return;
 	}
 }

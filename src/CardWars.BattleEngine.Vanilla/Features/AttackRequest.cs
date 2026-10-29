@@ -30,7 +30,7 @@ public class AttackRequestInputHandler : IInputHandler<AttackRequestInput>
 		if (state.Require<UnitSlot>(request.TargetSlotId) is not { } targetSlot) return;
 
 		// Check if Targeted Unit is valid
-		if (targetSlot.HoldingCardId == null) { Log.Error("Target Unit Slot does not have any holding card id"); return; }
+		if (targetSlot.HoldingCardId is null) { Log.Error("Target Unit Slot does not have any holding card id"); return; }
 		if (state.Require<GenericCard>((EntityId)targetSlot.HoldingCardId) is not { } targetCard) return;
 
 		foreach (var attackerSlotId in request.AttackerSlotIds)
@@ -39,7 +39,7 @@ public class AttackRequestInputHandler : IInputHandler<AttackRequestInput>
 			if (state.Require<UnitSlot>(attackerSlotId) is not { } attackerSlot) continue;
 
 			// Check if Attacker Unit is valid
-			if (attackerSlot.HoldingCardId == null) { Log.Error("One of Attacker's Unit Slot does not have any holding card id"); continue; }
+			if (attackerSlot.HoldingCardId is null) { Log.Error("One of Attacker's Unit Slot does not have any holding card id"); continue; }
 			if (state.Require<GenericCard>((EntityId)attackerSlot.HoldingCardId) is not { } attackerCard) continue;
 
 			context.Transaction.QueueEvent(new AttackRequestEvent() { AttackerId = attackerCard.Id, TargetId = targetCard.Id });
@@ -104,7 +104,7 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 		// Check if Attacker & Target Unit are valid
 		if (state.Require<GenericCard>(request.AttackerId) is not { } attackerCard) return;
 		if (state.Require<GenericCard>(request.TargetId) is not { } targetCard) return;
-		if (targetCard.OwnerUnitSlotId == null) { Log.Error("Target Card is not on any OwnerUnitSlotId"); return; }
+		if (targetCard.OwnerUnitSlotId is null) { Log.Error("Target Card is not on any OwnerUnitSlotId"); return; }
 
 		if (attackerCard.SpAtk.Count > 0)
 		{
@@ -112,7 +112,7 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 			for (int i = 0; i < attackerCard.SpAtk.Count; i++)
 			{
 				var spAtk = attackerCard.SpAtk.Get<CompoundTag>(i);
-				if (spAtk == null) { continue; }
+				if (spAtk is null) { continue; }
 				// Get SP Atk details
 				var name = spAtk.Get<StringTag>("name") ?? new StringTag("Default");
 				var multiType = spAtk.Get<StringTag>("multi_type") ?? new StringTag("");

@@ -21,14 +21,14 @@ public class SummonUnitCardToUnitSlotBehaviour : Behaviour<UseCardRequestEvent>
 		// Skip if the entity parent isnt even a card
 		if (context.Owner is not GenericCard card) return BehaviourResult.Complete;
 
-		if (evnt.TargetEntityId != null && evnt.TargetEntityId != EntityId.None)
+		if (evnt.TargetEntityId is { } targetId && targetId != EntityId.None)
 		{
-			var unitSlot = context.State.Get<UnitSlot>(evnt.TargetEntityId ?? EntityId.None);
-			if (unitSlot != null && unitSlot.HoldingCardId == null)
+			var unitSlot = context.State.Get<UnitSlot>(targetId);
+			if (unitSlot is { HoldingCardId: null })
 			{
 				batch.Blocks.Add(new DetachCardFromPlayerBlock(card.OwnerPlayerId ?? EntityId.None, card.Id));
 				batch.Blocks.Add(new AttachCardToUnitSlotBlock(unitSlot.Id, card.Id));
-				Log.Debug("We want to summon this unit " + context.OwnerEntityId + " to slot " + evnt.TargetEntityId);
+				Log.Debug("We want to summon this unit " + context.OwnerEntityId + " to slot " + targetId);
 			}
 			else
 			{

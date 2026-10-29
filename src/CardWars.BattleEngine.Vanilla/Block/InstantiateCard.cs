@@ -17,14 +17,14 @@ public class InstantiateCardBlockHandler : IBlockHandler<InstantiateCardBlock>
 {
 	public void Handle(GameState context, InstantiateCardBlock request)
 	{
-		if (context.Get(request.Id) != null)
+		if (context.Get(request.Id) is not null)
 		{
 			Log.Warn($"Entity [{request.Id}] already exists, skipping InstantiateCardBlock"); return;
 		}
 
 		var card = new GenericCard(request.Id);
-		if (request.Data != null)
-			card.Data = (CompoundTag)request.Data.Clone();
+		if (request.Data is { } data)
+			card.Data = (CompoundTag)data.Clone();
 		context.Add(card);
 	}
 }

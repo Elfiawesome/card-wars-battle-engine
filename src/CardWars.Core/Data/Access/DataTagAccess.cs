@@ -5,7 +5,6 @@ using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Registry;
 
 namespace CardWars.Core.Data.Access;
 
@@ -22,7 +21,7 @@ public static class DataTagAccess
 		if (member == DataTagMapper.TypeDiscriminatorKey)
 		{
 			var typeId = DataTagTypeRegistry.GetTypeId(target.GetType());
-			if (typeId != null)
+			if (typeId is not null)
 			{
 				value = new StringTag(typeId);
 				return true;
@@ -30,7 +29,7 @@ public static class DataTagAccess
 		}
 
 		var property = FindProperty(target.GetType(), member);
-		if (property != null)
+		if (property is not null)
 		{
 			value = ToAccessTag(property.GetValue(target), property.PropertyType);
 			return true;
@@ -90,7 +89,7 @@ public static class DataTagAccess
 				return true;
 			case IDictionary dictionary:
 				var dictionaryKey = ConvertToType(index, GetDictionaryKeyType(target.GetType()));
-				if (dictionaryKey == null || !dictionary.Contains(dictionaryKey)) break;
+				if (dictionaryKey is null || !dictionary.Contains(dictionaryKey)) break;
 				value = ToAccessTag(dictionary[dictionaryKey], GetDictionaryValueType(target.GetType()));
 				return true;
 			case IList list when index is IntTag intTag:
@@ -120,7 +119,7 @@ public static class DataTagAccess
 				return true;
 			case IDictionary dictionary:
 				var dictionaryKey = ConvertToType(index, GetDictionaryKeyType(target.GetType()));
-				if (dictionaryKey == null) return false;
+				if (dictionaryKey is null) return false;
 				dictionary[dictionaryKey] = DataTagMapper.FromValueTag(value, GetDictionaryValueType(target.GetType()));
 				return true;
 			case IList list when index is IntTag intTag:
@@ -181,7 +180,7 @@ public static class DataTagAccess
 		{
 			var parameter = indexer.GetIndexParameters()[0];
 			var converted = ConvertToType(new StringTag(member), parameter.ParameterType);
-			if (converted == null) continue;
+			if (converted is null) continue;
 
 			value = ToAccessTag(indexer.GetValue(target, [converted]), indexer.PropertyType);
 			return true;
@@ -198,7 +197,7 @@ public static class DataTagAccess
 			if (!indexer.CanWrite) continue;
 			var parameter = indexer.GetIndexParameters()[0];
 			var converted = ConvertToType(new StringTag(member), parameter.ParameterType);
-			if (converted == null) continue;
+			if (converted is null) continue;
 			indexer.SetValue(target, DataTagMapper.FromValueTag(value, indexer.PropertyType), [converted]);
 			return true;
 		}
@@ -212,7 +211,7 @@ public static class DataTagAccess
 		{
 			var parameter = indexer.GetIndexParameters()[0];
 			var converted = ConvertToType(index, parameter.ParameterType);
-			if (converted == null) continue;
+			if (converted is null) continue;
 
 			value = ToAccessTag(indexer.GetValue(target, [converted]), indexer.PropertyType);
 			return true;
@@ -229,7 +228,7 @@ public static class DataTagAccess
 			if (!indexer.CanWrite) continue;
 			var parameter = indexer.GetIndexParameters()[0];
 			var converted = ConvertToType(index, parameter.ParameterType);
-			if (converted == null) continue;
+			if (converted is null) continue;
 			indexer.SetValue(target, DataTagMapper.FromValueTag(value, indexer.PropertyType), [converted]);
 			return true;
 		}

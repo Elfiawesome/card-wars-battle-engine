@@ -18,7 +18,7 @@ public sealed class CallExpressionHandler : IExpressionHandler<CallExpression>
 	public DataTag Handle(ScriptContext context, CallExpression request)
 	{
 		var function = context.DataDriven.Functions.Get(request.Function);
-		if (function == null)
+		if (function is null)
 		{
 			Log.Error($"Unknown function [{request.Function}]");
 			return new NullTag();

@@ -9,13 +9,13 @@ internal static class TagDeserializer
 {
 	public static object? Deserialize(DataTag? tag, Type targetType)
 	{
-		if (tag == null) return GetDefault(targetType);
+		if (tag is null) return GetDefault(targetType);
 
 		var actualType = Nullable.GetUnderlyingType(targetType) ?? targetType;
 
 		if (tag is NullTag)
 		{
-			if (Nullable.GetUnderlyingType(targetType) != null) return null;
+			if (Nullable.GetUnderlyingType(targetType) is not null) return null;
 			if (targetType == typeof(DataTag)) return tag.Clone();
 			return GetDefault(targetType);
 		}
@@ -94,12 +94,12 @@ internal static class TagDeserializer
 		if (tag is StringTag stringTag)
 		{
 			var parseMethod = actualType.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, [typeof(string)]);
-			if (parseMethod != null) return parseMethod.Invoke(null, [stringTag.Value]);
+			if (parseMethod is not null) return parseMethod.Invoke(null, [stringTag.Value]);
 		}
 		if (tag is GuidTag guidTag)
 		{
 			var ctor = actualType.GetConstructor([typeof(Guid)]);
-			if (ctor != null) return ctor.Invoke([guidTag.Value]);
+			if (ctor is not null) return ctor.Invoke([guidTag.Value]);
 		}
 
 		// 7. Collections
@@ -133,7 +133,7 @@ internal static class TagDeserializer
 		if (!string.IsNullOrEmpty(typeId))
 		{
 			var resolved = DataTagTypeRegistry.GetType(typeId);
-			if (resolved != null && (targetType == typeof(object) || targetType.IsAssignableFrom(resolved)))
+			if (resolved is not null && (targetType == typeof(object) || targetType.IsAssignableFrom(resolved)))
 			{
 				concreteType = resolved;
 			}
@@ -152,7 +152,7 @@ internal static class TagDeserializer
 		object instance;
 
 		// Constructor instantiation
-		if (meta.Constructor != null && meta.ConstructorParams.Length > 0)
+		if (meta.Constructor is not null && meta.ConstructorParams.Length > 0)
 		{
 			var args = new object?[meta.ConstructorParams.Length];
 			for (int i = 0; i < meta.ConstructorParams.Length; i++)
@@ -160,7 +160,7 @@ internal static class TagDeserializer
 				var param = meta.ConstructorParams[i];
 				var paramTag = compound.Get(param.TagKey);
 
-				if (paramTag != null)
+				if (paramTag is not null)
 					args[i] = Deserialize(paramTag, param.ParamType);
 				else if (param.HasDefault)
 					args[i] = param.DefaultValue;
@@ -180,11 +180,11 @@ internal static class TagDeserializer
 			if (prop.IsConstructorBound) continue;
 
 			var propTag = compound.Get(prop.TagKey);
-			if (propTag == null) continue;
+			if (propTag is null) continue;
 
 			if (prop.PropertyInfo.CanWrite)
 			{
-				var val = prop.Converter != null
+				var val = prop.Converter is not null
 					? prop.Converter.FromTag(propTag)
 					: Deserialize(propTag, prop.PropertyInfo.PropertyType);
 
@@ -235,7 +235,7 @@ internal static class TagDeserializer
 				{
 					var k = Deserialize(pairTag.Get("k"), keyType);
 					var v = Deserialize(pairTag.Get("v"), valType);
-					if (k != null) dict[k] = v;
+					if (k is not null) dict[k] = v;
 				}
 			}
 		}
@@ -277,7 +277,7 @@ internal static class TagDeserializer
 			foreach (var item in listTag.Items)
 			{
 				var val = Deserialize(item, elemType);
-				if (val != null) addMethod?.Invoke(set, [val]);
+				if (val is not null) addMethod?.Invoke(set, [val]);
 			}
 			return set;
 		}
@@ -287,7 +287,7 @@ internal static class TagDeserializer
 
 	private static void PopulateExistingCollection(object? existing, ListTag listTag, Type collectionType)
 	{
-		if (existing == null) return;
+		if (existing is null) return;
 		var elemType = TagSerializer.GetElementType(collectionType) ?? typeof(object);
 
 		if (existing is IList list)
@@ -298,12 +298,12 @@ internal static class TagDeserializer
 		}
 
 		var addMethod = existing.GetType().GetMethod("Add");
-		if (addMethod != null)
+		if (addMethod is not null)
 		{
 			foreach (var item in listTag.Items)
 			{
 				var val = Deserialize(item, elemType);
-				if (val != null) addMethod.Invoke(existing, [val]);
+				if (val is not null) addMethod.Invoke(existing, [val]);
 			}
 		}
 	}

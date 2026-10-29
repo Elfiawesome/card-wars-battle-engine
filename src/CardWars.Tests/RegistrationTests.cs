@@ -17,7 +17,7 @@ public sealed class RegistrationTests
 		foreach (var type in expressionTypes)
 		{
 			Assert.True(
-				registry.DataDriven.ExpressionHandlers.Get(type) != null,
+				registry.DataDriven.ExpressionHandlers.Get(type) is not null,
 				$"Missing expression handler for [{type.Name}]");
 		}
 	}
@@ -32,7 +32,7 @@ public sealed class RegistrationTests
 		foreach (var type in instructionTypes)
 		{
 			Assert.True(
-				registry.DataDriven.InstructionHandlers.Get(type) != null,
+				registry.DataDriven.InstructionHandlers.Get(type) is not null,
 				$"Missing instruction handler for [{type.Name}]");
 		}
 	}

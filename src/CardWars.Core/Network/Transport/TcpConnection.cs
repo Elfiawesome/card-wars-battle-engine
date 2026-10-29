@@ -80,10 +80,10 @@ public class TcpConnection : IConnection
 
 				var json = Encoding.UTF8.GetString(payloadBuffer);
 				var tag = DataTagSerializer.Deserialize<CompoundTag>(json);
-				if (tag == null) continue;
+				if (tag is null) continue;
 
 				var packet = DataTagMapper.FromTag<IPacket>(tag);
-				if (packet != null)
+				if (packet is not null)
 					_receiveQueue.Enqueue(packet);
 			}
 			catch (ObjectDisposedException) { break; }

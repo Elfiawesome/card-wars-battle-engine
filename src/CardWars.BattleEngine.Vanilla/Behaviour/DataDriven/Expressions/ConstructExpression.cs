@@ -20,7 +20,7 @@ public sealed class ConstructExpressionHandler : IExpressionHandler<ConstructExp
 	public DataTag Handle(ScriptContext context, ConstructExpression request)
 	{
 		var type = DataTagTypeRegistry.GetType(request.Type.ToString());
-		if (type == null)
+		if (type is null)
 		{
 			Log.Error($"Could not construct unknown type [{request.Type}]");
 			return new NullTag();
@@ -35,7 +35,7 @@ public sealed class ConstructExpressionHandler : IExpressionHandler<ConstructExp
 		try
 		{
 			var instance = DataTagMapper.FromTag(compound, type);
-			return instance == null ? new NullTag() : new ObjectRefTag(instance);
+			return instance is null ? new NullTag() : new ObjectRefTag(instance);
 		}
 		catch (Exception ex)
 		{

@@ -21,7 +21,7 @@ public class LocalSerializedConnection : IConnection
 
 	public void Send(IPacket packet)
 	{
-		if (!IsConnected || Peer == null) return;
+		if (!IsConnected || Peer is null) return;
 		Peer._receiveQueue.Enqueue(PacketCodec.Encode(packet));
 	}
 
@@ -30,7 +30,7 @@ public class LocalSerializedConnection : IConnection
 		if (_receiveQueue.TryDequeue(out var json))
 		{
 			packet = PacketCodec.Decode(json);
-			return packet != null;
+			return packet is not null;
 		}
 		packet = null;
 		return false;
@@ -39,7 +39,7 @@ public class LocalSerializedConnection : IConnection
 	public void Disconnect()
 	{
 		IsConnected = false;
-		if (Peer != null) Peer.IsConnected = false;
+		if (Peer is not null) Peer.IsConnected = false;
 	}
 
 	public void Dispose() => Disconnect();

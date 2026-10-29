@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using CardWars.BattleEngine;
 using CardWars.BattleEngine.Vanilla;
 using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Tags;

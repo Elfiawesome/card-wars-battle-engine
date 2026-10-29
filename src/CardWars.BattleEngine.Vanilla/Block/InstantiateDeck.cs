@@ -15,7 +15,7 @@ public class InstantiateDeckBlockHandler : IBlockHandler<InstantiateDeckBlock>
 {
 	public void Handle(GameState context, InstantiateDeckBlock request)
 	{
-		if (context.Get(request.Id) != null)
+		if (context.Get(request.Id) is not null)
 		{
 			Log.Warn($"Entity [{request.Id}] already exists, skipping InstantiateDeckBlock"); return;
 		}

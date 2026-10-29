@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 
 namespace CardWars.Core.Data.Serialization.Json;
 
@@ -38,7 +37,7 @@ public class DataTagJsonConverter : JsonConverter<DataTag>
 			var key = reader.GetString()!;
 			reader.Read();
 			var value = Read(ref reader, typeof(DataTag), options);
-			if (value != null) tag.Set(key, value);
+			if (value is not null) tag.Set(key, value);
 		}
 		return tag;
 	}
@@ -49,7 +48,7 @@ public class DataTagJsonConverter : JsonConverter<DataTag>
 		while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
 		{
 			var item = Read(ref reader, typeof(DataTag), options);
-			if (item != null) tag.Add(item);
+			if (item is not null) tag.Add(item);
 		}
 		return tag;
 	}
@@ -81,9 +80,7 @@ public class DataTagJsonConverter : JsonConverter<DataTag>
 				writer.WriteNullValue();
 				break;
 			case ObjectRefTag t:
-				Log.Warn($"Cannot serialize runtime object reference [{t.Value.GetType().Name}], writing null");
-				writer.WriteNullValue();
-				break;
+				throw new NotSupportedException($"Cannot serialize runtime object reference [{t.Value.GetType().Name}]");
 		}
 	}
 }

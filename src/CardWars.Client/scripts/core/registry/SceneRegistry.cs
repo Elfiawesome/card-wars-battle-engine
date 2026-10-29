@@ -16,7 +16,7 @@ public class SceneRegistry<TId> : Registry<TId, PackedScene>
 	{
 		var packedScene = Get(id);
 		var n = packedScene?.Instantiate<TNode>();
-		if (n == null) return null;
+		if (n is null) return null;
 		return n;
 	}
 }

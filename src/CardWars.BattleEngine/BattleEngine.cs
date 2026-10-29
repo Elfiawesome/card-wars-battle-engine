@@ -23,7 +23,7 @@ public class BattleEngine
 
 	public void HandleInput(EntityId playerId, IInput input)
 	{
-		if (_transaction == null)
+		if (_transaction is null)
 		{
 			_transaction = new Transaction { Registry = Registry, State = State, OnBlockBatchEvent = OnBlockBatchEvent };
 		}

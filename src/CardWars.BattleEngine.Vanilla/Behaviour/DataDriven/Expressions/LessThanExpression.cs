@@ -19,7 +19,7 @@ public sealed class LessThanExpressionHandler : IExpressionHandler<LessThanExpre
 		var left = context.Evaluate(request.Left);
 		var right = context.Evaluate(request.Right);
 		var comparison = ExpressionValue.Compare(left, right);
-		if (comparison == null)
+		if (comparison is null)
 		{
 			Log.Error($"Cannot compare [{left.Type}] and [{right.Type}]");
 			return new NullTag();

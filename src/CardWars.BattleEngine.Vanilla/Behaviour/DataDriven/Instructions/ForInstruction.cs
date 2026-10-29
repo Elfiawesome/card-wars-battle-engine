@@ -21,9 +21,9 @@ public sealed class ForInstructionHandler : IInstructionHandler<ForInstruction>
 		context.PushScope();
 		try
 		{
-			if (request.Init != null)
+			if (request.Init is { } init)
 			{
-				foreach (var outcome in ExecuteSingle(context, request.Init))
+				foreach (var outcome in ExecuteSingle(context, init))
 				{
 					yield return outcome;
 					if (outcome != InstructionOutcome.Continue && outcome != InstructionOutcome.WaitForInput) yield break;
@@ -31,7 +31,7 @@ public sealed class ForInstructionHandler : IInstructionHandler<ForInstruction>
 			}
 
 			var iterations = 0;
-			while (request.Condition == null || context.Evaluate(request.Condition).IsTruthy)
+			while (request.Condition is null || context.Evaluate(request.Condition).IsTruthy)
 			{
 				if (++iterations > context.MaxLoopIterations)
 				{
@@ -56,9 +56,9 @@ public sealed class ForInstructionHandler : IInstructionHandler<ForInstruction>
 
 				if (shouldBreak) yield break;
 
-				if (request.Step != null)
+				if (request.Step is { } step)
 				{
-					foreach (var outcome in ExecuteSingle(context, request.Step))
+					foreach (var outcome in ExecuteSingle(context, step))
 					{
 						yield return outcome;
 						if (outcome != InstructionOutcome.Continue && outcome != InstructionOutcome.WaitForInput) yield break;

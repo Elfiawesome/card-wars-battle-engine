@@ -29,7 +29,7 @@ public class ScriptContext : IDataTagAccessible
 
 	public DataTag Evaluate(IExpression expression)
 	{
-		if (DataDriven.ExpressionHandlers.TryExecute(this, expression, out var result) && result != null) return result;
+		if (DataDriven.ExpressionHandlers.TryExecute(this, expression, out var result) && result is not null) return result;
 		return new NullTag();
 	}
 

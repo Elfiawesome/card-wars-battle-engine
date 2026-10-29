@@ -63,7 +63,7 @@ public partial class BattlefieldNode : Node3D
 		BoundsCenter = new Vector3((minX + maxX) * 0.5f, 0f, (minZ + maxZ) * 0.5f);
 
 		// How to amke this work?
-		if (_collisionBoxShape != null)
+		if (_collisionBoxShape is not null)
 		{
 			_collisionBoxShape.Shape ??= new BoxShape3D();
 			if (_collisionBoxShape.Shape is BoxShape3D boxShape3D)

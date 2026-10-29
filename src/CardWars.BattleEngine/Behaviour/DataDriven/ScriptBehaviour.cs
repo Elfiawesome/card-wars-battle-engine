@@ -1,4 +1,3 @@
-using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Behaviour.DataDriven.Instructions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.Event;
@@ -26,7 +25,7 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 		ResetExecution();
 
 		var eventId = GetRequestId(evnt.GetType());
-		if (eventId == null) return BehaviourResult.Complete;
+		if (eventId is null) return BehaviourResult.Complete;
 
 		var hooks = definition.OnEvent?
 			.Where(hook => hook.EventType == eventId.Value)
@@ -52,19 +51,19 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 
 	public BehaviourResult Resume(EntityId playerId, IInput input, BehaviourContext context)
 	{
-		if (_waitingRuntime == null) return BehaviourResult.Complete;
+		if (_waitingRuntime is not { } runtime) return BehaviourResult.Complete;
 
-		if (_inputExecution != null)
+		if (_inputExecution is { } inputExecution)
 		{
-			SeedInputBindings(_waitingRuntime, _inputScope, playerId, input);
-			var pausedOutcome = Advance(_inputExecution);
+			SeedInputBindings(runtime, _inputScope, playerId, input);
+			var pausedOutcome = Advance(inputExecution);
 			if (pausedOutcome == InstructionOutcome.WaitForInput) return BehaviourResult.WaitForInput;
 
-			_inputExecution.Dispose();
+			inputExecution.Dispose();
 			_inputExecution = null;
 			_inputScope = null;
 
-			if (pausedOutcome != null)
+			if (pausedOutcome is not null)
 			{
 				ResetExecution();
 				return BehaviourResult.Complete;
@@ -74,7 +73,7 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 		}
 
 		var inputId = GetRequestId(input.GetType());
-		if (inputId == null) return BehaviourResult.WaitForInput;
+		if (inputId is null) return BehaviourResult.WaitForInput;
 
 		var hooks = definition.OnInput?
 			.Where(hook => hook.InputType == inputId.Value)
@@ -82,18 +81,19 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 
 		if (hooks.Count == 0) return BehaviourResult.WaitForInput;
 
-		_inputScope = _waitingRuntime.PushScope();
-		SeedInputBindings(_waitingRuntime, _inputScope, playerId, input);
-		_inputExecution = ExecuteHooks(_waitingRuntime, hooks.Select(hook => hook.Instructions)).GetEnumerator();
+		_inputScope = runtime.PushScope();
+		SeedInputBindings(runtime, _inputScope, playerId, input);
+		var execution = ExecuteHooks(runtime, hooks.Select(hook => hook.Instructions)).GetEnumerator();
+		_inputExecution = execution;
 
-		var outcome = Advance(_inputExecution);
+		var outcome = Advance(execution);
 		if (outcome == InstructionOutcome.WaitForInput) return BehaviourResult.WaitForInput;
 
-		_inputExecution.Dispose();
+		execution.Dispose();
 		_inputExecution = null;
 		_inputScope = null;
 
-		if (outcome != null)
+		if (outcome is not null)
 		{
 			ResetExecution();
 			return BehaviourResult.Complete;
@@ -104,7 +104,7 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 
 	private BehaviourResult ContinueEvent()
 	{
-		if (_eventExecution == null)
+		if (_eventExecution is null)
 		{
 			ResetExecution();
 			return BehaviourResult.Complete;
@@ -155,7 +155,7 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 
 	private static void SeedInputBindings(ScriptRuntimeContext runtime, ScriptScope? scope, EntityId playerId, IInput input)
 	{
-		if (scope == null) return;
+		if (scope is null) return;
 
 		var inputTag = new ObjectRefTag(input);
 		runtime.DeclareVariable(scope, ScriptBindings.Input, inputTag);
@@ -176,7 +176,7 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 	private static ResourceId? GetRequestId(Type type)
 	{
 		var typeId = DataTagTypeRegistry.GetTypeId(type);
-		if (typeId == null)
+		if (typeId is null)
 		{
 			Log.Warn($"Type [{type.Name}] is not registered as a data tag type");
 			return null;

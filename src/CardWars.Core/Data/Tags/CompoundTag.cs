@@ -11,8 +11,8 @@ public sealed class CompoundTag : DataTag
 	// --- Core ---
 
 	public DataTag? Get(string key) => _entries.GetValueOrDefault(key);
-	public T? Get<T>(string key) where T : DataTag => Get(key) as T;
-	public T Get<T>(string key, T defaultValue) where T : DataTag => Get(key) as T ?? defaultValue;
+	public T? Get<T>(string key) where T : DataTag => Get(key) is T typed ? typed : null;
+	public T Get<T>(string key, T defaultValue) where T : DataTag => Get(key) is T typed ? typed : defaultValue;
 
 	public bool Has(string key) => _entries.ContainsKey(key);
 	public bool Remove(string key) => _entries.Remove(key);
@@ -51,13 +51,13 @@ public sealed class CompoundTag : DataTag
 				ListTag l when int.TryParse(segment, out var i) => l.Get(i),
 				_ => null
 			};
-			if (current == null) return null;
+			if (current is null) return null;
 		}
 		return current;
 	}
 
-	public int GetIntByPath(string path, int fallback = 0) => (GetByPath(path) as IntTag)?.Value ?? fallback;
-	public string GetStringByPath(string path, string fallback = "") => (GetByPath(path) as StringTag)?.Value ?? fallback;
+	public int GetIntByPath(string path, int fallback = 0) => GetByPath(path) is IntTag tag ? tag.Value : fallback;
+	public string GetStringByPath(string path, string fallback = "") => GetByPath(path) is StringTag tag ? tag.Value : fallback;
 
 	public void SetByPath(string path, DataTag value)
 	{
@@ -73,14 +73,14 @@ public sealed class CompoundTag : DataTag
 				_ => null
 			};
 
-			if (next == null && current is CompoundTag compound)
+			if (next is null && current is CompoundTag compound)
 			{
 				next = new CompoundTag();
 				compound.Set(segments[i], next);
 			}
 
 			current = next;
-			if (current == null) return;
+			if (current is null) return;
 		}
 
 		var last = segments[^1];

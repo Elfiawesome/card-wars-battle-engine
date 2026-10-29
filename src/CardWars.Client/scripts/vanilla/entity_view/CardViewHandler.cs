@@ -11,10 +11,10 @@ public class CardViewHandler : IEntityViewHandler<GenericCard>
 	public void Sync(BattleInstance instance, IReadOnlyCollection<GenericCard> entities)
 	{
 		var hand = instance.HandManagerNode;
-		if (hand == null) return;
+		if (hand is null) return;
 
 		var handIds = entities
-			.Where(e => e.OwnerPlayerId == instance.MyPlayerId && e.OwnerUnitSlotId == null)
+			.Where(e => e.OwnerPlayerId == instance.MyPlayerId && e.OwnerUnitSlotId is null)
 			.Select(e => e.Id)
 			.ToHashSet();
 
@@ -25,7 +25,7 @@ public class CardViewHandler : IEntityViewHandler<GenericCard>
 
 		foreach (var id in handIds)
 		{
-			if (hand.GetCard(id) == null) hand.AddCard(id);
+			if (hand.GetCard(id) is null) hand.AddCard(id);
 		}
 	}
 }

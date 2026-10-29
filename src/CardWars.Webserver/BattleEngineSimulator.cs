@@ -180,16 +180,16 @@ public class Simulator
 	public List<UnitSlot> Slots(string playerAlias, int battlefieldIndex = 0)
 	{
 		var bf = Battlefields(playerAlias).ElementAtOrDefault(battlefieldIndex);
-		return bf != null ? Slots(bf.Id) : [];
+		return bf is not null ? Slots(bf.Id) : [];
 	}
 
 	public UnitSlot? FindEmptySlot(string playerAlias, UnitSlotPos pos, int bfIndex = 0)
 		=> Slots(playerAlias, bfIndex)
-			.FirstOrDefault(s => s.Position == pos && s.HoldingCardId == null);
+			.FirstOrDefault(s => s.Position == pos && s.HoldingCardId is null);
 
 	public UnitSlot? FindOccupiedSlot(string playerAlias, UnitSlotPos pos, int bfIndex = 0)
 		=> Slots(playerAlias, bfIndex)
-			.FirstOrDefault(s => s.Position == pos && s.HoldingCardId != null);
+			.FirstOrDefault(s => s.Position == pos && s.HoldingCardId is not null);
 
 	private UnitSlot? FindSlotOnOtherPlayers(EntityId excludePlayerId, UnitSlotPos pos)
 	{
@@ -199,7 +199,7 @@ public class Simulator
 			foreach (var bfId in player.BattlefieldIds)
 			{
 				var slot = Slots(bfId).FirstOrDefault(s => s.Position == pos);
-				if (slot != null) return slot;
+				if (slot is not null) return slot;
 			}
 		}
 		return null;
@@ -229,9 +229,9 @@ public class Simulator
 		foreach (var slot in Slots(playerAlias)
 					 .OrderBy(s => s.Position.Y).ThenBy(s => s.Position.X))
 		{
-			var card = slot.HoldingCardId != null
+			var card = slot.HoldingCardId is not null
 				? State.Get<GenericCard>((EntityId)slot.HoldingCardId) : null;
-			var label = card != null
+			var label = card is not null
 				? $"{card.Name}  ATK:{card.Atk}  HP:{card.Hp}"
 				: "[empty]";
 			Log.Info($"  ({slot.Position.X},{slot.Position.Y}) {label}");

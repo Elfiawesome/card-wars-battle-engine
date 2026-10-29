@@ -18,7 +18,7 @@ public class AttachCardToUnitSlotBlockHandler : IBlockHandler<AttachCardToUnitSl
 		if (context.Require<UnitSlot>(request.UnitSlotId) is not { } unitSlot) return;
 		if (context.Require<GenericCard>(request.CardId) is not { } card) return;
 
-		if (unitSlot.HoldingCardId != null) { return; }
+		if (unitSlot.HoldingCardId is not null) { return; }
 		unitSlot.HoldingCardId = request.CardId;
 		card.OwnerUnitSlotId = request.UnitSlotId;
 	}

@@ -20,9 +20,9 @@ public static class DataTagTypeRegistry
 		foreach (var type in assembly.GetTypes())
 		{
 			var attr = type.GetCustomAttribute<DataTagTypeAttribute>();
-			if (attr != null)
+			if (attr is not null)
 			{
-				if (attr.Id == null)
+				if (attr.Id is null)
 				{
 					Register(type, ResourceId.Vanilla(NamingUtils.ToSnakeCase(type.Name)).ToString());
 				}

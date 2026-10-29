@@ -42,17 +42,17 @@ public class BattleAnimationHandler
 
 	private void ProcessRack(AnimationRack rack, BattleInstance instance, double delta)
 	{
-		if (rack.CurrentAnimation != null && rack.IsCompleted)
+		if (rack.CurrentAnimation is not null && rack.IsCompleted)
 		{
 			EndCurrentAnimation(rack, instance);
 		}
 
-		while (rack.CurrentAnimation == null && rack.Queue.Count > 0)
+		while (rack.CurrentAnimation is null && rack.Queue.Count > 0)
 		{
 			StartNextAnimation(rack, instance);
 		}
 
-		if (rack.CurrentAnimation != null)
+		if (rack.CurrentAnimation is not null)
 		{
 			rack.CurrentAnimation.Process(instance, delta);
 
@@ -84,11 +84,11 @@ public class BattleAnimationHandler
 
 	private void EndCurrentAnimation(AnimationRack rack, BattleInstance instance)
 	{
-		if (rack.CurrentAnimation == null) return;
+		if (rack.CurrentAnimation is null) return;
 
 		var anim = rack.CurrentAnimation;
 
-		if (rack.CompletedCallback != null)
+		if (rack.CompletedCallback is not null)
 		{
 			anim.Completed -= rack.CompletedCallback;
 			rack.CompletedCallback = null;
@@ -99,19 +99,19 @@ public class BattleAnimationHandler
 		rack.IsCompleted = false;
 	}
 
-	public bool IsBusy => _racks.Values.Any(r => r.CurrentAnimation != null || r.Queue.Count > 0);
+	public bool IsBusy => _racks.Values.Any(r => r.CurrentAnimation is not null || r.Queue.Count > 0);
 
 	public bool IsRackBusy(ResourceId rackId)
 	{
 		return _racks.TryGetValue(rackId, out var rack) &&
-			   (rack.CurrentAnimation != null || rack.Queue.Count > 0);
+			   (rack.CurrentAnimation is not null || rack.Queue.Count > 0);
 	}
 
 	public void ClearRack(ResourceId rackId, BattleInstance instance)
 	{
 		if (!_racks.TryGetValue(rackId, out var rack)) return;
 
-		if (rack.CurrentAnimation != null)
+		if (rack.CurrentAnimation is not null)
 		{
 			EndCurrentAnimation(rack, instance);
 		}

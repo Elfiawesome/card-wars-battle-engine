@@ -34,7 +34,7 @@ public class StorageManager
 
 	public SessionStorage OpenSession(string sessionName)
 	{
-		if (CurrentSession != null)
+		if (CurrentSession is not null)
 			CloseSession();
 
 		var sessionRoot = SavesDir.Combine(sessionName);
@@ -49,7 +49,7 @@ public class StorageManager
 
 	public void CloseSession()
 	{
-		if (CurrentSession != null)
+		if (CurrentSession is not null)
 		{
 			Log.Info($"Storage: Closed session '{CurrentSession.SessionName}'");
 			CurrentSession = null;

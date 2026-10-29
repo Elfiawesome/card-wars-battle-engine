@@ -36,7 +36,7 @@ public class GameState : IDataTagAccessible
 		var source = $"{Path.GetFileNameWithoutExtension(file)}.{member}";
 		if (id == EntityId.None)
 			Log.Warn($"[{source}] Require<{typeof(T).Name}> called with EntityId.None");
-		else if (entity == null)
+		else if (entity is null)
 			Log.Warn($"[{source}] Entity not found: {typeof(T).Name} [{id}]");
 		else
 			Log.Warn($"[{source}] Type mismatch: [{id}] is {entity.GetType().Name}, expected {typeof(T).Name}");

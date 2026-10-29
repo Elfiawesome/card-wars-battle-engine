@@ -9,10 +9,6 @@ using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.vanilla.registry;
-using CardWars.Core.Data.Mapping;
-using CardWars.Core.Data.Serialization.Json;
-using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared.Packet;
@@ -61,7 +57,7 @@ public partial class BattleInstance : ClientInstance
 
 	public override void _Ready()
 	{
-		if (HandManagerNode != null) HandManagerNode.BattleInstance = this;
+		if (HandManagerNode is not null) HandManagerNode.BattleInstance = this;
 	}
 
 	public override void _Process(double delta)
@@ -72,7 +68,7 @@ public partial class BattleInstance : ClientInstance
 
 	public void FocusOn(EntityId entityId)
 	{
-		if (MouseControlNode == null) return;
+		if (MouseControlNode is null) return;
 		MouseControlNode.FocusOn(GetEntityNode<Node3D>(entityId));
 	}
 
@@ -104,14 +100,14 @@ public partial class BattleInstance : ClientInstance
 		if (!parsedAnimationId.IsEmpty)
 		{
 			var animation = BattleRegistry?.Animations.Create(parsedAnimationId);
-			if (animation != null) { animation.Data = batch.AnimationArgs; AnimationHandler.QueueAnimation(animation); }
+			if (animation is not null) { animation.Data = batch.AnimationArgs; AnimationHandler.QueueAnimation(animation); }
 		}
 	}
 
 	public void SyncState()
 	{
-		if (BattleRegistry == null) return;
-		if (PlayspaceNode == null) return;
+		if (BattleRegistry is null) return;
+		if (PlayspaceNode is null) return;
 
 		// Handle Entity Clenup & Handling
 		BattleRegistry.EntityViewHandlers.Execute(this, State);
@@ -156,7 +152,7 @@ public partial class BattleInstance : ClientInstance
 	{
 		if (_entityNodes.TryGetValue(id, out var existing) && existing is T existingTyped) return existingTyped;
 		var node = BattleRegistry?.EntityScene.Instantiate<T>(sceneId);
-		if (node == null) return null;
+		if (node is null) return null;
 
 		node.Name = id.ToString();
 		_entityNodes[id] = node;
@@ -174,7 +170,7 @@ public partial class BattleInstance : ClientInstance
 	// Keeps a node under its owner's node; falls back to the playspace.
 	public void AttachNodeToOwner(Node3D node, EntityId? ownerId)
 	{
-		if (PlayspaceNode == null) return;
+		if (PlayspaceNode is null) return;
 		var target = ownerId is { } id && GetEntityNode<Node3D>(id) is { } ownerNode ? ownerNode : PlayspaceNode;
 		var current = node.GetParent();
 		if (current == target) return;

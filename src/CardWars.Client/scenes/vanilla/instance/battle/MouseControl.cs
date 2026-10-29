@@ -13,7 +13,7 @@ public partial class MouseControl : Control
 
 	public override void _Ready()
 	{
-		if (CameraNode != null && Target != null) CameraNode.SetTarget(Target);
+		if (CameraNode is not null && Target is not null) CameraNode.SetTarget(Target);
 	}
 
 	public void FocusOn(Node3D? target)
@@ -21,7 +21,7 @@ public partial class MouseControl : Control
 
 	public override void _GuiInput(InputEvent @event)
 	{
-		if (CameraNode == null) return;
+		if (CameraNode is null) return;
 
 		switch (@event)
 		{
@@ -47,7 +47,7 @@ public partial class MouseControl : Control
 			case InputEventMouseMotion motion when _dragging:
 				var start = GroundPoint(CameraNode, _dragStartMouse);
 				var current = GroundPoint(CameraNode, motion.Position);
-				if (start == null || current == null) return;
+				if (start is null || current is null) return;
 
 				var delta = current.Value - start.Value;
 				CameraNode.SetPan(_dragStartPan - new Vector2(delta.X, delta.Y));

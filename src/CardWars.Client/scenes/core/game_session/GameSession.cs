@@ -67,7 +67,7 @@ public partial class GameSession : Node
 
 	private void StartIntegratedServer()
 	{
-		if (Storage == null) { return; }
+		if (Storage is null) { return; }
 		var sessionName = "session_1";
 		IntegratedServer = new Server.Server(Storage, sessionName);
 
@@ -86,7 +86,7 @@ public partial class GameSession : Node
 
 	private void JoinServer()
 	{
-		if (Storage == null) { return; }
+		if (Storage is null) { return; }
 		var modDirs = Storage.AllModDirectories;
 		ModLoader.ModLoader modLoader = new(modDirs);
 		modLoader.Setup();
@@ -99,14 +99,11 @@ public partial class GameSession : Node
 
 	public override void _Process(double delta)
 	{
-		if (Connection != null && Connection.IsConnected)
+		if (Connection is { IsConnected: true } connection)
 		{
-			while (Connection.TryReceive(out var packet))
+			while (connection.TryReceive(out var packet))
 			{
-				if (packet != null)
-				{
-					HandleIncomingPacket(packet);
-				}
+				if (packet is { } received) HandleIncomingPacket(received);
 			}
 		}
 
@@ -115,7 +112,7 @@ public partial class GameSession : Node
 
 	public void SwitchInstance(ClientInstance newInstance, Guid? playerId)
 	{
-		if (Instance != null) { RemoveChild(Instance); Instance.onPacketSent -= SendPacket; }
+		if (Instance is { } oldInstance) { RemoveChild(oldInstance); oldInstance.onPacketSent -= SendPacket; }
 
 		Instance = newInstance;
 		Instance.onPacketSent += SendPacket;

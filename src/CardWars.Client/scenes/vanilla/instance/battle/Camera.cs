@@ -49,7 +49,7 @@ public partial class Camera : Camera3D
 	{
 		var weight = (float)(SmoothSpeed * delta);
 
-		if (Target != null && IsInstanceValid(Target))
+		if (Target is not null && IsInstanceValid(Target))
 		{
 			var relative = new Transform3D(
 				Basis.FromEuler(new Vector3(Mathf.DegToRad(-90f + _pitchDegrees), 0f, 0f)),

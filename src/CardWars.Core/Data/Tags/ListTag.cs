@@ -18,8 +18,8 @@ public sealed class ListTag : DataTag, IEnumerable<DataTag>
 	// 	=> Add(new StringTag(value.ToString()));
 
 	public DataTag? Get(int index) => index >= 0 && index < _items.Count ? _items[index] : null;
-	public T? Get<T>(int index) where T : DataTag => Get(index) as T;
-	public T Get<T>(int index, T defaultValue) where T : DataTag => Get(index) as T ?? defaultValue;
+	public T? Get<T>(int index) where T : DataTag => Get(index) is T typed ? typed : null;
+	public T Get<T>(int index, T defaultValue) where T : DataTag => Get(index) is T typed ? typed : defaultValue;
 	public void Set(int index, DataTag tag) { if (index >= 0 && index < _items.Count) _items[index] = tag; }
 	public bool RemoveAt(int index)
 	{

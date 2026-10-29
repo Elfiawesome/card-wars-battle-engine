@@ -52,13 +52,13 @@ internal static class TypeMetadataCache
 			if (!seenProps.Add(prop.Name)) continue;
 
 			var dataAttr = prop.GetCustomAttribute<DataTagAttribute>();
-			if (dataAttr == null || dataAttr.Ignore) continue;
+			if (dataAttr is null || dataAttr.Ignore) continue;
 
 			var tagKey = !string.IsNullOrEmpty(dataAttr.Key) ? dataAttr.Key : NamingUtils.ToSnakeCase(prop.Name);
 
 			IDataTagConverter? converter = null;
 			var convAttr = prop.GetCustomAttribute<DataTagConverterAttribute>();
-			if (convAttr != null)
+			if (convAttr is not null)
 			{
 				converter = GetConverterInstance(convAttr.ConverterType);
 			}
@@ -85,7 +85,7 @@ internal static class TypeMetadataCache
 				PropertyMetadata? matchingProp;
 				string paramKey;
 
-				if (paramAttr?.Key != null)
+				if (paramAttr?.Key is not null)
 				{
 					paramKey = paramAttr.Key;
 					matchingProp = propList.FirstOrDefault(p => p.TagKey == paramKey);
@@ -97,7 +97,7 @@ internal static class TypeMetadataCache
 					paramKey = matchingProp?.TagKey ?? NamingUtils.ToSnakeCase(param.Name ?? "");
 				}
 
-				if (matchingProp != null)
+				if (matchingProp is not null)
 				{
 					paramMetas.Add(new ConstructorParamMetadata(paramKey, param.ParameterType, param.HasDefaultValue, param.HasDefaultValue ? param.DefaultValue : null));
 				}

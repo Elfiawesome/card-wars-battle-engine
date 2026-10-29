@@ -54,6 +54,12 @@ public sealed class NullTagSerializationTests
 	}
 
 	[Fact]
+	public void ObjectRefTag_CannotBeSerialized()
+	{
+		Assert.Throws<NotSupportedException>(() => DataTagSerializer.Serialize(new ObjectRefTag(new object())));
+	}
+
+	[Fact]
 	public void JsonNull_DeserializesToNullTag()
 	{
 		var tag = DataTagSerializer.Deserialize<DataTag>("null");

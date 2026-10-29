@@ -45,7 +45,7 @@ public static class Log
 
 	public static string ToReadable(object? obj)
 	{
-		if (obj == null) return "null";
+		if (obj is null) return "null";
 
 		if (obj is string s) return s;
 		if (obj is int || obj is float || obj is bool || obj is Guid)
@@ -53,6 +53,8 @@ public static class Log
 
 		if (obj is System.Collections.IEnumerable enumerable)
 			return "[" + string.Join(", ", enumerable.Cast<object>().Select(ToReadable)) + "]";
+
+		if (obj is ObjectRefTag objectRef) return objectRef.Value.ToString() ?? "<object>";
 
 		if (obj is DataTag tag)
 			return DataTagSerializer.Serialize(tag);  // compact JSON

@@ -21,7 +21,7 @@ public class LocalConnection : IConnection
 
 	public void Send(IPacket packet)
 	{
-		if (!IsConnected || Peer == null) return;
+		if (!IsConnected || Peer is null) return;
 		Peer._receiveQueue.Enqueue(packet);
 	}
 
@@ -31,7 +31,7 @@ public class LocalConnection : IConnection
 	public void Disconnect()
 	{
 		IsConnected = false;
-		if (Peer != null) Peer.IsConnected = false;
+		if (Peer is not null) Peer.IsConnected = false;
 	}
 
 	public void Dispose() => Disconnect();

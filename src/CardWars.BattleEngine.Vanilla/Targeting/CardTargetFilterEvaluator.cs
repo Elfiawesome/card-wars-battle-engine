@@ -14,11 +14,11 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven)
 	public bool CanTarget(GameState state, GenericCard card, EntityId playerId, EntityId? targetId)
 	{
 		var filter = GetFilter(card);
-		if (filter == null) return targetId == null;
-		if (targetId == null) return false;
+		if (filter is null) return targetId is null;
+		if (targetId is null) return false;
 
 		var target = state.Get(targetId.Value);
-		if (target == null) return false;
+		if (target is null) return false;
 
 		var context = CreateContext(state, card, playerId);
 		try
@@ -35,7 +35,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven)
 	public IReadOnlyCollection<EntityId> ResolveTargets(GameState state, GenericCard card, EntityId playerId)
 	{
 		var filter = GetFilter(card);
-		if (filter == null) return [];
+		if (filter is null) return [];
 
 		var targets = new List<EntityId>();
 		var context = CreateContext(state, card, playerId);
@@ -78,7 +78,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven)
 	private static IExpression? GetFilter(GenericCard card)
 	{
 		var tag = card.Data.Get("target_filter");
-		if (tag == null) return null;
+		if (tag is null) return null;
 
 		if (tag is not CompoundTag compound)
 		{

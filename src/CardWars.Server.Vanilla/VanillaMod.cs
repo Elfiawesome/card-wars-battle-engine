@@ -133,7 +133,7 @@ public class VanillaMod : IServerMod
 			{
 				case ["worlds"]:
 					var worldDataTag = content.ReadAs<CompoundTag>();
-					if (worldDataTag == null) continue;
+					if (worldDataTag is null) continue;
 					Log.Info("Registered World: " + content.Id.ToString());
 					worldRegistry.Templates.Register(content.Id, worldDataTag);
 					break;
@@ -141,7 +141,7 @@ public class VanillaMod : IServerMod
 					if (content.FilePath.GetFileNameWithoutExtension() == "config")
 					{
 						var configDataTag = content.ReadAs<CompoundTag>();
-						if (configDataTag == null) continue;
+						if (configDataTag is null) continue;
 
 						worldRegistry.DefaultWorld = ResourceId.Parse(configDataTag.GetString("default_world"));
 						Log.Info("Registered default_world as: " + worldRegistry.DefaultWorld);

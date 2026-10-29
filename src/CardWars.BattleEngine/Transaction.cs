@@ -15,7 +15,7 @@ public class Transaction
 	public required BattleEngineRegistry Registry { get; init; }
 	public required GameState State { get; init; }
 
-	public bool IsIdle => _behaviourQueue.Count == 0 && _eventQueue.Count == 0 && _activeEvent == null;
+	public bool IsIdle => _behaviourQueue.Count == 0 && _eventQueue.Count == 0 && _activeEvent is null;
 
 	public Action<BlockBatch>? OnBlockBatchEvent;
 
@@ -89,9 +89,9 @@ public class Transaction
 			}
 
 			// Handle event after all behaviours are handled already
-			if (_activeEvent != null)
+			if (_activeEvent is { } activeEvent)
 			{
-				Registry.EventHandlers.Execute(this, _activeEvent);
+				Registry.EventHandlers.Execute(this, activeEvent);
 				_activeEvent = null;
 				continue;
 			}
@@ -131,10 +131,10 @@ public class Transaction
 		foreach (var (entityId, pointer) in pointers)
 		{
 			var behaviour = InstantiateBehaviour(pointer, eventType);
-			if (behaviour == null) continue;
+			if (behaviour is null) continue;
 
 			var entity = State.Get(entityId);
-			if (entity == null)
+			if (entity is null)
 			{
 				Log.Warn($"Behaviour pointer references missing entity [{entityId}], skipping");
 				continue;
@@ -179,11 +179,11 @@ public class Transaction
 		{
 			behaviour = Registry.Behaviours.Create(resourceId);
 		}
-		else if (pointer.BehaviourDefinition != null)
+		else if (pointer.BehaviourDefinition is { } definitionTag)
 		{
 			try
 			{
-				var definition = DataTagMapper.FromTag<BehaviourDefinition>(pointer.BehaviourDefinition);
+				var definition = DataTagMapper.FromTag<BehaviourDefinition>(definitionTag);
 				behaviour = new ScriptBehaviour(definition, Registry.DataDriven);
 			}
 			catch (Exception ex)
@@ -192,7 +192,7 @@ public class Transaction
 			}
 		}
 
-		if (behaviour != null && !behaviour.ListeningEventType.IsAssignableFrom(eventType)) return null;
+		if (behaviour is not null && !behaviour.ListeningEventType.IsAssignableFrom(eventType)) return null;
 
 		return behaviour;
 	}
