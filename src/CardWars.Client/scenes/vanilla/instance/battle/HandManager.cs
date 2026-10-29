@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.BattleEngine.Vanilla.Targeting;
 using CardWars.Core.Logging;
 using CardWars.Vanilla.Shared;
@@ -26,7 +27,6 @@ public partial class HandManager : Control
 	public HashSet<EntityId> ArrowTargets = [];
 	public BattleInstance? BattleInstance = null;
 
-	// private List<CardDisplay> _cards = [];
 	private Dictionary<EntityId, CardDisplay> _cards = [];
 	public IReadOnlyDictionary<EntityId, CardDisplay> Cards => _cards;
 
@@ -40,8 +40,12 @@ public partial class HandManager : Control
 		if (LineArrow is not { } lineArrow) return;
 
 		if (BattleInstance?.Hovered3DTarget.Node is { } target3D
-			&& BattleInstance.CameraNode is { } camera)
+			&& BattleInstance.CameraNode is { } camera
+			&& BattleInstance?.Hovered3DTarget.Id is { } targetId
+			&& ArrowTargets.Contains(targetId)
+		)
 		{
+
 			var viewportPoint = camera.UnprojectPosition(target3D.GlobalPosition);
 			var localPoint = lineArrow.GetGlobalTransformWithCanvas().AffineInverse() * viewportPoint;
 			lineArrow.Set("target", localPoint);
@@ -104,6 +108,17 @@ public partial class HandManager : Control
 					{
 						SelectedCard = card;
 
+						if (BattleInstance is { BattleEngineRegistry: { } registry } instance)
+						{
+							var eval = new CardTargetFilterEvaluator(registry.DataDriven);
+							var cardEntry = Cards.FirstOrDefault(entry => entry.Value == SelectedCard);
+							if (instance.State.Get<GenericCard>(cardEntry.Key) is { } candidate)
+							{
+								ArrowTargets = [.. eval.ResolveTargets(instance.State, candidate, instance.MyPlayerId)];
+							}
+						}
+
+
 						LineArrow?.QueueFree();
 						LineArrow = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<Node2D>(SharedIds.UI.LineArrow);
 						AddChild(LineArrow);
@@ -122,8 +137,14 @@ public partial class HandManager : Control
 			{
 				if (SelectedCard is not null)
 				{
-					SelectedCard = null;
+					// TODO: end input voer
+					// if (BattleInstance is not null && BattleInstance.Hovered3DTarget.Id is { } targetId)
+					// {
+					// 	var targetEntity = Cards.FirstOrDefault(entry => entry.Value == SelectedCard).Key;
+					// 	if (targetEntity != EntityId.None) { BattleInstance?.SendInput(new UseCardRequestInput(targetEntity, targetId)); }
+					// }
 
+					SelectedCard = null;
 					LineArrow?.QueueFree();
 					LineArrow = null;
 				}

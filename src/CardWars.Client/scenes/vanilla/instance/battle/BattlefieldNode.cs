@@ -25,8 +25,8 @@ public partial class BattlefieldNode : Node3D
 		_collisionBox = GetNode<Area3D>("Area3D");
 		_collisionBoxShape = GetNode<CollisionShape3D>("Area3D/CollisionShape3D");
 		// _collisionBox.InputEvent += onCollisionInputEvent;
-		_collisionBox.MouseEntered += () => { OnMouseEntered?.Invoke(); Log.Info("Entered"); };
-		_collisionBox.MouseExited += () => { OnMouseExited?.Invoke(); Log.Info("Exited"); };
+		_collisionBox.MouseEntered += () => { OnMouseEntered?.Invoke(); };
+		_collisionBox.MouseExited += () => { OnMouseExited?.Invoke(); };
 	}
 
 

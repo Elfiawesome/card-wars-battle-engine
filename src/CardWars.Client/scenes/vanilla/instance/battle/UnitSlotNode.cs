@@ -23,8 +23,8 @@ public partial class UnitSlotNode : Node3D
 		// This code
 		var collisionBox = GetNode<Area3D>("Area3D");
 		collisionBox.InputEvent += onCollisionInputEvent;
-		collisionBox.MouseEntered += () => { OnMouseEntered?.Invoke(); Log.Info("Entered"); };
-		collisionBox.MouseExited += () => { OnMouseExited?.Invoke(); Log.Info("Exited"); };
+		collisionBox.MouseEntered += () => { OnMouseEntered?.Invoke(); };
+		collisionBox.MouseExited += () => { OnMouseExited?.Invoke(); };
 	}
 
 	private void onCollisionInputEvent(Node cameraNode, InputEvent @event, Vector3 eventPosition, Vector3 normal, long shapeIndex)
@@ -33,7 +33,7 @@ public partial class UnitSlotNode : Node3D
 		{
 			if (inputEventMouseButton.Pressed && inputEventMouseButton.ButtonIndex == MouseButton.Left)
 			{
-				Log.Info($"Clicked on {this}");
+				// Log.Info($"Clicked on {this}");
 				OnMouseClicked?.Invoke();
 			}
 		}
