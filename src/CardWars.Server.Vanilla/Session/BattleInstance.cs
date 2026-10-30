@@ -56,7 +56,7 @@ public class BattleInstance : ServerInstance
 
 		// Bind the battle player identity to the session identity so they map 1:1.
 		var entityId = new EntityId(player.PlayerId);
-		Engine?.HandleInput(EntityId.None, new PlayerJoinedRequestInput(entityId));
+		Engine?.HandleInput(EntityId.None, new PlayerJoinedRequestInput(entityId, Players.Count % 2)); // % 2 to alternate users team
 	}
 
 	public override void RemovePlayer(PlayerSession player)
