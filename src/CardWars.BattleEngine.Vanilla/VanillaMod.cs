@@ -103,6 +103,7 @@ public class VanillaMod : IBattleEngineMod
 		dataDriven.ExpressionHandlers.Register(new ObjectExpressionHandler());
 		dataDriven.ExpressionHandlers.Register(new ConstructExpressionHandler());
 		dataDriven.ExpressionHandlers.Register(new CallExpressionHandler());
+		dataDriven.ExpressionHandlers.Register(new IsEntityTypeExpressionHandler());
 
 		dataDriven.InstructionHandlers.Register(new DeclarationInstructionHandler());
 		dataDriven.InstructionHandlers.Register(new SetInstructionHandler());

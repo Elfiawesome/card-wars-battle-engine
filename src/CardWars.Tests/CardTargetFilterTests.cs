@@ -169,9 +169,9 @@ public sealed class CardTargetFilterTests
 		var player = new VariableExpression(TargetBindings.Player);
 		var state = new VariableExpression(BattleEngine.Behaviour.DataDriven.ScriptBindings.State);
 
-		var isUnitSlot = new EqualsExpression(
-			new MemberExpression(candidate, DataTagMapper.TypeDiscriminatorKey),
-			new LiteralExpression(new StringTag(ResourceId.Vanilla("battle/entity/unit_slot").ToString())));
+		var isUnitSlot = new IsEntityTypeExpression(
+			candidate,
+			ResourceId.Vanilla("battle/entity/unit_slot"));
 
 		var ownBattlefield = new EqualsExpression(
 			new MemberExpression(candidate, "owner_battlefield_id"),

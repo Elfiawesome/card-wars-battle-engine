@@ -1,7 +1,6 @@
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 
@@ -15,10 +14,9 @@ public static class UnitTargetFilter
 		var card = new VariableExpression(TargetBindings.Card);
 		var state = new VariableExpression(ScriptBindings.State);
 
-		// TODO: We need a new expression for entity checking since DataTagMapper.TypeDiscriminatorKey can change to anything and break this...
-		var isUnitSlot = new EqualsExpression(
-			new MemberExpression(candidate, DataTagMapper.TypeDiscriminatorKey),
-			new LiteralExpression(new StringTag(ResourceId.Vanilla("battle/entity/unit_slot").ToString())));
+		var isUnitSlot = new IsEntityTypeExpression(
+			candidate,
+			ResourceId.Vanilla("battle/entity/unit_slot"));
 
 		var isEmpty = new EqualsExpression(
 			new MemberExpression(candidate, "holding_card_id"),
