@@ -1,6 +1,5 @@
 using System;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.Core.Logging;
 using Godot;
 
 namespace CardWars.Client.scenes.vanilla.instance.battle;
@@ -15,10 +14,13 @@ public partial class UnitSlotNode : Node3D
 	public Action? OnMouseClicked;
 
 	public Vector3 TargetPosition { get; private set; } = Vector3.Zero;
+	public Node3D? CardAnchor { get; private set; }
 
 	public override void _Ready()
 	{
 		base._Ready();
+
+		CardAnchor = GetNodeOrNull<Node3D>("CardAnchor");
 
 		// This code
 		var collisionBox = GetNode<Area3D>("Area3D");

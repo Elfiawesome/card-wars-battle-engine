@@ -1,5 +1,4 @@
 using System;
-using CardWars.Core.Logging;
 using Godot;
 
 namespace CardWars.Client.scenes.vanilla.instance.battle;

@@ -39,11 +39,12 @@ public class VanillaMod : IClientMod
 		// Entities
 		BattleRegistry.EntityScene.Register(SharedIds.Entities.Battlefield, "res://scenes/vanilla/instance/battle/battlefield_node.tscn");
 		BattleRegistry.EntityScene.Register(SharedIds.Entities.UnitSlot, "res://scenes/vanilla/instance/battle/unit_slot_node.tscn");
+		BattleRegistry.EntityScene.Register(SharedIds.Entities.Card, "res://scenes/vanilla/instance/battle/card_3d.tscn");
 
 		// Entity View Handlers: How the node structure/heritance is like
 		BattleRegistry.EntityViewHandlers.Register(new BattlefieldViewHandler());
-		BattleRegistry.EntityViewHandlers.Register(new CardViewHandler());
 		BattleRegistry.EntityViewHandlers.Register(new UnitSlotViewHandler());
+		BattleRegistry.EntityViewHandlers.Register(new CardViewHandler());
 
 		// Layout Handler: Sets default positions, no animation
 		BattleRegistry.DefaultLayoutId = ResourceId.Vanilla("default");

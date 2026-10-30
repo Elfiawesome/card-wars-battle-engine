@@ -14,6 +14,9 @@ size = Vector3(14.08, 1, 19.68)
 [node name="UnitSlot" type="Node3D" unique_id=1395622386]
 script = ExtResource("1_unitslot")
 
+[node name="CardAnchor" type="Node3D" parent="." unique_id=1395622387]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=142971445]
 transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
 mesh = SubResource("PlaneMesh_kmrvt")
