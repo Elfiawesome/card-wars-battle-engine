@@ -138,11 +138,14 @@ public partial class HandManager : Control
 				if (SelectedCard is not null)
 				{
 					// TODO: end input voer
-					// if (BattleInstance is not null && BattleInstance.Hovered3DTarget.Id is { } targetId)
-					// {
-					// 	var targetEntity = Cards.FirstOrDefault(entry => entry.Value == SelectedCard).Key;
-					// 	if (targetEntity != EntityId.None) { BattleInstance?.SendInput(new UseCardRequestInput(targetEntity, targetId)); }
-					// }
+					if (BattleInstance is not null 
+						&& BattleInstance?.Hovered3DTarget.Id is { } targetId
+						&& ArrowTargets.Contains(targetId))
+					{
+						var targetCard = Cards.FirstOrDefault(entry => entry.Value == SelectedCard).Key;
+						Log.Info(new UseCardRequestInput(targetCard, targetId));
+						if (targetCard != EntityId.None && targetId != EntityId.None) { BattleInstance?.SendInput(new UseCardRequestInput(targetCard, targetId)); }
+					}
 
 					SelectedCard = null;
 					LineArrow?.QueueFree();
