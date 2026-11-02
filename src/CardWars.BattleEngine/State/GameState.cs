@@ -55,14 +55,7 @@ public class GameState : IDataTagAccessible
 		=> _entities.Values.Where(predicate);
 
 	[DataTag]
-	public TurnState Turn { get; set; } = new()
-	{
-		TurnOrder = [],
-		AllowedPlayerInputs = [],
-		TurnIndex = 0,
-		TurnNumber = 0,
-		Phase = TurnPhase.Setup
-	};
+	public TurnState Turn { get; set; } = new();
 
 	[DataTag]
 	public LayoutState Layout { get; set; } = new()
@@ -113,7 +106,7 @@ public class GameState : IDataTagAccessible
 	{
 		_entities.Clear();
 		GlobalScope.Clear();
-		Turn = default;
+		Turn = new();
 		Layout = default;
 	}
 
@@ -122,7 +115,7 @@ public class GameState : IDataTagAccessible
 		var snapshot = new GameStateSnapshot
 		{
 			Entities = [.. Entities.Select(s => s.Value)],
-			Turn = Turn.Copy(),
+			Turn = Turn.Clone(),
 			Layout = Layout,
 		};
 		return snapshot;
@@ -135,7 +128,7 @@ public class GameState : IDataTagAccessible
 		{
 			_entities.Add(e.Id, e);
 		}
-		Turn = snapshot.Turn.Copy();
+		Turn = snapshot.Turn is { } turn ? turn.Clone() : new();
 		Layout = snapshot.Layout.Copy();
 	}
 }
@@ -145,5 +138,5 @@ public class GameStateSnapshot
 {
 	[DataTag] public List<IEntity> Entities { get; set; } = [];
 	[DataTag] public LayoutState Layout { get; set; } = default;
-	[DataTag] public TurnState Turn { get; set; } = default;
+	[DataTag] public TurnState Turn { get; set; } = new();
 }

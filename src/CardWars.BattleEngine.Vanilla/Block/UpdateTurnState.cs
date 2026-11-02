@@ -13,6 +13,6 @@ public class UpdateTurnStateBlockHandler : IBlockHandler<UpdateTurnStateBlock>
 {
 	public void Handle(GameState context, UpdateTurnStateBlock request)
 	{
-		context.Turn = request.NewState;
+		context.Turn = request.NewState is { } state ? state.Clone() : new();
 	}
 }

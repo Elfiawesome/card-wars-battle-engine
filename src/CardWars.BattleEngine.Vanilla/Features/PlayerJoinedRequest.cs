@@ -23,7 +23,7 @@ public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequest
 		batch.Blocks.Add(new InstantiatePlayerBlock(request.Id));
 		batch.Blocks.Add(new ModifyPlayerTeamBlock(request.Id, request.RequestedTeam));
 
-		var turnState = context.Transaction.State.Turn.Copy();
+		var turnState = context.Transaction.State.Turn.Clone();
 		turnState.TurnOrder.Add(request.Id);
 
 		if (!context.Transaction.State.All.Any((t) => t is Player))

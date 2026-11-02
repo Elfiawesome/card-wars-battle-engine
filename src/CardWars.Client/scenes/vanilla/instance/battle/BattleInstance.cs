@@ -121,30 +121,25 @@ public partial class BattleInstance : ClientInstance
 		layoutHandler?.Compute(this);
 
 		// Set Camera
+		UpdateCamera();
+	}
+
+	private void UpdateCamera()
+	{
 		if (State.Turn.TurnOrder.Count > 0 && State.Turn.TurnIndex < State.Turn.TurnOrder.Count)
 		{
-			var playerTurnId = State.Turn.TurnOrder[State.Turn.TurnIndex];
-			// Log.Info(_oldTurnState);
-			// Log.Info(State.Turn);
-			
-			Log.Info($"Turn Count: {_oldTurnState.TurnOrder}");
-			Log.Info($"Turn Count: {State.Turn.TurnOrder}");
-			if (
-				_oldTurnState.TurnIndex != State.Turn.TurnIndex // if the index changed (aka new turn)
-				// || _oldTurnState.TurnOrder.Count != State.Turn.TurnOrder.Count // if the turn order changed (aka new player joined/leave)
-			) //TODO: oldTurnState feels wrong and not a good way?
+			var turn = State.Turn;
+			var playerTurnId = turn.TurnOrder[turn.TurnIndex];
+
+			if (_oldTurnState is not { } old || old.Equals(turn) is false)
 			{
-				Log.Info("New Trun change...");
-				var e = State.Get(playerTurnId);
-				if (e is Player player)
+				if (State.Get(playerTurnId) is Player player)
 				{
 					var battlefieldId = player.BattlefieldIds.FirstOrDefault();
-					FocusOn(battlefieldId);
+					if (!battlefieldId.IsNone) FocusOn(battlefieldId);
 				}
-				_oldTurnState = State.Turn.Copy();
-			}
-			else
-			{
+
+				_oldTurnState = turn.Clone();
 			}
 		}
 	}

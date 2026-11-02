@@ -2,22 +2,52 @@ using CardWars.Core.Data.Attributes;
 
 namespace CardWars.BattleEngine.State;
 
-public record struct TurnState(
-    [property: DataTag] List<EntityId> TurnOrder,
-    [property: DataTag] HashSet<EntityId> AllowedPlayerInputs,
-    [property: DataTag] int TurnIndex,
-    [property: DataTag] int TurnNumber,
-    [property: DataTag] TurnPhase Phase = TurnPhase.Setup
-)
+public sealed class TurnState
 {
-	public TurnState Copy() => new()
+	[DataTag] public List<EntityId> TurnOrder { get; set; } = [];
+	[DataTag] public HashSet<EntityId> AllowedPlayerInputs { get; set; } = [];
+	[DataTag] public int TurnIndex { get; set; }
+	[DataTag] public int TurnNumber { get; set; }
+	[DataTag] public TurnPhase Phase { get; set; } = TurnPhase.Setup;
+
+	public TurnState()
 	{
-		TurnOrder = [.. this.TurnOrder],
-		AllowedPlayerInputs = [.. this.AllowedPlayerInputs],
-		TurnIndex = this.TurnIndex,
-		TurnNumber = this.TurnNumber,
-		Phase = this.Phase
-	};
-};
+	}
+
+	public TurnState(
+		List<EntityId>? turnOrder = null,
+		HashSet<EntityId>? allowedPlayerInputs = null,
+		int turnIndex = 0,
+		int turnNumber = 0,
+		TurnPhase phase = TurnPhase.Setup)
+	{
+		TurnOrder = turnOrder ?? [];
+		AllowedPlayerInputs = allowedPlayerInputs ?? [];
+		TurnIndex = turnIndex;
+		TurnNumber = turnNumber;
+		Phase = phase;
+	}
+
+	public TurnState Clone() => new(
+		[.. TurnOrder],
+		[.. AllowedPlayerInputs],
+		TurnIndex,
+		TurnNumber,
+		Phase
+	);
+
+	public bool Equals(TurnState? other)
+	{
+		if (other is null) return false;
+		if (ReferenceEquals(this, other)) return true;
+
+		return TurnIndex == other.TurnIndex
+			&& TurnNumber == other.TurnNumber
+			&& Phase == other.Phase
+			&& TurnOrder.SequenceEqual(other.TurnOrder)
+			&& AllowedPlayerInputs.SetEquals(other.AllowedPlayerInputs);
+	}
+
+}
 
 public enum TurnPhase { None = 0, Setup, Attacking }

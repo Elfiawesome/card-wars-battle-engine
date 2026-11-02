@@ -29,7 +29,7 @@ public class EndTurnRequestEventHandler : IEventHandler<EndTurnRequestEvent>
 	public void Handle(Transaction context, EndTurnRequestEvent request)
 	{
 		if (request.IsCancelled) { return; }
-		var newTurnState = context.State.Turn.Copy();
+		var newTurnState = context.State.Turn.Clone();
 		newTurnState.TurnIndex += 1;
 
 		bool isPhasedChanged = false;
