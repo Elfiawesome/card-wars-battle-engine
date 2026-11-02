@@ -10,6 +10,7 @@ public partial class Camera : Camera3D
 	[Export] public float ZoomStep { get; set; } = 0.2f;
 	[Export] public float MinHeight { get; set; } = 2f;
 	[Export] public float MaxHeight { get; set; } = 4f;
+	[Export] public Vector3 FocusOffset { get; set; } = new(0f, -1.5f, 0f);
 
 	public Vector2 PanOffset { get; private set; }
 
@@ -55,6 +56,7 @@ public partial class Camera : Camera3D
 				Basis.FromEuler(new Vector3(Mathf.DegToRad(-90f + _pitchDegrees), 0f, 0f)),
 				new Vector3(0f, _height, 0f));
 			var desired = Target.GlobalTransform * relative;
+			desired.Origin += FocusOffset;
 			desired.Origin += new Vector3(PanOffset.X, PanOffset.Y, 0f);
 
 			GlobalPosition = GlobalPosition.Lerp(desired.Origin, weight);

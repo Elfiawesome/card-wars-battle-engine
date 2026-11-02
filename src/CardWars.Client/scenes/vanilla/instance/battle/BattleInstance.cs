@@ -75,6 +75,17 @@ public partial class BattleInstance : ClientInstance
 		MouseControlNode.FocusOn(GetEntityNode<Node3D>(entityId));
 	}
 
+	private bool TryFocusOn(EntityId entityId)
+	{
+		if (MouseControlNode?.CameraNode is null) return false;
+
+		var node = GetEntityNode<Node3D>(entityId);
+		if (node is null) return false;
+
+		MouseControlNode.FocusOn(node);
+		return true;
+	}
+
 	public override void OnPacket(IPacket packet, PacketContextClient context)
 	{
 		switch (packet)
@@ -126,23 +137,25 @@ public partial class BattleInstance : ClientInstance
 
 	private void UpdateCamera()
 	{
-		if (State.Turn.TurnOrder.Count > 0 && State.Turn.TurnIndex < State.Turn.TurnOrder.Count)
-		{
-			var turn = State.Turn;
-			var playerTurnId = turn.TurnOrder[turn.TurnIndex];
+		var turn = State.Turn;
+		if (turn.TurnOrder.Count == 0 || turn.TurnIndex >= turn.TurnOrder.Count) return;
+		if (_oldTurnState is { } old && IsSameTurn(old, turn)) return;
 
-			if (_oldTurnState is not { } old || old.Equals(turn) is false)
-			{
-				if (State.Get(playerTurnId) is Player player)
-				{
-					var battlefieldId = player.BattlefieldIds.FirstOrDefault();
-					if (!battlefieldId.IsNone) FocusOn(battlefieldId);
-				}
+		var playerTurnId = turn.TurnOrder[turn.TurnIndex];
+		if (State.Get(playerTurnId) is not Player player) return;
 
-				_oldTurnState = turn.Clone();
-			}
-		}
+		var battlefieldId = player.BattlefieldIds.FirstOrDefault();
+		if (battlefieldId.IsNone) return;
+		if (!TryFocusOn(battlefieldId)) return;
+
+		_oldTurnState = turn.Clone();
 	}
+
+	private static bool IsSameTurn(TurnState left, TurnState right)
+		=> left.TurnIndex == right.TurnIndex
+		   && left.TurnNumber == right.TurnNumber
+		   && left.Phase == right.Phase
+		   && left.TurnOrder.SequenceEqual(right.TurnOrder);
 
 	public bool HasEntityNode(EntityId id) => _entityNodes.ContainsKey(id);
 
