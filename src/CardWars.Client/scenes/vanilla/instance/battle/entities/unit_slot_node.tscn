@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://64ch8yh7rnw6"]
 
-[ext_resource type="Script" uid="uid://mkclfdkaxmqh" path="res://scenes/vanilla/instance/battle/UnitSlotNode.cs" id="1_unitslot"]
+[ext_resource type="Script" uid="uid://mkclfdkaxmqh" path="res://scenes/vanilla/instance/battle/entities/UnitSlotNode.cs" id="1_unitslot"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0f7tl"]
 

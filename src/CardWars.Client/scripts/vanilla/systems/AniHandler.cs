@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 
-namespace CardWars.Client.scenes.vanilla.instance.battle;
+namespace CardWars.Client.scripts.vanilla.systems;
 
 public class BattleAnimationHandler
 {

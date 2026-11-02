@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://chm7whc23krys"]
 
-[ext_resource type="Script" uid="uid://dnkbo8i74wuq4" path="res://scenes/vanilla/instance/battle/BattlefieldNode.cs" id="1_f6vas"]
+[ext_resource type="Script" uid="uid://dnkbo8i74wuq4" path="res://scenes/vanilla/instance/battle/entities/BattlefieldNode.cs" id="1_f6vas"]
 
 [node name="BattlefieldNode" type="Node3D" unique_id=1437153473]
 script = ExtResource("1_f6vas")

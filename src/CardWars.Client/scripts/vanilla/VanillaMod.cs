@@ -32,14 +32,14 @@ public class VanillaMod : IClientMod
 		registry.Instances.Register(SharedIds.Instances.Battle, "res://scenes/vanilla/instance/battle/battle_instance.tscn");
 
 		// UI
-		registry.UserInterface.Register(SharedIds.UI.CardDisplay, "res://scenes/vanilla/instance/battle/card_display.tscn");
+		registry.UserInterface.Register(SharedIds.UI.CardDisplay, "res://scenes/vanilla/instance/battle/ui/card_display.tscn");
 		registry.UserInterface.Register(SharedIds.UI.LineArrow, "res://scenes/vanilla/instance/battle/ui/line_arrow.tscn");
 
 		// --- Battle ---
 		// Entities
-		BattleRegistry.EntityScene.Register(SharedIds.Entities.Battlefield, "res://scenes/vanilla/instance/battle/battlefield_node.tscn");
-		BattleRegistry.EntityScene.Register(SharedIds.Entities.UnitSlot, "res://scenes/vanilla/instance/battle/unit_slot_node.tscn");
-		BattleRegistry.EntityScene.Register(SharedIds.Entities.Card, "res://scenes/vanilla/instance/battle/card_3d.tscn");
+		BattleRegistry.EntityScene.Register(SharedIds.Entities.Battlefield, "res://scenes/vanilla/instance/battle/entities/battlefield_node.tscn");
+		BattleRegistry.EntityScene.Register(SharedIds.Entities.UnitSlot, "res://scenes/vanilla/instance/battle/entities/unit_slot_node.tscn");
+		BattleRegistry.EntityScene.Register(SharedIds.Entities.Card, "res://scenes/vanilla/instance/battle/entities/card_3d.tscn");
 
 		// Entity View Handlers: How the node structure/heritance is like
 		BattleRegistry.EntityViewHandlers.Register(new BattlefieldViewHandler());
