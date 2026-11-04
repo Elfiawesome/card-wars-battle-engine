@@ -139,7 +139,7 @@ public partial class BattleInstance : ClientInstance
 	{
 		var turn = State.Turn;
 		if (turn.TurnOrder.Count == 0 || turn.TurnIndex >= turn.TurnOrder.Count) return;
-		if (_oldTurnState is { } old && IsSameTurn(old, turn)) return;
+		if (_oldTurnState is { } old && turn.Equals(old)) return;
 
 		var playerTurnId = turn.TurnOrder[turn.TurnIndex];
 		if (State.Get(playerTurnId) is not Player player) return;
@@ -150,12 +150,6 @@ public partial class BattleInstance : ClientInstance
 
 		_oldTurnState = turn.Clone();
 	}
-
-	private static bool IsSameTurn(TurnState left, TurnState right) // TODO: bruh move this into turnstate itself...
-		=> left.TurnIndex == right.TurnIndex
-		   && left.TurnNumber == right.TurnNumber
-		   && left.Phase == right.Phase
-		   && left.TurnOrder.SequenceEqual(right.TurnOrder);
 
 	public bool HasEntityNode(EntityId id) => _entityNodes.ContainsKey(id);
 
