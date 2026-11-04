@@ -4,14 +4,10 @@ using Godot;
 
 namespace CardWars.Client.scenes.vanilla.instance.battle;
 
-public partial class UnitSlotNode : Node3D
+public partial class UnitSlotNode : EntityNode3D
 {
 	public const float CellWidth = 0.9f;
 	public const float CellDepth = 1.1f;
-
-	public Action? OnMouseEntered;
-	public Action? OnMouseExited;
-	public Action? OnMouseClicked;
 
 	public Vector3 TargetPosition { get; private set; } = Vector3.Zero;
 	public Node3D? CardAnchor { get; private set; }

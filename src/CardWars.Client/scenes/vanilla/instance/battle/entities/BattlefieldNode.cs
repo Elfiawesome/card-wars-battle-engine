@@ -3,15 +3,11 @@ using Godot;
 
 namespace CardWars.Client.scenes.vanilla.instance.battle;
 
-public partial class BattlefieldNode : Node3D
+public partial class BattlefieldNode : EntityNode3D
 {
 	public float Width { get; private set; } = UnitSlotNode.CellWidth;
 	public float Depth { get; private set; } = UnitSlotNode.CellDepth;
 	public Vector3 BoundsCenter { get; private set; } = Vector3.Zero;
-
-	public Action? OnMouseEntered;
-	public Action? OnMouseExited;
-	public Action? OnMouseClicked;
 
 	private Area3D? _collisionBox;
 	private CollisionShape3D? _collisionBoxShape;

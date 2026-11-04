@@ -39,9 +39,9 @@ public partial class HandManager : Control
 	{
 		if (LineArrow is not { } lineArrow) return;
 
-		if (BattleInstance?.Hovered3DTarget.Node is { } target3D
+		if (BattleInstance?.Hovered3DTarget is { } target3D
 			&& BattleInstance.CameraNode is { } camera
-			&& BattleInstance?.Hovered3DTarget.Id is { } targetId
+			&& BattleInstance?.Hovered3DTarget.EntityId is { } targetId
 			&& ArrowTargets.Contains(targetId)
 		)
 		{
@@ -140,7 +140,7 @@ public partial class HandManager : Control
 				{
 					// TODO: end input voer
 					if (BattleInstance is not null 
-						&& BattleInstance?.Hovered3DTarget.Id is { } targetId
+						&& BattleInstance?.Hovered3DTarget?.EntityId is { } targetId
 						&& ArrowTargets.Contains(targetId))
 					{
 						var targetCard = Cards.FirstOrDefault(entry => entry.Value == SelectedCard).Key;

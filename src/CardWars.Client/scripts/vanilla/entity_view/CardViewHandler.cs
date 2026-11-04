@@ -33,6 +33,7 @@ public class CardViewHandler : IEntityViewHandler<GenericCard>
 			if (node is null) continue;
 
 			AttachToSlot(instance, node, card.OwnerUnitSlotId);
+			// node.HookMouseEvents(); // Don't need yet since cards dont have collision...
 			node.SetCard(card);
 		}
 	}

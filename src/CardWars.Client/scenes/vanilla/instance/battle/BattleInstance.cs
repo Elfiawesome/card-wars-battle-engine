@@ -34,11 +34,11 @@ public partial class BattleInstance : ClientInstance
 	public GameState State = new();
 	private TurnState _oldTurnState = new();
 
-	public IReadOnlyDictionary<EntityId, Node3D> EntityNodes => _entityNodes;
-	private readonly Dictionary<EntityId, Node3D> _entityNodes = [];
+	public IReadOnlyDictionary<EntityId, EntityNode3D> EntityNodes => _entityNodes;
+	private readonly Dictionary<EntityId, EntityNode3D> _entityNodes = [];
 
-	public HoveredTarget Hovered3DTarget = new();
-	public Action<Node3D>? OnHovered3DTargetClicked;
+	public EntityNode3D? Hovered3DTarget = new();
+	public Action<EntityNode3D>? OnHovered3DTargetClicked;
 
 	// Test random node TODO: REMOVE LTR
 	public override void _Input(InputEvent @event)
@@ -72,14 +72,14 @@ public partial class BattleInstance : ClientInstance
 	public void FocusOn(EntityId entityId)
 	{
 		if (MouseControlNode is null) return;
-		MouseControlNode.FocusOn(GetEntityNode<Node3D>(entityId));
+		MouseControlNode.FocusOn(GetEntityNode<EntityNode3D>(entityId));
 	}
 
 	private bool TryFocusOn(EntityId entityId)
 	{
 		if (MouseControlNode?.CameraNode is null) return false;
 
-		var node = GetEntityNode<Node3D>(entityId);
+		var node = GetEntityNode<EntityNode3D>(entityId);
 		if (node is null) return false;
 
 		MouseControlNode.FocusOn(node);
@@ -151,7 +151,7 @@ public partial class BattleInstance : ClientInstance
 		_oldTurnState = turn.Clone();
 	}
 
-	private static bool IsSameTurn(TurnState left, TurnState right)
+	private static bool IsSameTurn(TurnState left, TurnState right) // TODO: bruh move this into turnstate itself...
 		=> left.TurnIndex == right.TurnIndex
 		   && left.TurnNumber == right.TurnNumber
 		   && left.Phase == right.Phase
@@ -159,16 +159,16 @@ public partial class BattleInstance : ClientInstance
 
 	public bool HasEntityNode(EntityId id) => _entityNodes.ContainsKey(id);
 
-	public IReadOnlyList<EntityId> GetEntityNodeIds<T>() where T : Node3D
+	public IReadOnlyList<EntityId> GetEntityNodeIds<T>() where T : EntityNode3D
 		=> [.. _entityNodes.Where(kv => kv.Value is T).Select(kv => kv.Key)];
 
-	public IReadOnlyList<T> GetEntityNodes<T>() where T : Node3D
+	public IReadOnlyList<T> GetEntityNodes<T>() where T : EntityNode3D
 		=> [.. _entityNodes.Where(kv => kv.Value is T).Select(kv => kv.Value).Cast<T>()];
 
-	public T? GetEntityNode<T>(EntityId id) where T : Node3D
+	public T? GetEntityNode<T>(EntityId id) where T : EntityNode3D
 		=> _entityNodes.TryGetValue(id, out var node) && node is T typed ? typed : null;
 
-	public T? GetOrCreateEntityNode<T>(ResourceId sceneId, EntityId id) where T : Node3D
+	public T? GetOrCreateEntityNode<T>(ResourceId sceneId, EntityId id) where T : EntityNode3D
 	{
 		if (_entityNodes.TryGetValue(id, out var existing) && existing is T existingTyped) return existingTyped;
 		var node = BattleRegistry?.EntityScene.Instantiate<T>(sceneId);
@@ -176,6 +176,7 @@ public partial class BattleInstance : ClientInstance
 
 		node.Name = id.ToString();
 		_entityNodes[id] = node;
+		node.Setup(this, id);
 		return node;
 	}
 
@@ -188,10 +189,10 @@ public partial class BattleInstance : ClientInstance
 	}
 
 	// Keeps a node under its owner's node; falls back to the playspace.
-	public void AttachNodeToOwner(Node3D node, EntityId? ownerId)
+	public void AttachNodeToOwner(EntityNode3D node, EntityId? ownerId)
 	{
 		if (PlayspaceNode is null) return;
-		var target = ownerId is { } id && GetEntityNode<Node3D>(id) is { } ownerNode ? ownerNode : PlayspaceNode;
+		var target = ownerId is { } id && GetEntityNode<EntityNode3D>(id) is { } ownerNode ? ownerNode : PlayspaceNode;
 		var current = node.GetParent();
 		if (current == target) return;
 
@@ -203,5 +204,36 @@ public partial class BattleInstance : ClientInstance
 		=> SendPacket(new C2S_BattleInput() { Input = input });
 }
 
+public partial class EntityNode3D : Node3D
+{
+	public Action? OnMouseEntered;
+	public Action? OnMouseExited;
+	public Action? OnMouseClicked;
 
-public record struct HoveredTarget(Node3D? Node, EntityId Id);
+	public BattleInstance? BattleInstance { get; set; }
+	public EntityId EntityId { get; set; } = EntityId.None;
+	public T? GetData<T>() where T : IEntity
+		=> BattleInstance?.State.Get(EntityId) is T typed ? typed : default;
+
+	private bool _hasHookedMouseEvents = false;
+
+	public void Setup(BattleInstance battleInstance, EntityId entityId)
+	{
+		BattleInstance = battleInstance;
+		EntityId = entityId;
+	}
+
+	public void HookMouseEvents()
+	{
+		if (BattleInstance is { } instance)
+		{
+			if (!_hasHookedMouseEvents)
+			{
+				OnMouseEntered += () => { instance.Hovered3DTarget = this; };
+				OnMouseExited += () => { instance.Hovered3DTarget = null; };
+				OnMouseClicked += () => { instance.OnHovered3DTargetClicked?.Invoke(this); };
+				_hasHookedMouseEvents = true;
+			}
+		}
+	}
+}
