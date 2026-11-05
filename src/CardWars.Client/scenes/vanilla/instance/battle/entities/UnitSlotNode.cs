@@ -1,5 +1,7 @@
 using System;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
 using Godot;
 
 namespace CardWars.Client.scenes.vanilla.instance.battle;
@@ -48,12 +50,19 @@ public partial class UnitSlotNode : EntityNode3D
 	{
 		if (@event is InputEventMouseButton inputEventMouseButton)
 		{
-			if (inputEventMouseButton.Pressed && inputEventMouseButton.ButtonIndex == MouseButton.Left)
+			if (
+				TryGetData<UnitSlot>(out var unitSlot) && unitSlot?.OwnerBattlefieldId is { } battlefieldId
+				&& TryGetData<Battlefield>(out var battlefield, battlefieldId) && battlefield?.OwnerPlayerId is { } playerId
+				&& BattleInstance?.MyPlayerId == playerId
+			)
 			{
-				// Log.Info($"Clicked on {this}");
-				OnMouseClicked?.Invoke();
-				// Click and unclick select
-				if (CardAnchor?.GetChildCount() > 0) { IsSelected = !IsSelected; }
+				if (inputEventMouseButton.Pressed && inputEventMouseButton.ButtonIndex == MouseButton.Left)
+				{
+					// Log.Info($"Clicked on {this}");
+					OnMouseClicked?.Invoke();
+					// Click and unclick select
+					if (CardAnchor?.GetChildCount() > 0) { IsSelected = !IsSelected; }
+				}
 			}
 		}
 	}

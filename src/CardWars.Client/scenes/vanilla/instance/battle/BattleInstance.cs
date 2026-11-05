@@ -204,10 +204,17 @@ public partial class EntityNode3D : Node3D
 	public Action? OnMouseExited;
 	public Action? OnMouseClicked;
 
-	public BattleInstance? BattleInstance { get; set; }
+	public BattleInstance? BattleInstance { get; set; } // TODO: Rename to something else ig?
 	public EntityId EntityId { get; set; } = EntityId.None;
-	public T? GetData<T>() where T : IEntity
-		=> BattleInstance?.State.Get(EntityId) is T typed ? typed : default;
+	
+	public T? GetData<T>(EntityId? entityId = null) where T : IEntity
+		=> BattleInstance?.State.Get(entityId ?? EntityId) is T typed ? typed : default;
+
+	public bool TryGetData<T>(out T? data, EntityId? entityId = null) where T : IEntity
+	{
+		data = GetData<T>(entityId ?? EntityId);
+		return data is not null;
+	}
 
 	private bool _hasHookedMouseEvents = false;
 
