@@ -126,11 +126,11 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 				var affected = SlotTargetResolver.Resolve(state, (EntityId)targetCard.OwnerUnitSlotId, multiType.Value);
 				Log.Debug($"Targeted slots: [{string.Join(", ", affected)}]");
 
-				var charge = targetCard.Data.Get<IntTag>("charge", new IntTag(0));
+				var charge = attackerCard.Data.Get<IntTag>("charge", new IntTag(0));
 				if (charge.Value > 0)
 				{
 					charge -= 1;
-					batch.Blocks.Add(new SetCardDataBlock(targetCard.Id, "charge", charge));
+					batch.Blocks.Add(new SetCardDataBlock(attackerCard.Id, "charge", charge));
 					context.QueueEvent(new UnitTakeDamageEvent()
 					{
 						Amt = attackerCard.Atk,
@@ -151,11 +151,11 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 			if (AttackRules.CanTargetSlot(state, (EntityId)targetCard.OwnerUnitSlotId))
 			{
 				Log.Custom("Attacking successful!");
-				var charge = targetCard.Data.Get<IntTag>("charge", new IntTag(0));
+				var charge = attackerCard.Data.Get<IntTag>("charge", new IntTag(0));
 				if (charge.Value > 0)
 				{
 					charge -= 1;
-					batch.Blocks.Add(new SetCardDataBlock(targetCard.Id, "charge", charge));
+					batch.Blocks.Add(new SetCardDataBlock(attackerCard.Id, "charge", charge));
 					context.QueueEvent(new UnitTakeDamageEvent()
 					{
 						Amt = attackerCard.Atk,
