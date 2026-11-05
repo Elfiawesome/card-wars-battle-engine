@@ -5,8 +5,103 @@
 [sub_resource type="PlaneMesh" id="PlaneMesh_highlight"]
 size = Vector2(0.82, 1.1)
 
+[sub_resource type="Shader" id="Shader_lwwf7"]
+code = "shader_type spatial;
+render_mode unshaded, blend_add, cull_disabled, depth_draw_never;
+
+uniform vec4 glow_color : source_color = vec4(0.35, 1.0, 0.45, 1.0);
+
+// Size of the quad in LOCAL units (QuadMesh default is 1x1). Set to (2,2) if your QuadMesh is 2x2, etc.
+uniform vec2 quad_size = vec2(1.0, 1.0);
+
+// All border values are in WORLD units now, not 0..1 UV.
+uniform float border_width    : hint_range(0.0, 4.0)   = 0.06;
+uniform float border_softness : hint_range(0.001, 2.0) = 0.02;
+uniform float corner_radius   : hint_range(0.0, 4.0)   = 0.05;
+
+uniform float pulse_speed = 2.2;
+uniform float pulse_min   : hint_range(0.0, 1.0) = 0.25;
+uniform float pulse_max   : hint_range(0.0, 1.0) = 0.8;
+
+uniform float shine_speed    = 0.75;
+uniform float shine_strength : hint_range(0.0, 1.0) = 0.25;
+uniform float shine_scale    = 8.0;   // waves per world unit
+
+uniform float inner_glow         : hint_range(0.0, 1.0)  = 0.0;
+uniform float inner_glow_falloff : hint_range(0.1, 32.0) = 6.0;
+
+uniform float hover_boost         = 1.0;
+uniform float emission_multiplier = 2.0;
+
+// Signed distance to a rounded box. Negative inside, positive outside.
+float sd_round_box(vec2 p, vec2 b, float r) {
+	vec2 q = abs(p) - b + r;
+	return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+}
+
+void fragment() {
+	// World-space extents of the quad, so stretching the node doesn't stretch the border.
+	vec2 size = vec2(length(MODEL_MATRIX[0].xyz), length(MODEL_MATRIX[1].xyz)) * quad_size;
+	vec2 half_size = max(size * 0.5, vec2(0.0001));
+	vec2 p = (UV - 0.5) * size; // position in world units, centered
+
+	float radius = min(corner_radius, min(half_size.x, half_size.y));
+	float d = sd_round_box(p, half_size, radius);
+	float inside = -d; // distance from the edge, positive inside
+
+	float soft = max(border_softness, 0.0001);
+	float bw   = min(border_width, min(half_size.x, half_size.y));
+
+	// Fade across the edge itself (this is what makes the rounded corners anti-aliased)
+	float aa = max(soft, fwidth(inside) * 0.5);
+	float outer_fade = smoothstep(-aa, 0.0, inside);
+
+	// Border ring: full at the edge, fades inward over border_width
+	float border = outer_fade * (1.0 - smoothstep(bw - soft, bw + soft, inside));
+
+	// Smooth (eased) pulse instead of a raw sine
+	float s = sin(TIME * pulse_speed) * 0.5 + 0.5;
+	float pulse = mix(pulse_min, pulse_max, s * s * (3.0 - 2.0 * s));
+
+	// Shine in world space too, otherwise it would stretch with the quad
+	float shine = 1.0 - shine_strength
+		+ shine_strength * (0.5 + 0.5 * sin((p.x + p.y) * shine_scale - TIME * shine_speed));
+
+	// Optional soft glow spilling inward from the border
+	float inner = inner_glow * exp(-max(inside, 0.0) * inner_glow_falloff) * outer_fade;
+
+	float intensity = (border + inner) * pulse * shine * hover_boost;
+
+	// Hot core: the border edge is brighter and slightly whiter
+	vec3 col = glow_color.rgb * (1.0 + 0.6 * border);
+	col = mix(col, vec3(1.0), 0.15 * border);
+
+	ALBEDO = col;
+	ALPHA  = glow_color.a * clamp(intensity, 0.0, 1.0);
+	EMISSION = glow_color.rgb * intensity * emission_multiplier;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_swgy1"]
+render_priority = 0
+shader = SubResource("Shader_lwwf7")
+shader_parameter/glow_color = Color(0.35, 1, 0.45, 1)
+shader_parameter/quad_size = Vector2(1, 1)
+shader_parameter/border_width = 0.055
+shader_parameter/border_softness = 0.015
+shader_parameter/corner_radius = 0.05
+shader_parameter/pulse_speed = 2.2
+shader_parameter/pulse_min = 0.25
+shader_parameter/pulse_max = 0.8
+shader_parameter/shine_speed = 0.75
+shader_parameter/shine_strength = 0.25
+shader_parameter/shine_scale = 8.0
+shader_parameter/inner_glow = 0.0
+shader_parameter/inner_glow_falloff = 6.0
+shader_parameter/hover_boost = 1.0
+shader_parameter/emission_multiplier = 2.0
+
 [node name="TargetHighlight" type="MeshInstance3D" unique_id=87975138]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_highlight")
+surface_material_override/0 = SubResource("ShaderMaterial_swgy1")
 script = ExtResource("1_cci53")

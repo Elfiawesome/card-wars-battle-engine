@@ -205,6 +205,8 @@ public partial class BattleInstance : ClientInstance
 		=> SendPacket(new C2S_BattleInput() { Input = input });
 }
 
+public readonly record struct HighlightBounds(Vector3 Center, Vector2 Size, float Rotation = 0f);
+
 public partial class EntityNode3D : Node3D
 {
 	public Action? OnMouseEntered;
@@ -217,26 +219,36 @@ public partial class EntityNode3D : Node3D
 
 	private TargetHighlight? _targetHighlight;
 
+	public virtual HighlightBounds? GetHighlightBounds() => null;
+
 	public void SetValidTarget(bool valid)
 	{
 		IsValidTarget = valid;
-		Log.Info($"Setting to {valid}");
 
-		if (IsValidTarget)
+		if (!valid)
 		{
-			if (_targetHighlight is null)
+			if (_targetHighlight is not null)
 			{
-				_targetHighlight = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<TargetHighlight>(SharedIds.UI.TargetHighlight);
-				AddChild(_targetHighlight);
+				RemoveChild(_targetHighlight);
+				_targetHighlight.QueueFree();
+				_targetHighlight = null;
 			}
-			_targetHighlight?.SetHighlighted(IsValidTarget);
+
+			return;
 		}
-		else
+
+		if (GetHighlightBounds() is not { } bounds) return;
+
+		if (_targetHighlight is null)
 		{
-			if (_targetHighlight is not null) { RemoveChild(_targetHighlight); }
-			_targetHighlight?.QueueFree();
-			_targetHighlight = null;
+			_targetHighlight = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<TargetHighlight>(SharedIds.UI.TargetHighlight);
+			if (_targetHighlight is null) return;
+
+			AddChild(_targetHighlight);
 		}
+
+		_targetHighlight.Configure(bounds);
+		_targetHighlight.SetHighlighted(true);
 	}
 
 	public override void _Process(double delta)

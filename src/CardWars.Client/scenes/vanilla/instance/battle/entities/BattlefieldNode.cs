@@ -68,6 +68,9 @@ public partial class BattlefieldNode : EntityNode3D
 		}
 	}
 
+	public override HighlightBounds? GetHighlightBounds()
+		=> new(BoundsCenter + new Vector3(0f, 0.01f, 0f), new Vector2(Width, Depth));
+
 	public void PlaceAt(Vector3 targetCenter, float facing)
 	{
 		Position = targetCenter - BoundsCenter.Rotated(Vector3.Up, facing);

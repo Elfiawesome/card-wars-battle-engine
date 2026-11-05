@@ -66,6 +66,9 @@ public partial class UnitSlotNode : EntityNode3D
 
 	public void SetSelected(bool selected) => IsSelected = selected;
 
+	public override HighlightBounds? GetHighlightBounds()
+		=> new(new Vector3(0f, 0.01f, 0f), new Vector2(0.82f, 1.1f));
+
 	public void SetGridPosition(UnitSlotPos position)
 	{
 		TargetPosition = new Vector3(position.X * CellWidth, 0f, -position.Y * CellDepth);
