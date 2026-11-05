@@ -1,4 +1,3 @@
-using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Tests.Support;
 using Xunit;

@@ -4,7 +4,6 @@ using System.Linq;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
-using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using Godot;
 

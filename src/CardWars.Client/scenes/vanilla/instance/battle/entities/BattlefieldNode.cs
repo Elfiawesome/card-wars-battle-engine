@@ -1,4 +1,3 @@
-using System;
 using Godot;
 
 namespace CardWars.Client.scenes.vanilla.instance.battle;

@@ -1,5 +1,4 @@
 using CardWars.BattleEngine.Vanilla.Entity;
-using Godot;
 
 namespace CardWars.Client.scenes.vanilla.instance.battle;
 
