@@ -1,8 +1,9 @@
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Tests.Support;
 using Xunit;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Simulation;
 
 public sealed class BattleAttackTests
 {

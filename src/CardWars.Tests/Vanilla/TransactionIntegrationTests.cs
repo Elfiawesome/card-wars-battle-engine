@@ -6,16 +6,17 @@ using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
+using CardWars.Tests.Support;
 using Xunit;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Vanilla;
 
 public sealed class TransactionIntegrationTests
 {
 	[Fact]
 	public void BattleEngine_InstantiatesDataDrivenBehaviourFromPointer()
 	{
-		var engine = new CardWars.BattleEngine.BattleEngine();
+		var engine = new BattleEngine.BattleEngine();
 		new VanillaMod().OnLoad(engine.Registry, []);
 		engine.Registry.InputHandlers.Register(new TestEventInputHandler());
 		engine.Registry.EventHandlers.Register(new TestEventHandler());

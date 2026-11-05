@@ -5,11 +5,11 @@ using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Support;
 
 internal sealed class BattleTestHarness
 {
-	public CardWars.BattleEngine.BattleEngine Engine { get; }
+	public BattleEngine.BattleEngine Engine { get; }
 	public GameState State => Engine.State;
 	public EntityId Player1Id { get; }
 	public EntityId Player2Id { get; }
@@ -18,7 +18,7 @@ internal sealed class BattleTestHarness
 	public Player Player2 => Require<Player>(Player2Id);
 
 	private BattleTestHarness(
-		CardWars.BattleEngine.BattleEngine engine,
+		BattleEngine.BattleEngine engine,
 		EntityId player1Id,
 		EntityId player2Id)
 	{
@@ -32,7 +32,7 @@ internal sealed class BattleTestHarness
 		var registry = TestSupport.CreateRegistry();
 		TestCards.RegisterStarterDeck(registry, configureCards);
 
-		var engine = new CardWars.BattleEngine.BattleEngine { Registry = registry };
+		var engine = new BattleEngine.BattleEngine { Registry = registry };
 		var player1Id = EntityId.New();
 		var player2Id = EntityId.New();
 

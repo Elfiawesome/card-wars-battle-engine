@@ -1,9 +1,10 @@
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Instructions;
 using CardWars.BattleEngine.Vanilla;
+using CardWars.Tests.Support;
 using Xunit;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Scripting;
 
 public sealed class RegistrationTests
 {

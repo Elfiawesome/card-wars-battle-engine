@@ -4,7 +4,7 @@ using CardWars.Core.Data.Serialization.Json;
 using CardWars.Core.Data.Tags;
 using Xunit;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Core;
 
 public sealed class TurnStateTests
 {

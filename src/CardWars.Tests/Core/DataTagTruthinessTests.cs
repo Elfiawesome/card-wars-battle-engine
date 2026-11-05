@@ -1,7 +1,7 @@
 using CardWars.Core.Data.Tags;
 using Xunit;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Core;
 
 public sealed class DataTagTruthinessTests
 {

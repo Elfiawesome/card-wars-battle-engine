@@ -11,9 +11,10 @@ using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 using CardWars.Core.Storage;
 using CardWars.ModLoader;
+using CardWars.Tests.Support;
 using Xunit;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Vanilla;
 
 public sealed class CardTargetFilterTests
 {

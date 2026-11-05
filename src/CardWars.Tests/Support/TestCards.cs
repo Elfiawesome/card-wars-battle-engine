@@ -4,7 +4,7 @@ using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Support;
 
 internal static class TestCards
 {

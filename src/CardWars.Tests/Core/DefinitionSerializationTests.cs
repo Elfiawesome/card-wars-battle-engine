@@ -8,7 +8,7 @@ using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 using Xunit;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Core;
 
 public sealed class DefinitionSerializationTests
 {

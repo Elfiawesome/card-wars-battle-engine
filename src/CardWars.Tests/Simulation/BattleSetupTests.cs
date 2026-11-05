@@ -1,9 +1,10 @@
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.Tests.Support;
 using Xunit;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Simulation;
 
 public sealed class BattleSetupTests
 {

@@ -1,9 +1,10 @@
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
+using CardWars.Tests.Support;
 using Xunit;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Scripting;
 
 public sealed class RuntimeVariableTests
 {

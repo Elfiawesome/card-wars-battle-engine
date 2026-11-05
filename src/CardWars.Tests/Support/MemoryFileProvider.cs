@@ -1,7 +1,7 @@
 using System.Text;
 using CardWars.Core.Storage;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Support;
 
 internal sealed class MemoryFileProvider : IFileProvider
 {

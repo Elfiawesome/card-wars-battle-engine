@@ -6,7 +6,7 @@ using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Support;
 
 [DataTagType("test/entity")]
 public sealed class TestEntity : IEntity

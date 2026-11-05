@@ -4,7 +4,7 @@ using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
 
-namespace CardWars.Tests;
+namespace CardWars.Tests.Support;
 
 internal static class TestSupport
 {
