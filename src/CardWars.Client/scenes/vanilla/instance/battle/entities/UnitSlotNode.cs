@@ -48,21 +48,39 @@ public partial class UnitSlotNode : EntityNode3D
 
 	private void onCollisionInputEvent(Node cameraNode, InputEvent @event, Vector3 eventPosition, Vector3 normal, long shapeIndex)
 	{
-		if (@event is InputEventMouseButton inputEventMouseButton)
+		if (@event is not InputEventMouseButton inputEventMouseButton
+			|| !inputEventMouseButton.Pressed
+			|| inputEventMouseButton.ButtonIndex != MouseButton.Left) { return; }
+
+		if (BattleInstance is { } battleInstance)
 		{
 			if (
-				TryGetData<UnitSlot>(out var unitSlot) && unitSlot?.OwnerBattlefieldId is { } battlefieldId
-				&& TryGetData<Battlefield>(out var battlefield, battlefieldId) && battlefield?.OwnerPlayerId is { } playerId
-				&& BattleInstance?.MyPlayerId == playerId
+				// Check UnitSlot exists
+				TryGetData<UnitSlot>(out var unitSlot)
+				&& unitSlot?.OwnerBattlefieldId is { } battlefieldId
+				// Check Battlefield exists
+				&& TryGetData<Battlefield>(out var battlefield, battlefieldId)
+				&& battlefield?.OwnerPlayerId is { } ownerPlayerId
+				// Check Player exists
+				&& TryGetData<Player>(out var player, battlefield.OwnerPlayerId)
 			)
 			{
-				if (inputEventMouseButton.Pressed && inputEventMouseButton.ButtonIndex == MouseButton.Left)
+				if (battleInstance.MyPlayerId == ownerPlayerId)
 				{
-					// Log.Info($"Clicked on {this}");
 					OnMouseClicked?.Invoke();
-					// Click and unclick select
 					if (CardAnchor?.GetChildCount() > 0) { IsSelected = !IsSelected; }
 				}
+				else
+				{
+					if (TryGetData<Player>(out var myPlayer, battleInstance.MyPlayerId))
+					{
+						if (myPlayer?.Team != player?.Team)
+						{
+							Log.Info($"Clicked enemy slot {EntityId}");
+						}
+					}
+				}
+
 			}
 		}
 	}
