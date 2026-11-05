@@ -1,0 +1,8 @@
+{
+	"name": "Sweep ATK",
+	"charge_cost": 1,
+	"bypass": false,
+	"patterns": [
+		{ "type": "row", "value": "100%" }
+	]
+}

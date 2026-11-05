@@ -1,0 +1,8 @@
+{
+	"name": "Spread ATK",
+	"charge_cost": 1,
+	"bypass": true,
+	"patterns": [
+		{ "type": "all", "value": "100%" }
+	]
+}

@@ -1,0 +1,8 @@
+{
+	"name": "Pierce ATK",
+	"charge_cost": 1,
+	"bypass": true,
+	"patterns": [
+		{ "type": "column", "value": "100%" }
+	]
+}
