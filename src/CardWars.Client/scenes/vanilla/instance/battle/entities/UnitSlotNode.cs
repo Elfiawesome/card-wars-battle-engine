@@ -1,10 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.BattleEngine.Vanilla.Features;
-using CardWars.Core.Logging;
 using Godot;
 
 namespace CardWars.Client.scenes.vanilla.instance.battle;
@@ -67,64 +62,9 @@ public partial class UnitSlotNode : EntityNode3D
 
 		// Generic clicking...
 		OnMouseClicked?.Invoke();
-
-		// Huh probably should be cleaner or data driven lol
-		if (BattleInstance is { } battleInstance)
-		{
-			if (
-				// Check UnitSlot exists
-				TryGetData<UnitSlot>(out var nullUnitSlot)
-				&& nullUnitSlot is { } unitSlot
-				&& unitSlot?.OwnerBattlefieldId is { } battlefieldId
-				// Check Battlefield exists
-				&& TryGetData<Battlefield>(out var nullBattlefield, battlefieldId)
-				&& nullBattlefield is { } battlefield
-				&& battlefield?.OwnerPlayerId is { } ownerPlayerId
-				// Check Player exists
-				&& TryGetData<Player>(out var nullPlayer, battlefield.OwnerPlayerId)
-				&& nullPlayer is { } player
-				// Check if it's my allowed turn
-				&& battleInstance.State.Turn.AllowedPlayerInputs.Contains(battleInstance.MyPlayerId)
-			)
-			{
-				if (battleInstance.MyPlayerId == ownerPlayerId)
-				{
-					if (
-						TryGetData<GenericCard>(out var nullCard, unitSlot.HoldingCardId)
-						&& nullCard is { } card
-						&& card.Charge > 0
-						&& battleInstance.State.Turn.Phase == TurnPhase.Attacking
-					)
-					{
-						IsSelected = !IsSelected;
-					}
-				}
-				else
-				{
-					if (TryGetData<Player>(out var myPlayer, battleInstance.MyPlayerId))
-					{
-						if (myPlayer?.Team != player?.Team)
-						{
-							if (battleInstance.State.Turn.Phase == TurnPhase.Attacking)
-							{
-								Log.Info($"Clicked enemy slot {EntityId}");
-								// TODO: Fuck it let's put it here
-								// Get all selected slots
-								List<UnitSlotNode> selectedSlots = [.. battleInstance.GetEntityNodes<UnitSlotNode>().Where(s => s.IsSelected == true)];
-								List<EntityId> selected = selectedSlots.Select(s => s.EntityId).ToList() ?? [];
-								selectedSlots.ForEach(s => s.IsSelected = false);
-								battleInstance.SendInput(
-									new AttackRequestInput(selected, EntityId)
-								);
-							}
-						}
-					}
-				}
-
-			}
-		}
 	}
 
+	public void SetSelected(bool selected) => IsSelected = selected;
 
 	public void SetGridPosition(UnitSlotPos position)
 	{

@@ -2,9 +2,9 @@ using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.BattleEngine.Vanilla.Helpers;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
@@ -28,21 +28,44 @@ public class AttackRequestInputHandler : IInputHandler<AttackRequestInput>
 
 		// Check if Targeted Unit Slot is valid
 		if (state.Require<UnitSlot>(request.TargetSlotId) is not { } targetSlot) return;
-
-		// Check if Targeted Unit is valid
 		if (targetSlot.HoldingCardId is null) { Log.Error("Target Unit Slot does not have any holding card id"); return; }
-		if (state.Require<GenericCard>((EntityId)targetSlot.HoldingCardId) is not { } targetCard) return;
+		if (state.Require<GenericCard>(targetSlot.HoldingCardId.Value) is null) return;
 
-		foreach (var attackerSlotId in request.AttackerSlotIds)
+		var resolver = new AttackResolver(context.Transaction.Registry);
+		var queuedAttackers = new HashSet<EntityId>();
+
+		foreach (var attackerSlotId in request.AttackerSlotIds ?? [])
 		{
+			if (!queuedAttackers.Add(attackerSlotId)) continue;
+
 			// Check if Attacker Unit Slot is valid
 			if (state.Require<UnitSlot>(attackerSlotId) is not { } attackerSlot) continue;
 
 			// Check if Attacker Unit is valid
-			if (attackerSlot.HoldingCardId is null) { Log.Error("One of Attacker's Unit Slot does not have any holding card id"); continue; }
-			if (state.Require<GenericCard>((EntityId)attackerSlot.HoldingCardId) is not { } attackerCard) continue;
+			if (attackerSlot.HoldingCardId is not { } attackerCardId) { Log.Error("One of Attacker's Unit Slot does not have any holding card id"); continue; }
+			if (state.Require<GenericCard>(attackerCardId) is not { } attackerCard) continue;
 
-			context.Transaction.QueueEvent(new AttackRequestEvent() { AttackerId = attackerCard.Id, TargetId = targetCard.Id });
+			// The attacker must belong to the player making this input.
+			if (AttackTargetResolver.GetOwnerPlayerId(state, attackerSlot) != context.PlayerId)
+			{
+				Log.Warn($"Attack rejected: slot [{attackerSlot.Id}] is not owned by player [{context.PlayerId}]");
+				continue;
+			}
+
+			var attack = resolver.Resolve(attackerCard);
+			if (!resolver.CanAfford(attackerCard, attack))
+			{
+				Log.Warn($"Attack rejected: card [{attackerCard.Id}] cannot afford [{attack.Name}]");
+				continue;
+			}
+
+			if (!AttackTargetResolver.CanTarget(state, attackerCard, attack, targetSlot.Id))
+			{
+				Log.Warn($"Attack rejected: target [{targetSlot.Id}] is not valid for card [{attackerCard.Id}]");
+				continue;
+			}
+
+			context.Transaction.QueueEvent(new AttackRequestEvent() { AttackerId = attackerCard.Id, TargetId = targetSlot.HoldingCardId.Value });
 		}
 	}
 }
@@ -99,82 +122,49 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 	{
 		var state = context.State;
 
-		BlockBatch batch = new([]);
-
 		// Check if Attacker & Target Unit are valid
 		if (state.Require<GenericCard>(request.AttackerId) is not { } attackerCard) return;
 		if (state.Require<GenericCard>(request.TargetId) is not { } targetCard) return;
-		if (targetCard.OwnerUnitSlotId is null) { Log.Error("Target Card is not on any OwnerUnitSlotId"); return; }
+		if (targetCard.OwnerUnitSlotId is not { } targetSlotId) { Log.Error("Target Card is not on any OwnerUnitSlotId"); return; }
 
-		if (attackerCard.SpAtk.Count > 0)
+		var resolver = new AttackResolver(context.Registry);
+		var attack = resolver.Resolve(attackerCard);
+		if (!resolver.CanAfford(attackerCard, attack))
 		{
-			// SP Atk
-			for (int i = 0; i < attackerCard.SpAtk.Count; i++)
-			{
-				var spAtk = attackerCard.SpAtk.Get<CompoundTag>(i);
-				if (spAtk is null) { continue; }
-				// Get SP Atk details
-				var name = spAtk.Get<StringTag>("name") ?? new StringTag("Default");
-				var multiType = spAtk.Get<StringTag>("multi_type") ?? new StringTag("");
-				var multiAmt = spAtk.Get<IntTag>("multi_amt") ?? new IntTag(attackerCard.Atk);
-				var chargeCost = spAtk.Get<IntTag>("charge_cost") ?? new IntTag(1);
-				var amt = spAtk.Get<IntTag>("amt") ?? new IntTag(attackerCard.Atk);
-
-				Log.Debug($"SpAtk '{name.Value}': pattern={multiType.Value} amt={amt.Value} " +
-					 $"multiAmt={multiAmt.Value} charge={chargeCost.Value}");
-
-				var affected = SlotTargetResolver.Resolve(state, (EntityId)targetCard.OwnerUnitSlotId, multiType.Value);
-				Log.Debug($"Targeted slots: [{string.Join(", ", affected)}]");
-
-				var charge = attackerCard.Data.Get<IntTag>("charge", new IntTag(0));
-				if (charge.Value > 0)
-				{
-					charge -= 1;
-					batch.Blocks.Add(new SetCardDataBlock(attackerCard.Id, "charge", charge));
-					context.QueueEvent(new UnitTakeDamageEvent()
-					{
-						Amt = attackerCard.Atk,
-						DamagedUnitId = targetCard.Id,
-						EntitySourceId = attackerCard.Id,
-						IsSPAtk = true
-					});
-				}
-				else
-				{
-					Log.Warn("Tried to attack with no charge");
-				}
-			}
+			Log.Warn($"Tried to attack with insufficient charge for [{attack.Name}]");
+			return;
 		}
-		else
+
+		if (!AttackTargetResolver.CanTarget(state, attackerCard, attack, targetSlotId))
 		{
-			// BA Atk
-			if (AttackRules.CanTargetSlot(state, (EntityId)targetCard.OwnerUnitSlotId))
-			{
-				Log.Custom("Attacking successful!");
-				var charge = attackerCard.Data.Get<IntTag>("charge", new IntTag(0));
-				if (charge.Value > 0)
-				{
-					charge -= 1;
-					batch.Blocks.Add(new SetCardDataBlock(attackerCard.Id, "charge", charge));
-					context.QueueEvent(new UnitTakeDamageEvent()
-					{
-						Amt = attackerCard.Atk,
-						DamagedUnitId = targetCard.Id,
-						EntitySourceId = attackerCard.Id,
-						IsSPAtk = true
-					});
-				}
-				else
-				{
-					Log.Warn("Tried to attack with no charge");
-				}
-
-			}
-			else
-			{
-				Log.Custom("Attacking faill!");
-			}
+			Log.Warn($"Attack target [{targetSlotId}] is not valid for [{attack.Name}]");
+			return;
 		}
+
+		var damage = AttackDamageResolver.Resolve(state, attackerCard, attack, targetSlotId);
+		var batch = new BlockBatch([]);
+
+		if (attack.ChargeCost > 0)
+		{
+			batch.Blocks.Add(new SetCardDataBlock(
+				attackerCard.Id,
+				"charge",
+				new IntTag(attackerCard.Charge - attack.ChargeCost)));
+		}
+
+		foreach (var (slotId, amount) in damage)
+		{
+			if (state.Get<UnitSlot>(slotId) is not { HoldingCardId: { } damagedCardId }) continue;
+
+			context.QueueEvent(new UnitTakeDamageEvent()
+			{
+				Amt = amount,
+				DamagedUnitId = damagedCardId,
+				EntitySourceId = attackerCard.Id,
+				IsSPAtk = attack.IsSpAtk
+			});
+		}
+
 		context.ApplyBlockBatch(batch);
 	}
 }

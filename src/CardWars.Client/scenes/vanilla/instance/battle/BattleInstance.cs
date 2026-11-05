@@ -10,8 +10,10 @@ using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.vanilla.registry;
 using CardWars.Client.scripts.vanilla.systems;
+using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
+using CardWars.Vanilla.Shared;
 using CardWars.Vanilla.Shared.Packet;
 using Godot;
 
@@ -24,10 +26,12 @@ public partial class BattleInstance : ClientInstance
 	[Export] public Control? ButtonsOverlayNode;
 	[Export] public HandManager? HandManagerNode;
 	[Export] public MouseControl? MouseControlNode;
+	[Export] public AttackController? AttackControllerNode;
 	[Export] public Node3D? PlayspaceNode;
 	[Export] public Camera? CameraNode;
 
 	public BattleAnimationHandler AnimationHandler = new();
+	public TargetHighlighter TargetHighlighter = new();
 
 	public GameState State = new();
 	private TurnState _oldTurnState = new();
@@ -35,7 +39,7 @@ public partial class BattleInstance : ClientInstance
 	public IReadOnlyDictionary<EntityId, EntityNode3D> EntityNodes => _entityNodes;
 	private readonly Dictionary<EntityId, EntityNode3D> _entityNodes = [];
 
-	public EntityNode3D? Hovered3DTarget = new();
+	public EntityNode3D? Hovered3DTarget;
 	public Action<EntityNode3D>? OnHovered3DTargetClicked;
 
 	// Test random node TODO: REMOVE LTR
@@ -59,12 +63,14 @@ public partial class BattleInstance : ClientInstance
 	public override void _Ready()
 	{
 		if (HandManagerNode is not null) HandManagerNode.BattleInstance = this;
+		if (AttackControllerNode is not null) AttackControllerNode.Setup(this);
 	}
 
 	public override void _Process(double delta)
 	{
 		base._Process(delta);
-		AnimationHandler?.Process(this, delta);
+		AnimationHandler.Process(this, delta);
+		TargetHighlighter.Process(this);
 	}
 
 	public void FocusOn(EntityId entityId)
@@ -123,6 +129,8 @@ public partial class BattleInstance : ClientInstance
 
 		// Handle Entity Clenup & Handling
 		BattleRegistry.EntityViewHandlers.Execute(this, State);
+		HandManagerNode?.RefreshTargeting();
+		TargetHighlighter.Invalidate();
 
 		// Handle Layout
 		var defaultId = BattleRegistry.DefaultLayoutId;
@@ -131,6 +139,7 @@ public partial class BattleInstance : ClientInstance
 
 		// Set Camera
 		UpdateCamera();
+		AttackControllerNode?.OnStateSynced();
 	}
 
 	private void UpdateCamera()
@@ -204,7 +213,40 @@ public partial class EntityNode3D : Node3D
 
 	public BattleInstance? BattleInstance { get; set; } // TODO: Rename to something else ig?
 	public EntityId EntityId { get; set; } = EntityId.None;
-	
+	public bool IsValidTarget { get; private set; }
+
+	private TargetHighlight? _targetHighlight;
+
+	public void SetValidTarget(bool valid)
+	{
+		IsValidTarget = valid;
+		Log.Info($"Setting to {valid}");
+
+		if (IsValidTarget)
+		{
+			if (_targetHighlight is null)
+			{
+				_targetHighlight = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<TargetHighlight>(SharedIds.UI.TargetHighlight);
+				AddChild(_targetHighlight);
+			}
+			_targetHighlight?.SetHighlighted(IsValidTarget);
+		}
+		else
+		{
+			if (_targetHighlight is not null) { RemoveChild(_targetHighlight); }
+			_targetHighlight?.QueueFree();
+			_targetHighlight = null;
+		}
+	}
+
+	public override void _Process(double delta)
+	{
+		if (IsValidTarget)
+		{
+			_targetHighlight?.SetHovered(BattleInstance?.Hovered3DTarget == this);
+		}
+	}
+
 	public T? GetData<T>(EntityId? entityId = null) where T : IEntity
 		=> BattleInstance?.State.Get(entityId ?? EntityId) is T typed ? typed : default;
 

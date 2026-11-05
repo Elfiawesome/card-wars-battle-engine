@@ -16,6 +16,7 @@ public static class SharedIds
 	{
 		public static readonly ResourceId CardDisplay = ResourceId.Vanilla("card_display");
 		public static readonly ResourceId LineArrow = ResourceId.Vanilla("line_arrow");
+		public static readonly ResourceId TargetHighlight = ResourceId.Vanilla("target_highlight");
 	}
 
 	// Battle Entity Objects

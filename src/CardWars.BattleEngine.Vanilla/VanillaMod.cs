@@ -70,6 +70,9 @@ public class VanillaMod : IBattleEngineMod
 		// --- Data-Driven Behaviours ---
 		RegisterDataDriven(registry);
 
+		// --- Attack Definitions ---
+		RegisterAttackDefinitions(registry, modContents);
+
 		// --- Card Definitions ---
 		RegisterCardDefinitions(registry, modContents);
 	}
@@ -123,6 +126,60 @@ public class VanillaMod : IBattleEngineMod
 	}
 
 
+	private static void RegisterAttackDefinitions(BattleEngineRegistry registry, List<ModContentResult> modContents)
+	{
+		foreach (var content in modContents)
+		{
+			if (content.Category.Length == 0 || content.Category[0] is not ("attacks" or "sp_atks")) continue;
+
+			var attack = content.ReadAs<CompoundTag>();
+			if (attack is null) continue;
+
+			registry.AttackDefinitions.Register(content.Id, attack);
+			Log.Info("Registered Attack: " + content.Id.ToString());
+		}
+	}
+
+	private static void ResolveAttackReferences(BattleEngineRegistry registry, CompoundTag card)
+	{
+		if (card.Get("ba_atk") is StringTag basicReference)
+		{
+			if (registry.AttackDefinitions.Get(ResourceId.Parse(basicReference.Value)) is { } basic)
+			{
+				card.Set("ba_atk", basic.Clone());
+			}
+			else
+			{
+				Log.Warn($"Attack definition [{basicReference.Value}] was not found for ba_atk");
+			}
+		}
+
+		if (card.GetList("sp_atk") is not { } specialAttacks) return;
+
+		var resolved = new ListTag();
+		foreach (var item in specialAttacks.Items)
+		{
+			if (item is StringTag reference)
+			{
+				if (registry.AttackDefinitions.Get(ResourceId.Parse(reference.Value)) is { } attack)
+				{
+					resolved.Add(attack.Clone());
+				}
+				else
+				{
+					Log.Warn($"Attack definition [{reference.Value}] was not found for sp_atk");
+					resolved.Add(item);
+				}
+			}
+			else
+			{
+				resolved.Add(item);
+			}
+		}
+
+		card.Set("sp_atk", resolved);
+	}
+
 	private void RegisterCardDefinitions(BattleEngineRegistry registry, List<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
@@ -138,6 +195,7 @@ public class VanillaMod : IBattleEngineMod
 					unitDataTag.Set("intrinsic_behaviours", new ListTag().Add(new CompoundTag().Set("resource", "cardwars:summon_unit_card_to_unit_slot_behaviour")));
 					if (!unitDataTag.Has("target_filter"))
 						unitDataTag.Set("target_filter", DataTagMapper.ToTag(UnitTargetFilter.Create()));
+					ResolveAttackReferences(registry, unitDataTag);
 
 					registry.CardDefinitions.Register(content.Id, unitDataTag);
 

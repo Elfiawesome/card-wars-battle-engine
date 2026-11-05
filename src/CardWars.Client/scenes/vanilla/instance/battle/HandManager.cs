@@ -23,7 +23,7 @@ public partial class HandManager : Control
 
 	public CardDisplay? HoveredCard = null;
 	public CardDisplay? SelectedCard = null;
-	public Node2D? LineArrow = null;
+	public LineArrow? LineArrow = null;
 	public HashSet<EntityId> ArrowTargets = [];
 	public BattleInstance? BattleInstance = null;
 
@@ -37,27 +37,33 @@ public partial class HandManager : Control
 
 	public override void _Process(double delta)
 	{
-		if (LineArrow is not { } lineArrow) return;
+		if (LineArrow is not { } lineArrow || BattleInstance?.CameraNode is not { } camera) return;
 
-		if (BattleInstance?.Hovered3DTarget is { } target3D
-			&& BattleInstance.CameraNode is { } camera
-			&& BattleInstance?.Hovered3DTarget.EntityId is { } targetId
-			&& ArrowTargets.Contains(targetId)
-		)
-		{
-
-			var viewportPoint = camera.UnprojectPosition(target3D.GlobalPosition);
-			var localPoint = lineArrow.GetGlobalTransformWithCanvas().AffineInverse() * viewportPoint;
-			lineArrow.Set("target", localPoint);
-			lineArrow.Set("smoothness", 0.2);
-		}
+		if (BattleInstance.Hovered3DTarget is { } target && ArrowTargets.Contains(target.EntityId))
+			lineArrow.SnapTo(camera, target);
 		else
-		{
-			lineArrow.Set("smoothness", 0.8);
-			lineArrow.Set("target", lineArrow.GetLocalMousePosition());
-		}
+			lineArrow.FollowMouse();
 	}
 
+
+	public void RefreshTargeting()
+	{
+		ArrowTargets.Clear();
+
+		if (SelectedCard is null) return;
+		if (BattleInstance is not { } instance) return;
+		if (instance.BattleEngineRegistry is not { } battleEngineRegistry) return;
+
+		var cardEntry = Cards.FirstOrDefault(entry => entry.Value == SelectedCard);
+		if (instance.State.Get<GenericCard>(cardEntry.Key) is { } candidate)
+		{
+			var evaluator = new CardTargetFilterEvaluator(battleEngineRegistry.DataDriven);
+			ArrowTargets = [.. evaluator.ResolveTargets(instance.State, candidate, instance.MyPlayerId)];
+		}
+
+		instance.TargetHighlighter.Clear(this);
+		instance.TargetHighlighter.Set(this, ArrowTargets);
+	}
 
 	public CardDisplay? GetCard(EntityId entityId) => _cards.TryGetValue(entityId, out var card) ? card : null;
 
@@ -82,6 +88,13 @@ public partial class HandManager : Control
 		if (_cards.TryGetValue(id, out var c))
 		{
 			_cards.Remove(id);
+
+			if (SelectedCard == c)
+			{
+				ArrowTargets.Clear();
+				ResetArrows();
+			}
+
 			c.QueueFree(); // TODO: Make it animate away
 		}
 	}
@@ -108,21 +121,11 @@ public partial class HandManager : Control
 					if (SelectedCard is null)
 					{
 						SelectedCard = card;
-
-						if (BattleInstance is { BattleEngineRegistry: { } registry } instance)
-						{
-							var eval = new CardTargetFilterEvaluator(registry.DataDriven);
-							var cardEntry = Cards.FirstOrDefault(entry => entry.Value == SelectedCard);
-							if (instance.State.Get<GenericCard>(cardEntry.Key) is { } candidate)
-							{
-								ArrowTargets = [.. eval.ResolveTargets(instance.State, candidate, instance.MyPlayerId)];
-							}
-						}
-
+						RefreshTargeting();
 
 						LineArrow?.QueueFree();
-						LineArrow = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<Node2D>(SharedIds.UI.LineArrow);
-						AddChild(LineArrow);
+						LineArrow = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<LineArrow>(SharedIds.UI.LineArrow);
+						if (LineArrow is not null) AddChild(LineArrow);
 					}
 				}
 				ArrangeCard();
@@ -139,7 +142,7 @@ public partial class HandManager : Control
 				if (SelectedCard is not null)
 				{
 					// TODO: end input voer
-					if (BattleInstance is not null 
+					if (BattleInstance is not null
 						&& BattleInstance?.Hovered3DTarget?.EntityId is { } targetId
 						&& ArrowTargets.Contains(targetId))
 					{
@@ -148,13 +151,19 @@ public partial class HandManager : Control
 						if (targetCard != EntityId.None && targetId != EntityId.None) { BattleInstance?.SendInput(new UseCardRequestInput(targetCard, targetId)); }
 					}
 
-					SelectedCard = null;
-					LineArrow?.QueueFree();
-					LineArrow = null;
+					ResetArrows();
 				}
 			}
 			ArrangeCard();
 		}
+	}
+
+	private void ResetArrows()
+	{
+		SelectedCard = null;
+		BattleInstance?.TargetHighlighter.Clear(this);
+		LineArrow?.QueueFree();
+		LineArrow = null;
 	}
 
 

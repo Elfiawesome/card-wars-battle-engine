@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://b7e2pum6t8sfj" path="res://scenes/vanilla/instance/battle/HandManager.cs" id="2_4cb27"]
 [ext_resource type="Texture2D" uid="uid://c2n6a1kcehf1m" path="res://assets/vanilla/texture/wood_texture.jpg" id="4_3esg4"]
 [ext_resource type="Script" uid="uid://d0bhmtleyro4k" path="res://scenes/vanilla/instance/battle/Camera.cs" id="5_4jex4"]
+[ext_resource type="Script" uid="uid://cevyuc4l4qfr3" path="res://scenes/vanilla/instance/battle/AttackController.cs" id="6_attack"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4jex4"]
 albedo_texture = ExtResource("4_3esg4")
@@ -13,11 +14,12 @@ albedo_texture = ExtResource("4_3esg4")
 material = SubResource("StandardMaterial3D_4jex4")
 size = Vector2(32, 32)
 
-[node name="BattleScene" type="Node" unique_id=587125568 node_paths=PackedStringArray("ButtonsOverlayNode", "HandManagerNode", "MouseControlNode", "PlayspaceNode", "CameraNode")]
+[node name="BattleScene" type="Node" unique_id=587125568 node_paths=PackedStringArray("ButtonsOverlayNode", "HandManagerNode", "MouseControlNode", "AttackControllerNode", "PlayspaceNode", "CameraNode")]
 script = ExtResource("1_kka0g")
 ButtonsOverlayNode = NodePath("UI/ButtonsOverlay")
 HandManagerNode = NodePath("UI/ButtonsOverlay/HandManager")
 MouseControlNode = NodePath("UI/ButtonsOverlay/HandManager/MouseControl")
+AttackControllerNode = NodePath("AttackController")
 PlayspaceNode = NodePath("Playspace")
 CameraNode = NodePath("Camera")
 
@@ -39,6 +41,9 @@ shadow_enabled = true
 [node name="Camera" type="Camera3D" parent="." unique_id=1427412567]
 transform = Transform3D(1, 0, 0, 0, 0.9905765, 0.13696073, 0, -0.13696073, 0.9905765, 0, 0, 2)
 script = ExtResource("5_4jex4")
+
+[node name="AttackController" type="Node" parent="." unique_id=268114820]
+script = ExtResource("6_attack")
 
 [node name="UI" type="Control" parent="." unique_id=187991382]
 layout_mode = 3

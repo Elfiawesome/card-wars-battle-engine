@@ -26,3 +26,5 @@ transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1941787991]
 shape = SubResource("BoxShape3D_30tpu")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=953489096]
