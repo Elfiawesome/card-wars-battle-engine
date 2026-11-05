@@ -20,6 +20,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 script = ExtResource("1_8pb73")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=408841810]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -39,29 +40,55 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_3al6n")
 
 [node name="NameLabel" type="Label" parent="." unique_id=370074598]
-layout_mode = 0
-offset_left = 70.0
-offset_top = 60.0
-offset_right = 1200.0
-offset_bottom = 180.0
-theme_override_font_sizes/font_size = 64
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 328.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 240
 text = "Card Name"
 
 [node name="HpLabel" type="Label" parent="." unique_id=370074599]
-layout_mode = 0
-offset_left = 70.0
-offset_top = 1680.0
-offset_right = 500.0
-offset_bottom = 1840.0
-theme_override_font_sizes/font_size = 72
-text = "HP 0"
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -328.0
+offset_right = 137.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.14999998, 1, 0, 1)
+theme_override_font_sizes/font_size = 240
+text = "0"
 
 [node name="AtkLabel" type="Label" parent="." unique_id=370074600]
-layout_mode = 0
-offset_left = 900.0
-offset_top = 1680.0
-offset_right = 1340.0
-offset_bottom = 1840.0
-theme_override_font_sizes/font_size = 72
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -137.0
+offset_top = -328.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0, 0.0333333, 1)
+theme_override_font_sizes/font_size = 240
+text = "0"
 horizontal_alignment = 2
-text = "ATK 0"
+
+[node name="ChargeLabel" type="Label" parent="." unique_id=1612720777]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -68.5
+offset_top = -164.0
+offset_right = 68.5
+offset_bottom = 164.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 240
+text = "0"
+horizontal_alignment = 2

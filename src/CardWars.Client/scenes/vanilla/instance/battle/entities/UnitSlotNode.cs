@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using Godot;
@@ -76,7 +80,16 @@ public partial class UnitSlotNode : EntityNode3D
 					{
 						if (myPlayer?.Team != player?.Team)
 						{
-							Log.Info($"Clicked enemy slot {EntityId}");
+							if (battleInstance.State.Turn.Phase == TurnPhase.Attacking)
+							{
+								Log.Info($"Clicked enemy slot {EntityId}");
+								// TODO: Fuck it let's put it here
+								// Get all selected slots
+								List<EntityId> selected = battleInstance.GetEntityNodes<UnitSlotNode>().Where(s => s.IsSelected == true).Select(s => s.EntityId).ToList() ?? [];
+								battleInstance.SendInput(
+									new AttackRequestInput(selected, EntityId)
+								);
+							}
 						}
 					}
 				}

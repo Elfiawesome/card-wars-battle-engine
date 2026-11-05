@@ -13,9 +13,12 @@ public partial class CardDisplay : Control
 			nameLabel.Text = data.GetString("name");
 
 		if (GetNodeOrNull<Label>("HpLabel") is { } hpLabel)
-			hpLabel.Text = $"HP {data.GetInt("hp")}";
+			hpLabel.Text = $"{data.GetInt("hp")}";
 
 		if (GetNodeOrNull<Label>("AtkLabel") is { } atkLabel)
-			atkLabel.Text = $"ATK {data.GetInt("atk")}";
+			atkLabel.Text = $"{data.GetInt("atk")}";
+
+		if (GetNodeOrNull<Label>("ChargeLabel") is { } chargeLabel)
+			chargeLabel.Text = $"{data.GetInt("charge")}";
 	}
 }
