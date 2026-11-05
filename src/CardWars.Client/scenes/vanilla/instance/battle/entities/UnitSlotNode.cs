@@ -66,6 +66,7 @@ public partial class UnitSlotNode : EntityNode3D
 				&& battlefield?.OwnerPlayerId is { } ownerPlayerId
 				// Check Player exists
 				&& TryGetData<Player>(out var player, battlefield.OwnerPlayerId)
+				&& battleInstance.State.Turn.AllowedPlayerInputs.Contains(battleInstance.MyPlayerId)
 			)
 			{
 				if (battleInstance.MyPlayerId == ownerPlayerId)
