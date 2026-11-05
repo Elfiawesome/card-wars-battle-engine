@@ -26,7 +26,7 @@ public partial class UnitSlotNode : EntityNode3D
 
 		// This code
 		var collisionBox = GetNode<Area3D>("Area3D");
-		collisionBox.InputEvent += onCollisionInputEvent;
+		collisionBox.InputEvent += OnCollisionInputEvent;
 		collisionBox.MouseEntered += () => { OnMouseEntered?.Invoke(); };
 		collisionBox.MouseExited += () => { OnMouseExited?.Invoke(); };
 	}
@@ -49,7 +49,7 @@ public partial class UnitSlotNode : EntityNode3D
 	}
 
 
-	private void onCollisionInputEvent(Node cameraNode, InputEvent @event, Vector3 eventPosition, Vector3 normal, long shapeIndex)
+	private void OnCollisionInputEvent(Node cameraNode, InputEvent @event, Vector3 eventPosition, Vector3 normal, long shapeIndex)
 	{
 		if (@event is not InputEventMouseButton inputEventMouseButton
 			|| !inputEventMouseButton.Pressed
@@ -85,7 +85,9 @@ public partial class UnitSlotNode : EntityNode3D
 								Log.Info($"Clicked enemy slot {EntityId}");
 								// TODO: Fuck it let's put it here
 								// Get all selected slots
-								List<EntityId> selected = battleInstance.GetEntityNodes<UnitSlotNode>().Where(s => s.IsSelected == true).Select(s => s.EntityId).ToList() ?? [];
+								List<UnitSlotNode> selectedSlots = [.. battleInstance.GetEntityNodes<UnitSlotNode>().Where(s => s.IsSelected == true)];
+								List<EntityId> selected = selectedSlots.Select(s => s.EntityId).ToList() ?? [];
+								selectedSlots.ForEach(s => s.IsSelected = false);
 								battleInstance.SendInput(
 									new AttackRequestInput(selected, EntityId)
 								);
