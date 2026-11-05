@@ -117,36 +117,29 @@ public sealed class CardTargetFilterTests
 	[Fact]
 	public void UnitCardRegistration_InjectsDefaultTargetFilter()
 	{
-		var path = Path.Combine(Path.GetTempPath(), $"cw-target-{Guid.NewGuid():N}.json");
-		System.IO.File.WriteAllText(path, """{"name":"Test Unit","hp":4,"atk":2}""");
+		var provider = new MemoryFileProvider();
+		provider.AddFile("cards/units/test_unit.json", """{"name":"Test Unit","hp":4,"atk":2}""");
 
-		try
+		var registry = new BattleEngineRegistry();
+		var content = new ModContentResult
 		{
-			var registry = new BattleEngineRegistry();
-			var content = new ModContentResult
-			{
-				Id = ResourceId.Vanilla("cards/units/test_unit"),
-				FilePath = new StoragePath(path, new LocalFileProvider()),
-				Category = ["cards", "units"]
-			};
+			Id = ResourceId.Vanilla("cards/units/test_unit"),
+			FilePath = new StoragePath("cards/units/test_unit.json", provider),
+			Category = ["cards", "units"]
+		};
 
-			new VanillaMod().OnLoad(registry, [content]);
+		new VanillaMod().OnLoad(registry, [content]);
 
-			var definition = registry.CardDefinitions.Get(content.Id) ?? throw new InvalidOperationException("Unit definition was not registered");
-			Assert.True(definition.Has("target_filter"));
+		var definition = registry.CardDefinitions.Get(content.Id) ?? throw new InvalidOperationException("Unit definition was not registered");
+		Assert.True(definition.Has("target_filter"));
 
-			var state = new GameState();
-			var player = AddPlayer(state, out _, out _, out _);
-			var card = new GenericCard(EntityId.New()) { OwnerPlayerId = player.Id, Data = (CompoundTag)definition.Clone() };
-			state.Add(card);
+		var state = new GameState();
+		var player = AddPlayer(state, out _, out _, out _);
+		var card = new GenericCard(EntityId.New()) { OwnerPlayerId = player.Id, Data = (CompoundTag)definition.Clone() };
+		state.Add(card);
 
-			var evaluator = new CardTargetFilterEvaluator(registry.DataDriven);
-			Assert.NotEmpty(evaluator.ResolveTargets(state, card, player.Id));
-		}
-		finally
-		{
-			System.IO.File.Delete(path);
-		}
+		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven);
+		Assert.NotEmpty(evaluator.ResolveTargets(state, card, player.Id));
 	}
 
 	[Fact]

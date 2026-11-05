@@ -1,45 +1,12 @@
 using CardWars.BattleEngine;
-using CardWars.BattleEngine.Behaviour;
-using CardWars.BattleEngine.Behaviour.DataDriven.Functions;
-using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
-using CardWars.BattleEngine.Vanilla;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 
 namespace CardWars.Tests;
-
-internal static class TestSupport
-{
-	public static BattleEngineRegistry CreateRegistry()
-	{
-		var registry = new BattleEngineRegistry();
-		new VanillaMod().OnLoad(registry, []);
-		return registry;
-	}
-
-	public static BehaviourContext CreateBehaviourContext(BattleEngineRegistry registry, GameState state, EntityId owner)
-	{
-		var transaction = new Transaction { Registry = registry, State = state };
-		return new BehaviourContext(transaction, state, owner);
-	}
-
-	public static ScriptRuntimeContext CreateRuntime(BattleEngineRegistry registry, GameState state, EntityId owner)
-	{
-		var context = CreateBehaviourContext(registry, state, owner);
-		return new ScriptRuntimeContext(context, registry.DataDriven);
-	}
-
-	public static TestEntity AddEntity(GameState state, int hp = 10)
-	{
-		var entity = new TestEntity { Id = EntityId.New(), Hp = hp };
-		state.Add(entity);
-		return entity;
-	}
-}
 
 [DataTagType("test/entity")]
 public sealed class TestEntity : IEntity
@@ -102,16 +69,5 @@ public sealed class OtherInputHandler : IInputHandler<OtherInput>
 {
 	public void Handle(InputContext context, OtherInput request)
 	{
-	}
-}
-
-public sealed class CountingFunction : IDataDrivenFunction
-{
-	public int Calls { get; private set; }
-
-	public DataTag Invoke(ScriptContext context, IReadOnlyList<DataTag> arguments)
-	{
-		Calls++;
-		return new IntTag(1);
 	}
 }
