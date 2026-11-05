@@ -66,13 +66,17 @@ public partial class UnitSlotNode : EntityNode3D
 				&& battlefield?.OwnerPlayerId is { } ownerPlayerId
 				// Check Player exists
 				&& TryGetData<Player>(out var player, battlefield.OwnerPlayerId)
+				// Check if it's my allowed turn
 				&& battleInstance.State.Turn.AllowedPlayerInputs.Contains(battleInstance.MyPlayerId)
 			)
 			{
 				if (battleInstance.MyPlayerId == ownerPlayerId)
 				{
 					OnMouseClicked?.Invoke();
-					if (CardAnchor?.GetChildCount() > 0) { IsSelected = !IsSelected; }
+					if (CardAnchor?.GetChildCount() > 0)
+					{
+						if (battleInstance.State.Turn.Phase == TurnPhase.Attacking) { IsSelected = !IsSelected; }
+					}
 				}
 				else
 				{
