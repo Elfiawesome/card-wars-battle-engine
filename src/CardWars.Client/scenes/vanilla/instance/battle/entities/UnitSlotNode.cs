@@ -55,27 +55,38 @@ public partial class UnitSlotNode : EntityNode3D
 			|| !inputEventMouseButton.Pressed
 			|| inputEventMouseButton.ButtonIndex != MouseButton.Left) { return; }
 
+		// Generic clicking...
+		OnMouseClicked?.Invoke();
+
+		// Huh probably should be cleaner or data driven lol
 		if (BattleInstance is { } battleInstance)
 		{
 			if (
 				// Check UnitSlot exists
-				TryGetData<UnitSlot>(out var unitSlot)
+				TryGetData<UnitSlot>(out var nullUnitSlot)
+				&& nullUnitSlot is { } unitSlot
 				&& unitSlot?.OwnerBattlefieldId is { } battlefieldId
 				// Check Battlefield exists
-				&& TryGetData<Battlefield>(out var battlefield, battlefieldId)
+				&& TryGetData<Battlefield>(out var nullBattlefield, battlefieldId)
+				&& nullBattlefield is { } battlefield
 				&& battlefield?.OwnerPlayerId is { } ownerPlayerId
 				// Check Player exists
-				&& TryGetData<Player>(out var player, battlefield.OwnerPlayerId)
+				&& TryGetData<Player>(out var nullPlayer, battlefield.OwnerPlayerId)
+				&& nullPlayer is { } player
 				// Check if it's my allowed turn
 				&& battleInstance.State.Turn.AllowedPlayerInputs.Contains(battleInstance.MyPlayerId)
 			)
 			{
 				if (battleInstance.MyPlayerId == ownerPlayerId)
 				{
-					OnMouseClicked?.Invoke();
-					if (CardAnchor?.GetChildCount() > 0)
+					if (
+						TryGetData<GenericCard>(out var nullCard, unitSlot.HoldingCardId)
+						&& nullCard is { } card
+						&& card.Charge > 0
+						&& battleInstance.State.Turn.Phase == TurnPhase.Attacking
+					)
 					{
-						if (battleInstance.State.Turn.Phase == TurnPhase.Attacking) { IsSelected = !IsSelected; }
+						IsSelected = !IsSelected;
 					}
 				}
 				else
