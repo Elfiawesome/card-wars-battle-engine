@@ -103,9 +103,10 @@ public partial class HandManager : Control
 				.SetTrans(Tween.TransitionType.Cubic)
 				.SetEase(Tween.EaseType.Out);
 
-			tween.TweenProperty(c, "scale", Vector2.Zero, 0.5);
-			tween.TweenProperty(c, "position", c.Position - new Vector2(0f, 50f), 0.5);
-			tween.TweenProperty(c, "modulate:a", 0.0, 0.5);
+			tween.TweenProperty(c, "scale", Vector2.Zero, 0.25);
+			tween.TweenProperty(c, "position", c.Position + new Vector2(0f, 50f), 0.25);
+			tween.TweenProperty(c, "modulate:a", 0.0, 0.25);
+			tween.TweenProperty(c, "rotation", c.Rotation - Mathf.Pi / 4, 0.25);
 			tween.Finished += c.QueueFree;
 			ArrangeCard();
 		}
@@ -149,7 +150,7 @@ public partial class HandManager : Control
 	{
 		if (@event is InputEventMouseButton inputEventMouseButton)
 		{
-			if (inputEventMouseButton.Pressed)
+			if (inputEventMouseButton.Pressed && inputEventMouseButton.ButtonIndex == MouseButton.Left)
 			{
 				if (SelectedCard is not null)
 				{
@@ -160,10 +161,19 @@ public partial class HandManager : Control
 					{
 						var targetCard = Cards.FirstOrDefault(entry => entry.Value == SelectedCard).Key;
 						Log.Info(new UseCardRequestInput(targetCard, targetId));
-						if (targetCard != EntityId.None && targetId != EntityId.None) { BattleInstance?.SendInput(new UseCardRequestInput(targetCard, targetId)); }
+						if (targetCard != EntityId.None && targetId != EntityId.None)
+						{
+							BattleInstance?.SendInput(new UseCardRequestInput(targetCard, targetId));
+						}
+						else
+						{
+							ResetArrows();
+						}
 					}
-
-					ResetArrows();
+					else
+					{
+						ResetArrows();
+					}
 				}
 			}
 			ArrangeCard();
