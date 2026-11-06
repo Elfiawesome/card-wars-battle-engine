@@ -32,6 +32,7 @@ public class VanillaMod : IBattleEngineMod
 		registry.EventHandlers.Register(new TurnEndedEventHandler());
 		registry.EventHandlers.Register(new PhaseEndedEventHandler());
 		registry.EventHandlers.Register(new RoundEndedEventHandler());
+		registry.EventHandlers.Register(new UnitDiedEventHandler());
 		registry.EventHandlers.Register(new ChargeRefillEventHandler());
 		registry.EventHandlers.Register(new EndTurnEventHandler());
 		registry.EventHandlers.Register(new DrawCardRequestEventHandler());
@@ -49,6 +50,7 @@ public class VanillaMod : IBattleEngineMod
 		// --- Block Handlers ---
 		registry.BlockHandlers.Register(new AttachBattlefieldToPlayerBlockHandler());
 		registry.BlockHandlers.Register(new AttachCardToDeckBlockHandler());
+		registry.BlockHandlers.Register(new AttachCardToGraveyardBlockHandler());
 		registry.BlockHandlers.Register(new AttachCardToUnitSlotBlockHandler());
 		registry.BlockHandlers.Register(new AttachHeroCardToBattlefieldBlockHandler());
 		registry.BlockHandlers.Register(new AttachCardToPlayerBlockHandler());

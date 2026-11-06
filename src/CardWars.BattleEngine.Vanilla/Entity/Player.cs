@@ -14,6 +14,7 @@ public class Player(EntityId id) : IEntity
 	[DataTag] public HashSet<EntityId> BattlefieldIds { get; } = [];
 	[DataTag] public HashSet<EntityId> DeckIds { get; } = [];
 	[DataTag] public HashSet<EntityId> HandCardIds { get; } = [];
+	[DataTag] public List<EntityId> GraveyardCardIds { get; } = [];
 
 	public int BehaviourPriority => 0;
 	public List<BehaviourPointer> GetBehaviours() => [];

@@ -39,6 +39,36 @@ public sealed class BattleRoundTests
 	}
 
 	[Fact]
+	public void RoundEnd_DiscardsFatalUnitsAndRefillsSurvivors()
+	{
+		var battle = BattleTestHarness.Create((id, definition) =>
+		{
+			if (id == TestCards.John) definition.Set("hp", 1);
+		});
+
+		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));
+		var target = battle.DrawAndPlay(battle.Player2Id, new UnitSlotPos(0, 0));
+		var targetSlot = battle.SlotOf(battle.Player2Id, new UnitSlotPos(0, 0));
+		battle.AdvanceToAttackingPhase();
+
+		battle.Attack(
+			battle.Player1Id,
+			battle.SlotOf(battle.Player1Id, new UnitSlotPos(0, 0)),
+			targetSlot);
+
+		Assert.True(target.IsFatal);
+
+		battle.EndTurn(battle.Player1Id);
+		battle.EndTurn(battle.Player2Id);
+
+		Assert.Null(targetSlot.HoldingCardId);
+		Assert.Null(target.OwnerUnitSlotId);
+		Assert.Contains(target.Id, battle.Player2.GraveyardCardIds);
+		Assert.Equal(attacker.ChargeMax, attacker.Charge);
+		Assert.DoesNotContain(target.Id, battle.Player2.HandCardIds);
+	}
+
+	[Fact]
 	public void RoundEnd_RefillsEveryDeployedUnit()
 	{
 		var battle = BattleTestHarness.Create();

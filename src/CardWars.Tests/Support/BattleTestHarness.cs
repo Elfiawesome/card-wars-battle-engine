@@ -76,6 +76,12 @@ internal sealed class BattleTestHarness
 			.OfType<GenericCard>()
 			.ToList();
 
+	public IReadOnlyList<GenericCard> GraveyardOf(EntityId playerId)
+		=> Player(playerId).GraveyardCardIds
+			.Select(id => State.Get<GenericCard>(id))
+			.OfType<GenericCard>()
+			.ToList();
+
 	public GenericCard HeroOf(EntityId playerId)
 		=> HeroesOf(playerId).Single();
 

@@ -98,6 +98,34 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 {
 	public void Handle(Transaction context, RoundEndedEvent request)
 	{
+		var fatalUnits = new List<(EntityId CardId, EntityId PlayerId, EntityId BattlefieldId, EntityId UnitSlotId)>();
+		var discardBatch = new BlockBatch([]);
+
+		foreach (var card in context.State.OfType<GenericCard>())
+		{
+			if (!card.IsUnit || !card.IsFatal || card.OwnerUnitSlotId is not { } unitSlotId) continue;
+			if (context.State.Get<UnitSlot>(unitSlotId) is not { OwnerBattlefieldId: { } battlefieldId }) continue;
+			if (context.State.Get<Battlefield>(battlefieldId) is not { OwnerPlayerId: { } playerId }) continue;
+
+			discardBatch.Blocks.Add(new DetachCardFromUnitSlotBlock(unitSlotId, card.Id));
+			discardBatch.Blocks.Add(new AttachCardToGraveyardBlock(playerId, card.Id));
+			fatalUnits.Add((card.Id, playerId, battlefieldId, unitSlotId));
+		}
+
+		if (discardBatch.Blocks.Count > 0)
+			context.ApplyBlockBatch(discardBatch);
+
+		foreach (var fatalUnit in fatalUnits)
+		{
+			context.QueueEvent(new UnitDiedEvent()
+			{
+				CardId = fatalUnit.CardId,
+				PlayerId = fatalUnit.PlayerId,
+				BattlefieldId = fatalUnit.BattlefieldId,
+				UnitSlotId = fatalUnit.UnitSlotId
+			});
+		}
+
 		foreach (var card in context.State.OfType<GenericCard>())
 		{
 			if (!card.IsUnit || card.OwnerUnitSlotId is null) continue;
