@@ -1,3 +1,4 @@
+using CardWars.Core.Logging;
 using Godot;
 
 namespace CardWars.Client.scenes.vanilla.instance.battle;
@@ -52,11 +53,12 @@ public partial class Camera : Camera3D
 
 		if (Target is not null && IsInstanceValid(Target))
 		{
+			// Place FocusOffset inside the Targets local space so that it rotates with `Target.GlobalTransform`
 			var relative = new Transform3D(
 				Basis.FromEuler(new Vector3(Mathf.DegToRad(-90f + _pitchDegrees), 0f, 0f)),
-				new Vector3(0f, _height, 0f));
+				new Vector3(FocusOffset.X, _height, -FocusOffset.Y));
+
 			var desired = Target.GlobalTransform * relative;
-			desired.Origin += FocusOffset;
 			desired.Origin += new Vector3(PanOffset.X, PanOffset.Y, 0f);
 
 			GlobalPosition = GlobalPosition.Lerp(desired.Origin, weight);
