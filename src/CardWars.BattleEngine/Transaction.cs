@@ -26,6 +26,12 @@ public class Transaction
 	// Public APIs entries
 	public void ProcessInput(EntityId playerId, IInput input)
 	{
+		if (State.IsGameOver)
+		{
+			Log.Warn("Input received after the game ended");
+			return;
+		}
+
 		// Input handled to current behaviour
 		bool inputConsumed = ResumeBehaviours(playerId, input);
 

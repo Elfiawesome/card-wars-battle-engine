@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
@@ -59,6 +60,9 @@ public class TurnEndedEventHandler : IEventHandler<TurnEndedEvent>
 			phaseChanged = true;
 		}
 
+		if (endedPhase == TurnPhase.Attacking && newTurnState.Phase == TurnPhase.Setup)
+			newTurnState.RoundNumber += 1;
+
 		EntityId? currentPlayerId = newTurnState.TurnOrder.ElementAtOrDefault(newTurnState.TurnIndex);
 		if (currentPlayerId is null || currentPlayerId == EntityId.None)
 		{
@@ -100,6 +104,7 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 {
 	public void Handle(Transaction context, RoundEndedEvent request)
 	{
+		// Handle Fatal & Death units
 		var fatalUnits = new List<(EntityId CardId, EntityId PlayerId, EntityId BattlefieldId, EntityId UnitSlotId)>();
 		var fatalUnitsListTag = new ListTag();
 		var discardBatch = new BlockBatch([]);
@@ -134,19 +139,79 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 			});
 		}
 
-		foreach (var card in context.State.OfType<GenericCard>())
-		{
-			if (!card.IsUnit || card.OwnerUnitSlotId is null) continue;
+		// Handle hero defeat and player loss
+		var heroEvaluator = new HeroLoseConditionEvaluator(context.Registry.DataDriven);
+		var defeatedHeroes = new List<(EntityId HeroCardId, EntityId PlayerId, EntityId BattlefieldId, int Hrt)>();
+		var defeatedPlayers = new List<(EntityId PlayerId, int Team)>();
+		var defeatBatch = new BlockBatch([]);
 
-			context.QueueEvent(new ChargeRefillEvent()
+		foreach (var player in context.State.OfType<Player>())
+		{
+			if (player.IsDefeated) continue;
+
+			var heroes = GetPlayerHeroes(context.State, player);
+			var defeatedHeroIds = new HashSet<EntityId>(player.DefeatedHeroIds);
+
+			foreach (var (hero, battlefieldId) in heroes)
 			{
-				CardId = card.Id,
-				Amount = card.ChargeMax
+				if (defeatedHeroIds.Contains(hero.Id)) continue;
+				if (!heroEvaluator.IsDefeated(context.State, hero)) continue;
+
+				defeatedHeroIds.Add(hero.Id);
+				defeatBatch.Blocks.Add(new MarkHeroDefeatedBlock(player.Id, hero.Id));
+				defeatedHeroes.Add((hero.Id, player.Id, battlefieldId, hero.Hrt));
+			}
+
+			if (heroes.Any(hero => !defeatedHeroIds.Contains(hero.Hero.Id))) continue;
+
+			defeatedPlayers.Add((player.Id, player.Team));
+			defeatBatch.Blocks.Add(new MarkPlayerDefeatedBlock(player.Id));
+		}
+
+		if (defeatBatch.Blocks.Count > 0) context.ApplyBlockBatch(defeatBatch);
+
+		foreach (var defeatedHero in defeatedHeroes)
+		{
+			context.QueueEvent(new HeroDiedEvent()
+			{
+				HeroCardId = defeatedHero.HeroCardId,
+				PlayerId = defeatedHero.PlayerId,
+				BattlefieldId = defeatedHero.BattlefieldId,
+				Hrt = defeatedHero.Hrt
 			});
 		}
 
-		context.QueueEvent(new EndTurnEvent() { TurnState = request.TurnState, PhaseChanged = true });
+		foreach (var defeatedPlayer in defeatedPlayers)
+		{
+			context.QueueEvent(new PlayerDefeatedEvent()
+			{
+				PlayerId = defeatedPlayer.PlayerId,
+				Team = defeatedPlayer.Team
+			});
+		}
+
+		// Win Check
+		context.QueueEvent(new WinConditionCheckEvent() { TurnState = request.TurnState });
 	}
+
+	private static List<(GenericCard Hero, EntityId BattlefieldId)> GetPlayerHeroes(GameState state, Player player)
+	{
+		var heroes = new List<(GenericCard Hero, EntityId BattlefieldId)>();
+
+		foreach (var battlefieldId in player.BattlefieldIds)
+		{
+			if (state.Get<Battlefield>(battlefieldId) is not { } battlefield) continue;
+
+			foreach (var heroId in battlefield.HeroCardIds)
+			{
+				if (state.Get<GenericCard>(heroId) is { IsHero: true } hero)
+					heroes.Add((hero, battlefield.Id));
+			}
+		}
+
+		return heroes;
+	}
+
 }
 
 public class EndTurnEventHandler : IEventHandler<EndTurnEvent>

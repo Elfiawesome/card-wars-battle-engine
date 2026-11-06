@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.Vanilla.Behaviour;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
@@ -33,7 +34,12 @@ public class VanillaMod : IBattleEngineMod
 		registry.EventHandlers.Register(new PhaseEndedEventHandler());
 		registry.EventHandlers.Register(new RoundEndedEventHandler());
 		registry.EventHandlers.Register(new UnitDiedEventHandler());
+		registry.EventHandlers.Register(new HeroDiedEventHandler());
+		registry.EventHandlers.Register(new PlayerDefeatedEventHandler());
+		registry.EventHandlers.Register(new WinConditionCheckEventHandler());
+		registry.EventHandlers.Register(new GameEndedEventHandler());
 		registry.EventHandlers.Register(new ChargeRefillEventHandler());
+		registry.EventHandlers.Register(new PtReplenishEventHandler());
 		registry.EventHandlers.Register(new EndTurnEventHandler());
 		registry.EventHandlers.Register(new DrawCardRequestEventHandler());
 		registry.EventHandlers.Register(new DrawCardEventHandler());
@@ -61,6 +67,7 @@ public class VanillaMod : IBattleEngineMod
 		registry.BlockHandlers.Register(new DetachCardFromPlayerBlockHandler());
 		registry.BlockHandlers.Register(new DetachCardFromUnitSlotBlockHandler());
 		registry.BlockHandlers.Register(new DetachDeckFromPlayerBlockHandler());
+		registry.BlockHandlers.Register(new DetachHeroCardFromBattlefieldBlockHandler());
 		registry.BlockHandlers.Register(new DetachUnitSlotFromBattlefieldBlockHandler());
 		registry.BlockHandlers.Register(new InstantiateBattlefieldBlockHandler());
 		registry.BlockHandlers.Register(new InstantiateCardBlockHandler());
@@ -68,9 +75,14 @@ public class VanillaMod : IBattleEngineMod
 		registry.BlockHandlers.Register(new InstantiatePlayerBlockHandler());
 		registry.BlockHandlers.Register(new InstantiateUnitSlotBlockHandler());
 		registry.BlockHandlers.Register(new ModifyUnitSlotPositionBlockHandler());
+		registry.BlockHandlers.Register(new MarkHeroDefeatedBlockHandler());
+		registry.BlockHandlers.Register(new MarkPlayerDefeatedBlockHandler());
 		registry.BlockHandlers.Register(new ModifyLayoutBlockHandler());
+		registry.BlockHandlers.Register(new ModifyPlayerPtBlockHandler());
 		registry.BlockHandlers.Register(new ModifyPlayerTeamBlockHandler());
+		registry.BlockHandlers.Register(new RemoveEntityBlockHandler());
 		registry.BlockHandlers.Register(new SetCardDataBlockHandler());
+		registry.BlockHandlers.Register(new SetGameOutcomeBlockHandler());
 		registry.BlockHandlers.Register(new UpdateTurnStateBlockHandler());
 
 		// --- Behaviours ---
@@ -78,6 +90,9 @@ public class VanillaMod : IBattleEngineMod
 
 		// --- Data-Driven Behaviours ---
 		RegisterDataDriven(registry);
+
+		// --- Game Rules ---
+		RegisterGameRules(registry, modContents);
 
 		// --- Attack Definitions ---
 		RegisterAttackDefinitions(registry, modContents);
@@ -134,6 +149,25 @@ public class VanillaMod : IBattleEngineMod
 		dataDriven.InstructionHandlers.Register(new LogInstructionHandler());
 	}
 
+
+	private static void RegisterGameRules(BattleEngineRegistry registry, List<ModContentResult> modContents)
+	{
+		foreach (var content in modContents)
+		{
+			if (content.Category.Length == 0 || content.Category[0] != "rules") continue;
+
+			try
+			{
+				var rules = content.ReadAsObject<GameRulesDefinition>();
+				registry.GameRules.Register(content.Id, rules);
+				Log.Info("Registered Game Rules: " + content.Id.ToString());
+			}
+			catch (Exception ex)
+			{
+				Log.Warn($"Could not load game rules [{content.Id}]: {ex.Message}");
+			}
+		}
+	}
 
 	private static void RegisterAttackDefinitions(BattleEngineRegistry registry, List<ModContentResult> modContents)
 	{

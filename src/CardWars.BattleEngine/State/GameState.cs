@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
+using CardWars.BattleEngine.Rules;
 using CardWars.Core.Data.Access;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
@@ -64,6 +65,11 @@ public class GameState : IDataTagAccessible
 		LayoutConfig = new CompoundTag()
 	};
 
+	[DataTag] public ResourceId RuleId { get; set; } = GameRulesDefinition.DefaultId;
+	[DataTag] public bool IsGameOver { get; set; }
+	[DataTag] public int? WinningTeam { get; set; }
+	[DataTag] public bool IsDraw { get; set; }
+
 	[DataTag] public IReadOnlyDictionary<EntityId, IEntity> Entities => _entities;
 
 	// For modding?
@@ -108,6 +114,10 @@ public class GameState : IDataTagAccessible
 		GlobalScope.Clear();
 		Turn = new();
 		Layout = default;
+		RuleId = GameRulesDefinition.DefaultId;
+		IsGameOver = false;
+		WinningTeam = null;
+		IsDraw = false;
 	}
 
 	public GameStateSnapshot ToSnapshot()
@@ -117,6 +127,10 @@ public class GameState : IDataTagAccessible
 			Entities = [.. Entities.Select(s => s.Value)],
 			Turn = Turn.Clone(),
 			Layout = Layout,
+			RuleId = RuleId,
+			IsGameOver = IsGameOver,
+			WinningTeam = WinningTeam,
+			IsDraw = IsDraw,
 		};
 		return snapshot;
 	}
@@ -130,6 +144,10 @@ public class GameState : IDataTagAccessible
 		}
 		Turn = snapshot.Turn is { } turn ? turn.Clone() : new();
 		Layout = snapshot.Layout.Copy();
+		RuleId = snapshot.RuleId;
+		IsGameOver = snapshot.IsGameOver;
+		WinningTeam = snapshot.WinningTeam;
+		IsDraw = snapshot.IsDraw;
 	}
 }
 
@@ -139,4 +157,8 @@ public class GameStateSnapshot
 	[DataTag] public List<IEntity> Entities { get; set; } = [];
 	[DataTag] public LayoutState Layout { get; set; } = default;
 	[DataTag] public TurnState Turn { get; set; } = new();
+	[DataTag] public ResourceId RuleId { get; set; } = GameRulesDefinition.DefaultId;
+	[DataTag] public bool IsGameOver { get; set; }
+	[DataTag] public int? WinningTeam { get; set; }
+	[DataTag] public bool IsDraw { get; set; }
 }

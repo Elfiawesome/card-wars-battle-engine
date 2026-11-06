@@ -1,6 +1,7 @@
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
 
@@ -12,6 +13,11 @@ internal static class TestSupport
 	{
 		var registry = new BattleEngineRegistry();
 		new VanillaMod().OnLoad(registry, []);
+		registry.GameRules.Register(GameRulesDefinition.DefaultId, new GameRulesDefinition
+		{
+			PtSchedule = [5, 6, 8, 11, 15, 20, 26, 33, 41, 50],
+			PtCap = 50
+		});
 		return registry;
 	}
 

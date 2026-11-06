@@ -77,6 +77,7 @@ public sealed class BattleSetupTests
 		var turn = battle.State.Turn;
 
 		Assert.Equal(TurnPhase.Setup, turn.Phase);
+		Assert.Equal(1, turn.RoundNumber);
 		Assert.Equal(0, turn.TurnIndex);
 		Assert.Contains(battle.Player1Id, turn.AllowedPlayerInputs);
 
@@ -89,6 +90,7 @@ public sealed class BattleSetupTests
 		turn = battle.State.Turn;
 		Assert.Equal(0, turn.TurnIndex);
 		Assert.Equal(1, turn.TurnNumber);
+		Assert.Equal(1, turn.RoundNumber);
 		Assert.Equal(TurnPhase.Attacking, turn.Phase);
 		Assert.Contains(battle.Player1Id, turn.AllowedPlayerInputs);
 
@@ -101,6 +103,7 @@ public sealed class BattleSetupTests
 		turn = battle.State.Turn;
 		Assert.Equal(0, turn.TurnIndex);
 		Assert.Equal(2, turn.TurnNumber);
+		Assert.Equal(2, turn.RoundNumber);
 		Assert.Equal(TurnPhase.Setup, turn.Phase);
 		Assert.Contains(battle.Player1Id, turn.AllowedPlayerInputs);
 	}
@@ -118,5 +121,22 @@ public sealed class BattleSetupTests
 
 		Assert.Equal(handCount, battle.Player2.HandCardIds.Count);
 		Assert.Equal(5, deck.CardIds.Count);
+	}
+
+	[Fact]
+	public void NonAllowedPlayer_CannotPlayCard()
+	{
+		var battle = BattleTestHarness.Create();
+		var card = battle.DrawCard(battle.Player2Id);
+		var slot = battle.SlotOf(battle.Player2Id, new UnitSlotPos(0, 0));
+
+		battle.Engine.HandleInput(battle.Player2Id, new UseCardRequestInput
+		{
+			CardId = card.Id,
+			TargetEntityId = slot.Id
+		});
+
+		Assert.Null(slot.HoldingCardId);
+		Assert.Contains(card.Id, battle.Player2.HandCardIds);
 	}
 }

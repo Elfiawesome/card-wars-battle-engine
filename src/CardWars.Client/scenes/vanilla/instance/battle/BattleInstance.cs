@@ -144,7 +144,26 @@ public partial class BattleInstance : ClientInstance
 
 		// Set Camera
 		UpdateCamera();
+		UpdateGameOver();
 		AttackControllerNode?.OnStateSynced();
+
+		// Update pt label TODO: Temp...
+		GetNode<Label>("UI/ButtonsOverlay/MarginContainer/VBoxContainer/Label").Text = $"Pt: {State.Get<Player>(MyPlayerId)?.Pt ?? 0}";
+	}
+
+	private void UpdateGameOver()
+	{
+		// TODO: Temporary...
+		var overlayNode = GetNode<Control>("UI/Overlay");
+		var resultLabel = GetNode<Label>("UI/Overlay/MarginContainer/Panel/ResultLabel");
+		if (overlayNode is not null) overlayNode.Visible = State.IsGameOver;
+		if (resultLabel is null) return;
+
+		resultLabel.Text = State.IsGameOver
+			? State.IsDraw
+				? "Draw"
+				: State.WinningTeam is { } team ? $"Team {team} Wins!" : "Game Over"
+			: "";
 	}
 
 	private void UpdateCamera()

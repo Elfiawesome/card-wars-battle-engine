@@ -1,4 +1,19 @@
 {
 	"name": "Ilyas",
-	"hrt": 10
+	"hrt": 10,
+	"lose_condition": {
+		"_type": "cardwars:script/expression/less_than_or_equal",
+		"left": {
+			"_type": "cardwars:script/expression/member",
+			"target": {
+				"_type": "cardwars:script/expression/variable",
+				"name": "cardwars:self"
+			},
+			"member": "hrt"
+		},
+		"right": {
+			"_type": "cardwars:script/expression/literal",
+			"value": 0
+		}
+	}
 }

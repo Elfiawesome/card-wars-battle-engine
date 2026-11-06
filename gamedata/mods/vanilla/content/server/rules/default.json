@@ -1,0 +1,23 @@
+{
+	"_type": "cardwars:battle/rules",
+	"pt_schedule": [5, 6, 8, 11, 15, 20, 26, 33, 41, 50],
+	"pt_cap": 50,
+	"win_condition": {
+		"_type": "cardwars:script/expression/and",
+		"left": {
+			"_type": "cardwars:script/expression/variable",
+			"name": "cardwars:win/team_alive"
+		},
+		"right": {
+			"_type": "cardwars:script/expression/equals",
+			"left": {
+				"_type": "cardwars:script/expression/variable",
+				"name": "cardwars:win/alive_team_count"
+			},
+			"right": {
+				"_type": "cardwars:script/expression/literal",
+				"value": 1
+			}
+		}
+	}
+}

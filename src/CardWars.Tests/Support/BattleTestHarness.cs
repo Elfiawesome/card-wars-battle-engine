@@ -101,7 +101,8 @@ internal sealed class BattleTestHarness
 
 	public void PlayCard(EntityId playerId, GenericCard card, UnitSlot slot)
 	{
-		Engine.HandleInput(EntityId.None, new UseCardRequestInput
+		State.Turn.AllowedPlayerInputs.Add(playerId);
+		Engine.HandleInput(playerId, new UseCardRequestInput
 		{
 			CardId = card.Id,
 			TargetEntityId = slot.Id

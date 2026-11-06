@@ -9,11 +9,14 @@ public class Player(EntityId id) : IEntity
 	[DataTag] public EntityId Id { get; init; } = id;
 	[DataTag] public string Name { get; set; } = "";
 	[DataTag] public int Team { get; set; } = 0;
+	[DataTag] public int Pt { get; set; }
+	[DataTag] public bool IsDefeated { get; set; }
 
 	// Relationships
 	[DataTag] public HashSet<EntityId> BattlefieldIds { get; } = [];
 	[DataTag] public HashSet<EntityId> DeckIds { get; } = [];
 	[DataTag] public HashSet<EntityId> HandCardIds { get; } = [];
+	[DataTag] public HashSet<EntityId> DefeatedHeroIds { get; } = [];
 	[DataTag] public List<EntityId> GraveyardCardIds { get; } = [];
 
 	public int BehaviourPriority => 0;

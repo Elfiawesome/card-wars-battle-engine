@@ -1,6 +1,7 @@
 using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Input;
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
@@ -18,5 +19,6 @@ public class BattleEngineRegistry
 
 	public Registry<ResourceId, CompoundTag> CardDefinitions { get; } = new();
 	public Registry<ResourceId, CompoundTag> AttackDefinitions { get; } = new();
+	public Registry<ResourceId, GameRulesDefinition> GameRules { get; } = new();
 	public Registry<ResourceId, object> CustomContent {get;} = new(); // Other modded data content
 }

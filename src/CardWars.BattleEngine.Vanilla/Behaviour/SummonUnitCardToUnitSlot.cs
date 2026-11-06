@@ -22,13 +22,24 @@ public class SummonUnitCardToUnitSlotBehaviour : Behaviour<UseCardRequestEvent>
 		if (evnt.CardId != context.OwnerEntityId) return BehaviourResult.Complete;
 		// Skip if the entity parent isnt even a card
 		if (context.Owner is not GenericCard card) return BehaviourResult.Complete;
+		if (card.OwnerPlayerId is not { } ownerId) return BehaviourResult.Complete;
+		if (context.State.Get<Player>(ownerId) is not { } owner) return BehaviourResult.Complete;
+		if (!owner.HandCardIds.Contains(card.Id)) return BehaviourResult.Complete;
+		if (card.Pt > owner.Pt)
+		{
+			Log.Warn($"Could not resolve SummonUnitCardToUnitSlotBehaviour due to insufficient Pt for card [{card.Id}]");
+			return BehaviourResult.Complete;
+		}
 
 		if (evnt.TargetEntityId is { } targetId && targetId != EntityId.None)
 		{
 			var unitSlot = context.State.Get<UnitSlot>(targetId);
-			if (unitSlot is { HoldingCardId: null })
+			if (unitSlot is { HoldingCardId: null, OwnerBattlefieldId: { } battlefieldId }
+				&& context.State.Get<Battlefield>(battlefieldId) is { OwnerPlayerId: { } battlefieldOwnerId }
+				&& battlefieldOwnerId == ownerId)
 			{
-				batch.Blocks.Add(new DetachCardFromPlayerBlock(card.OwnerPlayerId ?? EntityId.None, card.Id));
+				batch.Blocks.Add(new ModifyPlayerPtBlock(ownerId, -card.Pt));
+				batch.Blocks.Add(new DetachCardFromPlayerBlock(ownerId, card.Id));
 				batch.Blocks.Add(new AttachCardToUnitSlotBlock(unitSlot.Id, card.Id));
 				batch.AnimationId = SharedIds.Animations.PlayCard.ToString();
 				batch.AnimationArgs.Set("card_id", new GuidTag(card.Id.Value));
@@ -37,7 +48,7 @@ public class SummonUnitCardToUnitSlotBehaviour : Behaviour<UseCardRequestEvent>
 			}
 			else
 			{
-				Log.Warn("Could not resolve SummonUnitCardToUnitSlotBehaviour due to UnitSlot not being empty");
+				Log.Warn("Could not resolve SummonUnitCardToUnitSlotBehaviour due to invalid UnitSlot target");
 			}
 		}
 		else

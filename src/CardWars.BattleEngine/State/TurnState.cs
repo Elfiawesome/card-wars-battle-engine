@@ -8,6 +8,7 @@ public sealed class TurnState
 	[DataTag] public HashSet<EntityId> AllowedPlayerInputs { get; set; } = [];
 	[DataTag] public int TurnIndex { get; set; }
 	[DataTag] public int TurnNumber { get; set; }
+	[DataTag] public int RoundNumber { get; set; } = 1;
 	[DataTag] public TurnPhase Phase { get; set; } = TurnPhase.Setup;
 
 	public TurnState()
@@ -19,13 +20,15 @@ public sealed class TurnState
 		HashSet<EntityId>? allowedPlayerInputs = null,
 		int turnIndex = 0,
 		int turnNumber = 0,
-		TurnPhase phase = TurnPhase.Setup)
+		TurnPhase phase = TurnPhase.Setup,
+		int roundNumber = 1)
 	{
 		TurnOrder = turnOrder ?? [];
 		AllowedPlayerInputs = allowedPlayerInputs ?? [];
 		TurnIndex = turnIndex;
 		TurnNumber = turnNumber;
 		Phase = phase;
+		RoundNumber = roundNumber;
 	}
 
 	public TurnState Clone() => new(
@@ -33,7 +36,8 @@ public sealed class TurnState
 		[.. AllowedPlayerInputs],
 		TurnIndex,
 		TurnNumber,
-		Phase
+		Phase,
+		RoundNumber
 	);
 
 	public bool Equals(TurnState? other)
@@ -43,6 +47,7 @@ public sealed class TurnState
 
 		return TurnIndex == other.TurnIndex
 			&& TurnNumber == other.TurnNumber
+			&& RoundNumber == other.RoundNumber
 			&& Phase == other.Phase
 			&& TurnOrder.SequenceEqual(other.TurnOrder)
 			&& AllowedPlayerInputs.SetEquals(other.AllowedPlayerInputs);

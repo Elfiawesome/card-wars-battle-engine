@@ -2,6 +2,7 @@ using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Serialization.Json;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Registry;
 using Xunit;
 
 namespace CardWars.Tests.Core;
@@ -16,6 +17,7 @@ public sealed class TurnStateTests
 		Assert.Empty(turn.TurnOrder);
 		Assert.Empty(turn.AllowedPlayerInputs);
 		Assert.Equal(TurnPhase.Setup, turn.Phase);
+		Assert.Equal(1, turn.RoundNumber);
 	}
 
 	[Fact]
@@ -66,7 +68,7 @@ public sealed class TurnStateTests
 	public void TurnState_RoundTripsThroughDataTags()
 	{
 		var player = EntityId.New();
-		var source = new TurnState([player], [player], 1, 3, TurnPhase.Attacking);
+		var source = new TurnState([player], [player], 1, 3, TurnPhase.Attacking, 4);
 
 		var tag = DataTagMapper.ToTag(source);
 		var json = DataTagSerializer.Serialize(tag);
@@ -77,6 +79,29 @@ public sealed class TurnStateTests
 		Assert.Equal(source.AllowedPlayerInputs, restored.AllowedPlayerInputs);
 		Assert.Equal(source.TurnIndex, restored.TurnIndex);
 		Assert.Equal(source.TurnNumber, restored.TurnNumber);
+		Assert.Equal(source.RoundNumber, restored.RoundNumber);
 		Assert.Equal(source.Phase, restored.Phase);
+	}
+
+	[Fact]
+	public void Snapshot_PreservesOutcomeAndRuleId()
+	{
+		var state = new GameState
+		{
+			RuleId = ResourceId.Vanilla("rules/custom"),
+			IsGameOver = true,
+			WinningTeam = 2,
+			IsDraw = false
+		};
+		state.Turn.RoundNumber = 4;
+
+		var tag = DataTagMapper.ToTag(state.ToSnapshot());
+		var restored = DataTagMapper.FromTag<GameStateSnapshot>(tag);
+
+		Assert.Equal(state.RuleId, restored.RuleId);
+		Assert.True(restored.IsGameOver);
+		Assert.Equal(2, restored.WinningTeam);
+		Assert.False(restored.IsDraw);
+		Assert.Equal(4, restored.Turn.RoundNumber);
 	}
 }
