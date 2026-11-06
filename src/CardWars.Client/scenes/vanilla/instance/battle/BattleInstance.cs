@@ -10,7 +10,6 @@ using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.vanilla.registry;
 using CardWars.Client.scripts.vanilla.systems;
-using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared;
