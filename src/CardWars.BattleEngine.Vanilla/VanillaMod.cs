@@ -29,8 +29,10 @@ public class VanillaMod : IBattleEngineMod
 
 		// --- Event Handlers ---
 		registry.EventHandlers.Register(new PlayerJoinedEventHandler());
-		registry.EventHandlers.Register(new EndTurnRequestEventHandler());
-		registry.EventHandlers.Register(new EndPhaseEventHandler());
+		registry.EventHandlers.Register(new TurnEndedEventHandler());
+		registry.EventHandlers.Register(new PhaseEndedEventHandler());
+		registry.EventHandlers.Register(new RoundEndedEventHandler());
+		registry.EventHandlers.Register(new ChargeRefillEventHandler());
 		registry.EventHandlers.Register(new EndTurnEventHandler());
 		registry.EventHandlers.Register(new DrawCardRequestEventHandler());
 		registry.EventHandlers.Register(new DrawCardEventHandler());
