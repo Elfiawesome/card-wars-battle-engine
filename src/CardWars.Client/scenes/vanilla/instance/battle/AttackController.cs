@@ -67,9 +67,17 @@ public partial class AttackController : Node
 	public void HandleClick(EntityNode3D? clicked)
 	{
 		if (BattleInstance is null) return;
-		if (clicked is not UnitSlotNode slot) return;
 		if (BattleInstance.HandManagerNode?.SelectedCard is not null) return;
 		if (!CanAct()) return;
+
+		if (clicked is Card3D heroNode
+			&& BattleInstance.State.Get<GenericCard>(heroNode.EntityId) is { IsHero: true })
+		{
+			AttackHeroTarget(heroNode);
+			return;
+		}
+
+		if (clicked is not UnitSlotNode slot) return;
 		if (slot.GetData<UnitSlot>() is not { } unitSlot) return;
 
 		var ownerPlayerId = AttackTargetResolver.GetOwnerPlayerId(BattleInstance.State, unitSlot);
@@ -143,6 +151,37 @@ public partial class AttackController : Node
 		RefreshHighlights();
 	}
 
+	private void AttackHeroTarget(Card3D heroNode)
+	{
+		if (BattleInstance is null || _resolver is not { } resolver) return;
+		if (BattleInstance.State.Get<GenericCard>(heroNode.EntityId) is not { IsHero: true } hero) return;
+
+		var validAttackers = new List<EntityId>();
+
+		foreach (var attackerId in _selected)
+		{
+			if (BattleInstance.GetEntityNode<UnitSlotNode>(attackerId) is not { } attackerNode) continue;
+			if (attackerNode.GetData<UnitSlot>() is not { } attackerSlot) continue;
+			if (attackerSlot.HoldingCardId is not { } attackerCardId) continue;
+			if (BattleInstance.State.Get<GenericCard>(attackerCardId) is not { } attackerCard) continue;
+
+			var attack = resolver.Resolve(attackerCard);
+			if (!resolver.CanAfford(attackerCard, attack)) continue;
+			if (!HeroTargetResolver.CanTarget(BattleInstance.State, attackerCard, hero.Id)) continue;
+
+			validAttackers.Add(attackerId);
+		}
+
+		if (validAttackers.Count == 0) return;
+
+		BattleInstance.SendInput(new AttackHeroRequestInput(validAttackers, hero.Id));
+
+		foreach (var attackerId in validAttackers)
+			RemoveAttacker(attackerId);
+
+		RefreshHighlights();
+	}
+
 	private void PruneSelection()
 	{
 		if (BattleInstance is null) return;
@@ -201,7 +240,11 @@ public partial class AttackController : Node
 	}
 
 	private void RefreshTargets(EntityId attackerId, GenericCard card, AttackProfile attack)
-		=> _targets[attackerId] = [.. AttackTargetResolver.GetValidTargets(BattleInstance!.State, card, attack)];
+		=> _targets[attackerId] =
+		[
+			.. AttackTargetResolver.GetValidTargets(BattleInstance!.State, card, attack),
+			.. HeroTargetResolver.GetValidTargets(BattleInstance.State, card)
+		];
 
 	private void CreateArrow(EntityId attackerId)
 	{

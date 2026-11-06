@@ -70,6 +70,15 @@ internal sealed class BattleTestHarness
 			.OfType<GenericCard>()
 			.ToList();
 
+	public IReadOnlyList<GenericCard> HeroesOf(EntityId playerId)
+		=> BattlefieldOf(playerId).HeroCardIds
+			.Select(id => State.Get<GenericCard>(id))
+			.OfType<GenericCard>()
+			.ToList();
+
+	public GenericCard HeroOf(EntityId playerId)
+		=> HeroesOf(playerId).Single();
+
 	public GenericCard DrawCard(EntityId playerId)
 	{
 		var deck = DeckOf(playerId);
@@ -117,6 +126,20 @@ internal sealed class BattleTestHarness
 		{
 			AttackerSlotIds = [.. attackerSlots.Select(slot => slot.Id)],
 			TargetSlotId = targetSlot.Id
+		});
+
+	public void AttackHero(EntityId playerId, UnitSlot attackerSlot, GenericCard hero)
+		=> Engine.HandleInput(playerId, new AttackHeroRequestInput
+		{
+			AttackerSlotIds = [attackerSlot.Id],
+			HeroCardId = hero.Id
+		});
+
+	public void AttackHero(EntityId playerId, IReadOnlyCollection<UnitSlot> attackerSlots, GenericCard hero)
+		=> Engine.HandleInput(playerId, new AttackHeroRequestInput
+		{
+			AttackerSlotIds = [.. attackerSlots.Select(slot => slot.Id)],
+			HeroCardId = hero.Id
 		});
 
 	private T Require<T>(EntityId id) where T : class, IEntity

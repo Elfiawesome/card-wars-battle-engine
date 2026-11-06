@@ -9,7 +9,7 @@ public class Battlefield(EntityId id) : IEntity
 	[DataTag] public EntityId Id { get; init; } = id;
 	[DataTag] public EntityId? OwnerPlayerId { get; set; } = null;
 	[DataTag] public HashSet<EntityId> UnitSlotIds { get; } = [];
-	[DataTag] public HashSet<EntityId> HeroCardIds { get; } = [];
+	[DataTag] public List<EntityId> HeroCardIds { get; } = [];
 
 	public int BehaviourPriority => 0;
 

@@ -46,13 +46,14 @@ public sealed class DefaultLayout : BattlefieldLayout
 		foreach (var node in centered)
 		{
 			node.PlaceAt(Vector3.Zero, 0f);
+			PlaceHeroes(battle, node);
 			centerRadius = Mathf.Max(centerRadius, node.Radius);
 		}
 
 		if (teams.Count == 0) return;
 		if (teams.Count == 1)
 		{
-			PlaceRow(teams[0], Vector3.Zero, 0f, gap);
+			PlaceRow(battle, teams[0], Vector3.Zero, 0f, gap);
 			return;
 		}
 
@@ -100,6 +101,7 @@ public sealed class DefaultLayout : BattlefieldLayout
 				var position = (apothem + bowOffset) * normal + offset * tangent;
 				var curveFacing = Mathf.Atan2(position.X, position.Z);
 				node.PlaceAt(position, Mathf.LerpAngle(lineFacing, curveFacing, facingCurve));
+				PlaceHeroes(battle, node);
 			}
 		}
 	}

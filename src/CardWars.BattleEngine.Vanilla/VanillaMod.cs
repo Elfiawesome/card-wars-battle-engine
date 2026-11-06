@@ -25,6 +25,7 @@ public class VanillaMod : IBattleEngineMod
 		registry.InputHandlers.Register(new DrawCardRequestInputHandler());
 		registry.InputHandlers.Register(new UseCardRequestInputHandler());
 		registry.InputHandlers.Register(new AttackRequestInputHandler());
+		registry.InputHandlers.Register(new AttackHeroRequestInputHandler());
 
 		// --- Event Handlers ---
 		registry.EventHandlers.Register(new PlayerJoinedEventHandler());
@@ -38,12 +39,16 @@ public class VanillaMod : IBattleEngineMod
 		registry.EventHandlers.Register(new TargetUnitEventHandler());
 		registry.EventHandlers.Register(new UnitAttackEventHandler());
 		registry.EventHandlers.Register(new UnitTakeDamageEventHandler());
+		registry.EventHandlers.Register(new AttackHeroRequestEventHandler());
+		registry.EventHandlers.Register(new HeroAttackEventHandler());
+		registry.EventHandlers.Register(new HeroTakeDamageEventHandler());
 
 
 		// --- Block Handlers ---
 		registry.BlockHandlers.Register(new AttachBattlefieldToPlayerBlockHandler());
 		registry.BlockHandlers.Register(new AttachCardToDeckBlockHandler());
 		registry.BlockHandlers.Register(new AttachCardToUnitSlotBlockHandler());
+		registry.BlockHandlers.Register(new AttachHeroCardToBattlefieldBlockHandler());
 		registry.BlockHandlers.Register(new AttachCardToPlayerBlockHandler());
 		registry.BlockHandlers.Register(new AttachDeckToPlayerBlockHandler());
 		registry.BlockHandlers.Register(new AttachUnitSlotToBattlefieldBlockHandler());

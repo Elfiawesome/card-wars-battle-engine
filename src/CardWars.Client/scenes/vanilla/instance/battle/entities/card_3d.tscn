@@ -6,6 +6,9 @@
 [sub_resource type="ViewportTexture" id="ViewportTexture_30tpu"]
 viewport_path = NodePath("SubViewport")
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_m2ci4"]
+size = Vector3(14.08, 1, 19.68)
+
 [node name="Card3D" type="Node3D" unique_id=543971027]
 script = ExtResource("2_card3d")
 
@@ -17,3 +20,10 @@ texture = SubResource("ViewportTexture_30tpu")
 size = Vector2i(1408, 1968)
 
 [node name="CardDisplay" parent="SubViewport" unique_id=397712715 instance=ExtResource("1_0eavq")]
+
+[node name="Area3D" type="Area3D" parent="." unique_id=1704980204]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=8637685]
+shape = SubResource("BoxShape3D_m2ci4")

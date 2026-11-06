@@ -5,6 +5,7 @@ using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
+
 using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared;
 
@@ -26,6 +27,11 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		ResourceId.Vanilla("cards/units/nicholas"),
 		ResourceId.Vanilla("cards/units/john"),
 		ResourceId.Vanilla("cards/units/john"),
+	];
+
+	private static readonly ResourceId[] Heroes =
+	[
+		ResourceId.Vanilla("cards/heroes/ilyas"),
 	];
 
 	public void Handle(Transaction context, PlayerJoinedEvent request)
@@ -92,6 +98,20 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 			addUnitSlot(batch, battlefieldId, new(-1 + i, 0));
 		}
 		addUnitSlot(batch, battlefieldId, new(0, -1));
+
+		// Create Heroes
+		foreach (var heroDefinitionId in Heroes)
+		{
+			var heroDefinition = context.Registry.CardDefinitions.Get(heroDefinitionId);
+			if (heroDefinition is null) continue;
+
+			if (!heroDefinition.Has("hrt")) heroDefinition.Set("hrt", 0);
+			if (!heroDefinition.Has("hrt_max")) heroDefinition.Set("hrt_max", heroDefinition.GetInt("hrt"));
+
+			var heroId = EntityId.New();
+			batch.Blocks.Add(new InstantiateCardBlock(heroId, heroDefinition));
+			batch.Blocks.Add(new AttachHeroCardToBattlefieldBlock(battlefieldId, heroId));
+		}
 
 		// REMOVE LTR!!!
 		batch.AnimationArgs.Set("unit_slots", unitLists);

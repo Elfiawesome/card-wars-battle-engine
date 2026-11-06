@@ -38,7 +38,7 @@ public sealed class LineLayout : BattlefieldLayout
 			if (nearSide) nearDepth += rowDepth + gap;
 			else farDepth += rowDepth + gap;
 
-			PlaceRow(row, new Vector3(0f, 0f, rowCenterZ), nearSide ? 0f : Mathf.Pi, gap);
+			PlaceRow(battle, row, new Vector3(0f, 0f, rowCenterZ), nearSide ? 0f : Mathf.Pi, gap);
 		}
 	}
 }

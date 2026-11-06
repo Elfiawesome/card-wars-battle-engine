@@ -1,10 +1,4 @@
 {
 	"name": "Ilyas",
-	"hrt": 10,
-	"ability": [
-		{
-			"description": "",
-			"behaviour": []
-		}
-	]
+	"hrt": 10
 }

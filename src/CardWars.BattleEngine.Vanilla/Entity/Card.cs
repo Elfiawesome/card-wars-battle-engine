@@ -12,7 +12,8 @@ public class GenericCard(EntityId id) : IEntity
 	[DataTag] public EntityId Id { get; init; } = id;
 	[DataTag] public EntityId? OwnerPlayerId { get; set; }
 	[DataTag] public EntityId? OwnerUnitSlotId { get; set; }
-	public bool IsPlayed => (OwnerPlayerId is null) && (OwnerUnitSlotId is not null);
+	[DataTag] public EntityId? OwnerBattlefieldId { get; set; }
+	public bool IsPlayed => (OwnerPlayerId is null) && (OwnerUnitSlotId is not null || OwnerBattlefieldId is not null);
 
 	[DataTag] public CompoundTag Data { get; set; } = new();
 

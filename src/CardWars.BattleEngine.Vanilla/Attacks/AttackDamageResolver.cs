@@ -5,6 +5,29 @@ namespace CardWars.BattleEngine.Vanilla.Attacks;
 
 public static class AttackDamageResolver
 {
+	public static int GetOriginDamage(GenericCard attacker, AttackProfile attack)
+	{
+		var damage = attacker.Atk;
+
+		foreach (var pattern in attack.Patterns)
+		{
+			var hitsOrigin = pattern.Type switch
+			{
+				AttackPatternType.Single => true,
+				AttackPatternType.Row => true,
+				AttackPatternType.Column => true,
+				AttackPatternType.All => true,
+				AttackPatternType.Cell => pattern.X == 0 && pattern.Y == 0,
+				_ => false
+			};
+
+			if (hitsOrigin)
+				damage += pattern.Damage.Resolve(attacker.Atk);
+		}
+
+		return damage;
+	}
+
 	public static Dictionary<EntityId, int> Resolve(
 		GameState state,
 		GenericCard attacker,
