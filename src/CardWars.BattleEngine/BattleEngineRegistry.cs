@@ -16,6 +16,7 @@ public class BattleEngineRegistry
 	public DataDrivenRegistry DataDriven { get; } = new();
 	public RegistryFactory<ResourceId, IBehaviour> Behaviours { get; } = new();
 	public RegistryFactory<ResourceId, EntityId, IEntity> Entities { get; } = new();
+	public RegistryFactory<ResourceId, IEntityCondition> EntityConditions { get; } = new();
 
 	public Registry<ResourceId, CompoundTag> CardDefinitions { get; } = new();
 	public Registry<ResourceId, CompoundTag> AttackDefinitions { get; } = new();

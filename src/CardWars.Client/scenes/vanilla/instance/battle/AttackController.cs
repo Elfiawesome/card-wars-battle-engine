@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using CardWars.BattleEngine.Behaviour.DataDriven;
+using CardWars.BattleEngine;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
@@ -19,7 +19,7 @@ public partial class AttackController : Node
 	private readonly Dictionary<EntityId, HashSet<EntityId>> _targets = [];
 
 	private AttackResolver? _resolver;
-	private DataDrivenRegistry? _dataDriven;
+	private BattleEngineRegistry? _registry;
 
 	public void Setup(BattleInstance battleInstance)
 	{
@@ -28,7 +28,7 @@ public partial class AttackController : Node
 		if (battleInstance.BattleEngineRegistry is { } registry)
 		{
 			_resolver = new(registry);
-			_dataDriven = registry.DataDriven;
+			_registry = registry;
 		}
 	}
 
@@ -159,7 +159,7 @@ public partial class AttackController : Node
 
 	private void AttackHeroTarget(Card3D heroNode)
 	{
-		if (BattleInstance is null || _resolver is not { } resolver || _dataDriven is not { } dataDriven) return;
+		if (BattleInstance is null || _resolver is not { } resolver || _registry is not { } registry) return;
 		if (BattleInstance.State.Get<GenericCard>(heroNode.EntityId) is not { IsHero: true } hero) return;
 
 		var validAttackers = new List<EntityId>();
@@ -173,7 +173,7 @@ public partial class AttackController : Node
 
 			var attack = resolver.Resolve(attackerCard);
 			if (!resolver.CanAfford(attackerCard, attack)) continue;
-			if (!HeroTargetResolver.CanTarget(BattleInstance.State, attackerCard, hero.Id, dataDriven)) continue;
+			if (!HeroTargetResolver.CanTarget(BattleInstance.State, attackerCard, hero.Id, registry)) continue;
 
 			validAttackers.Add(attackerId);
 		}
@@ -247,12 +247,12 @@ public partial class AttackController : Node
 
 	private void RefreshTargets(EntityId attackerId, GenericCard card, AttackProfile attack)
 	{
-		if (BattleInstance is null || _dataDriven is not { } dataDriven) return;
+		if (BattleInstance is null || _registry is not { } registry) return;
 
 		_targets[attackerId] =
 		[
 			.. AttackTargetResolver.GetValidTargets(BattleInstance.State, card, attack),
-			.. HeroTargetResolver.GetValidTargets(BattleInstance.State, card, dataDriven)
+			.. HeroTargetResolver.GetValidTargets(BattleInstance.State, card, registry)
 		];
 	}
 

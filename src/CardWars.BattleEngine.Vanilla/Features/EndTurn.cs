@@ -140,7 +140,7 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 		}
 
 		// Handle hero defeat and player loss
-		var heroEvaluator = new HeroLoseConditionEvaluator(context.Registry.DataDriven);
+		var heroEvaluator = new HeroLoseConditionEvaluator(context.Registry);
 		var defeatedHeroes = new List<(EntityId HeroCardId, EntityId PlayerId, EntityId BattlefieldId, int Hrt)>();
 		var defeatedPlayers = new List<(EntityId PlayerId, int Team)>();
 		var defeatBatch = new BlockBatch([]);

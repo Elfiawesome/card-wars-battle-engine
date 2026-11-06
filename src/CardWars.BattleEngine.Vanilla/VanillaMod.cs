@@ -4,6 +4,7 @@ using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.BattleEngine.Vanilla.Targeting;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
@@ -87,6 +88,9 @@ public class VanillaMod : IBattleEngineMod
 
 		// --- Behaviours ---
 		registry.Behaviours.Register<SummonUnitCardToUnitSlotBehaviour>(ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour"));
+
+		// --- Hero Lose Conditions ---
+		registry.EntityConditions.Register<HeroHrtLoseCondition>(HeroHrtLoseCondition.Id);
 
 		// --- Data-Driven Behaviours ---
 		RegisterDataDriven(registry);
@@ -251,6 +255,8 @@ public class VanillaMod : IBattleEngineMod
 					Log.Info("Registered Hero: " + content.Id.ToString());
 
 					heroDataTag.Set("card_type", "hero");
+					if (!heroDataTag.Has("lose_condition"))
+						heroDataTag.Set("lose_condition", DataTagMapper.ToTag(new HeroLoseConditionPointer(Resource: HeroHrtLoseCondition.Id)));
 
 					registry.CardDefinitions.Register(content.Id, heroDataTag);
 					break;

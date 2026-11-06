@@ -60,7 +60,7 @@ public class AttackHeroRequestInputHandler : IInputHandler<AttackHeroRequestInpu
 				continue;
 			}
 
-			if (!HeroTargetResolver.CanTarget(state, attackerCard, hero.Id, context.Transaction.Registry.DataDriven))
+			if (!HeroTargetResolver.CanTarget(state, attackerCard, hero.Id, context.Transaction.Registry))
 			{
 				Log.Warn($"Hero attack rejected: [{hero.Id}] is not a valid target for card [{attackerCard.Id}]");
 				continue;
@@ -117,7 +117,7 @@ public class HeroAttackEventHandler : IEventHandler<HeroAttackEvent>
 		var attack = resolver.Resolve(attackerCard);
 
 		if (!resolver.CanAfford(attackerCard, attack)) return;
-		if (!HeroTargetResolver.CanTarget(state, attackerCard, hero.Id, context.Registry.DataDriven)) return;
+		if (!HeroTargetResolver.CanTarget(state, attackerCard, hero.Id, context.Registry)) return;
 
 		var damage = AttackDamageResolver.GetOriginDamage(attackerCard, attack);
 		var batch = new BlockBatch([])

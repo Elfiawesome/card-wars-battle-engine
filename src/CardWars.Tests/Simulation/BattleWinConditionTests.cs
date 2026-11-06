@@ -74,7 +74,7 @@ public sealed class BattleWinConditionTests
 			battle.State,
 			attacker,
 			hero.Id,
-			battle.Engine.Registry.DataDriven));
+			battle.Engine.Registry));
 	}
 
 	[Fact]
@@ -82,8 +82,26 @@ public sealed class BattleWinConditionTests
 	{
 		var battle = BattleTestHarness.Create();
 		var hero = battle.HeroOf(battle.Player2Id);
+		hero.Data.Set("lose_condition", DataTagMapper.ToTag(new HeroLoseConditionPointer(
+			Definition: DataTagMapper.ToTag(new LiteralExpression(new BoolTag(true))))));
+
+		battle.AdvanceToAttackingPhase();
+		battle.EndTurn(battle.Player1Id);
+		battle.EndTurn(battle.Player2Id);
+
+		Assert.True(battle.Player2.IsDefeated);
+		Assert.Equal(1, battle.State.WinningTeam);
+	}
+
+	[Fact]
+	public void HeroLoseCondition_HardCodedResourceCanBeRegistered()
+	{
+		var battle = BattleTestHarness.Create();
+		var conditionId = ResourceId.Vanilla("hero_lose_conditions/always");
+		var hero = battle.HeroOf(battle.Player2Id);
+		battle.Engine.Registry.EntityConditions.Register<AlwaysLoseCondition>(conditionId);
 		hero.Data.Set("lose_condition", DataTagMapper.ToTag(
-			new LiteralExpression(new BoolTag(true))));
+			new HeroLoseConditionPointer(Resource: conditionId)));
 
 		battle.AdvanceToAttackingPhase();
 		battle.EndTurn(battle.Player1Id);
@@ -98,12 +116,12 @@ public sealed class BattleWinConditionTests
 	{
 		var battle = BattleTestHarness.Create();
 		var hero = battle.HeroOf(battle.Player2Id);
-		hero.Data.Set("lose_condition", DataTagMapper.ToTag(
-			new GreaterThanExpression(
+		hero.Data.Set("lose_condition", DataTagMapper.ToTag(new HeroLoseConditionPointer(
+			Definition: DataTagMapper.ToTag(new GreaterThanExpression(
 				new MemberExpression(
 					new VariableExpression(ScriptBindings.Self),
 					"hrt"),
-				new LiteralExpression(new IntTag(5)))));
+				new LiteralExpression(new IntTag(5)))))));
 
 		battle.AdvanceToAttackingPhase();
 		battle.EndTurn(battle.Player1Id);
@@ -190,5 +208,10 @@ public sealed class BattleWinConditionTests
 		battle.EndTurn(battle.Player2Id);
 
 		Assert.True(battle.State.Turn.Equals(turn));
+	}
+
+	public sealed class AlwaysLoseCondition : IHeroLoseCondition
+	{
+		public bool IsMet(GameState state, EntityId heroId) => true;
 	}
 }
