@@ -41,7 +41,7 @@ float sd_round_box(vec2 p, vec2 b, float r) {
 
 void fragment() {
 	// World-space extents of the quad, so stretching the node doesn't stretch the border.
-	vec2 size = vec2(length(MODEL_MATRIX[0].xyz), length(MODEL_MATRIX[1].xyz)) * quad_size;
+	vec2 size = quad_size;
 	vec2 half_size = max(size * 0.5, vec2(0.0001));
 	vec2 p = (UV - 0.5) * size; // position in world units, centered
 

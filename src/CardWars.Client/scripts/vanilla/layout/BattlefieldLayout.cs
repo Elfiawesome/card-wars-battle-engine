@@ -48,18 +48,17 @@ public abstract class BattlefieldLayout : IBattleLayoutHandler
 
 		if (cards.Count == 0) return;
 
-		var bounds = cards[0].GetHighlightBounds();
-		var width = bounds?.Size.X ?? 1.1f;
-		var depth = bounds?.Size.Y ?? 0.82f;
-		var spacing = width + 0.15f;
+		if (cards[0].GetHighlightBounds() is not { } bounds) return;
+
+		var width = bounds.Size.X;
 		var gap = battle.State.Layout.LayoutConfig.GetFloat("hero_gap", 0.3f);
+		var spacing = width + gap;
 		var z = node.BoundsCenter.Z + node.Depth * 0.5f + gap;
 
 		for (var i = 0; i < cards.Count; i++)
 		{
 			var x = (i - (cards.Count - 1) * 0.5f) * spacing;
 			cards[i].Position = new Vector3(x, 0.02f, z);
-			cards[i].Rotation = new Vector3(0f, Mathf.Pi / 2f, 0f);
 		}
 	}
 }

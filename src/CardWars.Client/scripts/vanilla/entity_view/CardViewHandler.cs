@@ -38,6 +38,7 @@ public class CardViewHandler : IEntityViewHandler<GenericCard>
 
 			if (card.OwnerUnitSlotId is { } slotId)
 			{
+				node.Rotation = Vector3.Zero;
 				node.SetHitBox(false);
 				AttachToSlot(instance, node, slotId);
 				continue;

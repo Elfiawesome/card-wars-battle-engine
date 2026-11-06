@@ -37,9 +37,23 @@ public partial class Card3D : EntityNode3D
 	}
 
 	public override HighlightBounds? GetHighlightBounds()
-		=> GetData<GenericCard>() is { IsHero: true }
-			? new(new Vector3(0f, 0.01f, 0f), new Vector2(1.1f, 0.82f))
-			: null;
+	{
+		if (GetData<GenericCard>() is not { IsHero: true }) return null;
+
+		const float cardWidth = 0.82f;
+		const float cardHeight = 1.1f;
+		var angle = Rotation.Y;
+		var sin = Mathf.Abs(Mathf.Sin(angle));
+		var cos = Mathf.Abs(Mathf.Cos(angle));
+
+		var width = cardWidth * cos + cardHeight * sin;
+		var height = cardWidth * sin + cardHeight * cos;
+
+		return new HighlightBounds(
+			new Vector3(0f, 0.01f, 0f),
+			new Vector2(width, height),
+			-angle);
+	}
 
 	private void OnTargetInput(Node cameraNode, InputEvent @event, Vector3 eventPosition, Vector3 normal, long shapeIndex)
 	{
