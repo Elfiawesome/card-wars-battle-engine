@@ -4,7 +4,9 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
+using CardWars.Vanilla.Shared;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
@@ -99,6 +101,7 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 	public void Handle(Transaction context, RoundEndedEvent request)
 	{
 		var fatalUnits = new List<(EntityId CardId, EntityId PlayerId, EntityId BattlefieldId, EntityId UnitSlotId)>();
+		var fatalUnitsListTag = new ListTag();
 		var discardBatch = new BlockBatch([]);
 
 		foreach (var card in context.State.OfType<GenericCard>())
@@ -110,10 +113,15 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 			discardBatch.Blocks.Add(new DetachCardFromUnitSlotBlock(unitSlotId, card.Id));
 			discardBatch.Blocks.Add(new AttachCardToGraveyardBlock(playerId, card.Id));
 			fatalUnits.Add((card.Id, playerId, battlefieldId, unitSlotId));
+			fatalUnitsListTag.Add(card.Id.Value);
 		}
 
-		if (discardBatch.Blocks.Count > 0)
+		if (fatalUnits.Count > 0)
+		{
+			discardBatch.AnimationId = SharedIds.Animations.Death.ToString();
+			discardBatch.AnimationArgs.Set("units", fatalUnitsListTag);
 			context.ApplyBlockBatch(discardBatch);
+		}
 
 		foreach (var fatalUnit in fatalUnits)
 		{

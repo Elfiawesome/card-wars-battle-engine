@@ -38,6 +38,9 @@ public partial class BattleInstance : ClientInstance
 	public IReadOnlyDictionary<EntityId, EntityNode3D> EntityNodes => _entityNodes;
 	private readonly Dictionary<EntityId, EntityNode3D> _entityNodes = [];
 
+	public IReadOnlyDictionary<EntityId, EntityNode3D> PendingFreeNodes => _pendingEntityNodes;
+	private readonly Dictionary<EntityId, EntityNode3D> _pendingEntityNodes = [];
+
 	public EntityNode3D? Hovered3DTarget;
 	public Action<EntityNode3D>? OnHovered3DTargetClicked;
 
@@ -63,6 +66,7 @@ public partial class BattleInstance : ClientInstance
 	{
 		if (HandManagerNode is not null) HandManagerNode.BattleInstance = this;
 		if (AttackControllerNode is not null) AttackControllerNode.Setup(this);
+		AnimationHandler.Completed += ReleasePendingNodes;
 	}
 
 	public override void _Process(double delta)
@@ -101,6 +105,7 @@ public partial class BattleInstance : ClientInstance
 				// we can ignore first since even if switch team we can assume the next cards on enemy will be covered
 				State.FromSnapshot(battleSyncSnapshot.GameStateSnapshot);
 				SyncState();
+				ReleasePendingNodes();
 				break;
 		}
 	}
@@ -117,8 +122,9 @@ public partial class BattleInstance : ClientInstance
 		if (!parsedAnimationId.IsEmpty)
 		{
 			var animation = BattleRegistry?.Animations.Create(parsedAnimationId);
-			if (animation is not null) { animation.Data = batch.AnimationArgs; AnimationHandler.QueueAnimation(animation); }
+			if (animation is not null) { animation.Data = batch.AnimationArgs; AnimationHandler.QueueAnimation(animation); return; }
 		}
+		if (!AnimationHandler.IsBusy) ReleasePendingNodes();
 	}
 
 	public void SyncState()
@@ -157,6 +163,7 @@ public partial class BattleInstance : ClientInstance
 		_oldTurnState = turn.Clone();
 	}
 
+	// --- Entity Nodes Accessors ---
 	public bool HasEntityNode(EntityId id) => _entityNodes.ContainsKey(id);
 
 	public IReadOnlyList<EntityId> GetEntityNodeIds<T>() where T : EntityNode3D
@@ -180,12 +187,34 @@ public partial class BattleInstance : ClientInstance
 		return node;
 	}
 
+	// --- Pending Entity Nodes Accessors ---
+	public bool HasPendingEntityNode(EntityId id) => _pendingEntityNodes.ContainsKey(id);
+
+	public IReadOnlyList<EntityId> GetPendingEntityNodeIds<T>() where T : EntityNode3D
+		=> [.. _pendingEntityNodes.Where(kv => kv.Value is T).Select(kv => kv.Key)];
+
+	public IReadOnlyList<T> GetPendingEntityNodes<T>() where T : EntityNode3D
+		=> [.. _pendingEntityNodes.Where(kv => kv.Value is T).Select(kv => kv.Value).Cast<T>()];
+
+	public T? GetPendingEntityNode<T>(EntityId id) where T : EntityNode3D
+		=> _pendingEntityNodes.TryGetValue(id, out var node) && node is T typed ? typed : null;
+
+	// Entity Node freeing ssytems
 	public bool FreeEntityNode(EntityId id)
 	{
 		// For now Idk if i want to handle at a handler level or instance level
 		if (!_entityNodes.Remove(id, out var node)) return false;
-		node.QueueFree();
+		_pendingEntityNodes.Add(id, node);
 		return true;
+	}
+
+	private void ReleasePendingNodes()
+	{
+		foreach (var node in _pendingEntityNodes)
+		{
+			if (IsInstanceValid(node.Value)) node.Value.QueueFree();
+		}
+		_pendingEntityNodes.Clear();
 	}
 
 	// Keeps a node under its owner's node; falls back to the playspace.

@@ -4,7 +4,9 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
+using CardWars.Vanilla.Shared;
 
 namespace CardWars.BattleEngine.Vanilla.Behaviour;
 
@@ -28,6 +30,9 @@ public class SummonUnitCardToUnitSlotBehaviour : Behaviour<UseCardRequestEvent>
 			{
 				batch.Blocks.Add(new DetachCardFromPlayerBlock(card.OwnerPlayerId ?? EntityId.None, card.Id));
 				batch.Blocks.Add(new AttachCardToUnitSlotBlock(unitSlot.Id, card.Id));
+				batch.AnimationId = SharedIds.Animations.PlayCard.ToString();
+				batch.AnimationArgs.Set("card_id", new GuidTag(card.Id.Value));
+				batch.AnimationArgs.Set("slot_id", new GuidTag(unitSlot.Id.Value));
 				Log.Debug("We want to summon this unit " + context.OwnerEntityId + " to slot " + targetId);
 			}
 			else

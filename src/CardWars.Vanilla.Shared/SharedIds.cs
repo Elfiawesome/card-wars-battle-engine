@@ -32,5 +32,9 @@ public static class SharedIds
 	public static class Animations
 	{
 		public static readonly ResourceId PlayerIntroduction = ResourceId.Vanilla("battle/animation/player_introduction_animation");
+		public static readonly ResourceId PlayCard = ResourceId.Vanilla("battle/animation/play_card_animation");
+		public static readonly ResourceId Attack = ResourceId.Vanilla("battle/animation/attack_animation");
+		public static readonly ResourceId TakeDamage = ResourceId.Vanilla("battle/animation/take_damage_animation");
+		public static readonly ResourceId Death = ResourceId.Vanilla("battle/animation/death_animation");
 	}
 }

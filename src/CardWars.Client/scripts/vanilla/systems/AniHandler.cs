@@ -19,6 +19,8 @@ public class BattleAnimationHandler
 
 	private readonly Dictionary<ResourceId, AnimationRack> _racks = [];
 
+	public event Action? Completed;
+
 	public void QueueAnimation(BattleAnimation animation, ResourceId? rackIdN = null)
 	{
 		var rackId = rackIdN ?? ResourceId.Empty;
@@ -33,12 +35,15 @@ public class BattleAnimationHandler
 
 	public void Process(BattleInstance instance, double delta)
 	{
+		var wasBusy = IsBusy;
 		var racks = _racks.Values.ToArray();
 
 		foreach (var rack in racks)
 		{
 			ProcessRack(rack, instance, delta);
 		}
+
+		if (wasBusy && !IsBusy) Completed?.Invoke();
 	}
 
 	private void ProcessRack(AnimationRack rack, BattleInstance instance, double delta)
@@ -112,6 +117,7 @@ public class BattleAnimationHandler
 	{
 		if (!_racks.TryGetValue(rackId, out var rack)) return;
 
+		var wasBusy = IsBusy;
 		if (rack.CurrentAnimation is not null)
 		{
 			EndCurrentAnimation(rack, instance);
@@ -122,6 +128,8 @@ public class BattleAnimationHandler
 			var anim = rack.Queue.Dequeue();
 			anim.Destroy(instance);
 		}
+
+		if (wasBusy && !IsBusy) Completed?.Invoke();
 	}
 
 	public void ClearAll(BattleInstance instance)

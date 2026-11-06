@@ -8,6 +8,7 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
+using CardWars.Vanilla.Shared;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
@@ -142,7 +143,13 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 		}
 
 		var damage = AttackDamageResolver.Resolve(state, attackerCard, attack, targetSlotId);
-		var batch = new BlockBatch([]);
+		var batch = new BlockBatch([])
+		{
+			AnimationId = SharedIds.Animations.Attack.ToString(),
+			AnimationArgs = new CompoundTag()
+				.Set("attacker", new GuidTag(attackerCard.Id.Value))
+				.Set("target", new GuidTag(targetCard.Id.Value))
+		};
 
 		if (attack.ChargeCost > 0)
 		{
@@ -184,6 +191,11 @@ public class UnitTakeDamageEventHandler : IEventHandler<UnitTakeDamageEvent>
 	{
 		if (context.State.Require<GenericCard>(request.DamagedUnitId) is not { } targetCard) return;
 		var newHp = new IntTag(targetCard.Hp - request.Amt);
-		context.ApplyBlockBatch(new BlockBatch([new SetCardDataBlock(request.DamagedUnitId, "hp", newHp)]));
+		var batch = new BlockBatch([new SetCardDataBlock(request.DamagedUnitId, "hp", newHp)])
+		{
+			AnimationId = SharedIds.Animations.TakeDamage.ToString(),
+			AnimationArgs = new CompoundTag().Set("card_id", new GuidTag(request.DamagedUnitId.Value))
+		};
+		context.ApplyBlockBatch(batch);
 	}
 }

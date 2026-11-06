@@ -95,7 +95,19 @@ public partial class HandManager : Control
 				ResetArrows();
 			}
 
-			c.QueueFree(); // TODO: Make it animate away
+			c.currentAnimationTween?.Kill();
+			c.currentAnimationTween = null;
+			c.MouseFilter = MouseFilterEnum.Ignore;
+			var tween = c.CreateTween()
+				.SetParallel(true)
+				.SetTrans(Tween.TransitionType.Cubic)
+				.SetEase(Tween.EaseType.Out);
+
+			tween.TweenProperty(c, "scale", Vector2.Zero, 0.5);
+			tween.TweenProperty(c, "position", c.Position - new Vector2(0f, 50f), 0.5);
+			tween.TweenProperty(c, "modulate:a", 0.0, 0.5);
+			tween.Finished += c.QueueFree;
+			ArrangeCard();
 		}
 	}
 

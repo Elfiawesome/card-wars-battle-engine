@@ -54,6 +54,10 @@ public class VanillaMod : IClientMod
 
 		// Battle Animation
 		BattleRegistry.Animations.Register<PlayerIntroductionAnimation>(SharedIds.Animations.PlayerIntroduction);
+		BattleRegistry.Animations.Register<PlayCardAnimation>(SharedIds.Animations.PlayCard);
+		BattleRegistry.Animations.Register<AttackAnimation>(SharedIds.Animations.Attack);
+		BattleRegistry.Animations.Register<TakeDamageAnimation>(SharedIds.Animations.TakeDamage);
+		BattleRegistry.Animations.Register<DeathAnimation>(SharedIds.Animations.Death);
 
 		// See later if i want to use it
 		registry.RegisterExtension(BattleRegistry);
