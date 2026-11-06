@@ -16,7 +16,7 @@ public sealed class PlayCardAnimation : BattleAnimation
 		}
 
 		var targetPosition = card.Position;
-		card.Position = targetPosition + new Vector3(0f, -0.35f, 0f);
+		card.Position = targetPosition + new Vector3(0f, 0f, +0.35f);
 		card.Scale = Vector3.One * 0.15f;
 
 		var tween = instance.CreateTween()
@@ -24,8 +24,8 @@ public sealed class PlayCardAnimation : BattleAnimation
 			.SetTrans(Tween.TransitionType.Cubic)
 			.SetEase(Tween.EaseType.Out);
 
-		tween.TweenProperty(card, "position", targetPosition, 0.25);
-		tween.TweenProperty(card, "scale", Vector3.One, 0.25);
+		tween.TweenProperty(card, "position", targetPosition, 0.5);
+		tween.TweenProperty(card, "scale", Vector3.One, 0.5);
 		tween.Finished += Complete;
 	}
 }

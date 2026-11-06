@@ -24,7 +24,7 @@ public sealed class DeathAnimation : BattleAnimation
 				var node = instance.GetPendingEntityNode<EntityNode3D>(new EntityId(unitId.Value));
 				if (node is not null)
 				{
-					tween.TweenProperty(node, "position", node.Position + new Vector3(0f, -0.15f, 0f), 0.5);
+					tween.TweenProperty(node, "position", node.Position + new Vector3(0f, 0f, -0.45f), 0.5);
 					tween.TweenProperty(node, "scale", new Vector3(0.001f, 0.001f, 0.001f), 0.5);
 				}
 			}
