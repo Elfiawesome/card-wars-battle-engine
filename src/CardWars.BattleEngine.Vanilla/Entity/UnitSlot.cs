@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
 
@@ -12,7 +13,7 @@ public class UnitSlot(EntityId id) : IEntity
 	[DataTag] public UnitSlotPos Position { get; set; } = new UnitSlotPos(0, 0);
 
 	public int BehaviourPriority => 0;
-	public List<BehaviourPointer> GetBehaviours() => [];
+	public List<ContentPointer> GetBehaviours() => [];
 }
 
 public record struct UnitSlotPos(

@@ -2,6 +2,7 @@ using CardWars.BattleEngine;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
@@ -14,10 +15,10 @@ public sealed class TestEntity : IEntity
 	[DataTag] public EntityId Id { get; init; }
 	[DataTag] public int Hp { get; set; }
 	[DataTag] public CompoundTag Data { get; set; } = new();
-	public List<BehaviourPointer> Behaviours { get; set; } = [];
+	public List<ContentPointer> Behaviours { get; set; } = [];
 
 	public int BehaviourPriority => 0;
-	public List<BehaviourPointer> GetBehaviours() => Behaviours;
+	public List<ContentPointer> GetBehaviours() => Behaviours;
 }
 
 [DataTagType("test/event")]

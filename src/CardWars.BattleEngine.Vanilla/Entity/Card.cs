@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Mapping;
@@ -49,23 +50,23 @@ public class GenericCard(EntityId id) : IEntity
 	public static int AtkToHrt(int hpDamage)
 		=> hpDamage > 0 ? (int)Math.Ceiling(hpDamage / 10.0) : 0;
 
-	public List<BehaviourPointer> GetBehaviours()
+	public List<ContentPointer> GetBehaviours()
 	{
-		var result = new List<BehaviourPointer>();
+		var result = new List<ContentPointer>();
 
 		if (Data.GetList("abilities") is { } abilities)
 		{
 			foreach (var item in abilities.Items.OfType<CompoundTag>())
 			{
 				if (item.GetCompound("behaviour") is { } bTag)
-					result.Add(DataTagMapper.FromTag<BehaviourPointer>(bTag));// <- this feels and looks wrong? TODO: fix
+					result.Add(DataTagMapper.FromTag<ContentPointer>(bTag));// <- this feels and looks wrong? TODO: fix
 			}
 		}
 
 		if (Data.GetList("intrinsic_behaviours") is { } intrinsics)
 		{
 			foreach (var item in intrinsics.Items.OfType<CompoundTag>())
-				result.Add(DataTagMapper.FromTag<BehaviourPointer>(item)); // <- this feels and looks wrong?
+				result.Add(DataTagMapper.FromTag<ContentPointer>(item)); // <- this feels and looks wrong?
 		}
 
 		return result;

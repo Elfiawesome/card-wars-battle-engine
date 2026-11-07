@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
 
@@ -13,5 +14,5 @@ public class Battlefield(EntityId id) : IEntity
 
 	public int BehaviourPriority => 0;
 
-	public List<BehaviourPointer> GetBehaviours() => [];
+	public List<ContentPointer> GetBehaviours() => [];
 }

@@ -1,4 +1,5 @@
 using CardWars.BattleEngine.Behaviour.DataDriven;
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
@@ -33,7 +34,7 @@ public sealed class TransactionIntegrationTests
 					])
 			]);
 
-		var pointer = new BehaviourPointer(BehaviourDefinition: DataTagMapper.ToTag(definition));
+		var pointer = new ContentPointer(Definition: DataTagMapper.ToTag(definition));
 		var entity = new TestEntity
 		{
 			Id = EntityId.New(),

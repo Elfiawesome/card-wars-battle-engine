@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
 
@@ -11,5 +12,5 @@ public class Deck(EntityId id) : IEntity
 	[DataTag] public List<EntityId> CardIds { get; set; } = [];
 
 	public int BehaviourPriority => 0;
-	public List<BehaviourPointer> GetBehaviours() => [];
+	public List<ContentPointer> GetBehaviours() => [];
 }

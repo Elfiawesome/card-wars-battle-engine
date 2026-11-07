@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Logging;
@@ -178,14 +179,14 @@ public class Transaction
 		return true;
 	}
 
-	private IBehaviour? InstantiateBehaviour(BehaviourPointer pointer, Type eventType)
+	private IBehaviour? InstantiateBehaviour(ContentPointer pointer, Type eventType)
 	{
 		IBehaviour? behaviour = null;
-		if (pointer.BehaviourResource is { } resourceId)
+		if (pointer.Resource is { } resourceId)
 		{
 			behaviour = Registry.Behaviours.Create(resourceId);
 		}
-		else if (pointer.BehaviourDefinition is { } definitionTag)
+		else if (pointer.Definition is { } definitionTag)
 		{
 			try
 			{
