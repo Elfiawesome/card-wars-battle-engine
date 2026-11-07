@@ -18,7 +18,7 @@ public partial class HandManager : Control
 	public const float SelectedLowerAmount = 180.0f;
 	public const int HoverZIndex = 10;
 
-	public Vector2 CardScale = Vector2.One * 0.15f;
+	public Vector2 CardScale = Vector2.One * 0.2f; // 0.15f;
 
 	public CardDisplay? HoveredCard = null;
 	public CardDisplay? SelectedCard = null;
