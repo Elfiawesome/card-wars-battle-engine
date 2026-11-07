@@ -2,6 +2,7 @@ using CardWars.BattleEngine.State;
 using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Client.scripts.vanilla.systems;
 using CardWars.Core.Data.Tags;
+using CardWars.Vanilla.Shared;
 using Godot;
 
 namespace CardWars.Client.scripts.vanilla.animation;
@@ -10,7 +11,7 @@ public sealed class DeathAnimation : BattleAnimation
 {
 	public override void Start(BattleInstance instance)
 	{
-		var unitList = Data.GetList("units") ?? new();
+		var unitList = Data.GetList(SharedIds.Animations.Args.Units) ?? new();
 
 		var tween = instance.CreateTween()
 			.SetParallel(true)

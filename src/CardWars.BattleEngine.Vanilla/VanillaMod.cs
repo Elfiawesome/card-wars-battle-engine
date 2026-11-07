@@ -84,6 +84,7 @@ public class VanillaMod : IBattleEngineMod
 		registry.BlockHandlers.Register(new RemoveEntityBlockHandler());
 		registry.BlockHandlers.Register(new SetCardDataBlockHandler());
 		registry.BlockHandlers.Register(new SetGameOutcomeBlockHandler());
+		registry.BlockHandlers.Register(new SetGameRuleBlockHandler());
 		registry.BlockHandlers.Register(new UpdateTurnStateBlockHandler());
 
 		// --- Behaviours ---
@@ -160,16 +161,11 @@ public class VanillaMod : IBattleEngineMod
 		{
 			if (content.Category.Length == 0 || content.Category[0] != "rules") continue;
 
-			try
-			{
-				var rules = content.ReadAsObject<GameRulesDefinition>();
-				registry.GameRules.Register(content.Id, rules);
-				Log.Info("Registered Game Rules: " + content.Id.ToString());
-			}
-			catch (Exception ex)
-			{
-				Log.Warn($"Could not load game rules [{content.Id}]: {ex.Message}");
-			}
+			var rules = content.ReadAs<CompoundTag>();
+			if (rules is null) continue;
+
+			registry.RuleDefinitions.Register(content.Id, rules);
+			Log.Info("Registered Game Rules: " + content.Id.ToString());
 		}
 	}
 
@@ -187,46 +183,6 @@ public class VanillaMod : IBattleEngineMod
 		}
 	}
 
-	private static void ResolveAttackReferences(BattleEngineRegistry registry, CompoundTag card)
-	{
-		if (card.Get("ba_atk") is StringTag basicReference)
-		{
-			if (registry.AttackDefinitions.Get(ResourceId.Parse(basicReference.Value)) is { } basic)
-			{
-				card.Set("ba_atk", basic.Clone());
-			}
-			else
-			{
-				Log.Warn($"Attack definition [{basicReference.Value}] was not found for ba_atk");
-			}
-		}
-
-		if (card.GetList("sp_atk") is not { } specialAttacks) return;
-
-		var resolved = new ListTag();
-		foreach (var item in specialAttacks.Items)
-		{
-			if (item is StringTag reference)
-			{
-				if (registry.AttackDefinitions.Get(ResourceId.Parse(reference.Value)) is { } attack)
-				{
-					resolved.Add(attack.Clone());
-				}
-				else
-				{
-					Log.Warn($"Attack definition [{reference.Value}] was not found for sp_atk");
-					resolved.Add(item);
-				}
-			}
-			else
-			{
-				resolved.Add(item);
-			}
-		}
-
-		card.Set("sp_atk", resolved);
-	}
-
 	private void RegisterCardDefinitions(BattleEngineRegistry registry, List<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
@@ -242,7 +198,6 @@ public class VanillaMod : IBattleEngineMod
 					unitDataTag.Set("intrinsic_behaviours", new ListTag().Add(new CompoundTag().Set("resource", "cardwars:summon_unit_card_to_unit_slot_behaviour")));
 					if (!unitDataTag.Has("target_filter"))
 						unitDataTag.Set("target_filter", DataTagMapper.ToTag(UnitTargetFilter.Create()));
-					ResolveAttackReferences(registry, unitDataTag);
 
 					registry.CardDefinitions.Register(content.Id, unitDataTag);
 
@@ -256,7 +211,7 @@ public class VanillaMod : IBattleEngineMod
 
 					heroDataTag.Set("card_type", "hero");
 					if (!heroDataTag.Has("lose_condition"))
-						heroDataTag.Set("lose_condition", DataTagMapper.ToTag(new HeroLoseConditionPointer(Resource: HeroHrtLoseCondition.Id)));
+						heroDataTag.Set("lose_condition", DataTagMapper.ToTag(new ContentPointer(Resource: HeroHrtLoseCondition.Id)));
 
 					registry.CardDefinitions.Register(content.Id, heroDataTag);
 					break;

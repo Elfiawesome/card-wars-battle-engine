@@ -53,12 +53,12 @@ public sealed class AttackDefinitionTests
 		var card = new GenericCard(EntityId.New())
 		{
 			Data = new CompoundTag().Set("sp_atk", new ListTag()
-				.Add(new StringTag("cardwars:attacks/cross"))
-				.Add(new CompoundTag()
+				.Add(TestSupport.AttackPointer(ResourceId.Vanilla("attacks/cross")))
+				.Add(TestSupport.AttackPointer(new CompoundTag()
 					.Set("name", "Sweep")
 					.Set("charge_cost", 2)
 					.Set("patterns", new ListTag().Add(
-						new CompoundTag().Set("type", "column").Set("value", "50%")))))
+						new CompoundTag().Set("type", "column").Set("value", "50%"))))))
 		};
 
 		var attack = new AttackResolver(registry).Resolve(card);
@@ -87,7 +87,7 @@ public sealed class AttackDefinitionTests
 	}
 
 	[Fact]
-	public void CardRegistration_ResolvesSpAtkReferencesInline()
+	public void CardRegistration_StoresSpAtkReferencesForRuntimeResolution()
 	{
 		var provider = new MemoryFileProvider();
 		provider.AddFile("attacks/cross.json", """
@@ -105,7 +105,9 @@ public sealed class AttackDefinitionTests
 				"name": "Test Unit",
 				"hp": 4,
 				"atk": 2,
-				"sp_atk": ["cardwars:attacks/cross"]
+				"sp_atk": [
+					{ "resource": "cardwars:attacks/cross" }
+				]
 			}
 			""");
 
@@ -127,11 +129,15 @@ public sealed class AttackDefinitionTests
 
 		var definition = registry.CardDefinitions.Get(unitContent.Id)
 			?? throw new InvalidOperationException("Unit definition was not registered");
-		var spAtk = definition.GetList("sp_atk")?.Get<CompoundTag>(0)
-			?? throw new InvalidOperationException("sp_atk reference was not resolved");
+		var pointer = definition.GetList("sp_atk")?.Get<CompoundTag>(0)
+			?? throw new InvalidOperationException("sp_atk pointer was not stored");
+		Assert.Equal("cardwars:attacks/cross", pointer.GetString("resource"));
 
-		Assert.Equal("Cross", spAtk.GetString("name"));
-		Assert.True(spAtk.GetBool("bypass"));
+		var card = new GenericCard(EntityId.New()) { Data = (CompoundTag)definition.Clone() };
+		var attack = new AttackResolver(registry).Resolve(card);
+		Assert.True(attack.IsSpAtk);
+		Assert.True(attack.Bypass);
+		Assert.Equal("Cross", attack.Name);
 	}
 
 	[Fact]

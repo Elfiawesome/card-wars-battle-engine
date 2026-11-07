@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.RegularExpressions;
 using CardWars.Core.Storage;
 
 namespace CardWars.Tests.Support;
@@ -23,7 +24,8 @@ internal sealed class MemoryFileProvider : IFileProvider
 
 	public Stream OpenRead(string path) => new MemoryStream(Encoding.UTF8.GetBytes(ReadAllText(path)));
 
-	public Stream OpenWrite(string path) => new MemoryStream();
+	public Stream OpenWrite(string path)
+		=> new WriteBackStream(bytes => WriteAllText(path, Encoding.UTF8.GetString(bytes)));
 
 	public string ReadAllText(string path) => _files[NormalizePath(path)];
 
@@ -38,13 +40,27 @@ internal sealed class MemoryFileProvider : IFileProvider
 	public string[] GetFiles(string directoryPath, string pattern = "*")
 	{
 		var prefix = NormalizePath(directoryPath).TrimEnd(PathSeparator) + PathSeparator;
+		var regex = WildcardRegex(pattern);
+
 		return _files.Keys
 			.Where(file => file.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
 			.Where(file => !file[prefix.Length..].Contains(PathSeparator))
+			.Where(file => regex.IsMatch(GetFileName(file)))
 			.ToArray();
 	}
 
-	public string[] GetDirectories(string directoryPath) => [];
+	public string[] GetDirectories(string directoryPath)
+	{
+		var prefix = NormalizePath(directoryPath).TrimEnd(PathSeparator) + PathSeparator;
+
+		return _files.Keys
+			.Where(file => file.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+			.Select(file => file[prefix.Length..])
+			.Where(relative => relative.Contains(PathSeparator))
+			.Select(relative => prefix + relative[..relative.IndexOf(PathSeparator)])
+			.Distinct(StringComparer.OrdinalIgnoreCase)
+			.ToArray();
+	}
 
 	public IEnumerable<(string filePath, string relativePath)> Walk(string directoryPath)
 	{
@@ -92,4 +108,17 @@ internal sealed class MemoryFileProvider : IFileProvider
 	public string[] SplitPath(string path) => NormalizePath(path).Trim(PathSeparator).Split(PathSeparator);
 
 	public string JoinPath(params string[] parts) => string.Join(PathSeparator, parts.Where(part => part.Length > 0));
+
+	private static Regex WildcardRegex(string pattern)
+		=> new("^" + Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", ".") + "$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+	private sealed class WriteBackStream(Action<byte[]> onDispose) : MemoryStream
+	{
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing) onDispose(ToArray());
+			base.Dispose(disposing);
+		}
+	}
 }

@@ -82,7 +82,7 @@ public sealed class BattleWinConditionTests
 	{
 		var battle = BattleTestHarness.Create();
 		var hero = battle.HeroOf(battle.Player2Id);
-		hero.Data.Set("lose_condition", DataTagMapper.ToTag(new HeroLoseConditionPointer(
+		hero.Data.Set("lose_condition", DataTagMapper.ToTag(new ContentPointer(
 			Definition: DataTagMapper.ToTag(new LiteralExpression(new BoolTag(true))))));
 
 		battle.AdvanceToAttackingPhase();
@@ -101,7 +101,7 @@ public sealed class BattleWinConditionTests
 		var hero = battle.HeroOf(battle.Player2Id);
 		battle.Engine.Registry.EntityConditions.Register<AlwaysLoseCondition>(conditionId);
 		hero.Data.Set("lose_condition", DataTagMapper.ToTag(
-			new HeroLoseConditionPointer(Resource: conditionId)));
+			new ContentPointer(Resource: conditionId)));
 
 		battle.AdvanceToAttackingPhase();
 		battle.EndTurn(battle.Player1Id);
@@ -116,7 +116,7 @@ public sealed class BattleWinConditionTests
 	{
 		var battle = BattleTestHarness.Create();
 		var hero = battle.HeroOf(battle.Player2Id);
-		hero.Data.Set("lose_condition", DataTagMapper.ToTag(new HeroLoseConditionPointer(
+		hero.Data.Set("lose_condition", DataTagMapper.ToTag(new ContentPointer(
 			Definition: DataTagMapper.ToTag(new GreaterThanExpression(
 				new MemberExpression(
 					new VariableExpression(ScriptBindings.Self),
@@ -182,7 +182,7 @@ public sealed class BattleWinConditionTests
 				new LiteralExpression(new IntTag(2)))
 		};
 
-		battle.Engine.Registry.GameRules.Register(ruleId, rule);
+		battle.Engine.Registry.RuleDefinitions.Register(ruleId, DataTagMapper.ToTag(rule));
 		battle.State.RuleId = ruleId;
 
 		battle.AdvanceToAttackingPhase();
@@ -204,13 +204,15 @@ public sealed class BattleWinConditionTests
 		battle.EndTurn(battle.Player1Id);
 		battle.EndTurn(battle.Player2Id);
 
+		Assert.Equal(6, battle.Player2.Pt);
+
 		var turn = battle.State.Turn.Clone();
 		battle.EndTurn(battle.Player2Id);
 
 		Assert.True(battle.State.Turn.Equals(turn));
 	}
 
-	public sealed class AlwaysLoseCondition : IHeroLoseCondition
+	public sealed class AlwaysLoseCondition : IEntityCondition
 	{
 		public bool IsMet(GameState state, EntityId heroId) => true;
 	}

@@ -1,9 +1,9 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
-using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 
@@ -40,8 +40,11 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		// Make sure we don't re-create a player with the same id
 		if (context.State.Require<Player>(request.PlayerId) is not { } player) return;
 
-		var rules = context.Registry.GameRules.Get(context.State.RuleId) ?? new GameRulesDefinition();
+		var ruleId = context.State.RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.RuleId;
+		var rules = GameRulesDefinition.Get(context.Registry, ruleId) ?? new GameRulesDefinition();
 		var batch = new BlockBatch([]);
+		if (context.State.RuleId.IsEmpty)
+			batch.Blocks.Add(new SetGameRuleBlock(ruleId));
 		batch.Blocks.Add(new ModifyPlayerPtBlock(request.PlayerId, rules.GetPtForRound(context.State.Turn.RoundNumber)));
 
 		// Create new deck

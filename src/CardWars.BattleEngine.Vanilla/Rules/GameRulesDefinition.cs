@@ -1,8 +1,11 @@
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 
-namespace CardWars.BattleEngine.Rules;
+namespace CardWars.BattleEngine.Vanilla.Rules;
 
 [DataTagType("battle/rules")]
 public sealed class GameRulesDefinition
@@ -21,5 +24,20 @@ public sealed class GameRulesDefinition
 
 		var index = Math.Clamp(roundNumber - 1, 0, PtSchedule.Count - 1);
 		return Math.Min(PtSchedule[index], PtCap);
+	}
+
+	public static GameRulesDefinition? Get(BattleEngineRegistry registry, ResourceId ruleId)
+	{
+		if (registry.RuleDefinitions.Get(ruleId) is not CompoundTag tag) return null;
+
+		try
+		{
+			return DataTagMapper.FromTag<GameRulesDefinition>(tag);
+		}
+		catch (Exception ex)
+		{
+			Log.Warn($"Could not parse game rules [{ruleId}]: {ex.Message}");
+			return null;
+		}
 	}
 }

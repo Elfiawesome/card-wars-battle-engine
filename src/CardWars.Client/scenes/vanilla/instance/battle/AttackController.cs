@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using CardWars.BattleEngine;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
@@ -18,18 +17,10 @@ public partial class AttackController : Node
 	private readonly Dictionary<EntityId, LineArrow> _arrows = [];
 	private readonly Dictionary<EntityId, HashSet<EntityId>> _targets = [];
 
-	private AttackResolver? _resolver;
-	private BattleEngineRegistry? _registry;
-
 	public void Setup(BattleInstance battleInstance)
 	{
 		BattleInstance = battleInstance;
 		BattleInstance.OnHovered3DTargetClicked += HandleClick;
-		if (battleInstance.BattleEngineRegistry is { } registry)
-		{
-			_resolver = new(registry);
-			_registry = registry;
-		}
 	}
 
 	public override void _Process(double delta)
@@ -90,10 +81,8 @@ public partial class AttackController : Node
 		if (ownerPlayerId == BattleInstance.MyPlayerId)
 		{
 			if (slot.GetData<GenericCard>(unitSlot.HoldingCardId) is not { } card) return;
-			if (_resolver is not { } resolver) return;
-
-			var attack = resolver.Resolve(card);
-			if (!resolver.CanAfford(card, attack)) return;
+			if (BattleInstance.ActionValidator is not { } actions) return;
+			if (!actions.TryResolveAttack(BattleInstance.State, BattleInstance.MyPlayerId, card, out var attack, out _)) return;
 
 			ToggleAttacker(slot, card, attack);
 			return;
@@ -129,7 +118,7 @@ public partial class AttackController : Node
 
 	private void AttackTarget(UnitSlot targetSlot)
 	{
-		if (BattleInstance is null || _resolver is not { } resolver) return;
+		if (BattleInstance is null || BattleInstance.ActionValidator is not { } actions) return;
 
 		var validAttackers = new List<EntityId>();
 
@@ -140,9 +129,8 @@ public partial class AttackController : Node
 			if (attackerSlot.HoldingCardId is not { } attackerCardId) continue;
 			if (BattleInstance.State.Get<GenericCard>(attackerCardId) is not { } attackerCard) continue;
 
-			var attack = resolver.Resolve(attackerCard);
-			if (!resolver.CanAfford(attackerCard, attack)) continue;
-			if (!AttackTargetResolver.CanTarget(BattleInstance.State, attackerCard, attack, targetSlot.Id)) continue;
+			if (!actions.TryResolveAttack(BattleInstance.State, BattleInstance.MyPlayerId, attackerCard, out var attack, out _)) continue;
+			if (!actions.CanTargetUnit(BattleInstance.State, attackerCard, attack, targetSlot.Id, out _)) continue;
 
 			validAttackers.Add(attackerId);
 		}
@@ -159,7 +147,7 @@ public partial class AttackController : Node
 
 	private void AttackHeroTarget(Card3D heroNode)
 	{
-		if (BattleInstance is null || _resolver is not { } resolver || _registry is not { } registry) return;
+		if (BattleInstance is null || BattleInstance.ActionValidator is not { } actions) return;
 		if (BattleInstance.State.Get<GenericCard>(heroNode.EntityId) is not { IsHero: true } hero) return;
 
 		var validAttackers = new List<EntityId>();
@@ -171,9 +159,8 @@ public partial class AttackController : Node
 			if (attackerSlot.HoldingCardId is not { } attackerCardId) continue;
 			if (BattleInstance.State.Get<GenericCard>(attackerCardId) is not { } attackerCard) continue;
 
-			var attack = resolver.Resolve(attackerCard);
-			if (!resolver.CanAfford(attackerCard, attack)) continue;
-			if (!HeroTargetResolver.CanTarget(BattleInstance.State, attackerCard, hero.Id, registry)) continue;
+			if (!actions.TryResolveAttack(BattleInstance.State, BattleInstance.MyPlayerId, attackerCard, out _, out _)) continue;
+			if (!actions.CanTargetHero(BattleInstance.State, attackerCard, hero, out _)) continue;
 
 			validAttackers.Add(attackerId);
 		}
@@ -192,7 +179,7 @@ public partial class AttackController : Node
 	{
 		if (BattleInstance is null) return;
 		if (_selected.Count == 0) return;
-		if (_resolver is not { } resolver) return;
+		if (BattleInstance.ActionValidator is not { } actions) return;
 
 		foreach (var attackerId in _selected.ToList())
 		{
@@ -214,14 +201,7 @@ public partial class AttackController : Node
 				continue;
 			}
 
-			if (AttackTargetResolver.GetOwnerPlayerId(BattleInstance.State, unitSlot) != BattleInstance.MyPlayerId)
-			{
-				RemoveAttacker(attackerId);
-				continue;
-			}
-
-			var attack = resolver.Resolve(card);
-			if (!resolver.CanAfford(card, attack))
+			if (!actions.TryResolveAttack(BattleInstance.State, BattleInstance.MyPlayerId, card, out var attack, out _))
 			{
 				RemoveAttacker(attackerId);
 				continue;
@@ -247,12 +227,12 @@ public partial class AttackController : Node
 
 	private void RefreshTargets(EntityId attackerId, GenericCard card, AttackProfile attack)
 	{
-		if (BattleInstance is null || _registry is not { } registry) return;
+		if (BattleInstance?.ActionValidator is not { } actions) return;
 
 		_targets[attackerId] =
 		[
-			.. AttackTargetResolver.GetValidTargets(BattleInstance.State, card, attack),
-			.. HeroTargetResolver.GetValidTargets(BattleInstance.State, card, registry)
+			.. actions.GetValidUnitTargets(BattleInstance.State, card, attack),
+			.. actions.GetValidHeroTargets(BattleInstance.State, card)
 		];
 	}
 

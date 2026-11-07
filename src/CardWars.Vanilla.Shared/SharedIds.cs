@@ -36,5 +36,14 @@ public static class SharedIds
 		public static readonly ResourceId Attack = ResourceId.Vanilla("battle/animation/attack_animation");
 		public static readonly ResourceId TakeDamage = ResourceId.Vanilla("battle/animation/take_damage_animation");
 		public static readonly ResourceId Death = ResourceId.Vanilla("battle/animation/death_animation");
+
+		public static class Args
+		{
+			public const string Attacker = "attacker";
+			public const string Target = "target";
+			public const string CardId = "card_id";
+			public const string SlotId = "slot_id";
+			public const string Units = "units";
+		}
 	}
 }

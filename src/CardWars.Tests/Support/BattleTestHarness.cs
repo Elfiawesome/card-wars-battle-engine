@@ -91,7 +91,8 @@ internal sealed class BattleTestHarness
 		var cardId = deck.CardIds.FirstOrDefault();
 		if (cardId.IsNone) throw new InvalidOperationException($"Deck [{deck.Id}] is empty");
 
-		Engine.HandleInput(EntityId.None, new DrawCardRequestInput(deck.Id, playerId));
+		using var allowance = AllowInput(playerId);
+		Engine.HandleInput(playerId, new DrawCardRequestInput(deck.Id, playerId));
 		return State.Require<GenericCard>(cardId)
 			?? throw new InvalidOperationException($"Drawn card [{cardId}] was not found");
 	}
@@ -101,12 +102,26 @@ internal sealed class BattleTestHarness
 
 	public void PlayCard(EntityId playerId, GenericCard card, UnitSlot slot)
 	{
-		State.Turn.AllowedPlayerInputs.Add(playerId);
+		using var allowance = AllowInput(playerId);
 		Engine.HandleInput(playerId, new UseCardRequestInput
 		{
 			CardId = card.Id,
 			TargetEntityId = slot.Id
 		});
+	}
+
+	private IDisposable AllowInput(EntityId playerId)
+	{
+		var added = State.Turn.AllowedPlayerInputs.Add(playerId);
+		return new InputAllowance(State.Turn.AllowedPlayerInputs, playerId, added);
+	}
+
+	private sealed class InputAllowance(HashSet<EntityId> allowedPlayers, EntityId playerId, bool added) : IDisposable
+	{
+		public void Dispose()
+		{
+			if (added) allowedPlayers.Remove(playerId);
+		}
 	}
 
 	public GenericCard DrawAndPlay(EntityId playerId, UnitSlotPos position)

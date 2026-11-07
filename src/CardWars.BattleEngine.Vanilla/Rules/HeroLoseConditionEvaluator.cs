@@ -1,12 +1,12 @@
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
-using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Rules;
 
@@ -65,24 +65,19 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry)
 		return condition?.IsMet(state, hero.Id) ?? hero.Hrt <= 0;
 	}
 
-	private static HeroLoseConditionPointer GetPointer(GenericCard hero)
+	private static ContentPointer GetPointer(GenericCard hero)
 	{
-		var tag = hero.Data.Get("lose_condition");
+		if (hero.Data.Get("lose_condition") is not CompoundTag pointerTag)
+			return new ContentPointer(Resource: HeroHrtLoseCondition.Id);
 
-		switch (tag)
+		try
 		{
-			case StringTag resource:
-				return new HeroLoseConditionPointer(Resource: ResourceId.Parse(resource.Value));
-			case CompoundTag compound:
-				if (compound.Get<StringTag>("resource") is { } resourceTag)
-					return new HeroLoseConditionPointer(Resource: ResourceId.Parse(resourceTag.Value));
-
-				if (compound.Get<CompoundTag>("definition") is { } definition)
-					return new HeroLoseConditionPointer(Definition: definition);
-
-				return new HeroLoseConditionPointer(Definition: compound);
-			default:
-				return new HeroLoseConditionPointer(Resource: HeroHrtLoseCondition.Id);
+			return DataTagMapper.FromTag<ContentPointer>(pointerTag);
+		}
+		catch (Exception ex)
+		{
+			Log.Warn($"Could not parse lose_condition for hero [{hero.Id}]: {ex.Message}");
+			return new ContentPointer(Resource: HeroHrtLoseCondition.Id);
 		}
 	}
 }

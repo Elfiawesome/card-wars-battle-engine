@@ -5,7 +5,7 @@ using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Rules;
 
-public sealed class HeroHrtLoseCondition : IHeroLoseCondition
+public sealed class HeroHrtLoseCondition : IEntityCondition
 {
 	public static readonly ResourceId Id = ResourceId.Vanilla("hero_lose_conditions/hrt");
 

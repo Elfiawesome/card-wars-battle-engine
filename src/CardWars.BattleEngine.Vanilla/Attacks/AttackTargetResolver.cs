@@ -1,6 +1,6 @@
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.BattleEngine.Vanilla.Helpers;
+using CardWars.BattleEngine.Vanilla.Rules;
 
 namespace CardWars.BattleEngine.Vanilla.Attacks;
 

@@ -89,9 +89,7 @@ public sealed class TurnStateTests
 		var state = new GameState
 		{
 			RuleId = ResourceId.Vanilla("rules/custom"),
-			IsGameOver = true,
-			WinningTeam = 2,
-			IsDraw = false
+			Outcome = GameOutcome.Win(2)
 		};
 		state.Turn.RoundNumber = 4;
 
@@ -99,9 +97,9 @@ public sealed class TurnStateTests
 		var restored = DataTagMapper.FromTag<GameStateSnapshot>(tag);
 
 		Assert.Equal(state.RuleId, restored.RuleId);
-		Assert.True(restored.IsGameOver);
-		Assert.Equal(2, restored.WinningTeam);
-		Assert.False(restored.IsDraw);
+		Assert.True(restored.Outcome.IsGameOver);
+		Assert.Equal(2, restored.Outcome.WinningTeam);
+		Assert.False(restored.Outcome.IsDraw);
 		Assert.Equal(4, restored.Turn.RoundNumber);
 	}
 }

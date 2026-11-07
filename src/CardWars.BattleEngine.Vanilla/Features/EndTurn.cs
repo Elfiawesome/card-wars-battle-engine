@@ -63,15 +63,15 @@ public class TurnEndedEventHandler : IEventHandler<TurnEndedEvent>
 		if (endedPhase == TurnPhase.Attacking && newTurnState.Phase == TurnPhase.Setup)
 			newTurnState.RoundNumber += 1;
 
-		EntityId? currentPlayerId = newTurnState.TurnOrder.ElementAtOrDefault(newTurnState.TurnIndex);
-		if (currentPlayerId is null || currentPlayerId == EntityId.None)
+		var currentPlayerId = newTurnState.TurnOrder.ElementAtOrDefault(newTurnState.TurnIndex);
+		if (currentPlayerId.IsNone)
 		{
 			Log.Warn($"TurnOrder[{newTurnState.TurnIndex}] is null/empty, turn cannot advance");
 			return;
 		}
 
 		newTurnState.AllowedPlayerInputs.Clear();
-		newTurnState.AllowedPlayerInputs.Add((EntityId)currentPlayerId);
+		newTurnState.AllowedPlayerInputs.Add(currentPlayerId);
 
 		if (phaseChanged)
 		{
@@ -124,7 +124,7 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 		if (fatalUnits.Count > 0)
 		{
 			discardBatch.AnimationId = SharedIds.Animations.Death.ToString();
-			discardBatch.AnimationArgs.Set("units", fatalUnitsListTag);
+			discardBatch.AnimationArgs.Set(SharedIds.Animations.Args.Units, fatalUnitsListTag);
 			context.ApplyBlockBatch(discardBatch);
 		}
 
@@ -190,8 +190,41 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 			});
 		}
 
-		// Win Check
 		context.QueueEvent(new WinConditionCheckEvent() { TurnState = request.TurnState });
+
+		foreach (var card in context.State.OfType<GenericCard>())
+		{
+			if (!card.IsUnit || card.OwnerUnitSlotId is null) continue;
+
+			context.QueueEvent(new ChargeRefillEvent()
+			{
+				CardId = card.Id,
+				Amount = card.ChargeMax
+			});
+		}
+
+		var nextTurnState = request.TurnState.Clone();
+		nextTurnState.TurnOrder.RemoveAll(playerId => context.State.Get<Player>(playerId) is { IsDefeated: true });
+		nextTurnState.TurnIndex = 0;
+		nextTurnState.AllowedPlayerInputs.Clear();
+		if (nextTurnState.TurnOrder.Count > 0)
+			nextTurnState.AllowedPlayerInputs.Add(nextTurnState.TurnOrder[0]);
+
+		context.QueueEvent(new EndTurnEvent() { TurnState = nextTurnState, PhaseChanged = true });
+
+		var ruleId = context.State.RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.RuleId;
+		var rules = GameRulesDefinition.Get(context.Registry, ruleId) ?? new GameRulesDefinition();
+		var targetPt = rules.GetPtForRound(nextTurnState.RoundNumber);
+		foreach (var player in context.State.OfType<Player>())
+		{
+			if (player.IsDefeated) continue;
+
+			context.QueueEvent(new PtReplenishEvent()
+			{
+				PlayerId = player.Id,
+				TargetPt = targetPt
+			});
+		}
 	}
 
 	private static List<(GenericCard Hero, EntityId BattlefieldId)> GetPlayerHeroes(GameState state, Player player)

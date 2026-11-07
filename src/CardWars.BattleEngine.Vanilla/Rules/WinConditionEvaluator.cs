@@ -1,6 +1,5 @@
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
-using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Tags;

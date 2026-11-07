@@ -5,6 +5,7 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
@@ -24,45 +25,30 @@ public class AttackHeroRequestInputHandler : IInputHandler<AttackHeroRequestInpu
 	{
 		var state = context.Transaction.State;
 
-		if (state.Turn.Phase != TurnPhase.Attacking)
-		{
-			Log.Error("Hero attack request rejected: not in Attacking phase");
-			return;
-		}
-
 		if (state.Require<GenericCard>(request.HeroCardId) is not { IsHero: true } hero)
 		{
-			Log.Error($"Hero attack rejected: [{request.HeroCardId}] is not a hero");
+			Log.Warn($"Hero attack rejected: [{request.HeroCardId}] is not a hero");
 			return;
 		}
 
-		var resolver = new AttackResolver(context.Transaction.Registry);
+		var validator = new BattleActionValidator(context.Transaction.Registry);
 		var queuedAttackers = new HashSet<EntityId>();
 
 		foreach (var attackerSlotId in request.AttackerSlotIds ?? [])
 		{
 			if (!queuedAttackers.Add(attackerSlotId)) continue;
-
-			if (state.Require<UnitSlot>(attackerSlotId) is not { } attackerSlot) continue;
-			if (attackerSlot.HoldingCardId is not { } attackerCardId) continue;
+			if (state.Require<UnitSlot>(attackerSlotId) is not { HoldingCardId: { } attackerCardId }) continue;
 			if (state.Require<GenericCard>(attackerCardId) is not { } attackerCard) continue;
 
-			if (AttackTargetResolver.GetOwnerPlayerId(state, attackerSlot) != context.PlayerId)
+			if (!validator.TryResolveAttack(state, context.PlayerId, attackerCard, out _, out var reason))
 			{
-				Log.Warn($"Hero attack rejected: slot [{attackerSlot.Id}] is not owned by player [{context.PlayerId}]");
+				Log.Warn($"Hero attack rejected: {reason}");
 				continue;
 			}
 
-			var attack = resolver.Resolve(attackerCard);
-			if (!resolver.CanAfford(attackerCard, attack))
+			if (!validator.CanTargetHero(state, attackerCard, hero, out reason))
 			{
-				Log.Warn($"Hero attack rejected: card [{attackerCard.Id}] cannot afford [{attack.Name}]");
-				continue;
-			}
-
-			if (!HeroTargetResolver.CanTarget(state, attackerCard, hero.Id, context.Transaction.Registry))
-			{
-				Log.Warn($"Hero attack rejected: [{hero.Id}] is not a valid target for card [{attackerCard.Id}]");
+				Log.Warn($"Hero attack rejected: {reason}");
 				continue;
 			}
 
@@ -113,19 +99,28 @@ public class HeroAttackEventHandler : IEventHandler<HeroAttackEvent>
 		if (state.Require<GenericCard>(request.AttackerId) is not { } attackerCard) return;
 		if (state.Require<GenericCard>(request.HeroCardId) is not { IsHero: true } hero) return;
 
-		var resolver = new AttackResolver(context.Registry);
-		var attack = resolver.Resolve(attackerCard);
+		if (AttackTargetResolver.GetOwnerPlayerId(state, attackerCard) is not { } ownerId) return;
 
-		if (!resolver.CanAfford(attackerCard, attack)) return;
-		if (!HeroTargetResolver.CanTarget(state, attackerCard, hero.Id, context.Registry)) return;
+		var validator = new BattleActionValidator(context.Registry);
+		if (!validator.TryResolveAttack(state, ownerId, attackerCard, out var attack, out var reason))
+		{
+			Log.Warn($"Hero attack rejected: {reason}");
+			return;
+		}
+
+		if (!validator.CanTargetHero(state, attackerCard, hero, out reason))
+		{
+			Log.Warn($"Hero attack rejected: {reason}");
+			return;
+		}
 
 		var damage = AttackDamageResolver.GetOriginDamage(attackerCard, attack);
 		var batch = new BlockBatch([])
 		{
 			AnimationId = SharedIds.Animations.Attack.ToString(),
 			AnimationArgs = new CompoundTag()
-				.Set("attacker", new GuidTag(attackerCard.Id.Value))
-				.Set("target", new GuidTag(hero.Id.Value))
+				.Set(SharedIds.Animations.Args.Attacker, new GuidTag(attackerCard.Id.Value))
+				.Set(SharedIds.Animations.Args.Target, new GuidTag(hero.Id.Value))
 		};
 
 		if (attack.ChargeCost > 0)
@@ -166,7 +161,7 @@ public class HeroTakeDamageEventHandler : IEventHandler<HeroTakeDamageEvent>
 		var batch = new BlockBatch([new SetCardDataBlock(hero.Id, "hrt", hrt)])
 		{
 			AnimationId = SharedIds.Animations.TakeDamage.ToString(),
-			AnimationArgs = new CompoundTag().Set("card_id", new GuidTag(hero.Id.Value))
+			AnimationArgs = new CompoundTag().Set(SharedIds.Animations.Args.CardId, new GuidTag(hero.Id.Value))
 		};
 		context.ApplyBlockBatch(batch);
 	}

@@ -389,27 +389,27 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
 
 [node name="TopOutline" type="ColorRect" parent="WhiteOutline" unique_id=1316121615]
-custom_minimum_size = Vector2(4, 4)
+custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
 size_flags_vertical = 0
 
 [node name="LeftOutline" type="ColorRect" parent="WhiteOutline" unique_id=1253222022]
-custom_minimum_size = Vector2(4, 4)
+custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
 size_flags_horizontal = 0
 
 [node name="RightOutline" type="ColorRect" parent="WhiteOutline" unique_id=1876953417]
-custom_minimum_size = Vector2(4, 4)
+custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
 size_flags_horizontal = 8
 
 [node name="BottomOutline" type="ColorRect" parent="WhiteOutline" unique_id=1474245062]
-custom_minimum_size = Vector2(4, 4)
+custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
 size_flags_vertical = 8

@@ -1,7 +1,8 @@
+using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
-using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Attacks;
 
@@ -44,26 +45,33 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 	private bool TryResolve(DataTag? tag, string fallbackName, out AttackDefinition definition)
 	{
 		definition = AttackDefinition.DefaultBasic;
+		if (tag is not CompoundTag pointerTag) return false;
 
-		switch (tag)
+		ContentPointer pointer;
+		try
 		{
-			case StringTag reference:
-				var id = ResourceId.Parse(reference.Value);
-				var raw = registry.AttackDefinitions.Get(id);
-				if (raw is null)
-				{
-					Log.Warn($"Attack definition [{id}] was not found");
-					return false;
-				}
-
-				return AttackDefinitionParser.TryParse(raw, fallbackName, out definition);
-
-			case CompoundTag inline:
-				return AttackDefinitionParser.TryParse(inline, fallbackName, out definition);
-
-			default:
-				return false;
+			pointer = DataTagMapper.FromTag<ContentPointer>(pointerTag);
 		}
+		catch (Exception ex)
+		{
+			Log.Warn($"Could not parse attack pointer for [{fallbackName}]: {ex.Message}");
+			return false;
+		}
+
+		if (pointer.Resource is { } id)
+		{
+			var raw = registry.AttackDefinitions.Get(id);
+			if (raw is null)
+			{
+				Log.Warn($"Attack definition [{id}] was not found");
+				return false;
+			}
+
+			return AttackDefinitionParser.TryParse(raw, fallbackName, out definition);
+		}
+
+		return pointer.Definition is { } inline
+			&& AttackDefinitionParser.TryParse(inline, fallbackName, out definition);
 	}
 
 	private static AttackProfile FromDefinition(AttackDefinition definition, bool isSpAtk)

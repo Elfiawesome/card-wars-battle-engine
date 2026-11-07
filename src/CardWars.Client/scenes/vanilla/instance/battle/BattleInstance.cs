@@ -6,6 +6,7 @@ using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.vanilla.registry;
@@ -31,6 +32,7 @@ public partial class BattleInstance : ClientInstance
 
 	public BattleAnimationHandler AnimationHandler = new();
 	public TargetHighlighter TargetHighlighter = new();
+	public BattleActionValidator? ActionValidator { get; private set; }
 
 	public GameState State = new();
 	private TurnState _oldTurnState = new();
@@ -64,6 +66,7 @@ public partial class BattleInstance : ClientInstance
 
 	public override void _Ready()
 	{
+		if (BattleEngineRegistry is { } registry) ActionValidator = new(registry);
 		if (HandManagerNode is not null) HandManagerNode.BattleInstance = this;
 		if (AttackControllerNode is not null) AttackControllerNode.Setup(this);
 		AnimationHandler.Completed += ReleasePendingNodes;

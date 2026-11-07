@@ -62,11 +62,11 @@ public sealed class BattleHeroTests
 			if (id != TestCards.John) return;
 
 			definition.Set("sp_atk", new ListTag()
-				.Add(new CompoundTag()
+				.Add(TestSupport.AttackPointer(new CompoundTag()
 					.Set("name", "Origin Bonus")
 					.Set("charge_cost", 0)
 					.Set("patterns", new ListTag().Add(
-						new CompoundTag().Set("type", "single").Set("value", 10)))));
+						new CompoundTag().Set("type", "single").Set("value", 10))))));
 		});
 
 		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));

@@ -6,17 +6,13 @@ namespace CardWars.BattleEngine.Vanilla.Block;
 
 [DataTagType()]
 public record class SetGameOutcomeBlock(
-	[property: DataTag] bool IsGameOver,
-	[property: DataTag] int? WinningTeam,
-	[property: DataTag] bool IsDraw
+	[property: DataTag] GameOutcome Outcome
 ) : IBlock;
 
 public class SetGameOutcomeBlockHandler : IBlockHandler<SetGameOutcomeBlock>
 {
 	public void Handle(GameState context, SetGameOutcomeBlock request)
 	{
-		context.IsGameOver = request.IsGameOver;
-		context.WinningTeam = request.WinningTeam;
-		context.IsDraw = request.IsDraw;
+		context.Outcome = request.Outcome;
 	}
 }

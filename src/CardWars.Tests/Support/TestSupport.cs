@@ -1,9 +1,12 @@
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
-using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
+using CardWars.BattleEngine.Vanilla.Rules;
+using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data.Tags;
+using CardWars.Core.Registry;
 
 namespace CardWars.Tests.Support;
 
@@ -13,11 +16,11 @@ internal static class TestSupport
 	{
 		var registry = new BattleEngineRegistry();
 		new VanillaMod().OnLoad(registry, []);
-		registry.GameRules.Register(GameRulesDefinition.DefaultId, new GameRulesDefinition
+		registry.RuleDefinitions.Register(GameRulesDefinition.DefaultId, DataTagMapper.ToTag(new GameRulesDefinition
 		{
 			PtSchedule = [5, 6, 8, 11, 15, 20, 26, 33, 41, 50],
 			PtCap = 50
-		});
+		}));
 		return registry;
 	}
 
@@ -32,6 +35,12 @@ internal static class TestSupport
 		var context = CreateBehaviourContext(registry, state, owner);
 		return new ScriptRuntimeContext(context, registry.DataDriven);
 	}
+
+	public static CompoundTag AttackPointer(CompoundTag definition)
+		=> new CompoundTag().Set("definition", definition);
+
+	public static CompoundTag AttackPointer(ResourceId id)
+		=> new CompoundTag().Set("resource", id.ToString());
 
 	public static TestEntity AddEntity(GameState state, int hp = 10)
 	{

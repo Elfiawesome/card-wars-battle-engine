@@ -4,7 +4,6 @@ using System.Linq;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
-using CardWars.BattleEngine.Vanilla.Targeting;
 using CardWars.Core.Logging;
 using CardWars.Vanilla.Shared;
 using Godot;
@@ -52,13 +51,13 @@ public partial class HandManager : Control
 
 		if (SelectedCard is null) return;
 		if (BattleInstance is not { } instance) return;
-		if (instance.BattleEngineRegistry is not { } battleEngineRegistry) return;
+		if (instance.ActionValidator is not { } validator) return;
 
 		var cardEntry = Cards.FirstOrDefault(entry => entry.Value == SelectedCard);
-		if (instance.State.Get<GenericCard>(cardEntry.Key) is { } candidate)
+		if (instance.State.Get<GenericCard>(cardEntry.Key) is { } candidate
+			&& validator.CanStartPlayCard(instance.State, instance.MyPlayerId, candidate, out _))
 		{
-			var evaluator = new CardTargetFilterEvaluator(battleEngineRegistry.DataDriven);
-			ArrowTargets = [.. evaluator.ResolveTargets(instance.State, candidate, instance.MyPlayerId)];
+			ArrowTargets = [.. validator.GetPlayableTargets(instance.State, instance.MyPlayerId, candidate)];
 		}
 
 		instance.TargetHighlighter.Clear(this);
@@ -133,6 +132,11 @@ public partial class HandManager : Control
 				{
 					if (SelectedCard is null)
 					{
+						var cardId = Cards.FirstOrDefault(entry => entry.Value == card).Key;
+						if (BattleInstance is not { } instance || instance.ActionValidator is not { } validator) return;
+						if (instance.State.Get<GenericCard>(cardId) is not { } cardEntity) return;
+						if (!validator.CanStartPlayCard(instance.State, instance.MyPlayerId, cardEntity, out _)) return;
+
 						SelectedCard = card;
 						RefreshTargeting();
 
@@ -154,26 +158,30 @@ public partial class HandManager : Control
 			{
 				if (SelectedCard is not null)
 				{
-					// TODO: end input voer
-					if (BattleInstance is not null
-						&& BattleInstance?.Hovered3DTarget?.EntityId is { } targetId
-						&& ArrowTargets.Contains(targetId))
-					{
-						var targetCard = Cards.FirstOrDefault(entry => entry.Value == SelectedCard).Key;
-						Log.Info(new UseCardRequestInput(targetCard, targetId));
-						if (targetCard != EntityId.None && targetId != EntityId.None)
-						{
-							BattleInstance?.SendInput(new UseCardRequestInput(targetCard, targetId));
-						}
-						else
-						{
-							ResetArrows();
-						}
-					}
-					else
+					if (BattleInstance is not { } instance
+						|| instance.Hovered3DTarget?.EntityId is not { } targetId
+						|| !ArrowTargets.Contains(targetId))
 					{
 						ResetArrows();
+						return;
 					}
+
+					var cardId = Cards.FirstOrDefault(entry => entry.Value == SelectedCard).Key;
+					if (instance.State.Get<GenericCard>(cardId) is not { } card
+						|| instance.ActionValidator is not { } validator)
+					{
+						ResetArrows();
+						return;
+					}
+
+					if (!validator.CanPlayCard(instance.State, instance.MyPlayerId, card, targetId, out var reason))
+					{
+						Log.Debug($"Card play rejected: {reason}");
+						ResetArrows();
+						return;
+					}
+
+					instance.SendInput(new UseCardRequestInput(cardId, targetId));
 				}
 			}
 			ArrangeCard();

@@ -4,6 +4,8 @@
 	"hp": 2,
 	"atk": 3,
 	"sp_atk": [
-		"cardwars:attacks/cross"
+		{
+			"resource": "cardwars:attacks/cross"
+		}
 	]
 }

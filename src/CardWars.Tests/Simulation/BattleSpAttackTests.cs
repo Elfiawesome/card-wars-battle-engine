@@ -18,8 +18,8 @@ public sealed class BattleSpAttackTests
 
 			definition.Set("charge", 2);
 			definition.Set("sp_atk", new ListTag()
-				.Add(SpAtk("Flat", 1, false, Pattern("single", 1)))
-				.Add(SpAtk("Percent", 1, false, Pattern("single", "50%"))));
+				.Add(TestSupport.AttackPointer(SpAtk("Flat", 1, false, Pattern("single", 1))))
+				.Add(TestSupport.AttackPointer(SpAtk("Percent", 1, false, Pattern("single", "50%")))));
 		});
 
 		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));
@@ -44,12 +44,12 @@ public sealed class BattleSpAttackTests
 			if (id != TestCards.John) return;
 
 			definition.Set("charge", 1);
-			definition.Set("ba_atk", new CompoundTag()
+			definition.Set("ba_atk", TestSupport.AttackPointer(new CompoundTag()
 				.Set("charge_cost", 1)
-				.Set("patterns", new ListTag().Add(Pattern("single", 100))));
+				.Set("patterns", new ListTag().Add(Pattern("single", 100)))));
 			definition.Set("sp_atk", new ListTag()
-				.Add(SpAtk("First", 1, false, Pattern("single", 1)))
-				.Add(SpAtk("Second", 1, false, Pattern("single", 1))));
+				.Add(TestSupport.AttackPointer(SpAtk("First", 1, false, Pattern("single", 1))))
+				.Add(TestSupport.AttackPointer(SpAtk("Second", 1, false, Pattern("single", 1)))));
 		});
 
 		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));
@@ -74,7 +74,7 @@ public sealed class BattleSpAttackTests
 			if (id != TestCards.John) return;
 
 			definition.Set("sp_atk", new ListTag()
-				.Add(SpAtk("Pierce", 0, true, Pattern("single", 1))));
+				.Add(TestSupport.AttackPointer(SpAtk("Pierce", 0, true, Pattern("single", 1)))));
 		});
 
 		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));
@@ -100,9 +100,9 @@ public sealed class BattleSpAttackTests
 		{
 			if (id != TestCards.John) return;
 
-			definition.Set("ba_atk", new CompoundTag()
+			definition.Set("ba_atk", TestSupport.AttackPointer(new CompoundTag()
 				.Set("charge_cost", 1)
-				.Set("patterns", new ListTag().Add(Pattern("row", 2))));
+				.Set("patterns", new ListTag().Add(Pattern("row", 2)))));
 		});
 
 		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));
