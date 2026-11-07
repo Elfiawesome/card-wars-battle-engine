@@ -217,59 +217,6 @@ theme_override_constants/margin_bottom = 40
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="NameContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=753847694]
-visible = false
-layout_mode = 2
-theme_override_constants/margin_top = 56
-theme_override_constants/margin_bottom = 44
-
-[node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/NameContainer" unique_id=289947450]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_fi3fs")
-theme_override_font_sizes/font_size = 72
-text = "IRON VANGUARD"
-
-[node name="WorldTypeContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=1046481214]
-visible = false
-layout_mode = 2
-theme_override_constants/margin_bottom = 20
-
-[node name="HBoxContainer" type="HBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/WorldTypeContainer" unique_id=53285700]
-layout_mode = 2
-theme_override_constants/separation = 32
-
-[node name="WorldLable" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/WorldTypeContainer/HBoxContainer" unique_id=1154984559]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.16078432, 0.4745098, 1, 1)
-theme_override_fonts/font = ExtResource("3_fi3fs")
-theme_override_font_sizes/font_size = 36
-text = "AVALON"
-vertical_alignment = 1
-
-[node name="Divider" type="ColorRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/WorldTypeContainer/HBoxContainer" unique_id=213644785]
-custom_minimum_size = Vector2(4, 4)
-layout_mode = 2
-size_flags_horizontal = 4
-color = Color(1, 1, 1, 0.078431375)
-
-[node name="TypeDivider" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/WorldTypeContainer/HBoxContainer" unique_id=99732960]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.3019608)
-theme_override_fonts/font = ExtResource("3_fi3fs")
-theme_override_font_sizes/font_size = 32
-text = "UNIT"
-vertical_alignment = 1
-
-[node name="DividerContainerTop" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=1860674085]
-visible = false
-layout_mode = 2
-theme_override_constants/margin_bottom = 44
-
-[node name="GradientTexture" type="TextureRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/DividerContainerTop" unique_id=1153638549]
-custom_minimum_size = Vector2(4, 4)
-layout_mode = 2
-texture = SubResource("GradientTexture1D_a2w1i")
-
 [node name="StatContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=1543713742]
 layout_mode = 2
 theme_override_constants/margin_bottom = 24
@@ -339,7 +286,6 @@ theme_override_font_sizes/font_size = 96
 text = "0"
 
 [node name="AbilityAndSPAtkContainer" type="HBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=505944580]
-visible = false
 layout_mode = 2
 
 [node name="AbilitiesContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=1521468014]
@@ -347,6 +293,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="SPAtkContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=512750565]
+visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer/SPAtkContainer" unique_id=1582480491]
