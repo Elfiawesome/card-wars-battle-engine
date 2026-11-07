@@ -1,94 +1,415 @@
 [gd_scene format=3 uid="uid://bk7jiwgxicc04"]
 
-[ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/vanilla/instance/battle/ui/CardDisplay.cs" id="1_8pb73"]
-[ext_resource type="Texture2D" uid="uid://h66vbs1kggw4" path="res://assets/vanilla/texture/test.png" id="1_bw6t6"]
+[ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/vanilla/instance/battle/ui/CardDisplay.cs" id="1_q57fe"]
+[ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/vanilla/shader/blur.gdshader" id="2_0gwxm"]
+[ext_resource type="Texture2D" uid="uid://dxvtwhw1tnbmo" path="res://assets/vanilla/texture/cards/captain.png" id="2_iyhvi"]
+[ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/vanilla/font/rajdhani/rajdhani.tres" id="3_fi3fs"]
+[ext_resource type="Texture2D" uid="uid://dhqkm4keqsyhr" path="res://assets/vanilla/texture/icon/ri--heart-fill.svg" id="4_f1nea"]
+[ext_resource type="Texture2D" uid="uid://b07obi1nosrck" path="res://assets/vanilla/texture/icon/ri--sword-fill.svg" id="4_m05dj"]
+[ext_resource type="Texture2D" uid="uid://cqr0ccclab6og" path="res://assets/vanilla/texture/icon/ri--gemini-fill.svg" id="7_q57fe"]
+[ext_resource type="FontVariation" uid="uid://d2wy0udo168ij" path="res://assets/vanilla/font/hedvig_letters_sans/hedvig_letters_sans_italics.tres" id="8_kuav8"]
+[ext_resource type="Texture2D" uid="uid://d1pxi4dbq0ieq" path="res://assets/vanilla/texture/icon/crystal.svg" id="10_g0y7p"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3al6n"]
-bg_color = Color(0.6, 0.6, 0.6, 0)
-border_width_left = 30
-border_width_top = 30
-border_width_right = 30
-border_width_bottom = 30
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a2w1i"]
+shader = ExtResource("2_0gwxm")
+shader_parameter/blur_amount = 2.5
+shader_parameter/saturation = 1.6
+shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 
-[node name="CardDisplay" type="Control" unique_id=397712715]
-custom_minimum_size = Vector2(1408, 1968)
+[sub_resource type="Gradient" id="Gradient_8pn3e"]
+offsets = PackedFloat32Array(0, 0.6, 1)
+colors = PackedColorArray(0.16078432, 0.4745098, 1, 1, 1, 1, 1, 0.05882353, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_a2w1i"]
+gradient = SubResource("Gradient_8pn3e")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0gwxm"]
+shader = ExtResource("2_0gwxm")
+shader_parameter/blur_amount = 0.250000011875
+shader_parameter/saturation = 1.6
+shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
+
+[node name="UnitCard" type="Control" unique_id=934905130]
+custom_minimum_size = Vector2(352, 492)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1408.0
 offset_bottom = 1968.0
 pivot_offset_ratio = Vector2(0.5, 0.5)
-script = ExtResource("1_8pb73")
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("1_q57fe")
+metadata/_edit_use_anchors_ = true
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=408841810]
+[node name="TextureContainer" type="Control" parent="." unique_id=1654516441]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackgroundArt" type="TextureRect" parent="TextureContainer" unique_id=1775090872]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 5
+stretch_mode = 6
+
+[node name="CharacterArt" type="TextureRect" parent="TextureContainer" unique_id=1134226534]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_iyhvi")
+expand_mode = 5
+stretch_mode = 6
+
+[node name="InfoContainer" type="VBoxContainer" parent="." unique_id=2062988425]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="TopInfoContainer" type="MarginContainer" parent="InfoContainer" unique_id=518911392]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="BackgroundBlur" type="ColorRect" parent="InfoContainer/TopInfoContainer" unique_id=2123128436]
+material = SubResource("ShaderMaterial_a2w1i")
+layout_mode = 2
+color = Color(0.03137255, 0.039215688, 0.08627451, 1)
+
+[node name="NameInfoContainer" type="MarginContainer" parent="InfoContainer/TopInfoContainer" unique_id=1935982358]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/margin_left = 56
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 56
+theme_override_constants/margin_bottom = 40
+
+[node name="HBoxContainer" type="HBoxContainer" parent="InfoContainer/TopInfoContainer/NameInfoContainer" unique_id=311621225]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="PointBox" type="Control" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer" unique_id=293630926]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.15
+
+[node name="PointContainer" type="MarginContainer" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox" unique_id=201137071]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_top = -4
+theme_override_constants/margin_bottom = -4
+
+[node name="PointTexture" type="TextureRect" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox/PointContainer" unique_id=1616018669]
+modulate = Color(0.54509807, 0.36078432, 0.9647059, 1)
+layout_mode = 2
+texture = ExtResource("10_g0y7p")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox/PointContainer" unique_id=1605881433]
+modulate = Color(0.88899827, 0.8118024, 1, 1)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_font_sizes/font_size = 128
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RightInfoContainer" type="VBoxContainer" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer" unique_id=742837663]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer" unique_id=314134182]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_font_sizes/font_size = 72
+text = "Error Unit Name"
+
+[node name="WorldContainer" type="HBoxContainer" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer" unique_id=197986812]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="WorldLabel" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/WorldContainer" unique_id=1382824555]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.16078432, 0.4745098, 1, 1)
+theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_font_sizes/font_size = 36
+text = "Error Unit World"
+vertical_alignment = 1
+
+[node name="Divider" type="ColorRect" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/WorldContainer" unique_id=1321653080]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+size_flags_horizontal = 4
+color = Color(1, 1, 1, 0.078431375)
+
+[node name="TypeLabel" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/WorldContainer" unique_id=134240093]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.3019608)
+theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_font_sizes/font_size = 32
+text = "UNIT"
+vertical_alignment = 1
+
+[node name="BottomDivider" type="HBoxContainer" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer" unique_id=382696569]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="StarTexture" type="TextureRect" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/BottomDivider" unique_id=921823797]
+modulate = Color(0.16078432, 0.4745098, 1, 1)
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+texture = ExtResource("7_q57fe")
+expand_mode = 1
+
+[node name="GradientTexture" type="TextureRect" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/BottomDivider" unique_id=218586584]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+texture = SubResource("GradientTexture1D_a2w1i")
+expand_mode = 1
+
+[node name="TopDivider" type="ColorRect" parent="InfoContainer" unique_id=368075790]
+z_index = 1
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+color = Color(0.16078432, 0.4745098, 1, 1)
+
+[node name="BottomInfoContainer" type="MarginContainer" parent="InfoContainer" unique_id=563711645]
+layout_mode = 2
+
+[node name="BackgroundBlur" type="ColorRect" parent="InfoContainer/BottomInfoContainer" unique_id=69072794]
+material = SubResource("ShaderMaterial_0gwxm")
+layout_mode = 2
+color = Color(0.03137255, 0.039215688, 0.08627451, 1)
+
+[node name="MainInfoContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer" unique_id=247049199]
+layout_mode = 2
+theme_override_constants/margin_left = 56
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 56
+theme_override_constants/margin_bottom = 40
+
+[node name="MainInfoContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer" unique_id=1635060212]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="NameContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=753847694]
 visible = false
+layout_mode = 2
+theme_override_constants/margin_top = 56
+theme_override_constants/margin_bottom = 44
+
+[node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/NameContainer" unique_id=289947450]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_font_sizes/font_size = 72
+text = "IRON VANGUARD"
+
+[node name="WorldTypeContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=1046481214]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/WorldTypeContainer" unique_id=53285700]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="WorldLable" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/WorldTypeContainer/HBoxContainer" unique_id=1154984559]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.16078432, 0.4745098, 1, 1)
+theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_font_sizes/font_size = 36
+text = "AVALON"
+vertical_alignment = 1
+
+[node name="Divider" type="ColorRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/WorldTypeContainer/HBoxContainer" unique_id=213644785]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+size_flags_horizontal = 4
+color = Color(1, 1, 1, 0.078431375)
+
+[node name="TypeDivider" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/WorldTypeContainer/HBoxContainer" unique_id=99732960]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.3019608)
+theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_font_sizes/font_size = 32
+text = "UNIT"
+vertical_alignment = 1
+
+[node name="DividerContainerTop" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=1860674085]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_bottom = 44
+
+[node name="GradientTexture" type="TextureRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/DividerContainerTop" unique_id=1153638549]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+texture = SubResource("GradientTexture1D_a2w1i")
+
+[node name="StatContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=1543713742]
+layout_mode = 2
+theme_override_constants/margin_bottom = 24
+
+[node name="HBoxContainer" type="HBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer" unique_id=636605345]
+layout_mode = 2
+
+[node name="HpContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer" unique_id=1675877515]
+modulate = Color(0.2901961, 0.87058824, 0.5019608, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/HpContainer" unique_id=1943263220]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/HpContainer/HBoxContainer" unique_id=1980556591]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 24
+
+[node name="TextureRect" type="TextureRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/HpContainer/HBoxContainer/MarginContainer" unique_id=2044486387]
+layout_mode = 2
+texture = ExtResource("4_f1nea")
+expand_mode = 3
+
+[node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/HpContainer/HBoxContainer" unique_id=1211825131]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_font_sizes/font_size = 96
+text = "0"
+
+[node name="Divider" type="ColorRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer" unique_id=570978827]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+color = Color(1, 1, 1, 0.3019608)
+
+[node name="AtkContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer" unique_id=1215420418]
+modulate = Color(0.972549, 0.44313726, 0.44313726, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/AtkContainer" unique_id=1862939741]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/AtkContainer/HBoxContainer" unique_id=1994711437]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 24
+
+[node name="TextureRect" type="TextureRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/AtkContainer/HBoxContainer/MarginContainer" unique_id=695336582]
+layout_mode = 2
+texture = ExtResource("4_m05dj")
+expand_mode = 3
+
+[node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/AtkContainer/HBoxContainer" unique_id=1116769164]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_font_sizes/font_size = 96
+text = "0"
+
+[node name="AbilityAndSPAtkContainer" type="HBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=505944580]
+visible = false
+layout_mode = 2
+
+[node name="AbilitiesContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=1521468014]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SPAtkContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=512750565]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer/SPAtkContainer" unique_id=1582480491]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_font_sizes/font_size = 40
+text = "SP ATK"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer/SPAtkContainer" unique_id=41305726]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="DividerContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=777582917]
+layout_mode = 2
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="ColorRect" type="ColorRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/DividerContainer" unique_id=1280221738]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 2
+color = Color(1, 1, 1, 0.118)
+
+[node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=987717512]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.77254903)
+theme_override_fonts/font = ExtResource("8_kuav8")
+theme_override_font_sizes/font_size = 36
+text = "Error Flavour Text"
+autowrap_mode = 3
+
+[node name="WhiteOutline" type="MarginContainer" parent="." unique_id=1510602839]
+modulate = Color(1, 1, 1, 0.050980393)
+z_index = 1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_bw6t6")
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
 
-[node name="Panel" type="Panel" parent="." unique_id=370074597]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_3al6n")
+[node name="TopOutline" type="ColorRect" parent="WhiteOutline" unique_id=1316121615]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+size_flags_vertical = 0
 
-[node name="NameLabel" type="Label" parent="." unique_id=370074598]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 328.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 240
-text = "Card Name"
+[node name="LeftOutline" type="ColorRect" parent="WhiteOutline" unique_id=1253222022]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+size_flags_horizontal = 0
 
-[node name="HpLabel" type="Label" parent="." unique_id=370074599]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -328.0
-offset_right = 137.0
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.14999998, 1, 0, 1)
-theme_override_font_sizes/font_size = 240
-text = "0"
+[node name="RightOutline" type="ColorRect" parent="WhiteOutline" unique_id=1876953417]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+size_flags_horizontal = 8
 
-[node name="AtkLabel" type="Label" parent="." unique_id=370074600]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -137.0
-offset_top = -328.0
-grow_horizontal = 0
-grow_vertical = 0
-theme_override_colors/font_color = Color(1, 0, 0.0333333, 1)
-theme_override_font_sizes/font_size = 240
-text = "0"
-horizontal_alignment = 2
-
-[node name="ChargeLabel" type="Label" parent="." unique_id=1612720777]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -68.5
-offset_top = -164.0
-offset_right = 68.5
-offset_bottom = 164.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 240
-text = "0"
-horizontal_alignment = 2
+[node name="BottomOutline" type="ColorRect" parent="WhiteOutline" unique_id=1474245062]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+size_flags_vertical = 8

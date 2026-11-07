@@ -1,0 +1,9 @@
+[gd_resource type="FontVariation" format=3 uid="uid://d2wy0udo168ij"]
+
+[ext_resource type="FontFile" uid="uid://cnomknahp1ady" path="res://asset/fonts/hedvig_letters_sans/hedvig_letters_sans_regular.ttf" id="1_b17lg"]
+
+[resource]
+base_font = ExtResource("1_b17lg")
+variation_transform = Transform2D(1, 0.3, 0, 1, 0, 0)
+spacing_glyph = 1
+spacing_bottom = -3
