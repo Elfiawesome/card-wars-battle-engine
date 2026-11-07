@@ -16,7 +16,8 @@ public partial class HandManager : Control
 	public const float CardAngleDeg = 180.0f;
 	public const float HoverRaiseAmount = 60.0f;
 	public const float SelectedLowerAmount = 180.0f;
-	public const int HoverZIndex = 10;
+	public const int IndexGap = 3;
+	public int HoverZIndex => _cards.Count * IndexGap;
 
 	public Vector2 CardScale = Vector2.One * 0.2f; // 0.15f;
 
@@ -228,6 +229,7 @@ public partial class HandManager : Control
 			var n = cards[i];
 			if (n is CardDisplay c)
 			{
+				c.ZIndex = i * IndexGap;
 				float offset = i - halfRange;
 				float normOffset = offset / Math.Max(halfRange, 1);
 
@@ -264,10 +266,6 @@ public partial class HandManager : Control
 							newRot = 0;
 							c.ZIndex = HoverZIndex;
 							newScale *= 1.2f;
-						}
-						else
-						{
-							c.ZIndex = 0;
 						}
 					}
 					else
