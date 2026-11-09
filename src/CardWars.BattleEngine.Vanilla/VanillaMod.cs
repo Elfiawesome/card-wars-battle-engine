@@ -89,6 +89,7 @@ public class VanillaMod : IBattleEngineMod
 
 		// --- Behaviours ---
 		registry.Behaviours.Register<SummonUnitCardToUnitSlotBehaviour>(ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour"));
+		registry.Behaviours.Register<TestAbility>(ResourceId.Vanilla("test_ability"));
 
 		// --- Hero Lose Conditions ---
 		registry.EntityConditions.Register<HeroHrtLoseCondition>(HeroHrtLoseCondition.Id);

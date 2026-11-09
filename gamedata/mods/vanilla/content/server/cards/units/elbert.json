@@ -7,5 +7,13 @@
 		{
 			"resource": "cardwars:attacks/cross"
 		}
+	],
+	"abilities": [
+		{
+			"name": "Test Ability",
+			"behaviour": {
+				"resource": "test_ability"
+			}
+		}
 	]
 }

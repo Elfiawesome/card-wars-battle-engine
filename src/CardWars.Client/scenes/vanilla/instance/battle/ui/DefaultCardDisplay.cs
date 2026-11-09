@@ -1,4 +1,6 @@
+using System.Linq;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
 using Godot;
 
 namespace CardWars.Client;
@@ -19,9 +21,12 @@ public partial class DefaultCardDisplay : CardDisplay
 	[Export] Label? HpLabel;
 	[Export] Label? AtkLabel;
 	[Export] Label? FlavourTextLabel;
+	[Export] VBoxContainer? AbilitiesContainer;
 
 	public Vector2 PortraitSize = new(1408.0f, 1968.0f);
 	public Vector2 LandscapeSize = new(1968.0f, 1408.0f);
+
+	public PackedScene AbilityTextScene = GD.Load<PackedScene>("res://scenes/vanilla/instance/battle/ui/ability_text.tscn");
 
 	public override void SetData(CompoundTag data)
 	{
@@ -61,6 +66,17 @@ public partial class DefaultCardDisplay : CardDisplay
 					statContainer.Visible = true;
 					ptContainer.Visible = true;
 					Size = PortraitSize;
+
+					if (data.GetList("abilities") is { } abilities && AbilitiesContainer is { } abilitiesContainer)
+					{
+						foreach (var item in abilities.Items.OfType<CompoundTag>())
+						{
+							var ats = AbilityTextScene.Instantiate<HBoxContainer>(); // wow good naming man
+							abilitiesContainer.AddChild(ats);
+							abilitiesContainer.Visible = true;
+						}
+					}
+
 					break;
 				case "spell":
 					ptContainer.Visible = true;
@@ -71,6 +87,17 @@ public partial class DefaultCardDisplay : CardDisplay
 					Size = LandscapeSize;
 					break;
 			}
+		}
+	}
+
+	public override void SetDisplay(DisplayType displayType)
+	{
+		if (displayType == DisplayType.Full)
+		{
+
+		}
+		else if (displayType == DisplayType.Simplified)
+		{
 
 		}
 	}
@@ -84,4 +111,5 @@ public abstract partial class CardDisplay : Control
 	public Tween? currentAnimationTween;
 
 	public virtual void SetData(CompoundTag data) { }
+	public virtual void SetDisplay(DisplayType displayType) { }
 }

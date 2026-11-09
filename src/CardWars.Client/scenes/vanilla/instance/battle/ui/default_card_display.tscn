@@ -31,7 +31,7 @@ shader_parameter/blur_amount = 2.000000095
 shader_parameter/saturation = 1.6
 shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 
-[node name="UnitCard" type="Control" unique_id=934905130 node_paths=PackedStringArray("PtContainer", "PtLabel", "HrtContainer", "HrtLabel", "NameLabel", "WorldLabel", "CardTypeLabel", "BtmDivStarTexture", "BtmDivGradTexture", "StatContainer", "HpLabel", "AtkLabel", "FlavourTextLabel")]
+[node name="UnitCard" type="Control" unique_id=934905130 node_paths=PackedStringArray("PtContainer", "PtLabel", "HrtContainer", "HrtLabel", "NameLabel", "WorldLabel", "CardTypeLabel", "BtmDivStarTexture", "BtmDivGradTexture", "StatContainer", "HpLabel", "AtkLabel", "FlavourTextLabel", "AbilitiesContainer")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1408.0
@@ -51,6 +51,7 @@ StatContainer = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/Ma
 HpLabel = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/HpContainer/HBoxContainer/Label")
 AtkLabel = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/AtkContainer/HBoxContainer/Label")
 FlavourTextLabel = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/FlavourTextLabel")
+AbilitiesContainer = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer/AbilitiesContainer")
 metadata/_edit_use_anchors_ = true
 
 [node name="TextureContainer" type="Control" parent="." unique_id=1654516441]
@@ -330,14 +331,15 @@ texture = ExtResource("9_sris1")
 expand_mode = 3
 
 [node name="AbilityAndSPAtkContainer" type="HBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=505944580]
-visible = false
 layout_mode = 2
 
 [node name="AbilitiesContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=1521468014]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="SPAtkContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=512750565]
+visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer/SPAtkContainer" unique_id=1582480491]
