@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c2nb0vt775p1x"]
 
-[ext_resource type="PackedScene" uid="uid://bk7jiwgxicc04" path="res://scenes/vanilla/instance/battle/ui/card_display.tscn" id="1_0eavq"]
+[ext_resource type="PackedScene" uid="uid://bk7jiwgxicc04" path="res://scenes/vanilla/instance/battle/ui/default_card_display.tscn" id="1_0eavq"]
 [ext_resource type="Script" uid="uid://6pox2b7ma0ve" path="res://scenes/vanilla/instance/battle/entities/Card3D.cs" id="2_card3d"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_30tpu"]

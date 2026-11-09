@@ -1,18 +1,19 @@
 [gd_scene format=3 uid="uid://bk7jiwgxicc04"]
 
-[ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/vanilla/instance/battle/ui/CardDisplay.cs" id="1_q57fe"]
-[ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/vanilla/shader/blur.gdshader" id="2_0gwxm"]
-[ext_resource type="Texture2D" uid="uid://dxvtwhw1tnbmo" path="res://assets/vanilla/texture/cards/captain.png" id="2_iyhvi"]
-[ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/vanilla/font/rajdhani/rajdhani.tres" id="3_fi3fs"]
-[ext_resource type="Texture2D" uid="uid://dhqkm4keqsyhr" path="res://assets/vanilla/texture/icon/ri--heart-fill.svg" id="4_f1nea"]
-[ext_resource type="Texture2D" uid="uid://b07obi1nosrck" path="res://assets/vanilla/texture/icon/ri--sword-fill.svg" id="4_m05dj"]
-[ext_resource type="Texture2D" uid="uid://cqr0ccclab6og" path="res://assets/vanilla/texture/icon/ri--gemini-fill.svg" id="7_q57fe"]
-[ext_resource type="FontVariation" uid="uid://d2wy0udo168ij" path="res://assets/vanilla/font/hedvig_letters_sans/hedvig_letters_sans_italics.tres" id="8_kuav8"]
-[ext_resource type="Texture2D" uid="uid://dqm32ts2sr0jf" path="res://assets/vanilla/texture/border.svg" id="10_3l86x"]
-[ext_resource type="Texture2D" uid="uid://d1pxi4dbq0ieq" path="res://assets/vanilla/texture/icon/crystal.svg" id="10_g0y7p"]
+[ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/vanilla/instance/battle/ui/DefaultCardDisplay.cs" id="1_tjupb"]
+[ext_resource type="Texture2D" uid="uid://dxvtwhw1tnbmo" path="res://assets/vanilla/texture/cards/captain.png" id="2_mfiu1"]
+[ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/vanilla/shader/blur.gdshader" id="3_bs5su"]
+[ext_resource type="Texture2D" uid="uid://d1pxi4dbq0ieq" path="res://assets/vanilla/texture/icon/crystal.svg" id="4_4fyxd"]
+[ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/vanilla/font/rajdhani/rajdhani.tres" id="5_6ua0c"]
+[ext_resource type="Texture2D" uid="uid://cfa1fksioqwrd" path="res://assets/vanilla/texture/icon/broken-heart.svg" id="6_6hlfp"]
+[ext_resource type="Texture2D" uid="uid://cqr0ccclab6og" path="res://assets/vanilla/texture/icon/ri--gemini-fill.svg" id="7_yvrkv"]
+[ext_resource type="Texture2D" uid="uid://dhqkm4keqsyhr" path="res://assets/vanilla/texture/icon/ri--heart-fill.svg" id="8_nrkje"]
+[ext_resource type="Texture2D" uid="uid://b07obi1nosrck" path="res://assets/vanilla/texture/icon/ri--sword-fill.svg" id="9_sris1"]
+[ext_resource type="FontVariation" uid="uid://d2wy0udo168ij" path="res://assets/vanilla/font/hedvig_letters_sans/hedvig_letters_sans_italics.tres" id="10_rwj25"]
+[ext_resource type="Texture2D" uid="uid://dqm32ts2sr0jf" path="res://assets/vanilla/texture/border.svg" id="11_sj2xq"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a2w1i"]
-shader = ExtResource("2_0gwxm")
+shader = ExtResource("3_bs5su")
 shader_parameter/blur_amount = 2.5
 shader_parameter/saturation = 1.6
 shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
@@ -25,12 +26,12 @@ colors = PackedColorArray(0.16078432, 0.4745098, 1, 1, 1, 1, 1, 0.05882353, 0, 0
 gradient = SubResource("Gradient_8pn3e")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0gwxm"]
-shader = ExtResource("2_0gwxm")
+shader = ExtResource("3_bs5su")
 shader_parameter/blur_amount = 2.000000095
 shader_parameter/saturation = 1.6
 shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 
-[node name="UnitCard" type="Control" unique_id=934905130 node_paths=PackedStringArray("NameLabelNode", "WorldNameLabelNode", "CardTypeLabelNode", "PtLabelNode", "HpLabelNode", "AtkLabelNode", "FlavourTextLabelNode")]
+[node name="UnitCard" type="Control" unique_id=934905130 node_paths=PackedStringArray("PtContainer", "PtLabel", "HrtContainer", "HrtLabel", "NameLabel", "WorldLabel", "CardTypeLabel", "BtmDivStarTexture", "BtmDivGradTexture", "StatContainer", "HpLabel", "AtkLabel", "FlavourTextLabel")]
 custom_minimum_size = Vector2(352, 492)
 layout_mode = 3
 anchors_preset = 0
@@ -39,14 +40,20 @@ offset_bottom = 1968.0
 pivot_offset_ratio = Vector2(0.5, 0.5)
 size_flags_horizontal = 0
 size_flags_vertical = 0
-script = ExtResource("1_q57fe")
-NameLabelNode = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/Label")
-WorldNameLabelNode = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/WorldContainer/WorldLabel")
-CardTypeLabelNode = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/WorldContainer/TypeLabel")
-PtLabelNode = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox/MarginContainer/Label")
-HpLabelNode = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/HpContainer/HBoxContainer/Label")
-AtkLabelNode = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/AtkContainer/HBoxContainer/Label")
-FlavourTextLabelNode = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/FlavourTextLabel")
+script = ExtResource("1_tjupb")
+PtContainer = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox")
+PtLabel = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox/MarginContainer/Label")
+HrtContainer = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/HrtBox")
+HrtLabel = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/HrtBox/MarginContainer/Label")
+NameLabel = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/NameLabel")
+WorldLabel = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/WorldContainer/WorldLabel")
+CardTypeLabel = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/WorldContainer/TypeLabel")
+BtmDivStarTexture = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/BottomDivider/StarTexture")
+BtmDivGradTexture = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/BottomDivider/GradientTexture")
+StatContainer = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer")
+HpLabel = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/HpContainer/HBoxContainer/Label")
+AtkLabel = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/AtkContainer/HBoxContainer/Label")
+FlavourTextLabel = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/FlavourTextLabel")
 metadata/_edit_use_anchors_ = true
 
 [node name="TextureContainer" type="Control" parent="." unique_id=1654516441]
@@ -75,7 +82,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_iyhvi")
+texture = ExtResource("2_mfiu1")
 expand_mode = 5
 stretch_mode = 6
 
@@ -129,13 +136,46 @@ theme_override_constants/margin_bottom = -32
 [node name="TextureRect" type="TextureRect" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox/MarginContainer" unique_id=500142565]
 modulate = Color(0.54509807, 0.36078432, 0.9647059, 1)
 layout_mode = 2
-texture = ExtResource("10_g0y7p")
+texture = ExtResource("4_4fyxd")
 
 [node name="Label" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox/MarginContainer" unique_id=1089325618]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.8901961, 0.8117647, 1, 1)
-theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_fonts/font = ExtResource("5_6ua0c")
+theme_override_font_sizes/font_size = 192
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HrtBox" type="Control" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer" unique_id=46996760]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.15
+
+[node name="MarginContainer" type="MarginContainer" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/HrtBox" unique_id=257616636]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_top = -32
+theme_override_constants/margin_bottom = -32
+
+[node name="TextureRect" type="TextureRect" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/HrtBox/MarginContainer" unique_id=1470032377]
+modulate = Color(0.111600004, 0.62, 0.15396664, 1)
+layout_mode = 2
+texture = ExtResource("6_6hlfp")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/HrtBox/MarginContainer" unique_id=176869996]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.28417507, 0.81, 0.04050001, 1)
+theme_override_fonts/font = ExtResource("5_6ua0c")
 theme_override_font_sizes/font_size = 192
 text = "0"
 horizontal_alignment = 1
@@ -146,10 +186,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="Label" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer" unique_id=314134182]
+[node name="NameLabel" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer" unique_id=314134182]
 layout_mode = 2
 size_flags_horizontal = 0
-theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_fonts/font = ExtResource("5_6ua0c")
 theme_override_font_sizes/font_size = 72
 text = "Error Unit Name"
 
@@ -160,7 +200,7 @@ theme_override_constants/separation = 32
 [node name="WorldLabel" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/WorldContainer" unique_id=1382824555]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.16078432, 0.4745098, 1, 1)
-theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_fonts/font = ExtResource("5_6ua0c")
 theme_override_font_sizes/font_size = 36
 text = "Error Unit World"
 vertical_alignment = 1
@@ -174,10 +214,11 @@ color = Color(1, 1, 1, 0.078431375)
 [node name="TypeLabel" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/WorldContainer" unique_id=134240093]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.3019608)
-theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_fonts/font = ExtResource("5_6ua0c")
 theme_override_font_sizes/font_size = 32
-text = "UNIT"
+text = "Unit"
 vertical_alignment = 1
+uppercase = true
 
 [node name="BottomDivider" type="HBoxContainer" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer" unique_id=382696569]
 layout_mode = 2
@@ -187,7 +228,7 @@ theme_override_constants/separation = 4
 modulate = Color(0.16078432, 0.4745098, 1, 1)
 custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
-texture = ExtResource("7_q57fe")
+texture = ExtResource("7_yvrkv")
 expand_mode = 1
 
 [node name="GradientTexture" type="TextureRect" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/BottomDivider" unique_id=218586584]
@@ -242,7 +283,7 @@ size_flags_horizontal = 4
 [node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/HpContainer/HBoxContainer" unique_id=1211825131]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_fonts/font = ExtResource("5_6ua0c")
 theme_override_font_sizes/font_size = 192
 text = "0"
 
@@ -255,7 +296,7 @@ theme_override_constants/margin_bottom = 72
 
 [node name="TextureRect" type="TextureRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/HpContainer/HBoxContainer/MarginContainer" unique_id=2044486387]
 layout_mode = 2
-texture = ExtResource("4_f1nea")
+texture = ExtResource("8_nrkje")
 expand_mode = 3
 
 [node name="Divider" type="ColorRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer" unique_id=570978827]
@@ -275,7 +316,7 @@ size_flags_horizontal = 4
 [node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/AtkContainer/HBoxContainer" unique_id=1116769164]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_fonts/font = ExtResource("5_6ua0c")
 theme_override_font_sizes/font_size = 192
 text = "0"
 
@@ -288,10 +329,11 @@ theme_override_constants/margin_bottom = 72
 
 [node name="TextureRect" type="TextureRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/AtkContainer/HBoxContainer/MarginContainer" unique_id=695336582]
 layout_mode = 2
-texture = ExtResource("4_m05dj")
+texture = ExtResource("9_sris1")
 expand_mode = 3
 
 [node name="AbilityAndSPAtkContainer" type="HBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=505944580]
+visible = false
 layout_mode = 2
 
 [node name="AbilitiesContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=1521468014]
@@ -299,12 +341,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="SPAtkContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=512750565]
-visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer/SPAtkContainer" unique_id=1582480491]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_fi3fs")
+theme_override_fonts/font = ExtResource("5_6ua0c")
 theme_override_font_sizes/font_size = 40
 text = "SP ATK"
 horizontal_alignment = 1
@@ -328,7 +369,7 @@ color = Color(1, 1, 1, 0.118)
 custom_minimum_size = Vector2(30, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.77254903)
-theme_override_fonts/font = ExtResource("8_kuav8")
+theme_override_fonts/font = ExtResource("10_rwj25")
 theme_override_font_sizes/font_size = 36
 text = "Error Flavour Text"
 autowrap_mode = 3
@@ -341,7 +382,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("10_3l86x")
+texture = ExtResource("11_sj2xq")
 patch_margin_left = 130
 patch_margin_top = 130
 patch_margin_right = 130
