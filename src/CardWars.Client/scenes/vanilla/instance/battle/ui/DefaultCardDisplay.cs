@@ -20,7 +20,7 @@ public partial class DefaultCardDisplay : CardDisplay
 	[Export] Label? AtkLabel;
 	[Export] Label? FlavourTextLabel;
 
-	public Vector2 PortraitSize = new(1968.0f, 1968.0f);
+	public Vector2 PortraitSize = new(1408.0f, 1968.0f);
 	public Vector2 LandscapeSize = new(1968.0f, 1408.0f);
 
 	public override void SetData(CompoundTag data)
