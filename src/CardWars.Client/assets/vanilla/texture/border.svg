@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+	<g fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter">
+		<!-- lol doing this manually -->
+		<path d="
+			M 19 79 H 65 V 19 H 19 V 65 H 79 V 19
+			H 421 V 65 H 481 V 19 H 435 V 79 H 481
+			V 421 H 435 V 481 H 481 V 435 H 421 V 481
+			H 79 V 435 H 19 V 481 H 65 V 421 H 19
+			Z" />
+
+		<path d="
+			M 33 93 H 51 V 33 H 33 V 51 H 93 V 33
+			H 407 V 51 H 467 V 33 H 449 V 93 H 467
+			V 407 H 449 V 467 H 467 V 449 H 407 V 467
+			H 93 V 449 H 33 V 467 H 51 V 407 H 33
+			Z" />
+	</g>
+</svg>

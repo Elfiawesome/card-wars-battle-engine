@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://b07obi1nosrck" path="res://assets/vanilla/texture/icon/ri--sword-fill.svg" id="4_m05dj"]
 [ext_resource type="Texture2D" uid="uid://cqr0ccclab6og" path="res://assets/vanilla/texture/icon/ri--gemini-fill.svg" id="7_q57fe"]
 [ext_resource type="FontVariation" uid="uid://d2wy0udo168ij" path="res://assets/vanilla/font/hedvig_letters_sans/hedvig_letters_sans_italics.tres" id="8_kuav8"]
+[ext_resource type="Texture2D" uid="uid://dqm32ts2sr0jf" path="res://assets/vanilla/texture/border.svg" id="10_3l86x"]
 [ext_resource type="Texture2D" uid="uid://d1pxi4dbq0ieq" path="res://assets/vanilla/texture/icon/crystal.svg" id="10_g0y7p"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a2w1i"]
@@ -332,36 +333,16 @@ theme_override_font_sizes/font_size = 36
 text = "Error Flavour Text"
 autowrap_mode = 3
 
-[node name="WhiteOutline" type="MarginContainer" parent="." unique_id=1510602839]
-modulate = Color(1, 1, 1, 0.050980393)
-z_index = 1
+[node name="Border" type="NinePatchRect" parent="." unique_id=2107872014]
+modulate = Color(1, 1, 1, 0.09411765)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 32
-theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 32
-
-[node name="TopOutline" type="ColorRect" parent="WhiteOutline" unique_id=1316121615]
-custom_minimum_size = Vector2(8, 8)
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="LeftOutline" type="ColorRect" parent="WhiteOutline" unique_id=1253222022]
-custom_minimum_size = Vector2(8, 8)
-layout_mode = 2
-size_flags_horizontal = 0
-
-[node name="RightOutline" type="ColorRect" parent="WhiteOutline" unique_id=1876953417]
-custom_minimum_size = Vector2(8, 8)
-layout_mode = 2
-size_flags_horizontal = 8
-
-[node name="BottomOutline" type="ColorRect" parent="WhiteOutline" unique_id=1474245062]
-custom_minimum_size = Vector2(8, 8)
-layout_mode = 2
-size_flags_vertical = 8
+texture = ExtResource("10_3l86x")
+patch_margin_left = 130
+patch_margin_top = 130
+patch_margin_right = 130
+patch_margin_bottom = 130
