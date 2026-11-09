@@ -44,7 +44,6 @@ public class CardViewHandler : IEntityViewHandler<GenericCard>
 			else if (card.OwnerBattlefieldId is { } battlefieldId)
 			{
 				AttachToBattlefield(instance, node, battlefieldId);
-				node.Rotation = new Vector3(0f, Mathf.Pi / 2f, 0f);
 				node.SetHitBox(true);
 				node.HookMouseEvents();
 			}

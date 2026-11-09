@@ -44,6 +44,7 @@ public partial class Card3D : EntityNode3D
 		{
 			display.SetData(card.Data);
 			BoxShape.Size = new Vector3(display.Size.X, 100.0f, display.Size.Y) / 100f;
+			if (CardViewport is not null) CardViewport.Size = (Vector2I)display.Size;
 		}
 	}
 
@@ -59,21 +60,11 @@ public partial class Card3D : EntityNode3D
 
 	public override HighlightBounds? GetHighlightBounds()
 	{
-		// if (GetData<GenericCard>() is not { IsHero: true }) return null;
-
-		// const float cardWidth = 0.82f;
-		// const float cardHeight = 1.1f;
-		var angle = Rotation.Y;
-		// var sin = Mathf.Abs(Mathf.Sin(angle));
-		// var cos = Mathf.Abs(Mathf.Cos(angle));
-
 		var width = BoxShape.Size.Y;
 		var height = BoxShape.Size.Z;
-
 		return new HighlightBounds(
 			new Vector3(0f, 0.01f, 0f),
-			new Vector2(width, height),
-			-angle);
+			new Vector2(width, height));
 	}
 
 	private void OnTargetInput(Node cameraNode, InputEvent @event, Vector3 eventPosition, Vector3 normal, long shapeIndex)

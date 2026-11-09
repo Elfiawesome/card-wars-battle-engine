@@ -32,7 +32,6 @@ shader_parameter/saturation = 1.6
 shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 
 [node name="UnitCard" type="Control" unique_id=934905130 node_paths=PackedStringArray("PtContainer", "PtLabel", "HrtContainer", "HrtLabel", "NameLabel", "WorldLabel", "CardTypeLabel", "BtmDivStarTexture", "BtmDivGradTexture", "StatContainer", "HpLabel", "AtkLabel", "FlavourTextLabel")]
-custom_minimum_size = Vector2(352, 492)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1408.0
