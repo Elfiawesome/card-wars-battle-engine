@@ -14,7 +14,7 @@ public static class SharedIds
 	// UI
 	public static class UI
 	{
-		public static readonly ResourceId CardDisplay = ResourceId.Vanilla("card_display");
+		public static readonly ResourceId DefaultCardDisplay = ResourceId.Vanilla("default_card_display");
 		public static readonly ResourceId LineArrow = ResourceId.Vanilla("line_arrow");
 		public static readonly ResourceId TargetHighlight = ResourceId.Vanilla("target_highlight");
 	}

@@ -4,6 +4,7 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Client.scripts.vanilla.registry;
+using CardWars.Core.Logging;
 using CardWars.Vanilla.Shared;
 using Godot;
 
@@ -34,23 +35,27 @@ public class CardViewHandler : IEntityViewHandler<GenericCard>
 			var node = instance.GetOrCreateEntityNode<Card3D>(SharedIds.Entities.Card, card.Id);
 			if (node is null) continue;
 
-			node.SetCard(card);
-
 			if (card.OwnerUnitSlotId is { } slotId)
 			{
 				node.Rotation = Vector3.Zero;
 				node.SetHitBox(false);
 				AttachToSlot(instance, node, slotId);
-				continue;
 			}
-
-			if (card.OwnerBattlefieldId is { } battlefieldId)
+			else if (card.OwnerBattlefieldId is { } battlefieldId)
 			{
 				AttachToBattlefield(instance, node, battlefieldId);
 				node.Rotation = new Vector3(0f, Mathf.Pi / 2f, 0f);
 				node.SetHitBox(true);
 				node.HookMouseEvents();
 			}
+
+			// TODO: Check for skins here
+			// but for now let's use default
+			var targetSkinId = SharedIds.UI.DefaultCardDisplay; // Set the skin here
+			var display = instance.ClientRegistry?.UserInterface.Instantiate<CardDisplay>(targetSkinId);
+			Log.Info(display);
+			if (display is not null) node.SetCardDisplay(targetSkinId, display);
+			node.SetCard(card);
 		}
 	}
 

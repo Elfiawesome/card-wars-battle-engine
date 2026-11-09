@@ -1,4 +1,5 @@
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Registry;
 using Godot;
 
 namespace CardWars.Client.scenes.vanilla.instance.battle;
@@ -8,7 +9,9 @@ public partial class Card3D : EntityNode3D
 	private Area3D? _collisionBox;
 	private CollisionShape3D? _collisionBoxShape;
 
-	public CardDisplay? Display => GetNodeOrNull<CardDisplay>("SubViewport/CardDisplay");
+	public SubViewport? CardViewport => GetNode<SubViewport>("CardViewport");
+	public CardDisplay? Display;
+	public ResourceId DisplayId { get; private set; }
 
 	public override void _Ready()
 	{
@@ -34,6 +37,16 @@ public partial class Card3D : EntityNode3D
 	{
 		if (Display is { } display)
 			display.SetData(card.Data);
+	}
+
+	public void SetCardDisplay(ResourceId cardDisplayId, CardDisplay cardDisplay)
+	{
+		if (cardDisplayId == DisplayId) return;
+		if (Display is not null) { CardViewport?.RemoveChild(Display); Display.QueueFree(); }
+
+		Display = cardDisplay;
+		DisplayId = cardDisplayId;
+		CardViewport?.AddChild(Display);
 	}
 
 	public override HighlightBounds? GetHighlightBounds()

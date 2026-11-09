@@ -32,7 +32,7 @@ public class VanillaMod : IClientMod
 		registry.Instances.Register(SharedIds.Instances.Battle, "res://scenes/vanilla/instance/battle/battle_instance.tscn");
 
 		// UI
-		registry.UserInterface.Register(SharedIds.UI.CardDisplay, "res://scenes/vanilla/instance/battle/ui/default_card_display.tscn");
+		registry.UserInterface.Register(SharedIds.UI.DefaultCardDisplay, "res://scenes/vanilla/instance/battle/ui/default_card_display.tscn");
 		registry.UserInterface.Register(SharedIds.UI.LineArrow, "res://scenes/vanilla/instance/battle/ui/line_arrow.tscn");
 		registry.UserInterface.Register(SharedIds.UI.TargetHighlight, "res://scenes/vanilla/instance/battle/ui/target_highlight.tscn");
 

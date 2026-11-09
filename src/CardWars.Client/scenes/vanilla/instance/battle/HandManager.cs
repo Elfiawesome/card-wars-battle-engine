@@ -69,7 +69,8 @@ public partial class HandManager : Control
 
 	public void AddCard(EntityId id)
 	{
-		var card = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<CardDisplay>(SharedIds.UI.CardDisplay);
+		// TODO: Get skin and place it inside
+		var card = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<CardDisplay>(SharedIds.UI.DefaultCardDisplay);
 		if (card is null) return;
 		card.Scale = Vector2.Zero;
 		card.Position = new(0, 0);
