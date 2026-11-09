@@ -1,5 +1,4 @@
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using Godot;
 
