@@ -1,4 +1,5 @@
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using Godot;
 
@@ -59,8 +60,8 @@ public partial class Card3D : EntityNode3D
 
 	public override HighlightBounds? GetHighlightBounds()
 	{
-		var width = BoxShape.Size.Y;
-		var height = BoxShape.Size.Z;
+		var width = BoxShape.Size.X * CollisionBox?.Scale.X ?? 0.0f;
+		var height = BoxShape.Size.Z * CollisionBox?.Scale.Z ?? 0.0f;
 		return new HighlightBounds(
 			new Vector3(0f, 0.01f, 0f),
 			new Vector2(width, height));
