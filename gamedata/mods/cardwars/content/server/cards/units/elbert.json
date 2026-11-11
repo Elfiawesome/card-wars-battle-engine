@@ -10,10 +10,10 @@
 	],
 	"abilities": [
 		{
-			"name": "Test Ability",
+			"description": "Test Ability",
 			"ability_type": "Ability Trigger",
 			"color": "#4287f5",
-			"texture": "cardwars:texture/broken-heart",
+			"texture": "cardwars:texture/icon/broken-heart",
 			"behaviour": {
 				"resource": "test_ability"
 			}

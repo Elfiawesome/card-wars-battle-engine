@@ -79,7 +79,7 @@ public partial class HandManager : Control
 		card.MouseExited += () => OnCardMouseExited(card);
 		card.GuiInput += (e) => OnCardGuiInput(e, card);
 		AddChild(card);
-		if (BattleInstance?.State.Get<GenericCard>(id) is { } entity) card.SetData(entity.Data);
+		if (BattleInstance?.State.Get<GenericCard>(id) is { } entity && BattleInstance?.ClientRegistry is { } clientRegistry) card.SetData(entity.Data, clientRegistry);
 		_cards[id] = card;
 		ArrangeCard();
 	}

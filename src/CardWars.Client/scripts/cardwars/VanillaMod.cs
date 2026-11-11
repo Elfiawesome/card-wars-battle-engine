@@ -39,7 +39,7 @@ public class VanillaMod : IClientMod
 		registry.UserInterface.Register(SharedIds.UI.TargetHighlight, "res://scenes/cardwars/instance/battle/ui/target_highlight.tscn");
 
 		// Register all content in res://
-		var GDContentLoader = new GDContentLoader("vanilla");
+		var GDContentLoader = new GDContentLoader("cardwars");
 		foreach (var (resourceId, resourcePath) in GDContentLoader.LoadAssets())
 		{
 			Log.Info("Registered Resource: " + resourceId);
