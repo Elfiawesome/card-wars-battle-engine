@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bcn8333rsty1y"]
 
 [ext_resource type="Script" uid="uid://pixq23g4y1w0" path="res://scenes/cardwars/instance/battle/ui/card/default_card/ability_text.gd" id="1_yurro"]
-[ext_resource type="Texture2D" uid="uid://c41agu56cgkoy" path="res://assets/cardwars/texture/icon/ri--error-warning-fill.svg" id="2_lx3wp"]
+[ext_resource type="Texture2D" uid="uid://c41agu56cgkoy" path="res://assets/cardwars/texture/icon/error.svg" id="2_lx3wp"]
 [ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="3_ulykp"]
 [ext_resource type="FontVariation" uid="uid://c3rx16v67f23f" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans.tres" id="4_at12j"]
 

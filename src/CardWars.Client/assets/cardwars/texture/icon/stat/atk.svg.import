@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cfa1fksioqwrd"
-path="res://.godot/imported/broken-heart.svg-c812d949b7cd6ab59d847d0476da8cc2.ctex"
+uid="uid://b07obi1nosrck"
+path="res://.godot/imported/atk.svg-94406ea1bea37b7bd04e3605f95ae196.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cardwars/texture/icon/stat/broken-heart.svg"
-dest_files=["res://.godot/imported/broken-heart.svg-c812d949b7cd6ab59d847d0476da8cc2.ctex"]
+source_file="res://assets/cardwars/texture/icon/stat/atk.svg"
+dest_files=["res://.godot/imported/atk.svg-94406ea1bea37b7bd04e3605f95ae196.ctex"]
 
 [params]
 

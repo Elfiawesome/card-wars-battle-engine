@@ -3,12 +3,12 @@
 [ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/cardwars/instance/battle/ui/card/default_card/DefaultCardDisplay.cs" id="1_ivaen"]
 [ext_resource type="Texture2D" uid="uid://b77joxtigr563" path="res://assets/cardwars/texture/cards/by.jpg" id="2_ivaen"]
 [ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/cardwars/shader/blur.gdshader" id="3_deubm"]
-[ext_resource type="Texture2D" uid="uid://d1pxi4dbq0ieq" path="res://assets/cardwars/texture/icon/stat/crystal.svg" id="4_mt1s7"]
+[ext_resource type="Texture2D" uid="uid://d1pxi4dbq0ieq" path="res://assets/cardwars/texture/icon/stat/pt.svg" id="4_mt1s7"]
 [ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="5_cx7xc"]
-[ext_resource type="Texture2D" uid="uid://cfa1fksioqwrd" path="res://assets/cardwars/texture/icon/stat/broken-heart.svg" id="6_bvtu0"]
-[ext_resource type="Texture2D" uid="uid://cqr0ccclab6og" path="res://assets/cardwars/texture/icon/ri--gemini-fill.svg" id="7_jybqe"]
-[ext_resource type="Texture2D" uid="uid://dhqkm4keqsyhr" path="res://assets/cardwars/texture/icon/stat/ri--heart-fill.svg" id="8_ujkve"]
-[ext_resource type="Texture2D" uid="uid://b07obi1nosrck" path="res://assets/cardwars/texture/icon/stat/ri--sword-fill.svg" id="9_a0vwa"]
+[ext_resource type="Texture2D" uid="uid://cfa1fksioqwrd" path="res://assets/cardwars/texture/icon/stat/hrt.svg" id="6_bvtu0"]
+[ext_resource type="Texture2D" uid="uid://cqr0ccclab6og" path="res://assets/cardwars/texture/icon/star.svg" id="7_jybqe"]
+[ext_resource type="Texture2D" uid="uid://dhqkm4keqsyhr" path="res://assets/cardwars/texture/icon/stat/hp.svg" id="8_ujkve"]
+[ext_resource type="Texture2D" uid="uid://b07obi1nosrck" path="res://assets/cardwars/texture/icon/stat/atk.svg" id="9_a0vwa"]
 [ext_resource type="FontVariation" uid="uid://d2wy0udo168ij" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans_italics.tres" id="10_hucph"]
 [ext_resource type="Texture2D" uid="uid://dqm32ts2sr0jf" path="res://assets/cardwars/texture/ui/border.svg" id="11_cuo4o"]
 
@@ -135,6 +135,7 @@ theme_override_constants/margin_bottom = -32
 modulate = Color(0.54509807, 0.36078432, 0.9647059, 1)
 layout_mode = 2
 texture = ExtResource("4_mt1s7")
+expand_mode = 3
 
 [node name="Label" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox/MarginContainer" unique_id=1089325618]
 layout_mode = 2

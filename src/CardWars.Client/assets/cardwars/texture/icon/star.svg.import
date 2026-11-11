@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1pxi4dbq0ieq"
-path="res://.godot/imported/crystal.svg-a15a057004d759e30202363f542fdbb0.ctex"
+uid="uid://cqr0ccclab6og"
+path="res://.godot/imported/star.svg-eea158271cd50da1317c94a06d99b36d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cardwars/texture/icon/stat/crystal.svg"
-dest_files=["res://.godot/imported/crystal.svg-a15a057004d759e30202363f542fdbb0.ctex"]
+source_file="res://assets/cardwars/texture/icon/star.svg"
+dest_files=["res://.godot/imported/star.svg-eea158271cd50da1317c94a06d99b36d.ctex"]
 
 [params]
 
@@ -38,6 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=10.0
+svg/scale=1.0
 editor/scale_with_editor_scale=false
 editor/convert_colors_with_editor_theme=false
