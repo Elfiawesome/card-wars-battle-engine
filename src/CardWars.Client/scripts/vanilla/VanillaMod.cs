@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using System.Linq;
 using CardWars.Client.scripts.core;
+using CardWars.Client.scripts.core.storage;
 using CardWars.Client.scripts.vanilla.animation;
 using CardWars.Client.scripts.vanilla.entity_view;
 using CardWars.Client.scripts.vanilla.layout;
 using CardWars.Client.scripts.vanilla.packet;
 using CardWars.Client.scripts.vanilla.registry;
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
 using CardWars.Vanilla.Shared;
@@ -35,6 +38,14 @@ public class VanillaMod : IClientMod
 		registry.UserInterface.Register(SharedIds.UI.DefaultCardDisplay, "res://scenes/vanilla/instance/battle/ui/card/default_card/default_card_display.tscn");
 		registry.UserInterface.Register(SharedIds.UI.LineArrow, "res://scenes/vanilla/instance/battle/ui/line_arrow.tscn");
 		registry.UserInterface.Register(SharedIds.UI.TargetHighlight, "res://scenes/vanilla/instance/battle/ui/target_highlight.tscn");
+
+		// Register all content in res://
+		var GDContentLoader = new GDContentLoader("vanilla");
+		foreach (var (resourceId, resourcePath) in GDContentLoader.LoadAssets())
+		{
+			Log.Info("Registered Resource: " + resourceId);
+			registry.Resources.Register(resourceId, resourcePath);
+		}
 
 		// --- Battle ---
 		// Entities

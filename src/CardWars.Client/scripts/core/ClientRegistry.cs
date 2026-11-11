@@ -12,6 +12,7 @@ public class ClientRegistry
 	public SceneRegistry<ResourceId> Instances = new();
 	public SceneRegistry<ResourceId> UserInterface = new();
 	public SceneRegistry<ResourceId> GameObjects = new();
+	public ResourceRegistry<ResourceId> Resources = new();
 
 	private readonly Dictionary<Type, IClientRegistryExtension> _extensions = [];
 
