@@ -22,6 +22,6 @@
       <ModOutputFiles Include="$(TargetDir)CardWars.Vanilla.Shared.pdb" />
     </ItemGroup>
     <Message Text="Copying Server Vanilla Mod to mods folder..." Importance="high" />
-    <Copy SourceFiles="@(ModOutputFiles)" DestinationFolder="$(MSBuildProjectDirectory)\..\..\gamedata\mods\vanilla\code\" />
+    <Copy SourceFiles="@(ModOutputFiles)" DestinationFolder="$(MSBuildProjectDirectory)\..\..\gamedata\mods\cardwars\code\" />
   </Target>
 </Project>

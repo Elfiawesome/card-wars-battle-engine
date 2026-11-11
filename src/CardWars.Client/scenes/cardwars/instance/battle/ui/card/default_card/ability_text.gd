@@ -13,6 +13,6 @@ func set_data(
 ) -> void:
 	color_rect.color = ability_color
 	texture_rect.texture = ability_texture
-	label.text = description
-	ability_description.text = ability_trigger
+	label.text = ability_trigger
+	ability_description.text = description
 	print(texture_rect.texture)

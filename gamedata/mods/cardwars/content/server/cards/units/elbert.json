@@ -11,9 +11,7 @@
 	"abilities": [
 		{
 			"description": "Test Ability",
-			"ability_type": "Ability Trigger",
-			"color": "#4287f5",
-			"texture": "cardwars:texture/icon/abilities/active",
+			"ability_type": "cardwars:ability_types/passive",
 			"behaviour": {
 				"resource": "test_ability"
 			}

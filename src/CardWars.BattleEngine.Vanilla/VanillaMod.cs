@@ -103,6 +103,17 @@ public class VanillaMod : IBattleEngineMod
 		// --- Attack Definitions ---
 		RegisterAttackDefinitions(registry, modContents);
 
+		// --- Register Ability Types ---
+		foreach (var content in modContents)
+		{
+			if (content.Category.Length == 1 && content.Category[0] == "ability_types")
+			{
+				var abilityType = content.ReadAs<CompoundTag>();
+				if (abilityType is null) continue;
+				registry.AbilityTypeDefinitions.Register(content.Id, abilityType);
+			}
+		}
+
 		// --- Card Definitions ---
 		RegisterCardDefinitions(registry, modContents);
 	}
@@ -200,6 +211,25 @@ public class VanillaMod : IBattleEngineMod
 					if (!unitDataTag.Has("target_filter"))
 						unitDataTag.Set("target_filter", DataTagMapper.ToTag(UnitTargetFilter.Create()));
 
+					var abilities = unitDataTag.GetList("abilities");
+					if (abilities is ListTag { })
+					{
+						foreach (var a in abilities)
+						{
+							if (a is CompoundTag ability)
+							{
+								var abilityType = ability.Get<StringTag>("ability_type")?.Value ?? "";
+								var abilityTypeId = registry.AbilityTypeDefinitions.Get(ResourceId.Parse(abilityType));
+								if (abilityTypeId is { })
+								{
+									ability.Remove("ability_type");
+									ability.Set("ability_type", abilityTypeId.GetString("name", ""));
+									ability.Set("color", abilityTypeId.GetString("color", ""));
+									ability.Set("texture", abilityTypeId.GetString("texture", ""));
+								}
+							}
+						}
+					}
 					registry.CardDefinitions.Register(content.Id, unitDataTag);
 
 					break;
