@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CardWars.Client.scenes.vanilla.instance.battle;
+using CardWars.Client.scenes.cardwars.instance.battle;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 

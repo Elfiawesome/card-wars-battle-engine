@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.State;
-using CardWars.Client.scenes.vanilla.instance.battle;
+using CardWars.Client.scenes.cardwars.instance.battle;
+using CardWars.Client.scenes.cardwars.instance.battle.entities;
 using CardWars.Client.scripts.cardwars.systems;
 using CardWars.Core.Data.Tags;
 using Godot;

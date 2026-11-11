@@ -1,6 +1,6 @@
 using Godot;
 
-namespace CardWars.Client.scenes.vanilla.instance.battle;
+namespace CardWars.Client.scenes.cardwars.instance.battle;
 
 public partial class MouseControl : Control
 {

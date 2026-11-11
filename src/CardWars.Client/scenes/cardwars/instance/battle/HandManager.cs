@@ -4,11 +4,12 @@ using System.Linq;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Core.Logging;
 using CardWars.Vanilla.Shared;
 using Godot;
 
-namespace CardWars.Client.scenes.vanilla.instance.battle;
+namespace CardWars.Client.scenes.cardwars.instance.battle;
 
 public partial class HandManager : Control
 {

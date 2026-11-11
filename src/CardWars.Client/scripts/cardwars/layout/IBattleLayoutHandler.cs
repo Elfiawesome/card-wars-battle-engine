@@ -1,4 +1,4 @@
-using CardWars.Client.scenes.vanilla.instance.battle;
+using CardWars.Client.scenes.cardwars.instance.battle;
 
 namespace CardWars.Client.scripts.cardwars.layout;
 

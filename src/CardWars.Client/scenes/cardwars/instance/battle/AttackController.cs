@@ -4,10 +4,12 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.Client.scenes.cardwars.instance.battle.entities;
+using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Vanilla.Shared;
 using Godot;
 
-namespace CardWars.Client.scenes.vanilla.instance.battle;
+namespace CardWars.Client.scenes.cardwars.instance.battle;
 
 public partial class AttackController : Node
 {

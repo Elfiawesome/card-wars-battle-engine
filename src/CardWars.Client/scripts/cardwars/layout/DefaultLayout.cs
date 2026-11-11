@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.Client.scenes.vanilla.instance.battle;
+using CardWars.Client.scenes.cardwars.instance.battle;
+using CardWars.Client.scenes.cardwars.instance.battle.entities;
 using CardWars.Core.Data.Tags;
 using Godot;
 

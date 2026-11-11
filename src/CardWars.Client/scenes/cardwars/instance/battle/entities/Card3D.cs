@@ -3,7 +3,7 @@ using CardWars.Client.scripts.core;
 using CardWars.Core.Registry;
 using Godot;
 
-namespace CardWars.Client.scenes.vanilla.instance.battle;
+namespace CardWars.Client.scenes.cardwars.instance.battle.entities;
 
 public partial class Card3D : EntityNode3D
 {

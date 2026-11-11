@@ -8,6 +8,7 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Client.scenes.core.game_session;
+using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Client.scripts.cardwars.systems;
 using CardWars.Client.scripts.core.packet;
@@ -17,7 +18,7 @@ using CardWars.Vanilla.Shared;
 using CardWars.Vanilla.Shared.Packet;
 using Godot;
 
-namespace CardWars.Client.scenes.vanilla.instance.battle;
+namespace CardWars.Client.scenes.cardwars.instance.battle;
 
 public partial class BattleInstance : ClientInstance
 {

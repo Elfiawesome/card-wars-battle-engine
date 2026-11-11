@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CardWars.BattleEngine.State;
-using CardWars.Client.scenes.vanilla.instance.battle;
+using CardWars.Client.scenes.cardwars.instance.battle;
 
 namespace CardWars.Client.scripts.cardwars.systems;
 
