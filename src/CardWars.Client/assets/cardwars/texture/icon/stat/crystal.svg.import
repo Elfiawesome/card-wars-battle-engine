@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b07obi1nosrck"
-path="res://.godot/imported/ri--sword-fill.svg-73c678debc9d6ddaf3a75fdd52aa2514.ctex"
+uid="uid://d1pxi4dbq0ieq"
+path="res://.godot/imported/crystal.svg-a15a057004d759e30202363f542fdbb0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cardwars/texture/icon/ri--sword-fill.svg"
-dest_files=["res://.godot/imported/ri--sword-fill.svg-73c678debc9d6ddaf3a75fdd52aa2514.ctex"]
+source_file="res://assets/cardwars/texture/icon/stat/crystal.svg"
+dest_files=["res://.godot/imported/crystal.svg-a15a057004d759e30202363f542fdbb0.ctex"]
 
 [params]
 

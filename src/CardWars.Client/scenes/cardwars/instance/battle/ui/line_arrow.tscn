@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://i748dwpcbfwt"]
 
 [ext_resource type="Script" uid="uid://cft6bd02civky" path="res://scenes/cardwars/instance/battle/ui/LineArrow.cs" id="1_084u5"]
-[ext_resource type="Texture2D" uid="uid://cjby1xlu02v1h" path="res://assets/cardwars/texture/arrow_head.png" id="2_btmyy"]
+[ext_resource type="Texture2D" uid="uid://cjby1xlu02v1h" path="res://assets/cardwars/texture/ui/arrow_head.png" id="2_btmyy"]
 
 [node name="Line" type="Node2D" unique_id=936790578]
 script = ExtResource("1_084u5")

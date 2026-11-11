@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dqm32ts2sr0jf"
-path="res://.godot/imported/border.svg-037bd95d08d8293d2af2dde47a2056a6.ctex"
+uid="uid://cjby1xlu02v1h"
+path="res://.godot/imported/arrow_head.png-943596523b867492710046c6e3dcca42.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cardwars/texture/border.svg"
-dest_files=["res://.godot/imported/border.svg-037bd95d08d8293d2af2dde47a2056a6.ctex"]
+source_file="res://assets/cardwars/texture/ui/arrow_head.png"
+dest_files=["res://.godot/imported/arrow_head.png-943596523b867492710046c6e3dcca42.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bpemhsxwfw37p" path="res://scenes/cardwars/instance/battle/BattleInstance.cs" id="1_kka0g"]
 [ext_resource type="Script" uid="uid://dfmfjvoykx3r2" path="res://scenes/cardwars/instance/battle/MouseControl.cs" id="2_3esg4"]
 [ext_resource type="Script" uid="uid://b7e2pum6t8sfj" path="res://scenes/cardwars/instance/battle/HandManager.cs" id="2_4cb27"]
-[ext_resource type="Texture2D" uid="uid://c2n6a1kcehf1m" path="res://assets/cardwars/texture/wood_texture.jpg" id="4_3esg4"]
+[ext_resource type="Texture2D" uid="uid://c2n6a1kcehf1m" path="res://assets/cardwars/texture/ui/wood_texture.jpg" id="4_3esg4"]
 [ext_resource type="Script" uid="uid://d0bhmtleyro4k" path="res://scenes/cardwars/instance/battle/Camera.cs" id="5_4jex4"]
 [ext_resource type="Script" uid="uid://cevyuc4l4qfr3" path="res://scenes/cardwars/instance/battle/AttackController.cs" id="6_attack"]
 
