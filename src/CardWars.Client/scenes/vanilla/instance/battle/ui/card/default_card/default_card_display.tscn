@@ -164,7 +164,7 @@ theme_override_constants/margin_top = -32
 theme_override_constants/margin_bottom = -32
 
 [node name="TextureRect" type="TextureRect" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/HrtBox/MarginContainer" unique_id=1470032377]
-modulate = Color(0.111600004, 0.62, 0.15396664, 1)
+modulate = Color(0.019607844, 0.5882353, 0.4117647, 1)
 layout_mode = 2
 texture = ExtResource("6_bvtu0")
 expand_mode = 4
@@ -173,7 +173,7 @@ stretch_mode = 5
 [node name="Label" type="Label" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/HrtBox/MarginContainer" unique_id=176869996]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_colors/font_color = Color(0.28417507, 0.81, 0.04050001, 1)
+theme_override_colors/font_color = Color(0.81960785, 0.98039216, 0.8980392, 1)
 theme_override_fonts/font = ExtResource("5_cx7xc")
 theme_override_font_sizes/font_size = 192
 text = "0"
