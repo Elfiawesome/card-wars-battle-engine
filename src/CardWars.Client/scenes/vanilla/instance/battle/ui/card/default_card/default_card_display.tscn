@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bk7jiwgxicc04"]
 
 [ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/vanilla/instance/battle/ui/card/default_card/DefaultCardDisplay.cs" id="1_ivaen"]
-[ext_resource type="Texture2D" uid="uid://dxvtwhw1tnbmo" path="res://assets/vanilla/texture/cards/captain.png" id="2_y46c4"]
+[ext_resource type="Texture2D" uid="uid://b77joxtigr563" path="res://assets/vanilla/texture/cards/by.jpg" id="2_ivaen"]
 [ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/vanilla/shader/blur.gdshader" id="3_deubm"]
 [ext_resource type="Texture2D" uid="uid://d1pxi4dbq0ieq" path="res://assets/vanilla/texture/icon/crystal.svg" id="4_mt1s7"]
 [ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/vanilla/font/rajdhani/rajdhani.tres" id="5_cx7xc"]
@@ -74,14 +74,13 @@ expand_mode = 5
 stretch_mode = 6
 
 [node name="CharacterArt" type="TextureRect" parent="TextureContainer" unique_id=1134226534]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_y46c4")
+texture = ExtResource("2_ivaen")
 expand_mode = 5
 stretch_mode = 6
 
