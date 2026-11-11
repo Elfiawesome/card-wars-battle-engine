@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://bcn8333rsty1y"]
+
+[ext_resource type="Script" uid="uid://pixq23g4y1w0" path="res://scenes/cardwars/instance/battle/ui/card/default_card/ability_text.gd" id="1_yurro"]
+[ext_resource type="Texture2D" uid="uid://c41agu56cgkoy" path="res://assets/cardwars/texture/icon/ri--error-warning-fill.svg" id="2_lx3wp"]
+[ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="3_ulykp"]
+[ext_resource type="FontVariation" uid="uid://c3rx16v67f23f" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans.tres" id="4_at12j"]
+
+[node name="Ability" type="HBoxContainer" unique_id=1097095912]
+offset_right = 260.0
+offset_bottom = 68.0
+size_flags_horizontal = 3
+script = ExtResource("1_yurro")
+
+[node name="AbilityTriggerContainer" type="MarginContainer" parent="." unique_id=1671381476]
+custom_minimum_size = Vector2(0, 68)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="ColorRect" type="ColorRect" parent="AbilityTriggerContainer" unique_id=31246465]
+layout_mode = 2
+color = Color(1, 0, 0, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="AbilityTriggerContainer" unique_id=1989148496]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Control" type="Control" parent="AbilityTriggerContainer/HBoxContainer" unique_id=217302614]
+custom_minimum_size = Vector2(100, 68)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="AbilityTriggerContainer/HBoxContainer/Control" unique_id=1457777282]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 8
+
+[node name="TextureRect" type="TextureRect" parent="AbilityTriggerContainer/HBoxContainer/Control/MarginContainer" unique_id=548848192]
+layout_mode = 2
+texture = ExtResource("2_lx3wp")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MarginContainer" type="MarginContainer" parent="AbilityTriggerContainer/HBoxContainer" unique_id=2066502760]
+layout_mode = 2
+theme_override_constants/margin_right = 20
+
+[node name="Label" type="Label" parent="AbilityTriggerContainer/HBoxContainer/MarginContainer" unique_id=1592875302]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource("3_ulykp")
+theme_override_font_sizes/font_size = 60
+text = "Error"
+uppercase = true
+
+[node name="AbilityDescription" type="Label" parent="." unique_id=34148518]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource("4_at12j")
+theme_override_font_sizes/font_size = 60
+text = "Ability Text"
+vertical_alignment = 1
+autowrap_mode = 3

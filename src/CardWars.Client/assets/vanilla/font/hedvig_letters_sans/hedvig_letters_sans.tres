@@ -1,7 +1,0 @@
-[gd_resource type="FontVariation" format=3 uid="uid://c3rx16v67f23f"]
-
-[ext_resource type="FontFile" uid="uid://cnomknahp1ady" path="res://asset/fonts/hedvig_letters_sans/hedvig_letters_sans_regular.ttf" id="1_6nh8u"]
-
-[resource]
-base_font = ExtResource("1_6nh8u")
-spacing_bottom = -3
