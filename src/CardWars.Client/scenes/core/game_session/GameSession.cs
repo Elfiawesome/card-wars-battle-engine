@@ -49,7 +49,7 @@ public partial class GameSession : Node
 		ScanCoreAssemblies();
 
 		// Setup storage & providers
-		var provider = new GDFileProvider(); // LocalFileProvider();
+		var provider = new LocalFileProvider();
 		var clientDir = System.Environment.CurrentDirectory;
 		var projectRoot = provider.GetFullPath(provider.Combine(provider.Combine(clientDir, ".."), ".."));
 		var gamedataPath = provider.Combine(projectRoot, "gamedata");
