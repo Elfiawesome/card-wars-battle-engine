@@ -6,9 +6,11 @@ using CardWars.BattleEngine;
 using CardWars.BattleEngine.Input;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
+using CardWars.Client.scripts.core.storage;
 using CardWars.Client.scripts.vanilla;
 using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;
@@ -47,7 +49,7 @@ public partial class GameSession : Node
 		ScanCoreAssemblies();
 
 		// Setup storage & providers
-		var provider = new LocalFileProvider();
+		var provider = new GDFileProvider(); // LocalFileProvider();
 		var clientDir = System.Environment.CurrentDirectory;
 		var projectRoot = provider.GetFullPath(provider.Combine(provider.Combine(clientDir, ".."), ".."));
 		var gamedataPath = provider.Combine(projectRoot, "gamedata");
