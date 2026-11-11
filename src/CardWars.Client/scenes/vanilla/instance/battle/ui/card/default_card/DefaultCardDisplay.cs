@@ -26,7 +26,7 @@ public partial class DefaultCardDisplay : CardDisplay
 	public Vector2 PortraitSize = new(1408.0f, 1968.0f);
 	public Vector2 LandscapeSize = new(1968.0f, 1408.0f);
 
-	public PackedScene AbilityTextScene = GD.Load<PackedScene>("res://scenes/vanilla/instance/battle/ui/ability_text.tscn");
+	public PackedScene AbilityTextScene = GD.Load<PackedScene>("res://scenes/vanilla/instance/battle/ui/card/default_card/ability_text.tscn");
 
 	public override void SetData(CompoundTag data)
 	{
@@ -69,12 +69,49 @@ public partial class DefaultCardDisplay : CardDisplay
 
 					if (data.GetList("abilities") is { } abilities && AbilitiesContainer is { } abilitiesContainer)
 					{
-						foreach (var item in abilities.Items.OfType<CompoundTag>())
+						abilitiesContainer.Visible = true;
+
+						var abilityTags = abilities.Items.OfType<CompoundTag>().ToList();
+
+						// Grow / shrink the container to match the data
+						var children = abilitiesContainer.GetChildren();
+						int diff = abilityTags.Count - children.Count;
+
+						if (diff > 0)
 						{
-							var ats = AbilityTextScene.Instantiate<HBoxContainer>(); // wow good naming man
-							abilitiesContainer.AddChild(ats);
-							abilitiesContainer.Visible = true;
+							for (int i = 0; i < diff; i++)
+							{
+								var entry = AbilityTextScene.Instantiate<HBoxContainer>();
+								abilitiesContainer.AddChild(entry);
+							}
 						}
+						else if (diff < 0)
+						{
+							for (int i = 0; i < -diff; i++)
+							{
+								var last = abilitiesContainer.GetChild(abilitiesContainer.GetChildCount() - 1);
+								last.QueueFree();
+							}
+						}
+
+						var entries = abilitiesContainer.GetChildren();
+						for (int i = 0; i < abilityTags.Count; i++)
+						{
+							var tag = abilityTags[i];
+							var entry = entries[i];
+
+							// Populate.
+							if (entry is HBoxContainer)
+							{
+								entry.Call("set_data", [
+									tag.GetString("name"),
+									"idk honestly",
+									new Color(tag.GetString("color")),
+									GD.Load("res://assets/vanilla/texture/icon/ri--sword-fill.svg")
+								]);
+							}
+						}
+
 					}
 
 					break;

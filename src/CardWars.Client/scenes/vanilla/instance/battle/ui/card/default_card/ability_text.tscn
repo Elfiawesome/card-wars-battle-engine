@@ -1,13 +1,15 @@
 [gd_scene format=3 uid="uid://bcn8333rsty1y"]
 
-[ext_resource type="Texture2D" uid="uid://c41agu56cgkoy" path="res://assets/vanilla/texture/icon/ri--error-warning-fill.svg" id="1_5hulp"]
-[ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/vanilla/font/rajdhani/rajdhani.tres" id="2_5iqlh"]
-[ext_resource type="FontVariation" uid="uid://c3rx16v67f23f" path="res://assets/vanilla/font/hedvig_letters_sans/hedvig_letters_sans.tres" id="2_bgf63"]
+[ext_resource type="Script" uid="uid://pixq23g4y1w0" path="res://scenes/vanilla/instance/battle/ui/card/default_card/ability_text.gd" id="1_yurro"]
+[ext_resource type="Texture2D" uid="uid://c41agu56cgkoy" path="res://assets/vanilla/texture/icon/ri--error-warning-fill.svg" id="2_lx3wp"]
+[ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/vanilla/font/rajdhani/rajdhani.tres" id="3_ulykp"]
+[ext_resource type="FontVariation" uid="uid://c3rx16v67f23f" path="res://assets/vanilla/font/hedvig_letters_sans/hedvig_letters_sans.tres" id="4_at12j"]
 
 [node name="Ability" type="HBoxContainer" unique_id=1097095912]
 offset_right = 260.0
 offset_bottom = 68.0
 size_flags_horizontal = 3
+script = ExtResource("1_yurro")
 
 [node name="AbilityTriggerContainer" type="MarginContainer" parent="." unique_id=1671381476]
 custom_minimum_size = Vector2(0, 68)
@@ -41,7 +43,7 @@ theme_override_constants/margin_bottom = 8
 
 [node name="TextureRect" type="TextureRect" parent="AbilityTriggerContainer/HBoxContainer/Control/MarginContainer" unique_id=548848192]
 layout_mode = 2
-texture = ExtResource("1_5hulp")
+texture = ExtResource("2_lx3wp")
 expand_mode = 1
 stretch_mode = 5
 
@@ -52,17 +54,18 @@ theme_override_constants/margin_right = 20
 [node name="Label" type="Label" parent="AbilityTriggerContainer/HBoxContainer/MarginContainer" unique_id=1592875302]
 layout_mode = 2
 size_flags_horizontal = 0
-theme_override_fonts/font = ExtResource("2_5iqlh")
-theme_override_font_sizes/font_size = 40
+theme_override_fonts/font = ExtResource("3_ulykp")
+theme_override_font_sizes/font_size = 60
 text = "Error"
+uppercase = true
 
 [node name="AbilityDescription" type="Label" parent="." unique_id=34148518]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
-theme_override_fonts/font = ExtResource("2_bgf63")
-theme_override_font_sizes/font_size = 40
+theme_override_fonts/font = ExtResource("4_at12j")
+theme_override_font_sizes/font_size = 60
 text = "Ability Text"
 vertical_alignment = 1
 autowrap_mode = 3
