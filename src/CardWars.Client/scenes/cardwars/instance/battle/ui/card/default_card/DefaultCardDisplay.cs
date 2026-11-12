@@ -1,6 +1,7 @@
 using System.Linq;
 using CardWars.Client.scripts.core;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using Godot;
 
@@ -8,7 +9,6 @@ namespace CardWars.Client;
 
 public partial class DefaultCardDisplay : CardDisplay
 {
-
 	[Export] Control? PtContainer;
 	[Export] Label? PtLabel;
 	[Export] Control? HrtContainer;
@@ -16,6 +16,7 @@ public partial class DefaultCardDisplay : CardDisplay
 	[Export] Label? NameLabel;
 	[Export] Label? WorldLabel;
 	[Export] Label? CardTypeLabel;
+	[Export] VBoxContainer? SideStatsContainer;
 	[Export] TextureRect? BtmDivStarTexture;
 	[Export] TextureRect? BtmDivGradTexture;
 	[Export] MarginContainer? StatContainer;
@@ -28,6 +29,7 @@ public partial class DefaultCardDisplay : CardDisplay
 	public Vector2 LandscapeSize = new(1968.0f, 1408.0f);
 
 	public PackedScene AbilityTextScene = GD.Load<PackedScene>("res://scenes/cardwars/instance/battle/ui/card/default_card/ability_text.tscn");
+	public PackedScene SpAtkBox = GD.Load<PackedScene>("res://scenes/cardwars/instance/battle/ui/card/default_card/sp_atk_box.tscn");
 
 	public override void SetData(CompoundTag data, ClientRegistry registry)
 	{
@@ -39,6 +41,7 @@ public partial class DefaultCardDisplay : CardDisplay
 			NameLabel is { } nameLabel &&
 			WorldLabel is { } worldLabel &&
 			CardTypeLabel is { } cardTypeLabel &&
+			SideStatsContainer is { } sideStatsContainer &&
 			BtmDivStarTexture is { } btmDivStarTexture &&
 			BtmDivGradTexture is { } btmDivGradTexture &&
 			StatContainer is { } statContainer &&
@@ -112,7 +115,13 @@ public partial class DefaultCardDisplay : CardDisplay
 								entry.Call("set_data", [aDesc, aTrigger, acolor, aTexture]);
 							}
 						}
+					}
 
+					if (data.GetList("sp_atk") is { } spAtk)
+					{
+						Log.Info("Sp Atk");
+						Log.Info(spAtk);
+						// sideStatsContainer
 					}
 
 					break;

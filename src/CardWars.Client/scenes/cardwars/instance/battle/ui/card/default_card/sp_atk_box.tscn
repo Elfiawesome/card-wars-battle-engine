@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://b1yaxrisa4rs5"]
+
+[ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="1_advgc"]
+[ext_resource type="Texture2D" uid="uid://d3stda5ajnn4v" path="res://assets/cardwars/texture/icon/abilities/warcry.svg" id="2_2kmcp"]
+
+[node name="SpAtkBox" type="VBoxContainer" unique_id=207830437]
+custom_minimum_size = Vector2(0, 240)
+
+[node name="Label" type="Label" parent="." unique_id=1008326717]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_advgc")
+theme_override_font_sizes/font_size = 60
+text = "CROSS ATK"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=448949801]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("2_2kmcp")
+expand_mode = 3
+stretch_mode = 5

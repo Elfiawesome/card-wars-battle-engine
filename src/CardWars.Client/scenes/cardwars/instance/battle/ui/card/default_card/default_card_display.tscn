@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://dhqkm4keqsyhr" path="res://assets/cardwars/texture/icon/stat/hp.svg" id="8_ujkve"]
 [ext_resource type="Texture2D" uid="uid://b07obi1nosrck" path="res://assets/cardwars/texture/icon/stat/atk.svg" id="9_a0vwa"]
 [ext_resource type="FontVariation" uid="uid://d2wy0udo168ij" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans_italics.tres" id="10_hucph"]
+[ext_resource type="PackedScene" uid="uid://bcn8333rsty1y" path="res://scenes/cardwars/instance/battle/ui/card/default_card/ability_text.tscn" id="10_vleal"]
 [ext_resource type="Texture2D" uid="uid://dqm32ts2sr0jf" path="res://assets/cardwars/texture/ui/border.svg" id="11_cuo4o"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a2w1i"]
@@ -31,7 +32,7 @@ shader_parameter/blur_amount = 2.000000095
 shader_parameter/saturation = 1.6
 shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 
-[node name="UnitCard" type="Control" unique_id=934905130 node_paths=PackedStringArray("PtContainer", "PtLabel", "HrtContainer", "HrtLabel", "NameLabel", "WorldLabel", "CardTypeLabel", "BtmDivStarTexture", "BtmDivGradTexture", "StatContainer", "HpLabel", "AtkLabel", "FlavourTextLabel", "AbilitiesContainer")]
+[node name="UnitCard" type="Control" unique_id=934905130 node_paths=PackedStringArray("PtContainer", "PtLabel", "HrtContainer", "HrtLabel", "NameLabel", "WorldLabel", "CardTypeLabel", "SideStatsContainer", "BtmDivStarTexture", "BtmDivGradTexture", "StatContainer", "HpLabel", "AtkLabel", "FlavourTextLabel", "AbilitiesContainer")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1408.0
@@ -45,6 +46,7 @@ HrtLabel = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContai
 NameLabel = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/NameLabel")
 WorldLabel = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/WorldContainer/WorldLabel")
 CardTypeLabel = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/WorldContainer/TypeLabel")
+SideStatsContainer = NodePath("InfoContainer/MarginContainer/SideStatsContainer")
 BtmDivStarTexture = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/BottomDivider/StarTexture")
 BtmDivGradTexture = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/RightInfoContainer/BottomDivider/GradientTexture")
 StatContainer = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer")
@@ -96,7 +98,7 @@ alignment = 2
 
 [node name="TopInfoContainer" type="MarginContainer" parent="InfoContainer" unique_id=518911392]
 layout_mode = 2
-size_flags_vertical = 2
+size_flags_vertical = 0
 
 [node name="BackgroundBlur" type="ColorRect" parent="InfoContainer/TopInfoContainer" unique_id=2123128436]
 material = SubResource("ShaderMaterial_a2w1i")
@@ -238,6 +240,21 @@ size_flags_vertical = 4
 texture = SubResource("GradientTexture1D_a2w1i")
 expand_mode = 1
 
+[node name="MarginContainer" type="MarginContainer" parent="InfoContainer" unique_id=2114837402]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="SideStatsContainer" type="VBoxContainer" parent="InfoContainer/MarginContainer" unique_id=1916151776]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 3
+alignment = 2
+
 [node name="TopDivider" type="ColorRect" parent="InfoContainer" unique_id=368075790]
 z_index = 1
 custom_minimum_size = Vector2(4, 4)
@@ -335,25 +352,14 @@ expand_mode = 3
 layout_mode = 2
 
 [node name="AbilitiesContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=1521468014]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="Ability" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer/AbilitiesContainer" unique_id=1097095912 instance=ExtResource("10_vleal")]
+layout_mode = 2
+
 [node name="SPAtkContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=512750565]
-visible = false
 layout_mode = 2
-
-[node name="Label" type="Label" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer/SPAtkContainer" unique_id=1582480491]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("5_cx7xc")
-theme_override_font_sizes/font_size = 40
-text = "SP ATK"
-horizontal_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer/SPAtkContainer" unique_id=41305726]
-layout_mode = 2
-size_flags_vertical = 3
-alignment = 1
 
 [node name="DividerContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer" unique_id=777582917]
 layout_mode = 2
