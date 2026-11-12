@@ -104,15 +104,7 @@ public class VanillaMod : IBattleEngineMod
 		RegisterAttackDefinitions(registry, modContents);
 
 		// --- Register Ability Types ---
-		foreach (var content in modContents)
-		{
-			if (content.Category.Length == 1 && content.Category[0] == "ability_types")
-			{
-				var abilityType = content.ReadAs<CompoundTag>();
-				if (abilityType is null) continue;
-				registry.AbilityTypeDefinitions.Register(content.Id, abilityType);
-			}
-		}
+		RegisterAbilityTypes(registry, modContents);
 
 		// --- Card Definitions ---
 		RegisterCardDefinitions(registry, modContents);
@@ -195,7 +187,20 @@ public class VanillaMod : IBattleEngineMod
 		}
 	}
 
-	private void RegisterCardDefinitions(BattleEngineRegistry registry, List<ModContentResult> modContents)
+	public static void RegisterAbilityTypes(BattleEngineRegistry registry, List<ModContentResult> modContents)
+	{
+		foreach (var content in modContents)
+		{
+			if (content.Category.Length == 1 && content.Category[0] == "ability_types")
+			{
+				var abilityType = content.ReadAs<CompoundTag>();
+				if (abilityType is null) continue;
+				registry.AbilityTypeDefinitions.Register(content.Id, abilityType);
+			}
+		}
+	}
+
+	private static void RegisterCardDefinitions(BattleEngineRegistry registry, List<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{
