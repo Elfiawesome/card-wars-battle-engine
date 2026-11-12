@@ -169,7 +169,7 @@ public class VanillaMod : IBattleEngineMod
 			if (rules is null) continue;
 
 			registry.RuleDefinitions.Register(content.Id, rules);
-			Log.Info("Registered Game Rules: " + content.Id.ToString());
+			Log.Info($"Registered Game Rules: {content.Id}");
 		}
 	}
 
@@ -183,7 +183,7 @@ public class VanillaMod : IBattleEngineMod
 			if (attack is null) continue;
 
 			registry.AttackDefinitions.Register(content.Id, attack);
-			Log.Info("Registered Attack: " + content.Id.ToString());
+			Log.Info($"Registered Attack: {content.Id}");
 		}
 	}
 
@@ -196,6 +196,7 @@ public class VanillaMod : IBattleEngineMod
 				var abilityType = content.ReadAs<CompoundTag>();
 				if (abilityType is null) continue;
 				registry.AbilityTypeDefinitions.Register(content.Id, abilityType);
+				Log.Info($"Registered Ability Type: {content.Id}");
 			}
 		}
 	}
@@ -209,13 +210,15 @@ public class VanillaMod : IBattleEngineMod
 				case ["cards", "units"]:
 					var unitDataTag = content.ReadAs<CompoundTag>();
 					if (unitDataTag is null) continue;
-					Log.Info("Registered Unit: " + content.Id.ToString());
 
 					unitDataTag.Set("card_type", "unit");
+					// Set unit card's intrinsic behaviour
 					unitDataTag.Set("intrinsic_behaviours", new ListTag().Add(new CompoundTag().Set("resource", "cardwars:summon_unit_card_to_unit_slot_behaviour")));
+					// Set unit card's default unit targetting
 					if (!unitDataTag.Has("target_filter"))
 						unitDataTag.Set("target_filter", DataTagMapper.ToTag(UnitTargetFilter.Create()));
 
+					// Set unit card's abilities
 					var abilities = unitDataTag.GetList("abilities");
 					if (abilities is ListTag { })
 					{
@@ -235,21 +238,23 @@ public class VanillaMod : IBattleEngineMod
 							}
 						}
 					}
-					registry.CardDefinitions.Register(content.Id, unitDataTag);
 
+					registry.CardDefinitions.Register(content.Id, unitDataTag);
+					Log.Info($"Registered Unit Card: {content.Id}");
 					break;
 				case ["cards", "spells"]:
+					Log.Info($"Registered Spell Card: {content.Id}");
 					break;
 				case ["cards", "heroes"]:
 					var heroDataTag = content.ReadAs<CompoundTag>();
 					if (heroDataTag is null) continue;
-					Log.Info("Registered Hero: " + content.Id.ToString());
 
 					heroDataTag.Set("card_type", "hero");
 					if (!heroDataTag.Has("lose_condition"))
 						heroDataTag.Set("lose_condition", DataTagMapper.ToTag(new ContentPointer(Resource: HeroHrtLoseCondition.Id)));
 
 					registry.CardDefinitions.Register(content.Id, heroDataTag);
+					Log.Info($"Registered Hero Card: {content.Id}");
 					break;
 			}
 		}

@@ -9,6 +9,7 @@ using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;
@@ -54,15 +55,10 @@ public partial class GameSession : Node
 		Storage = new StorageManager(gamedataPath, provider);
 
 		// Start!
-		Core.Logging.Log.Info(ConnectingUsername);
-		if (ConnectingUsername == "Elfiawesome")
-		{
-			StartIntegratedServer();
-		}
-		else
-		{
-			JoinServer();
-		}
+		Log.Info($"Game Session started with username: {ConnectingUsername}");
+		
+		if (ConnectingUsername == "Elfiawesome") { StartIntegratedServer(); }
+		else { JoinServer(); }
 	}
 
 	private void StartIntegratedServer()
