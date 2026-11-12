@@ -12,9 +12,12 @@
 		{
 			"description": "Test Ability",
 			"ability_type": "cardwars:ability_types/passive",
-			"behaviour": {
-				"resource": "test_ability"
-			}
+			"behaviour": { "resource": "test_ability" }
+		},
+		{
+			"description": "Test Ability",
+			"ability_type": "cardwars:ability_types/deathwish",
+			"behaviour": { "resource": "test_ability" }
 		}
 	]
 }
