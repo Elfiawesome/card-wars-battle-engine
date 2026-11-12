@@ -12,11 +12,17 @@ public partial class ClientInstance : Node
 {
 	public Guid MyPlayerId = Guid.Empty;
 	public Action<IPacket>? onPacketSent;
-	public ClientRegistry? ClientRegistry;
-	public BattleEngineRegistry? BattleEngineRegistry;
+	// public ClientRegistry? Registry.ClientRegistry;
+	// public BattleEngineRegistry? BattleEngineRegistry;
+	public Registry Registry = new();
 
 	public virtual void OnPacket(IPacket packet, PacketContextClient context) { }
 
 	public void SendPacket(IPacket packet)
 		=> onPacketSent?.Invoke(packet);
 }
+
+public record struct Registry(
+	ClientRegistry? Client,
+	BattleEngineRegistry? Battle
+);

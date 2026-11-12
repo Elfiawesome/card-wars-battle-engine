@@ -112,8 +112,8 @@ public partial class GameSession : Node
 
 		Instance = newInstance;
 		Instance.onPacketSent += SendPacket;
-		Instance.ClientRegistry = ClientRegistry;
-		Instance.BattleEngineRegistry = BattleEngineRegistry;
+		Instance.Registry.Client = ClientRegistry;
+		Instance.Registry.Battle = BattleEngineRegistry;
 		Instance.MyPlayerId = playerId ?? Guid.Empty;
 		AddChild(Instance);
 	}

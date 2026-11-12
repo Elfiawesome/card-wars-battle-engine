@@ -241,7 +241,7 @@ public partial class AttackController : Node
 	private void CreateArrow(EntityId attackerId)
 	{
 		if (BattleInstance?.HandManagerNode is not { } parent) return;
-		if (BattleInstance.ClientRegistry?.UserInterface.Instantiate<LineArrow>(SharedIds.UI.LineArrow) is not { } arrow) return;
+		if (BattleInstance.Registry.Client?.UserInterface.Instantiate<LineArrow>(SharedIds.UI.LineArrow) is not { } arrow) return;
 
 		parent.AddChild(arrow);
 		_arrows[attackerId] = arrow;

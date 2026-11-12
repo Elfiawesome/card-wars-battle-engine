@@ -22,7 +22,7 @@ namespace CardWars.Client.scenes.cardwars.instance.battle;
 
 public partial class BattleInstance : ClientInstance
 {
-	public BattleRegistry? BattleRegistry => ClientRegistry?.GetExtension<BattleRegistry>();
+	public BattleRegistry? BattleRegistry => Registry.Client?.GetExtension<BattleRegistry>();
 
 	[Export] public Control? ButtonsOverlayNode;
 	[Export] public HandManager? HandManagerNode;
@@ -67,7 +67,7 @@ public partial class BattleInstance : ClientInstance
 
 	public override void _Ready()
 	{
-		if (BattleEngineRegistry is { } registry) ActionValidator = new(registry);
+		if (Registry.Battle is { } registry) ActionValidator = new(registry);
 		if (HandManagerNode is not null) HandManagerNode.BattleInstance = this;
 		if (AttackControllerNode is not null) AttackControllerNode.Setup(this);
 		AnimationHandler.Completed += ReleasePendingNodes;
@@ -118,7 +118,7 @@ public partial class BattleInstance : ClientInstance
 	{
 		foreach (var block in batch.Blocks)
 		{
-			BattleEngineRegistry?.BlockHandlers.Execute(State, block);
+			Registry.Battle?.BlockHandlers.Execute(State, block);
 		}
 		SyncState();
 		// Play animation
@@ -292,7 +292,7 @@ public partial class EntityNode3D : Node3D
 
 		if (_targetHighlight is null)
 		{
-			_targetHighlight = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<TargetHighlight>(SharedIds.UI.TargetHighlight);
+			_targetHighlight = BattleInstance?.Registry.Client?.UserInterface.Instantiate<TargetHighlight>(SharedIds.UI.TargetHighlight);
 			if (_targetHighlight is null) return;
 
 			AddChild(_targetHighlight);

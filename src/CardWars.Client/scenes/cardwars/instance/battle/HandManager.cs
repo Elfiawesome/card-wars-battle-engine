@@ -71,7 +71,7 @@ public partial class HandManager : Control
 	public void AddCard(EntityId id)
 	{
 		// TODO: Get skin and place it inside
-		var card = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<CardDisplay>(SharedIds.UI.DefaultCardDisplay);
+		var card = BattleInstance?.Registry.Client?.UserInterface.Instantiate<CardDisplay>(SharedIds.UI.DefaultCardDisplay);
 		if (card is null) return;
 		card.Scale = Vector2.Zero;
 		card.Position = new(0, 0);
@@ -80,7 +80,7 @@ public partial class HandManager : Control
 		card.MouseExited += () => OnCardMouseExited(card);
 		card.GuiInput += (e) => OnCardGuiInput(e, card);
 		AddChild(card);
-		if (BattleInstance?.State.Get<GenericCard>(id) is { } entity && BattleInstance?.ClientRegistry is { } clientRegistry) card.SetData(entity.Data, clientRegistry);
+		if (BattleInstance?.State.Get<GenericCard>(id) is { } entity && BattleInstance?.Registry.Client is { } clientRegistry) card.SetData(entity.Data, clientRegistry);
 		_cards[id] = card;
 		ArrangeCard();
 	}
@@ -144,7 +144,7 @@ public partial class HandManager : Control
 						RefreshTargeting();
 
 						LineArrow?.QueueFree();
-						LineArrow = BattleInstance?.ClientRegistry?.UserInterface.Instantiate<LineArrow>(SharedIds.UI.LineArrow);
+						LineArrow = BattleInstance?.Registry.Client?.UserInterface.Instantiate<LineArrow>(SharedIds.UI.LineArrow);
 						if (LineArrow is not null) AddChild(LineArrow);
 					}
 				}
