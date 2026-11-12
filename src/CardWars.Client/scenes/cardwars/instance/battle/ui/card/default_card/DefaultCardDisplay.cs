@@ -1,4 +1,5 @@
 using System.Linq;
+using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
@@ -31,7 +32,7 @@ public partial class DefaultCardDisplay : CardDisplay
 	public PackedScene AbilityTextScene = GD.Load<PackedScene>("res://scenes/cardwars/instance/battle/ui/card/default_card/ability_text.tscn");
 	public PackedScene SpAtkBox = GD.Load<PackedScene>("res://scenes/cardwars/instance/battle/ui/card/default_card/sp_atk_box.tscn");
 
-	public override void SetData(CompoundTag data, ClientRegistry registry)
+	public override void SetData(CompoundTag data, ClientInstanceRegistry registry)
 	{
 		if (
 			PtContainer is { } ptContainer &&
@@ -110,7 +111,7 @@ public partial class DefaultCardDisplay : CardDisplay
 								var aDesc = tag.GetString("description");
 								var aTrigger = tag.GetString("ability_type");
 								var acolor = new Color(tag.GetString("color"));
-								var aTexture = registry.Resources.Instantiate<Texture>(ResourceId.Parse(tag.GetString("texture")))
+								var aTexture = registry.Client?.Resources.Instantiate<Texture>(ResourceId.Parse(tag.GetString("texture")))
 									?? new ImageTexture();
 								entry.Call("set_data", [aDesc, aTrigger, acolor, aTexture]);
 							}
@@ -157,6 +158,6 @@ public abstract partial class CardDisplay : Control
 
 	public Tween? currentAnimationTween;
 
-	public virtual void SetData(CompoundTag data, ClientRegistry registry) { }
+	public virtual void SetData(CompoundTag data, ClientInstanceRegistry registry) { }
 	public virtual void SetDisplay(DisplayType displayType) { }
 }

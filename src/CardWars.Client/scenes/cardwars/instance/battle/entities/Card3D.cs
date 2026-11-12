@@ -1,4 +1,5 @@
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core;
 using CardWars.Core.Registry;
 using Godot;
@@ -38,7 +39,7 @@ public partial class Card3D : EntityNode3D
 		CollisionBox.InputRayPickable = value;
 	}
 
-	public void SetCard(GenericCard card, ClientRegistry registry)
+	public void SetCard(GenericCard card, ClientInstanceRegistry registry)
 	{
 		if (Display is { } display)
 		{

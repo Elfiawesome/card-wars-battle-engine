@@ -14,7 +14,7 @@ public partial class ClientInstance : Node
 	public Action<IPacket>? onPacketSent;
 	// public ClientRegistry? Registry.ClientRegistry;
 	// public BattleEngineRegistry? BattleEngineRegistry;
-	public Registry Registry = new();
+	public ClientInstanceRegistry Registry = new();
 
 	public virtual void OnPacket(IPacket packet, PacketContextClient context) { }
 
@@ -22,7 +22,7 @@ public partial class ClientInstance : Node
 		=> onPacketSent?.Invoke(packet);
 }
 
-public record struct Registry(
+public record struct ClientInstanceRegistry(
 	ClientRegistry? Client,
 	BattleEngineRegistry? Battle
 );
