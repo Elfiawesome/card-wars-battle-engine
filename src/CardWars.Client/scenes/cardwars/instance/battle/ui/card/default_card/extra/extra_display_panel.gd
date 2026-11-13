@@ -1,9 +1,9 @@
-extends Control
+extends MarginContainer
 
-@onready var grid_container: DataContainer = $VBoxContainer/Content/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/GridContainer
-@onready var texture_rect: TextureRect = $VBoxContainer/Content/MarginContainer/VBoxContainer/HBoxContainer/TextureRect
-@onready var title_label: Label = $VBoxContainer/Content/MarginContainer/VBoxContainer/HBoxContainer/TitleLabel
-@onready var content_label: Label = $VBoxContainer/Content/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/ContentLabel
+@export var grid_container: DataContainer
+@export var icon_texture: TextureRect
+@export var title_label: Label
+@export var content_label: Label
 
 func _ready() -> void:
 	pass
@@ -23,6 +23,6 @@ func set_grid(items: Array) -> void:
 
 
 func set_content(title: String, texture: Texture2D, text: String) -> void:
-	texture_rect.texture = texture
+	icon_texture.texture = texture
 	title_label.text = title
 	content_label.text = text

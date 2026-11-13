@@ -14,74 +14,71 @@ shader_parameter/blur_amount = 2.000000095
 shader_parameter/saturation = 1.6
 shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 
-[node name="ExtraDisplayPanel" type="Control" unique_id=1297808818]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 3
-anchors_preset = 0
+[node name="ExtraDisplayPanel" type="MarginContainer" unique_id=689193761 node_paths=PackedStringArray("grid_container", "icon_texture", "title_label", "content_label")]
+offset_right = 269.0
+offset_bottom = 116.0
 script = ExtResource("1_3o0vn")
+grid_container = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/GridContainer")
+icon_texture = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer/TextureRect")
+title_label = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer/TitleLabel")
+content_label = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/ContentLabel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1662876040]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 theme_override_constants/separation = 0
 
 [node name="Top" type="ColorRect" parent="VBoxContainer" unique_id=330546293]
-z_index = 1
 custom_minimum_size = Vector2(4, 4)
 layout_mode = 2
 
-[node name="Content" type="ColorRect" parent="VBoxContainer" unique_id=1853467460]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=488636612]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Content" type="ColorRect" parent="VBoxContainer/MarginContainer" unique_id=1853467460]
 material = SubResource("ShaderMaterial_30tpu")
 layout_mode = 2
 size_flags_vertical = 3
 color = Color(0.03137255, 0.039215688, 0.08627451, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Content" unique_id=365040612]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer" unique_id=365040612]
+layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Content/MarginContainer" unique_id=1870046184]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer/MarginContainer" unique_id=1870046184]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Content/MarginContainer/VBoxContainer" unique_id=677082020]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer" unique_id=677082020]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/Content/MarginContainer/VBoxContainer/HBoxContainer" unique_id=85173652]
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=85173652]
 layout_mode = 2
 texture = ExtResource("2_r8nh0")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="TitleLabel" type="Label" parent="VBoxContainer/Content/MarginContainer/VBoxContainer/HBoxContainer" unique_id=155473973]
+[node name="TitleLabel" type="Label" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=155473973]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_cm4iq")
 theme_override_font_sizes/font_size = 32
-text = "Text Content"
+text = "Tittle"
 uppercase = true
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Content/MarginContainer/VBoxContainer" unique_id=152555307]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer" unique_id=152555307]
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Content/MarginContainer/VBoxContainer/MarginContainer" unique_id=1375511234]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer" unique_id=1375511234]
 layout_mode = 2
 
-[node name="ContentLabel" type="Label" parent="VBoxContainer/Content/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=694992542]
+[node name="ContentLabel" type="Label" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=694992542]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -90,10 +87,10 @@ theme_override_font_sizes/font_size = 16
 text = "Error Text"
 autowrap_mode = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Content/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=1017035070]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=1017035070]
 layout_mode = 2
 
-[node name="GridContainer" type="GridContainer" parent="VBoxContainer/Content/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer" unique_id=307284906]
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer" unique_id=307284906]
 layout_mode = 2
 columns = 3
 script = ExtResource("5_dpao1")
