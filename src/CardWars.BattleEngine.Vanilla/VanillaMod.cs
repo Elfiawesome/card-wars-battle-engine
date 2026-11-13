@@ -219,25 +219,25 @@ public class VanillaMod : IBattleEngineMod
 						unitDataTag.Set("target_filter", DataTagMapper.ToTag(UnitTargetFilter.Create()));
 
 					// Set unit card's abilities
-					var abilities = unitDataTag.GetList("abilities");
-					if (abilities is ListTag { })
-					{
-						foreach (var a in abilities)
-						{
-							if (a is CompoundTag ability)
-							{
-								var abilityType = ability.Get<StringTag>("ability_type")?.Value ?? "";
-								var abilityTypeId = registry.AbilityTypeDefinitions.Get(ResourceId.Parse(abilityType));
-								if (abilityTypeId is { })
-								{
-									ability.Remove("ability_type");
-									ability.Set("ability_type", abilityTypeId.GetString("name", ""));
-									ability.Set("color", abilityTypeId.GetString("color", ""));
-									ability.Set("texture", abilityTypeId.GetString("texture", ""));
-								}
-							}
-						}
-					}
+					// var abilities = unitDataTag.GetList("abilities");
+					// if (abilities is ListTag { })
+					// {
+					// 	foreach (var a in abilities)
+					// 	{
+					// 		if (a is CompoundTag ability)
+					// 		{
+					// 			var abilityType = ability.Get<StringTag>("ability_type")?.Value ?? "";
+					// 			var abilityTypeId = registry.AbilityTypeDefinitions.Get(ResourceId.Parse(abilityType));
+					// 			if (abilityTypeId is { })
+					// 			{
+					// 				ability.Remove("ability_type");
+					// 				ability.Set("ability_type", abilityTypeId.GetString("name", ""));
+					// 				ability.Set("color", abilityTypeId.GetString("color", ""));
+					// 				ability.Set("texture", abilityTypeId.GetString("texture", ""));
+					// 			}
+					// 		}
+					// 	}
+					// }
 
 					registry.CardDefinitions.Register(content.Id, unitDataTag);
 					Log.Info($"Registered Unit Card: {content.Id}");

@@ -34,107 +34,114 @@ public partial class DefaultCardDisplay : CardDisplay
 
 	public override void SetData(CompoundTag data, ClientInstanceRegistry registry)
 	{
-		if (
-			PtContainer is { } ptContainer &&
-			PtLabel is { } ptLabel &&
-			HrtContainer is { } hrtContainer &&
-			HrtLabel is { } hrtLabel &&
-			NameLabel is { } nameLabel &&
-			WorldLabel is { } worldLabel &&
-			CardTypeLabel is { } cardTypeLabel &&
-			SideStatsContainer is { } sideStatsContainer &&
-			BtmDivStarTexture is { } btmDivStarTexture &&
-			BtmDivGradTexture is { } btmDivGradTexture &&
-			StatContainer is { } statContainer &&
-			HpLabel is { } hpLabel &&
-			AtkLabel is { } atkLabel &&
-			FlavourTextLabel is { } flavourTextLabel
-		)
+		if (PtContainer is not { } ptContainer) return;
+		if (PtLabel is not { } ptLabel) return;
+		if (HrtContainer is not { } hrtContainer) return;
+		if (HrtLabel is not { } hrtLabel) return;
+		if (NameLabel is not { } nameLabel) return;
+		if (WorldLabel is not { } worldLabel) return;
+		if (CardTypeLabel is not { } cardTypeLabel) return;
+		if (SideStatsContainer is not { } sideStatsContainer) return;
+		if (BtmDivStarTexture is not { } btmDivStarTexture) return;
+		if (BtmDivGradTexture is not { } btmDivGradTexture) return;
+		if (StatContainer is not { } statContainer) return;
+		if (HpLabel is not { } hpLabel) return;
+		if (AtkLabel is not { } atkLabel) return;
+		if (FlavourTextLabel is not { } flavourTextLabel) return;
+		if (AbilitiesContainer is not { } abilitiesContainer) return;
+
+		nameLabel.Text = data.GetString("name");
+		worldLabel.Text = data.GetString("world");
+		ptLabel.Text = $"{data.GetInt("pt")}";
+		hpLabel.Text = $"{data.GetInt("hp")}";
+		atkLabel.Text = $"{data.GetInt("atk")}";
+		flavourTextLabel.Text = data.GetString("flavour_text");
+		hrtLabel.Text = $"{data.GetInt("hrt")}";
+
+		statContainer.Visible = false;
+		ptContainer.Visible = false;
+		hrtContainer.Visible = false;
+		sideStatsContainer.Visible = false;
+
+		var cardType = data.GetString("card_type");
+		cardTypeLabel.Text = cardType;
+		switch (cardType)
 		{
-			nameLabel.Text = data.GetString("name");
-			worldLabel.Text = data.GetString("world");
-			ptLabel.Text = $"{data.GetInt("pt")}";
-			hpLabel.Text = $"{data.GetInt("hp")}";
-			atkLabel.Text = $"{data.GetInt("atk")}";
-			flavourTextLabel.Text = data.GetString("flavour_text");
-			hrtLabel.Text = $"{data.GetInt("hrt")}";
+			case "unit":
+				statContainer.Visible = true;
+				ptContainer.Visible = true;
+				abilitiesContainer.Visible = true;
+				Size = PortraitSize;
+				
+				// Set Abilities
+				if (data.GetList("abilities") is { } abilities)
+				{
+					var abilityTags = abilities.Items.OfType<CompoundTag>().ToList();
 
-			statContainer.Visible = false;
-			ptContainer.Visible = false;
-			hrtContainer.Visible = false;
+					// Grow / shrink the container to match the data
+					var children = abilitiesContainer.GetChildren();
+					int diff = abilityTags.Count - children.Count;
 
-			var cardType = data.GetString("card_type");
-			cardTypeLabel.Text = cardType;
-			switch (cardType)
-			{
-				case "unit":
-					statContainer.Visible = true;
-					ptContainer.Visible = true;
-					Size = PortraitSize;
-
-					if (data.GetList("abilities") is { } abilities && AbilitiesContainer is { } abilitiesContainer)
+					if (diff > 0)
 					{
-						abilitiesContainer.Visible = true;
-
-						var abilityTags = abilities.Items.OfType<CompoundTag>().ToList();
-
-						// Grow / shrink the container to match the data
-						var children = abilitiesContainer.GetChildren();
-						int diff = abilityTags.Count - children.Count;
-
-						if (diff > 0)
+						for (int i = 0; i < diff; i++)
 						{
-							for (int i = 0; i < diff; i++)
-							{
-								var entry = AbilityTextScene.Instantiate<HBoxContainer>();
-								abilitiesContainer.AddChild(entry);
-							}
+							var entry = AbilityTextScene.Instantiate<HBoxContainer>();
+							abilitiesContainer.AddChild(entry);
 						}
-						else if (diff < 0)
+					}
+					else if (diff < 0)
+					{
+						for (int i = 0; i < -diff; i++)
 						{
-							for (int i = 0; i < -diff; i++)
-							{
-								var last = abilitiesContainer.GetChild(abilitiesContainer.GetChildCount() - 1);
-								last.QueueFree();
-							}
-						}
-
-						var entries = abilitiesContainer.GetChildren();
-						for (int i = 0; i < abilityTags.Count; i++)
-						{
-							var tag = abilityTags[i];
-							var entry = entries[i];
-
-							// Populate.
-							if (entry is HBoxContainer)
-							{
-								var aDesc = tag.GetString("description");
-								var aTrigger = tag.GetString("ability_type");
-								var acolor = new Color(tag.GetString("color"));
-								var aTexture = registry.Client?.Resources.Instantiate<Texture>(ResourceId.Parse(tag.GetString("texture")))
-									?? new ImageTexture();
-								entry.Call("set_data", [aDesc, aTrigger, acolor, aTexture]);
-							}
+							var last = abilitiesContainer.GetChild(abilitiesContainer.GetChildCount() - 1);
+							last.QueueFree();
 						}
 					}
 
-					if (data.GetList("sp_atk") is { } spAtk)
+					var entries = abilitiesContainer.GetChildren();
+					for (int i = 0; i < abilityTags.Count; i++)
 					{
-						Log.Info("Sp Atk");
+						CompoundTag tag = abilityTags[i];
+						Node entry = entries[i];
+						if (entry is not HBoxContainer) continue;
+						// Populate.
+						string aDesc = tag.GetString("description");
+
+						string aTypePointer = tag.GetString("ability_type");
+						CompoundTag? aType = registry.Battle?.AbilityTypeDefinitions.Get(
+							ResourceId.Parse(aTypePointer)
+						);
+						if (aType is null) continue;
+						var aTypeName = aType.GetString("name");
+						var aTypeColor = new Color(aType.GetString("color"));
+						var aTypeTex = registry.Client?.Resources.Instantiate<Texture>(ResourceId.Parse(aType.GetString("texture")))
+							?? new ImageTexture();
+
+						entry.Call("set_data", [aDesc, aTypeName, aTypeColor, aTypeTex]);
+					}
+				}
+
+				// Set SP Atk
+				if (data.GetList("sp_atks") is { } spAtks)
+				{
+					Log.Info("Sp Atk");
+					foreach (var spAtk in spAtks.OfType<CompoundTag>())
+					{
 						Log.Info(spAtk);
-						// sideStatsContainer
 					}
+					sideStatsContainer.Visible = true;
+				}
 
-					break;
-				case "spell":
-					ptContainer.Visible = true;
-					Size = PortraitSize;
-					break;
-				case "hero":
-					hrtContainer.Visible = true;
-					Size = LandscapeSize;
-					break;
-			}
+				break;
+			case "spell":
+				ptContainer.Visible = true;
+				Size = PortraitSize;
+				break;
+			case "hero":
+				hrtContainer.Visible = true;
+				Size = LandscapeSize;
+				break;
 		}
 	}
 

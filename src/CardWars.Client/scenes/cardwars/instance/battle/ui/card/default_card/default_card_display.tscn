@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bk7jiwgxicc04"]
 
 [ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/cardwars/instance/battle/ui/card/default_card/DefaultCardDisplay.cs" id="1_ivaen"]
-[ext_resource type="Texture2D" uid="uid://b77joxtigr563" path="res://assets/cardwars/texture/cards/by.jpg" id="2_ivaen"]
+[ext_resource type="Texture2D" uid="uid://wpmcnek6bc0y" path="res://assets/cardwars/texture/cards/faketree.png" id="2_vleal"]
 [ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/cardwars/shader/blur.gdshader" id="3_deubm"]
 [ext_resource type="Texture2D" uid="uid://d1pxi4dbq0ieq" path="res://assets/cardwars/texture/icon/stat/pt.svg" id="4_mt1s7"]
 [ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="5_cx7xc"]
@@ -10,7 +10,6 @@
 [ext_resource type="Texture2D" uid="uid://dhqkm4keqsyhr" path="res://assets/cardwars/texture/icon/stat/hp.svg" id="8_ujkve"]
 [ext_resource type="Texture2D" uid="uid://b07obi1nosrck" path="res://assets/cardwars/texture/icon/stat/atk.svg" id="9_a0vwa"]
 [ext_resource type="FontVariation" uid="uid://d2wy0udo168ij" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans_italics.tres" id="10_hucph"]
-[ext_resource type="PackedScene" uid="uid://bcn8333rsty1y" path="res://scenes/cardwars/instance/battle/ui/card/default_card/ability_text.tscn" id="10_vleal"]
 [ext_resource type="Texture2D" uid="uid://dqm32ts2sr0jf" path="res://assets/cardwars/texture/ui/border.svg" id="11_cuo4o"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a2w1i"]
@@ -82,7 +81,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_ivaen")
+texture = ExtResource("2_vleal")
 expand_mode = 5
 stretch_mode = 6
 
@@ -242,7 +241,7 @@ expand_mode = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="InfoContainer" unique_id=2114837402]
 layout_mode = 2
-size_flags_horizontal = 8
+size_flags_horizontal = 0
 size_flags_vertical = 3
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
@@ -251,9 +250,7 @@ theme_override_constants/margin_bottom = 15
 
 [node name="SideStatsContainer" type="VBoxContainer" parent="InfoContainer/MarginContainer" unique_id=1916151776]
 layout_mode = 2
-size_flags_horizontal = 8
 size_flags_vertical = 3
-alignment = 2
 
 [node name="TopDivider" type="ColorRect" parent="InfoContainer" unique_id=368075790]
 z_index = 1
@@ -354,9 +351,6 @@ layout_mode = 2
 [node name="AbilitiesContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=1521468014]
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="Ability" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer/AbilitiesContainer" unique_id=1097095912 instance=ExtResource("10_vleal")]
-layout_mode = 2
 
 [node name="SPAtkContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=512750565]
 layout_mode = 2
