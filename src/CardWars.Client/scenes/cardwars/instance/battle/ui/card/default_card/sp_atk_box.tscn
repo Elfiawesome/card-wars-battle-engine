@@ -1,11 +1,13 @@
 [gd_scene format=3 uid="uid://b1yaxrisa4rs5"]
 
+[ext_resource type="Script" uid="uid://bqy1k137qvof2" path="res://scenes/cardwars/instance/battle/ui/card/default_card/sp_atk_box.gd" id="1_2kmcp"]
 [ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="1_advgc"]
 [ext_resource type="Texture2D" uid="uid://d3stda5ajnn4v" path="res://assets/cardwars/texture/icon/abilities/warcry.svg" id="2_2kmcp"]
 
 [node name="SpAtkBox" type="MarginContainer" unique_id=1684501402]
 offset_right = 286.0
 offset_bottom = 240.0
+script = ExtResource("1_2kmcp")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=207830437]
 custom_minimum_size = Vector2(0, 240)

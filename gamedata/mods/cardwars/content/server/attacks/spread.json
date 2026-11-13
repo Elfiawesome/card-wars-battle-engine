@@ -4,5 +4,6 @@
 	"bypass": true,
 	"patterns": [
 		{ "type": "all", "value": "100%" }
-	]
+	],
+	"texture":"cardwars:texture/icon/attacks/spread"
 }

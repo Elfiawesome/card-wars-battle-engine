@@ -2,5 +2,6 @@
 	"name": "Cross ATK",
 	"charge_cost": 1,
 	"bypass": true,
-	"patterns": []
+	"patterns": [],
+	"texture":"cardwars:texture/icon/attacks/cross"
 }

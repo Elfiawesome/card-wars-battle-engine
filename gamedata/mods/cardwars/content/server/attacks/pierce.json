@@ -4,5 +4,6 @@
 	"bypass": true,
 	"patterns": [
 		{ "type": "column", "value": "100%" }
-	]
+	],
+	"texture":"cardwars:texture/icon/attacks/pierce"
 }

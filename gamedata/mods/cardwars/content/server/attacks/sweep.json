@@ -4,5 +4,6 @@
 	"bypass": false,
 	"patterns": [
 		{ "type": "row", "value": "100%" }
-	]
+	],
+	"texture":"cardwars:attacks/sweep"
 }

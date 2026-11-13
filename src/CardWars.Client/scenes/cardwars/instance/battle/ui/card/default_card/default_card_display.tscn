@@ -11,6 +11,9 @@
 [ext_resource type="Texture2D" uid="uid://b07obi1nosrck" path="res://assets/cardwars/texture/icon/stat/atk.svg" id="9_a0vwa"]
 [ext_resource type="FontVariation" uid="uid://d2wy0udo168ij" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans_italics.tres" id="10_hucph"]
 [ext_resource type="Texture2D" uid="uid://dqm32ts2sr0jf" path="res://assets/cardwars/texture/ui/border.svg" id="11_cuo4o"]
+[ext_resource type="Script" uid="uid://cml7web851mlt" path="res://scenes/core/ui/data_container.gd" id="12_dc"]
+[ext_resource type="PackedScene" uid="uid://bcn8333rsty1y" path="res://scenes/cardwars/instance/battle/ui/card/default_card/ability_text.tscn" id="13_at"]
+[ext_resource type="PackedScene" uid="uid://b1yaxrisa4rs5" path="res://scenes/cardwars/instance/battle/ui/card/default_card/sp_atk_box.tscn" id="14_sp"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a2w1i"]
 shader = ExtResource("3_deubm")
@@ -75,6 +78,7 @@ expand_mode = 5
 stretch_mode = 6
 
 [node name="CharacterArt" type="TextureRect" parent="TextureContainer" unique_id=1134226534]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -251,6 +255,8 @@ theme_override_constants/margin_bottom = 15
 [node name="SideStatsContainer" type="VBoxContainer" parent="InfoContainer/MarginContainer" unique_id=1916151776]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("12_dc")
+item_scene = ExtResource("14_sp")
 
 [node name="TopDivider" type="ColorRect" parent="InfoContainer" unique_id=368075790]
 z_index = 1
@@ -351,6 +357,8 @@ layout_mode = 2
 [node name="AbilitiesContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=1521468014]
 layout_mode = 2
 size_flags_horizontal = 3
+script = ExtResource("12_dc")
+item_scene = ExtResource("13_at")
 
 [node name="SPAtkContainer" type="VBoxContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer" unique_id=512750565]
 layout_mode = 2

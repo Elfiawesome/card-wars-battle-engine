@@ -29,9 +29,6 @@ public partial class DefaultCardDisplay : CardDisplay
 	public Vector2 PortraitSize = new(1408.0f, 1968.0f);
 	public Vector2 LandscapeSize = new(1968.0f, 1408.0f);
 
-	public PackedScene AbilityTextScene = GD.Load<PackedScene>("res://scenes/cardwars/instance/battle/ui/card/default_card/ability_text.tscn");
-	public PackedScene SpAtkBox = GD.Load<PackedScene>("res://scenes/cardwars/instance/battle/ui/card/default_card/sp_atk_box.tscn");
-
 	public override void SetData(CompoundTag data, ClientInstanceRegistry registry)
 	{
 		if (PtContainer is not { } ptContainer) return;
@@ -72,65 +69,64 @@ public partial class DefaultCardDisplay : CardDisplay
 				ptContainer.Visible = true;
 				abilitiesContainer.Visible = true;
 				Size = PortraitSize;
-				
+
 				// Set Abilities
 				if (data.GetList("abilities") is { } abilities)
 				{
-					var abilityTags = abilities.Items.OfType<CompoundTag>().ToList();
-
-					// Grow / shrink the container to match the data
-					var children = abilitiesContainer.GetChildren();
-					int diff = abilityTags.Count - children.Count;
-
-					if (diff > 0)
+					var abilityItems = new Godot.Collections.Array();
+					foreach (var tag in abilities.Items.OfType<CompoundTag>())
 					{
-						for (int i = 0; i < diff; i++)
-						{
-							var entry = AbilityTextScene.Instantiate<HBoxContainer>();
-							abilitiesContainer.AddChild(entry);
-						}
-					}
-					else if (diff < 0)
-					{
-						for (int i = 0; i < -diff; i++)
-						{
-							var last = abilitiesContainer.GetChild(abilitiesContainer.GetChildCount() - 1);
-							last.QueueFree();
-						}
-					}
-
-					var entries = abilitiesContainer.GetChildren();
-					for (int i = 0; i < abilityTags.Count; i++)
-					{
-						CompoundTag tag = abilityTags[i];
-						Node entry = entries[i];
-						if (entry is not HBoxContainer) continue;
-						// Populate.
-						string aDesc = tag.GetString("description");
-
-						string aTypePointer = tag.GetString("ability_type");
+						var aTypePointer = tag.GetString("ability_type");
 						CompoundTag? aType = registry.Battle?.AbilityTypeDefinitions.Get(
 							ResourceId.Parse(aTypePointer)
 						);
 						if (aType is null) continue;
-						var aTypeName = aType.GetString("name");
-						var aTypeColor = new Color(aType.GetString("color"));
+
 						var aTypeTex = registry.Client?.Resources.Instantiate<Texture>(ResourceId.Parse(aType.GetString("texture")))
 							?? new ImageTexture();
 
-						entry.Call("set_data", [aDesc, aTypeName, aTypeColor, aTypeTex]);
+						abilityItems.Add(new Godot.Collections.Dictionary
+						{
+							["description"] = tag.GetString("description"),
+							["ability_type"] = aType.GetString("name"),
+							["color"] = new Color(aType.GetString("color")),
+							["texture"] = aTypeTex,
+						});
 					}
+					abilitiesContainer.Call("set_items", abilityItems);
 				}
 
 				// Set SP Atk
 				if (data.GetList("sp_atks") is { } spAtks)
 				{
-					Log.Info("Sp Atk");
+					var spAtkItems = new Godot.Collections.Array<Godot.Collections.Dictionary>();
+					sideStatsContainer.Visible = true;
 					foreach (var spAtk in spAtks.OfType<CompoundTag>())
 					{
-						Log.Info(spAtk);
+						CompoundTag? attackDef;
+						if (spAtk.Has("definition"))
+						{
+							attackDef = spAtk.GetCompound("definition");
+						}
+						else
+						{
+							var resourceId = ResourceId.Parse(spAtk.GetString("resource"));
+							attackDef = registry.Battle?.AttackDefinitions.Get(resourceId);
+						}
+
+						if (attackDef is null) continue;
+
+						var aText = attackDef.GetString("name") ?? "";
+						var aTexture = registry.Client?.Resources.Instantiate<Texture>(ResourceId.Parse(attackDef.GetString("texture")))
+							?? new ImageTexture();
+
+						spAtkItems.Add(new Godot.Collections.Dictionary()
+						{
+							["text"] = aText,
+							["texture"] = aTexture
+						});
 					}
-					sideStatsContainer.Visible = true;
+					SideStatsContainer.Call("set_items", spAtkItems);
 				}
 
 				break;

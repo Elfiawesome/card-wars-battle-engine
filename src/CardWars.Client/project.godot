@@ -22,6 +22,10 @@ config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 
 LoggerHook="res://scripts/core/global/LoggerHook.cs"
 
+[debug]
+
+gdscript/warnings/untyped_declaration=2
+
 [dotnet]
 
 project/assembly_name="CardWars.Client"
