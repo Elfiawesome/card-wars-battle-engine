@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://c2n6a1kcehf1m" path="res://assets/cardwars/texture/ui/wood_texture.jpg" id="4_3esg4"]
 [ext_resource type="Script" uid="uid://d0bhmtleyro4k" path="res://scenes/cardwars/instance/battle/Camera.cs" id="5_4jex4"]
 [ext_resource type="Script" uid="uid://cevyuc4l4qfr3" path="res://scenes/cardwars/instance/battle/AttackController.cs" id="6_attack"]
-[ext_resource type="PackedScene" uid="uid://bk7jiwgxicc04" path="res://scenes/cardwars/instance/battle/ui/card/default_card/default_card_display.tscn" id="7_1aoxh"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4jex4"]
 albedo_texture = ExtResource("4_3esg4")
@@ -84,10 +83,6 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("2_3esg4")
 CameraNode = NodePath("../../../../Camera")
-
-[node name="UnitCard" parent="UI/ButtonsOverlay/HandManager" unique_id=934905130 instance=ExtResource("7_1aoxh")]
-layout_mode = 0
-scale = Vector2(0.2, 0.2)
 
 [node name="MarginContainer" type="MarginContainer" parent="UI/ButtonsOverlay" unique_id=1749518099]
 layout_mode = 1
