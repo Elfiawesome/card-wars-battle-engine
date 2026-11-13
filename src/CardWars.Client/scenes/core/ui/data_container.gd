@@ -1,4 +1,4 @@
-extends VBoxContainer
+extends Container
 class_name DataContainer
 
 @export var item_scene: PackedScene:
