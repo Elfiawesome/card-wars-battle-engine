@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://c2n6a1kcehf1m" path="res://assets/cardwars/texture/ui/wood_texture.jpg" id="4_3esg4"]
 [ext_resource type="Script" uid="uid://d0bhmtleyro4k" path="res://scenes/cardwars/instance/battle/Camera.cs" id="5_4jex4"]
 [ext_resource type="Script" uid="uid://cevyuc4l4qfr3" path="res://scenes/cardwars/instance/battle/AttackController.cs" id="6_attack"]
+[ext_resource type="PackedScene" uid="uid://4bu5bbx8nng3" path="res://scenes/cardwars/instance/battle/ui/card/default_card/extra/extra_display_panel.tscn" id="7_1aoxh"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4jex4"]
 albedo_texture = ExtResource("4_3esg4")
@@ -150,3 +151,9 @@ theme_override_font_sizes/font_size = 96
 text = "Game Over"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="ExtraDisplayPanel" parent="." unique_id=1297808818 instance=ExtResource("7_1aoxh")]
+offset_left = 23.0
+offset_top = 30.0
+offset_right = -812.0
+offset_bottom = -213.0

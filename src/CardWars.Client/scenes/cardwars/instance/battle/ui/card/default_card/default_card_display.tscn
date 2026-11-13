@@ -12,8 +12,8 @@
 [ext_resource type="FontVariation" uid="uid://d2wy0udo168ij" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans_italics.tres" id="10_hucph"]
 [ext_resource type="Texture2D" uid="uid://dqm32ts2sr0jf" path="res://assets/cardwars/texture/ui/border.svg" id="11_cuo4o"]
 [ext_resource type="Script" uid="uid://cml7web851mlt" path="res://scenes/core/ui/data_container.gd" id="12_dc"]
-[ext_resource type="PackedScene" uid="uid://bcn8333rsty1y" path="res://scenes/cardwars/instance/battle/ui/card/default_card/ability_text.tscn" id="13_at"]
-[ext_resource type="PackedScene" uid="uid://b1yaxrisa4rs5" path="res://scenes/cardwars/instance/battle/ui/card/default_card/sp_atk_box.tscn" id="14_sp"]
+[ext_resource type="PackedScene" uid="uid://bcn8333rsty1y" path="res://scenes/cardwars/instance/battle/ui/card/default_card/parts/ability_text.tscn" id="13_at"]
+[ext_resource type="PackedScene" uid="uid://b1yaxrisa4rs5" path="res://scenes/cardwars/instance/battle/ui/card/default_card/parts/sp_atk_box.tscn" id="14_sp"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a2w1i"]
 shader = ExtResource("3_deubm")
@@ -88,7 +88,7 @@ texture = ExtResource("2_8dmay")
 expand_mode = 5
 stretch_mode = 6
 
-[node name="BlurBackBufferCopy" type="BackBufferCopy" parent="."]
+[node name="BlurBackBufferCopy" type="BackBufferCopy" parent="." unique_id=2038642834]
 copy_mode = 2
 
 [node name="InfoContainer" type="VBoxContainer" parent="." unique_id=2062988425]
