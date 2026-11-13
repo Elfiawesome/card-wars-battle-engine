@@ -56,7 +56,6 @@ HpLabel = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfo
 AtkLabel = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer/AtkContainer/HBoxContainer/Label")
 FlavourTextLabel = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/FlavourTextLabel")
 AbilitiesContainer = NodePath("InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/AbilityAndSPAtkContainer/AbilitiesContainer")
-metadata/_edit_use_anchors_ = true
 
 [node name="TextureContainer" type="Control" parent="." unique_id=1654516441]
 clip_contents = true

@@ -67,4 +67,3 @@ func _sync() -> void:
 			push_warning("DataContainer item [%s] is missing method [%s]." % [child.name, item_update_method])
 			continue
 		child.call(item_update_method, _items[index])
-		print("Setting child with: " + str(_items[index]))
