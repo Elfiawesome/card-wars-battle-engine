@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bk7jiwgxicc04"]
 
 [ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/cardwars/instance/battle/ui/card/default_card/DefaultCardDisplay.cs" id="1_ivaen"]
-[ext_resource type="Texture2D" uid="uid://wpmcnek6bc0y" path="res://assets/cardwars/texture/cards/faketree.png" id="2_vleal"]
+[ext_resource type="Texture2D" uid="uid://b77joxtigr563" path="res://assets/cardwars/texture/cards/by.jpg" id="2_8dmay"]
 [ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/cardwars/shader/blur.gdshader" id="3_deubm"]
 [ext_resource type="Texture2D" uid="uid://d1pxi4dbq0ieq" path="res://assets/cardwars/texture/icon/stat/pt.svg" id="4_mt1s7"]
 [ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="5_cx7xc"]
@@ -78,16 +78,18 @@ expand_mode = 5
 stretch_mode = 6
 
 [node name="CharacterArt" type="TextureRect" parent="TextureContainer" unique_id=1134226534]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_vleal")
+texture = ExtResource("2_8dmay")
 expand_mode = 5
 stretch_mode = 6
+
+[node name="BlurBackBufferCopy" type="BackBufferCopy" parent="."]
+copy_mode = 2
 
 [node name="InfoContainer" type="VBoxContainer" parent="." unique_id=2062988425]
 layout_mode = 1
