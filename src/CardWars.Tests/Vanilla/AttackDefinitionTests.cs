@@ -52,7 +52,7 @@ public sealed class AttackDefinitionTests
 
 		var card = new GenericCard(EntityId.New())
 		{
-			Data = new CompoundTag().Set("sp_atk", new ListTag()
+			Data = new CompoundTag().Set("sp_atks", new ListTag()
 				.Add(TestSupport.AttackPointer(ResourceId.Vanilla("attacks/cross")))
 				.Add(TestSupport.AttackPointer(new CompoundTag()
 					.Set("name", "Sweep")
@@ -105,7 +105,7 @@ public sealed class AttackDefinitionTests
 				"name": "Test Unit",
 				"hp": 4,
 				"atk": 2,
-				"sp_atk": [
+				"sp_atks": [
 					{ "resource": "cardwars:attacks/cross" }
 				]
 			}
@@ -129,7 +129,7 @@ public sealed class AttackDefinitionTests
 
 		var definition = registry.CardDefinitions.Get(unitContent.Id)
 			?? throw new InvalidOperationException("Unit definition was not registered");
-		var pointer = definition.GetList("sp_atk")?.Get<CompoundTag>(0)
+		var pointer = definition.GetList("sp_atks")?.Get<CompoundTag>(0)
 			?? throw new InvalidOperationException("sp_atk pointer was not stored");
 		Assert.Equal("cardwars:attacks/cross", pointer.GetString("resource"));
 

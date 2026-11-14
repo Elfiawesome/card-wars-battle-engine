@@ -61,7 +61,7 @@ public sealed class BattleHeroTests
 		{
 			if (id != TestCards.John) return;
 
-			definition.Set("sp_atk", new ListTag()
+			definition.Set("sp_atks", new ListTag()
 				.Add(TestSupport.AttackPointer(new CompoundTag()
 					.Set("name", "Origin Bonus")
 					.Set("charge_cost", 0)

@@ -10,7 +10,7 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 {
 	public AttackProfile Resolve(GenericCard card)
 	{
-		if (card.Data.GetList("sp_atk") is { Count: > 0 } spAtks)
+		if (card.Data.GetList("sp_atks") is { Count: > 0 } spAtks)
 		{
 			var definitions = new List<AttackDefinition>();
 

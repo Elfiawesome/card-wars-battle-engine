@@ -17,7 +17,7 @@ public sealed class BattleSpAttackTests
 			if (id != TestCards.John) return;
 
 			definition.Set("charge", 2);
-			definition.Set("sp_atk", new ListTag()
+			definition.Set("sp_atks", new ListTag()
 				.Add(TestSupport.AttackPointer(SpAtk("Flat", 1, false, Pattern("single", 1))))
 				.Add(TestSupport.AttackPointer(SpAtk("Percent", 1, false, Pattern("single", "50%")))));
 		});
@@ -47,7 +47,7 @@ public sealed class BattleSpAttackTests
 			definition.Set("ba_atk", TestSupport.AttackPointer(new CompoundTag()
 				.Set("charge_cost", 1)
 				.Set("patterns", new ListTag().Add(Pattern("single", 100)))));
-			definition.Set("sp_atk", new ListTag()
+			definition.Set("sp_atks", new ListTag()
 				.Add(TestSupport.AttackPointer(SpAtk("First", 1, false, Pattern("single", 1))))
 				.Add(TestSupport.AttackPointer(SpAtk("Second", 1, false, Pattern("single", 1)))));
 		});
@@ -73,7 +73,7 @@ public sealed class BattleSpAttackTests
 		{
 			if (id != TestCards.John) return;
 
-			definition.Set("sp_atk", new ListTag()
+			definition.Set("sp_atks", new ListTag()
 				.Add(TestSupport.AttackPointer(SpAtk("Pierce", 0, true, Pattern("single", 1)))));
 		});
 
