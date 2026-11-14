@@ -295,7 +295,7 @@ public partial class HandManager : Control
 		Vector2 cardSize = Vector2.Zero;
 		foreach (var c in cards) { if (c is CardDisplay cd) { cardSize = cd.Size; break; } }
 		float cardWidth = cardSize.X * CardScale.X;
-		float cardHeight = cardSize.X * CardScale.X;
+		float cardHeight = cardSize.Y * CardScale.Y;
 
 		Vector2 handCenter = new(Size.X / 2, Size.Y - cardHeight / 2);
 
