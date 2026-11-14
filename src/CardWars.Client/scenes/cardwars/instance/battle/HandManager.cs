@@ -4,7 +4,6 @@ using System.Linq;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
-using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Core.Logging;
 using CardWars.Vanilla.Shared;
 using Godot;
@@ -93,6 +92,8 @@ public partial class HandManager : Control
 		if (_cards.TryGetValue(id, out var c))
 		{
 			_cards.Remove(id);
+
+			if (HoveredCard == c) HoveredCard = null;
 
 			if (SelectedCard == c)
 			{
@@ -290,7 +291,13 @@ public partial class HandManager : Control
 	{
 		var cards = _cards.Select(s => s.Value).ToList();
 		int totalCard = cards.Count;
-		if (totalCard == 0) return;
+		if (totalCard == 0)
+		{
+			HoveredCard = null;
+			ResetArrows();
+			ArrangeSidePanels();
+			return;
+		}
 
 		Vector2 cardSize = Vector2.Zero;
 		foreach (var c in cards) { if (c is CardDisplay cd) { cardSize = cd.Size; break; } }

@@ -8,7 +8,6 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Client.scenes.core.game_session;
-using CardWars.Client.scenes.vanilla.instance.battle;
 using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Client.scripts.cardwars.systems;
 using CardWars.Client.scripts.core.packet;
