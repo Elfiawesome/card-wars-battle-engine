@@ -228,18 +228,19 @@ public partial class HandManager : Control
 
 				if (i == 0)
 					display.Call("set_grid", [new Godot.Collections.Array(){
-					new Godot.Collections.Dictionary(),
-					new Godot.Collections.Dictionary() { ["filled"] = true },
-					new Godot.Collections.Dictionary(),
+						new Godot.Collections.Dictionary(),
+						new Godot.Collections.Dictionary() { ["filled"] = true },
+						new Godot.Collections.Dictionary(),
 
-					new Godot.Collections.Dictionary() { ["filled"] = true },
-					new Godot.Collections.Dictionary() { ["filled"] = true, ["crossed"] = true },
-					new Godot.Collections.Dictionary() { ["filled"] = true },
+						new Godot.Collections.Dictionary() { ["filled"] = true },
+						new Godot.Collections.Dictionary() { ["filled"] = true, ["crossed"] = true },
+						new Godot.Collections.Dictionary() { ["filled"] = true },
 
-					new Godot.Collections.Dictionary(),
-					new Godot.Collections.Dictionary() { ["filled"] = true },
-					new Godot.Collections.Dictionary(),
-				}]);
+						new Godot.Collections.Dictionary(),
+						new Godot.Collections.Dictionary() { ["filled"] = true },
+						new Godot.Collections.Dictionary(),
+					}, 3
+				]);
 			}
 
 

@@ -1,6 +1,6 @@
 extends MarginContainer
 
-@export var grid_container: DataContainer
+@export var grid_container: Container
 @export var icon_texture: TextureRect
 @export var title_label: Label
 @export var content_label: Label
@@ -14,10 +14,13 @@ func _ready() -> void:
 	# 	{},{"text":"5","filled":true},{}
 	# ])
 
-func set_grid(items: Array) -> void:
+func set_grid(items: Array, grid_width: int = 3) -> void:
 	if items.size() > 0:
 		grid_container.visible = true
-		grid_container.set_items(items)
+		if grid_container is DataContainer:
+			grid_container.set_items(items)
+		if grid_container is GridContainer:
+			grid_container.columns = grid_width
 	else:
 		grid_container.visible = false
 
