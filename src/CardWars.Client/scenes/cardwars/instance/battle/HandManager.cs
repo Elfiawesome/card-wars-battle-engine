@@ -31,6 +31,9 @@ public partial class HandManager : Control
 	private Dictionary<EntityId, CardDisplay> _cards = [];
 	public IReadOnlyDictionary<EntityId, CardDisplay> Cards => _cards;
 
+	public List<Control> SidePanels = [];
+	public Rect2 SidePanelRect = new();
+
 	public override void _Ready()
 	{
 		Resized += ArrangeCard;
@@ -199,6 +202,82 @@ public partial class HandManager : Control
 		LineArrow = null;
 	}
 
+	private void ArrangeSidePanels()
+	{
+		// Remove any side panels
+		foreach (var s in SidePanels) { RemoveChild(s); s.QueueFree(); }
+		SidePanels.Clear();
+
+		if (HoveredCard is { } c)
+		{
+			// Populates side panels
+			for (var i = 0; i < 8; i++)
+			{
+				var display = GD.Load<PackedScene>("res://scenes/cardwars/instance/battle/ui/card/default_card/extra/extra_display_panel.tscn").Instantiate<Control>();
+				AddChild(display);
+				SidePanels.Add(display);
+				display.MouseBehaviorRecursive = MouseBehaviorRecursiveEnum.Disabled;
+				display.MouseFilter = MouseFilterEnum.Ignore;
+
+				display.Call("set_content", [
+					"SP ATK",
+					BattleInstance?.Registry.Client?.Resources.Get("cardwars:texture/icon/attacks/spread")
+						?? new ImageTexture(),
+					"Damage!"
+				]);
+
+				if (i == 0)
+					display.Call("set_grid", [new Godot.Collections.Array(){
+					new Godot.Collections.Dictionary(),
+					new Godot.Collections.Dictionary() { ["filled"] = true },
+					new Godot.Collections.Dictionary(),
+
+					new Godot.Collections.Dictionary() { ["filled"] = true },
+					new Godot.Collections.Dictionary() { ["filled"] = true, ["crossed"] = true },
+					new Godot.Collections.Dictionary() { ["filled"] = true },
+
+					new Godot.Collections.Dictionary(),
+					new Godot.Collections.Dictionary() { ["filled"] = true },
+					new Godot.Collections.Dictionary(),
+				}]);
+			}
+
+
+			// Arrange: TODO: This is not done well and correctly
+			float totalDisplayHeight = 0f;
+			float totalDisplayWidth = 0f;
+			for (var i = 0; i < SidePanels.Count; i++)
+			{
+				var display = SidePanels[i];
+				display.Size = new(350, 100);
+				totalDisplayHeight += display.Size.Y;
+				totalDisplayWidth = display.Size.X;
+			}
+
+			Vector2 StartingCoords = new(0, SidePanelRect.Position.Y - SidePanelRect.Size.Y / 2);
+			var LeftMost = SidePanelRect.Position.X - SidePanelRect.Size.X / 2 - totalDisplayWidth;
+			var RightMost = SidePanelRect.Position.X + SidePanelRect.Size.X / 2 + totalDisplayWidth;
+			if ((LeftMost - 0) > (Size.X - RightMost)) { StartingCoords.X = SidePanelRect.Position.X - SidePanelRect.Size.X / 2 - totalDisplayWidth; }
+			else { StartingCoords.X = SidePanelRect.Position.X + SidePanelRect.Size.X / 2; }
+
+			float prevHeight = 0;
+			for (var i = 0; i < SidePanels.Count; i++)
+			{
+				var display = SidePanels[i];
+				display.ZIndex = HoverZIndex - 1;
+				display.Position = StartingCoords + new Vector2(0, prevHeight);
+				prevHeight += display.Size.Y;
+
+
+				display.Modulate = new(display.Modulate, 0.0f);
+				var et = display.CreateTween();
+				et.SetParallel(true).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+				et.TweenProperty(display, "modulate:a", 1.0, 0.5f).SetDelay(0.3 + i * 0.1);
+				et.TweenProperty(display, "position", display.Position, 0.5).SetDelay(0.3 + i * 0.1);
+				display.Position = new(SidePanelRect.Position.X - SidePanelRect.Size.X / 2, display.Position.Y);
+			}
+		}
+	}
 
 	private void ArrangeCard()
 	{
@@ -268,6 +347,7 @@ public partial class HandManager : Control
 							newRot = 0;
 							c.ZIndex = HoverZIndex;
 							newScale *= 1.2f;
+							SidePanelRect = new Rect2(newPos + c.Size / 2, newScale * c.Size);
 						}
 					}
 					else
@@ -288,5 +368,6 @@ public partial class HandManager : Control
 				c.currentAnimationTween = t;
 			}
 		}
+		ArrangeSidePanels();
 	}
 }

@@ -15,8 +15,8 @@ shader_parameter/saturation = 1.6
 shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 
 [node name="ExtraDisplayPanel" type="MarginContainer" unique_id=689193761 node_paths=PackedStringArray("grid_container", "icon_texture", "title_label", "content_label")]
-offset_right = 269.0
-offset_bottom = 116.0
+offset_right = 140.0
+offset_bottom = 76.0
 script = ExtResource("1_3o0vn")
 grid_container = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/GridContainer")
 icon_texture = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer/TextureRect")
@@ -63,16 +63,16 @@ stretch_mode = 5
 [node name="TitleLabel" type="Label" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=155473973]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_cm4iq")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 14
 text = "Tittle"
 uppercase = true
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer" unique_id=152555307]
 layout_mode = 2
-theme_override_constants/margin_left = 15
-theme_override_constants/margin_top = 15
-theme_override_constants/margin_right = 15
-theme_override_constants/margin_bottom = 15
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer" unique_id=1375511234]
 layout_mode = 2
@@ -83,7 +83,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
 theme_override_fonts/font = ExtResource("4_wmffd")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 14
 text = "Error Text"
 autowrap_mode = 3
 
