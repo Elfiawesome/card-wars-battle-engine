@@ -167,10 +167,13 @@ public partial class GameSession : Node
 	private void SetupModClient(ModLoader.ModLoader modLoader)
 	{
 		var clientContent = modLoader.GetContentClient().ToList();
+		var battleContent = IntegratedServer is null
+			? modLoader.GetContentServer().ToList()
+			: clientContent;
 
 		new VanillaMod().OnLoad(ClientRegistry, clientContent); // TODO: Load dynamically via scanning current assembly bruh
 		modLoader.LoadModEntry<IClientMod>().ForEach(m => LoadMod(m, clientContent));
-		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => LoadMod(m, clientContent));
+		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => LoadMod(m, battleContent));
 
 		// If loaded client, use its shared battle engine registry to save on memory
 		IntegratedServer?.OverrideRegistry(BattleEngineRegistry);
