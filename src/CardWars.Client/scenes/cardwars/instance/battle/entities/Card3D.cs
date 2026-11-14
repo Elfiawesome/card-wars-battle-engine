@@ -51,7 +51,12 @@ public partial class Card3D : EntityNode3D
 
 	public void SetCardDisplay(ResourceId cardDisplayId, CardDisplay cardDisplay)
 	{
-		if (cardDisplayId == DisplayId) return;
+		if (cardDisplayId == DisplayId && Display is not null)
+		{
+			if (!ReferenceEquals(cardDisplay, Display)) cardDisplay.QueueFree();
+			return;
+		}
+
 		if (Display is not null) { CardViewport?.RemoveChild(Display); Display.QueueFree(); }
 
 		Display = cardDisplay;

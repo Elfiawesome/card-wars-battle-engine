@@ -51,8 +51,11 @@ public class CardViewHandler : IEntityViewHandler<GenericCard>
 			// TODO: Check for skins here
 			// but for now let's use default
 			var targetSkinId = SharedIds.UI.DefaultCardDisplay; // Set the skin here
-			var display = instance.Registry.Client?.UserInterface.Instantiate<CardDisplay>(targetSkinId);
-			if (display is not null) node.SetCardDisplay(targetSkinId, display);
+			if (node.DisplayId != targetSkinId || node.Display is null)
+			{
+				var display = instance.Registry.Client?.UserInterface.Instantiate<CardDisplay>(targetSkinId);
+				if (display is not null) node.SetCardDisplay(targetSkinId, display);
+			}
 			node.SetCard(card, instance.Registry);
 		}
 	}
