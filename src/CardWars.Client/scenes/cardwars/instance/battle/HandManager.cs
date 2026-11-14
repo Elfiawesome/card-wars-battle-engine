@@ -255,7 +255,13 @@ public partial class HandManager : Control
 				totalDisplayWidth = display.Size.X;
 			}
 
-			Vector2 StartingCoords = new(0, SidePanelRect.Position.Y - SidePanelRect.Size.Y / 2);
+			Vector2 StartingCoords = new(
+				0, 
+				Math.Min(
+					Size.Y - totalDisplayHeight,
+					SidePanelRect.Position.Y - SidePanelRect.Size.Y / 2
+				)
+			);
 			var LeftMost = SidePanelRect.Position.X - SidePanelRect.Size.X / 2 - totalDisplayWidth;
 			var RightMost = SidePanelRect.Position.X + SidePanelRect.Size.X / 2 + totalDisplayWidth;
 			if ((LeftMost - 0) > (Size.X - RightMost)) { StartingCoords.X = SidePanelRect.Position.X - SidePanelRect.Size.X / 2 - totalDisplayWidth; }
