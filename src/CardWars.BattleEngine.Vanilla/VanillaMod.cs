@@ -243,6 +243,11 @@ public class VanillaMod : IBattleEngineMod
 					Log.Info($"Registered Unit Card: {content.Id}");
 					break;
 				case ["cards", "spells"]:
+					var spellDataTag = content.ReadAs<CompoundTag>();
+					if (spellDataTag is null) continue;
+
+					spellDataTag.Set("card_type", "spell");
+					registry.CardDefinitions.Register(content.Id, spellDataTag);
 					Log.Info($"Registered Spell Card: {content.Id}");
 					break;
 				case ["cards", "heroes"]:
