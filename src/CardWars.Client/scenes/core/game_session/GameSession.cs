@@ -173,7 +173,7 @@ public partial class GameSession : Node
 
 		new VanillaMod().OnLoad(ClientRegistry, clientContent); // TODO: Load dynamically via scanning current assembly bruh
 		modLoader.LoadModEntry<IClientMod>().ForEach(m => LoadMod(m, clientContent));
-		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => LoadMod(m, battleContent));
+		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => LoadMod(m, battleContent)); // TODO: Maybe content is loaded and passed on by server. So we create a new battle registry each session and is given by server??
 
 		// If loaded client, use its shared battle engine registry to save on memory
 		IntegratedServer?.OverrideRegistry(BattleEngineRegistry);
