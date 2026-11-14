@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://4bu5bbx8nng3"]
 
-[ext_resource type="Script" uid="uid://bbgx32bogy68g" path="res://scenes/cardwars/instance/battle/ui/card/default_card/extra/extra_display_panel.gd" id="1_3o0vn"]
+[ext_resource type="Script" uid="uid://bbgx32bogy68g" path="res://scenes/cardwars/ui/inspection/panels/card_inspection_panel.gd" id="1_3o0vn"]
 [ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/cardwars/shader/blur.gdshader" id="1_c6e37"]
 [ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="2_cm4iq"]
 [ext_resource type="Texture2D" uid="uid://c41agu56cgkoy" path="res://assets/cardwars/texture/icon/error.svg" id="2_r8nh0"]
 [ext_resource type="FontVariation" uid="uid://c3rx16v67f23f" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans.tres" id="4_wmffd"]
-[ext_resource type="PackedScene" uid="uid://c0kxlqqmfr52" path="res://scenes/cardwars/instance/battle/ui/card/default_card/extra/grid_tile.tscn" id="5_1k4xy"]
+[ext_resource type="PackedScene" uid="uid://c0kxlqqmfr52" path="res://scenes/cardwars/ui/inspection/parts/grid_tile.tscn" id="5_1k4xy"]
 [ext_resource type="Script" uid="uid://cml7web851mlt" path="res://scenes/core/ui/data_container.gd" id="5_dpao1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_30tpu"]

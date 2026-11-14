@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace CardWars.Client.scenes.cardwars.instance.battle;
+namespace CardWars.Client.scenes.cardwars.ui.battle;
 
 public partial class LineArrow : Node2D
 {

@@ -5,6 +5,7 @@ using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Client.scenes.cardwars.instance.battle.entities;
+using CardWars.Client.scenes.cardwars.ui.battle;
 using CardWars.Vanilla.Shared;
 using Godot;
 

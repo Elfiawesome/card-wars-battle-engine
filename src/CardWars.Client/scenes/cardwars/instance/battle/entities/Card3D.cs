@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Client.scenes.core.game_session;
+using CardWars.Client.scenes.cardwars.ui.cards;
 using CardWars.Client.scripts.core;
 using CardWars.Core.Registry;
 using Godot;

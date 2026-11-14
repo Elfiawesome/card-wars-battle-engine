@@ -34,9 +34,9 @@ public class VanillaMod : IClientMod
 		registry.Instances.Register(SharedIds.Instances.Battle, "res://scenes/cardwars/instance/battle/battle_instance.tscn");
 
 		// UI
-		registry.UserInterface.Register(SharedIds.UI.DefaultCardDisplay, "res://scenes/cardwars/instance/battle/ui/card/default_card/default_card_display.tscn");
-		registry.UserInterface.Register(SharedIds.UI.LineArrow, "res://scenes/cardwars/instance/battle/ui/line_arrow.tscn");
-		registry.UserInterface.Register(SharedIds.UI.TargetHighlight, "res://scenes/cardwars/instance/battle/ui/target_highlight.tscn");
+		registry.UserInterface.Register(SharedIds.UI.DefaultCardDisplay, "res://scenes/cardwars/ui/cards/default_card/default_card_display.tscn");
+		registry.UserInterface.Register(SharedIds.UI.LineArrow, "res://scenes/cardwars/ui/battle/line_arrow.tscn");
+		registry.UserInterface.Register(SharedIds.UI.TargetHighlight, "res://scenes/cardwars/ui/battle/target_highlight.tscn");
 
 		// Register all content in res://
 		var GDContentLoader = new GDContentLoader("cardwars");

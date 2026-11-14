@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b786tjbivda3v"]
 
-[ext_resource type="Script" uid="uid://bfhvlr2tcj3y7" path="res://scenes/cardwars/instance/battle/ui/TargetHighlight.cs" id="1_cci53"]
+[ext_resource type="Script" uid="uid://bfhvlr2tcj3y7" path="res://scenes/cardwars/ui/battle/TargetHighlight.cs" id="1_cci53"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_highlight"]
 size = Vector2(0.82, 1.1)

@@ -6,7 +6,7 @@ using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using Godot;
 
-namespace CardWars.Client;
+namespace CardWars.Client.scenes.cardwars.ui.cards;
 
 public partial class DefaultCardDisplay : CardDisplay
 {

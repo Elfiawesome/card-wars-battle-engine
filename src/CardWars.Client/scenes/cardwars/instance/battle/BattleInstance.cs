@@ -9,6 +9,7 @@ using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.cardwars.registry;
+using CardWars.Client.scenes.cardwars.ui.battle;
 using CardWars.Client.scripts.cardwars.systems;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Core.Network.Packet;

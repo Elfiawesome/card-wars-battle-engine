@@ -4,6 +4,8 @@ using System.Linq;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.Client.scenes.cardwars.ui.battle;
+using CardWars.Client.scenes.cardwars.ui.cards;
 using CardWars.Core.Logging;
 using CardWars.Vanilla.Shared;
 using Godot;
@@ -214,7 +216,7 @@ public partial class HandManager : Control
 			// Populates side panels
 			for (var i = 0; i < 8; i++)
 			{
-				var display = GD.Load<PackedScene>("res://scenes/cardwars/instance/battle/ui/card/default_card/extra/extra_display_panel.tscn").Instantiate<Control>();
+				var display = GD.Load<PackedScene>("res://scenes/cardwars/ui/inspection/panels/card_inspection_panel.tscn").Instantiate<Control>();
 				AddChild(display);
 				SidePanels.Add(display);
 				display.MouseBehaviorRecursive = MouseBehaviorRecursiveEnum.Disabled;
