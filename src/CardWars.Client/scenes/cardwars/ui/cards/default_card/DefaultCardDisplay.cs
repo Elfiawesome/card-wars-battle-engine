@@ -153,14 +153,3 @@ public partial class DefaultCardDisplay : CardDisplay
 		}
 	}
 }
-
-public abstract partial class CardDisplay : Control
-{
-	public DisplayType Display { get; protected set; } = DisplayType.Full;
-	public enum DisplayType { Full, Simplified }
-
-	public Tween? currentAnimationTween;
-
-	public virtual void SetData(CompoundTag data, ClientInstanceRegistry registry) { }
-	public virtual void SetDisplay(DisplayType displayType) { }
-}
