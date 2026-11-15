@@ -126,6 +126,7 @@ theme_override_constants/separation = 32
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.15
+mouse_filter = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox" unique_id=135295749]
 layout_mode = 1
@@ -158,6 +159,7 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.15
+mouse_filter = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/HrtBox" unique_id=257616636]
 layout_mode = 1
