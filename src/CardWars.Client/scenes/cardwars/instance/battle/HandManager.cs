@@ -283,6 +283,7 @@ public partial class HandManager : Control
 				prevHeight += display.Size.Y;
 
 
+				// TO move animation set by each display themselves
 				display.Modulate = new(display.Modulate, 0.0f);
 				var et = display.CreateTween();
 				et.SetParallel(true).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);

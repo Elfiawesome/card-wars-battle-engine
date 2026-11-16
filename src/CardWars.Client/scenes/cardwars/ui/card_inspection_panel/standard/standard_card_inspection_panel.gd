@@ -5,9 +5,14 @@ extends MarginContainer
 @export var title_label: Label
 @export var content_label: Label
 
+# We can set from the consumer to set where the card is at so we can animate if needed
+@export var card_dimensions: Rect2 
+
 func _ready() -> void:
-	pass
-	# Example
+	# Here we do our animations based on our set positions
+	
+	
+	# Grid Example
 	# grid_container.set_items([
 	# 	{},{"text":"5","filled":true},{},
 	# 	{"text":"5","filled":true},{"crossed":true,"filled":true},{"text":"5","filled":true},
