@@ -4,6 +4,7 @@ using CardWars.Client.scripts.cardwars.entity_view;
 using CardWars.Client.scripts.cardwars.layout;
 using CardWars.Client.scripts.cardwars.packet;
 using CardWars.Client.scripts.cardwars.registry;
+using CardWars.Client.scripts.cardwars.ui.card_inspection_panel;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.storage;
 using CardWars.Core.Logging;
@@ -37,6 +38,10 @@ public class VanillaMod : IClientMod
 		registry.UserInterface.Register(SharedIds.UI.StandardCardDisplay, "res://scenes/cardwars/ui/card_display/standard/standard_card_display.tscn");
 		registry.UserInterface.Register(SharedIds.UI.LineArrow, "res://scenes/cardwars/ui/battle/line_arrow.tscn");
 		registry.UserInterface.Register(SharedIds.UI.TargetHighlight, "res://scenes/cardwars/ui/battle/target_highlight.tscn");
+
+		// Card Inspection Panel Handlers (for keywords etc.)
+		BattleRegistry.CardInspectionHandlers.Register(ResourceId.Vanilla("attack"), new CardInspectionAttackHandler());
+		BattleRegistry.CardInspectionHandlers.Register(ResourceId.Vanilla("abilities"), new CardInspectionAbilitiesHandler());
 
 		// Register all content in res://
 		var GDContentLoader = new GDContentLoader("cardwars");
