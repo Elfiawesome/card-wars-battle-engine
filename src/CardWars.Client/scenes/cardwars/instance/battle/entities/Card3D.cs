@@ -45,6 +45,7 @@ public partial class Card3D : EntityNode3D
 		if (Display is { } display)
 		{
 			display.SetData(card.Data, registry);
+			display.SetDisplay(CardDisplay.DisplayType.Simplified);
 			BoxShape.Size = new Vector3(display.Size.X, 100.0f, display.Size.Y) / 100f;
 			if (CardViewport is not null) CardViewport.Size = (Vector2I)display.Size;
 		}

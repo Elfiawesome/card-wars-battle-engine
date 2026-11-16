@@ -143,13 +143,17 @@ public partial class DefaultCardDisplay : CardDisplay
 
 	public override void SetDisplay(DisplayType displayType)
 	{
+		if (FlavourTextLabel is not { } flavourTextLabel) return;
+		if (AbilitiesContainer is not { } abilitiesContainer) return;
 		if (displayType == DisplayType.Full)
 		{
-
+			flavourTextLabel.Visible = true;
+			abilitiesContainer.Visible = true;
 		}
 		else if (displayType == DisplayType.Simplified)
 		{
-
+			flavourTextLabel.Visible = false;
+			abilitiesContainer.Visible = false;
 		}
 	}
 }

@@ -84,7 +84,11 @@ public partial class HandManager : Control
 		card.MouseExited += () => OnCardMouseExited(card);
 		card.GuiInput += (e) => OnCardGuiInput(e, card);
 		AddChild(card);
-		if (BattleInstance?.State.Get<GenericCard>(id) is { } entity) card.SetData(entity.Data, BattleInstance.Registry);
+		if (BattleInstance?.State.Get<GenericCard>(id) is { } entity)
+		{
+			card.SetData(entity.Data, BattleInstance.Registry);
+			card.SetDisplay(CardDisplay.DisplayType.Simplified);
+		}
 		_cards[id] = card;
 		ArrangeCard();
 	}
@@ -259,7 +263,7 @@ public partial class HandManager : Control
 			}
 
 			Vector2 StartingCoords = new(
-				0, 
+				0,
 				Math.Min(
 					Size.Y - totalDisplayHeight,
 					SidePanelRect.Position.Y - SidePanelRect.Size.Y / 2
@@ -297,7 +301,7 @@ public partial class HandManager : Control
 		{
 			HoveredCard = null;
 			ResetArrows();
-			ArrangeSidePanels();
+			// ArrangeSidePanels();
 			return;
 		}
 
@@ -384,6 +388,19 @@ public partial class HandManager : Control
 				c.currentAnimationTween = t;
 			}
 		}
-		ArrangeSidePanels();
+
+		// ArrangeSidePanels();
+		if (HoveredCard is not null)
+		{
+			var cardId = Cards.FirstOrDefault(entry => entry.Value == HoveredCard).Key;
+			var cardData = BattleInstance?.State.Get<GenericCard>(cardId);
+			if (cardData is not null)
+			{
+				BattleInstance?.Registry.Client?
+					.CardInspectionHandlers?
+					.Get(SharedIds.UI.DefaultCardDisplay /* TODO: pull the correct sking*/)?
+					.SetPanels(this, SidePanelRect, cardData.Data);
+			}
+		}
 	}
 }
