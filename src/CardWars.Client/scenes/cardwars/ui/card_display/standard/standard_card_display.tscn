@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bk7jiwgxicc04"]
 
-[ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/cardwars/ui/cards/default_card/DefaultCardDisplay.cs" id="1_ivaen"]
+[ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/cardwars/ui/card_display/standard/StandardCardDisplay.cs" id="1_ivaen"]
 [ext_resource type="Texture2D" uid="uid://b77joxtigr563" path="res://assets/cardwars/texture/cards/by.jpg" id="2_8dmay"]
 [ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/cardwars/shader/blur.gdshader" id="3_deubm"]
 [ext_resource type="Texture2D" uid="uid://d1pxi4dbq0ieq" path="res://assets/cardwars/texture/icon/stat/pt.svg" id="4_mt1s7"]
@@ -12,8 +12,8 @@
 [ext_resource type="FontVariation" uid="uid://d2wy0udo168ij" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans_italics.tres" id="10_hucph"]
 [ext_resource type="Texture2D" uid="uid://dqm32ts2sr0jf" path="res://assets/cardwars/texture/ui/border.svg" id="11_cuo4o"]
 [ext_resource type="Script" uid="uid://cml7web851mlt" path="res://scenes/core/ui/data_container.gd" id="12_dc"]
-[ext_resource type="PackedScene" uid="uid://bcn8333rsty1y" path="res://scenes/cardwars/ui/cards/default_card/parts/ability_text.tscn" id="13_at"]
-[ext_resource type="PackedScene" uid="uid://b1yaxrisa4rs5" path="res://scenes/cardwars/ui/cards/default_card/parts/sp_atk_box.tscn" id="14_sp"]
+[ext_resource type="PackedScene" uid="uid://bcn8333rsty1y" path="res://scenes/cardwars/ui/card_display/standard/parts/ability_text.tscn" id="13_at"]
+[ext_resource type="PackedScene" uid="uid://b1yaxrisa4rs5" path="res://scenes/cardwars/ui/card_display/standard/parts/sp_atk_box.tscn" id="14_sp"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a2w1i"]
 shader = ExtResource("3_deubm")
@@ -34,7 +34,7 @@ shader_parameter/blur_amount = 2.000000095
 shader_parameter/saturation = 1.6
 shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 
-[node name="UnitCard" type="Control" unique_id=934905130 node_paths=PackedStringArray("PtContainer", "PtLabel", "HrtContainer", "HrtLabel", "NameLabel", "WorldLabel", "CardTypeLabel", "SideStatsContainer", "BtmDivStarTexture", "BtmDivGradTexture", "StatContainer", "HpLabel", "AtkLabel", "FlavourTextLabel", "AbilitiesContainer")]
+[node name="StandardCardDisplay" type="Control" unique_id=934905130 node_paths=PackedStringArray("PtContainer", "PtLabel", "HrtContainer", "HrtLabel", "NameLabel", "WorldLabel", "CardTypeLabel", "SideStatsContainer", "BtmDivStarTexture", "BtmDivGradTexture", "StatContainer", "HpLabel", "AtkLabel", "FlavourTextLabel", "AbilitiesContainer")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1408.0

@@ -4,8 +4,8 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Client.scenes.cardwars.instance.battle;
 using CardWars.Client.scenes.cardwars.instance.battle.entities;
+using CardWars.Client.scenes.cardwars.ui.card_display;
 using CardWars.Client.scripts.cardwars.registry;
-using CardWars.Client.scenes.cardwars.ui.cards;
 using CardWars.Vanilla.Shared;
 using Godot;
 
@@ -51,7 +51,7 @@ public class CardViewHandler : IEntityViewHandler<GenericCard>
 
 			// TODO: Check for skins here
 			// but for now let's use default
-			var targetSkinId = SharedIds.UI.DefaultCardDisplay; // Set the skin here
+			var targetSkinId = SharedIds.UI.StandardCardDisplay; // Set the skin here
 			if (node.DisplayId != targetSkinId || node.Display is null)
 			{
 				var display = instance.Registry.Client?.UserInterface.Instantiate<CardDisplay>(targetSkinId);

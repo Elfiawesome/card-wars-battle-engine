@@ -5,7 +5,7 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Client.scenes.cardwars.ui.battle;
-using CardWars.Client.scenes.cardwars.ui.cards;
+using CardWars.Client.scenes.cardwars.ui.card_display;
 using CardWars.Core.Logging;
 using CardWars.Vanilla.Shared;
 using Godot;
@@ -75,7 +75,7 @@ public partial class HandManager : Control
 	public void AddCard(EntityId id)
 	{
 		// TODO: Get skin and place it inside
-		var card = BattleInstance?.Registry.Client?.UserInterface.Instantiate<CardDisplay>(SharedIds.UI.DefaultCardDisplay);
+		var card = BattleInstance?.Registry.Client?.UserInterface.Instantiate<CardDisplay>(SharedIds.UI.StandardCardDisplay);
 		if (card is null) return;
 		card.Scale = Vector2.Zero;
 		card.Position = new(0, 0);

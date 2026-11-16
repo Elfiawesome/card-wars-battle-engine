@@ -2,7 +2,7 @@ using CardWars.Client.scenes.core.game_session;
 using CardWars.Core.Data.Tags;
 using Godot;
 
-namespace CardWars.Client.scenes.cardwars.ui.cards;
+namespace CardWars.Client.scenes.cardwars.ui.card_display;
 
 public abstract partial class CardDisplay : Control
 {

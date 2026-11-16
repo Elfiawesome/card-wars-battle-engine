@@ -1,15 +1,15 @@
 [gd_scene format=3 uid="uid://4bu5bbx8nng3"]
 
-[ext_resource type="Script" uid="uid://bbgx32bogy68g" path="res://scenes/cardwars/ui/inspection/panels/card_inspection_panel.gd" id="1_3o0vn"]
-[ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/cardwars/shader/blur.gdshader" id="1_c6e37"]
-[ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="2_cm4iq"]
-[ext_resource type="Texture2D" uid="uid://c41agu56cgkoy" path="res://assets/cardwars/texture/icon/error.svg" id="2_r8nh0"]
-[ext_resource type="FontVariation" uid="uid://c3rx16v67f23f" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans.tres" id="4_wmffd"]
-[ext_resource type="PackedScene" uid="uid://c0kxlqqmfr52" path="res://scenes/cardwars/ui/inspection/parts/grid_tile.tscn" id="5_1k4xy"]
-[ext_resource type="Script" uid="uid://cml7web851mlt" path="res://scenes/core/ui/data_container.gd" id="5_dpao1"]
+[ext_resource type="Script" uid="uid://bbgx32bogy68g" path="res://scenes/cardwars/ui/card_inspection_panel/standard/standard_card_inspection_panel.gd" id="1_o23xf"]
+[ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/cardwars/shader/blur.gdshader" id="2_dqn7l"]
+[ext_resource type="Texture2D" uid="uid://c41agu56cgkoy" path="res://assets/cardwars/texture/icon/error.svg" id="3_66gck"]
+[ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="4_1bhno"]
+[ext_resource type="FontVariation" uid="uid://c3rx16v67f23f" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans.tres" id="5_1cc1h"]
+[ext_resource type="Script" uid="uid://cml7web851mlt" path="res://scenes/core/ui/data_container.gd" id="6_n55vb"]
+[ext_resource type="PackedScene" uid="uid://c0kxlqqmfr52" path="res://scenes/cardwars/ui/card_inspection_panel/standard/grid_tile.tscn" id="7_7di0a"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_30tpu"]
-shader = ExtResource("1_c6e37")
+shader = ExtResource("2_dqn7l")
 shader_parameter/blur_amount = 2.000000095
 shader_parameter/saturation = 1.6
 shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
@@ -17,7 +17,7 @@ shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 [node name="ExtraDisplayPanel" type="MarginContainer" unique_id=689193761 node_paths=PackedStringArray("grid_container", "icon_texture", "title_label", "content_label")]
 offset_right = 140.0
 offset_bottom = 76.0
-script = ExtResource("1_3o0vn")
+script = ExtResource("1_o23xf")
 grid_container = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/GridContainer")
 icon_texture = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer/TextureRect")
 title_label = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer/TitleLabel")
@@ -56,13 +56,13 @@ layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=85173652]
 layout_mode = 2
-texture = ExtResource("2_r8nh0")
+texture = ExtResource("3_66gck")
 expand_mode = 3
 stretch_mode = 5
 
 [node name="TitleLabel" type="Label" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=155473973]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_cm4iq")
+theme_override_fonts/font = ExtResource("4_1bhno")
 theme_override_font_sizes/font_size = 14
 text = "Tittle"
 uppercase = true
@@ -82,7 +82,7 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
-theme_override_fonts/font = ExtResource("4_wmffd")
+theme_override_fonts/font = ExtResource("5_1cc1h")
 theme_override_font_sizes/font_size = 14
 text = "Error Text"
 autowrap_mode = 3
@@ -93,5 +93,5 @@ layout_mode = 2
 [node name="GridContainer" type="GridContainer" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer" unique_id=307284906]
 layout_mode = 2
 columns = 3
-script = ExtResource("5_dpao1")
-item_scene = ExtResource("5_1k4xy")
+script = ExtResource("6_n55vb")
+item_scene = ExtResource("7_7di0a")

@@ -34,7 +34,7 @@ public class VanillaMod : IClientMod
 		registry.Instances.Register(SharedIds.Instances.Battle, "res://scenes/cardwars/instance/battle/battle_instance.tscn");
 
 		// UI
-		registry.UserInterface.Register(SharedIds.UI.DefaultCardDisplay, "res://scenes/cardwars/ui/cards/default_card/default_card_display.tscn");
+		registry.UserInterface.Register(SharedIds.UI.StandardCardDisplay, "res://scenes/cardwars/ui/card_display/standard/standard_card_display.tscn");
 		registry.UserInterface.Register(SharedIds.UI.LineArrow, "res://scenes/cardwars/ui/battle/line_arrow.tscn");
 		registry.UserInterface.Register(SharedIds.UI.TargetHighlight, "res://scenes/cardwars/ui/battle/target_highlight.tscn");
 

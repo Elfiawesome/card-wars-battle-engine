@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c0kxlqqmfr52"]
 
-[ext_resource type="Script" uid="uid://be13hylvv5xoi" path="res://scenes/cardwars/ui/inspection/parts/grid_tile.gd" id="1_rerdu"]
+[ext_resource type="Script" uid="uid://be13hylvv5xoi" path="res://scenes/cardwars/ui/card_inspection_panel/standard/grid_tile.gd" id="1_rerdu"]
 [ext_resource type="Texture2D" uid="uid://csrjisugd8m1g" path="res://assets/cardwars/texture/grid/grid_tile_empty.svg" id="2_iln1b"]
 [ext_resource type="Texture2D" uid="uid://cwv3714ytvsom" path="res://assets/cardwars/texture/icon/close.svg" id="3_sghio"]
 [ext_resource type="FontFile" uid="uid://cduys6ri5daps" path="res://assets/cardwars/font/rajdhani/rajdhani_bold.ttf" id="4_2sx4b"]

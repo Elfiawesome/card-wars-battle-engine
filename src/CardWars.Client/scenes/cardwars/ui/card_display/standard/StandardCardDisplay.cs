@@ -1,4 +1,5 @@
 using System.Linq;
+using CardWars.Client.scenes.cardwars.ui.card_display;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core;
 using CardWars.Core.Data.Tags;
@@ -6,9 +7,9 @@ using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using Godot;
 
-namespace CardWars.Client.scenes.cardwars.ui.cards;
+namespace CardWars.Client.scenes.cardwars.ui.card_display.standard;
 
-public partial class DefaultCardDisplay : CardDisplay
+public partial class StandardCardDisplay : CardDisplay
 {
 	[Export] Control? PtContainer;
 	[Export] Label? PtLabel;
