@@ -390,17 +390,17 @@ public partial class HandManager : Control
 		}
 
 		// ArrangeSidePanels();
-		if (HoveredCard is not null)
-		{
-			var cardId = Cards.FirstOrDefault(entry => entry.Value == HoveredCard).Key;
-			var cardData = BattleInstance?.State.Get<GenericCard>(cardId);
-			if (cardData is not null)
-			{
-				BattleInstance?.Registry.Client?
-					.CardInspectionHandlers?
-					.Get(SharedIds.UI.DefaultCardDisplay /* TODO: pull the correct sking*/)?
-					.SetPanels(this, SidePanelRect, cardData.Data);
-			}
-		}
+		// if (HoveredCard is not null)
+		// {
+		// 	var cardId = Cards.FirstOrDefault(entry => entry.Value == HoveredCard).Key;
+		// 	var cardData = BattleInstance?.State.Get<GenericCard>(cardId);
+		// 	if (cardData is not null)
+		// 	{
+		// 		BattleInstance?.Registry.Client?
+		// 			.CardInspectionHandlers?
+		// 			.Get(SharedIds.UI.DefaultCardDisplay /* TODO: pull the correct sking*/)?
+		// 			.SetPanels(this, SidePanelRect, cardData.Data);
+		// 	}
+		// }
 	}
 }
