@@ -11,7 +11,7 @@ using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Data.Mapping;
-using CardWars.Core.Data.Global;
+using CardWars.Core.Data;
 
 namespace CardWars.Server;
 
@@ -21,6 +21,13 @@ public class Server
 	private static readonly TimeSpan _unauthenticatedTimeout = TimeSpan.FromSeconds(30);
 
 	public ServerRegistry Registry { get; } = new();
+
+	/// <summary>
+	/// The data context this server owns, making it a context owner consistent with
+	/// <see cref="BattleEngine.BattleEngine"/>. Defaults to <see cref="DataContext.Default"/>
+	/// so Phase 1 behavior is preserved while other call sites still route through the facade.
+	/// </summary>
+	public DataContext Data { get; } = DataContext.Default;
 	public BattleEngineRegistry SharedBattleEngineRegistry { get; private set; } = new();
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
 
@@ -344,9 +351,9 @@ public class Server
 
 	private void ScanCoreAssemblies()
 	{
-		DataTagTypeRegistry.ScanAssembly(typeof(DataTag).Assembly); // Load core
-		DataTagTypeRegistry.ScanAssembly(typeof(ModLoader.ModLoader).Assembly);
-		DataTagTypeRegistry.ScanAssembly(typeof(BattleEngine.BattleEngine).Assembly); // Already done in BattleEngine, but just in case
-		DataTagTypeRegistry.ScanAssembly(typeof(Server).Assembly);
+		Data.ScanAssembly(typeof(DataTag).Assembly); // Load core
+		Data.ScanAssembly(typeof(ModLoader.ModLoader).Assembly);
+		Data.ScanAssembly(typeof(BattleEngine.BattleEngine).Assembly); // Already done in BattleEngine, but just in case
+		Data.ScanAssembly(typeof(Server).Assembly);
 	}
 }

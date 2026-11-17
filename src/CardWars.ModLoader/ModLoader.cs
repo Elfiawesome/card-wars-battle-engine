@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Runtime.Loader;
-using CardWars.Core.Data.Global;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Serialization.Json;
 using CardWars.Core.Data.Tags;
@@ -27,10 +27,19 @@ public class ModLoader
 	private Dictionary<string, LoadedMod> _mods = [];
 	private readonly List<string> _loadOrder = [];
 
-	public ModLoader(StoragePath modDir) { _modDirs = [modDir]; }
-	public ModLoader(IEnumerable<StoragePath> modDirs)
+	// The data context mod assemblies are scanned into. Defaults to DataContext.Default so
+	// Phase 1 behavior is preserved; a host can pass its own owned context to scope scanning.
+	private readonly DataContext _data;
+
+	public ModLoader(StoragePath modDir, DataContext? data = null)
+	{
+		_modDirs = [modDir];
+		_data = data ?? DataContext.Default;
+	}
+	public ModLoader(IEnumerable<StoragePath> modDirs, DataContext? data = null)
 	{
 		_modDirs = modDirs;
+		_data = data ?? DataContext.Default;
 	}
 
 	public void Setup()
@@ -149,7 +158,7 @@ public class ModLoader
 			// Load data registry AFTER
 			foreach (var assembly in loadContext.Assemblies)
 			{
-				DataTagTypeRegistry.ScanAssembly(assembly);
+				_data.ScanAssembly(assembly);
 			}
 		}
 	}

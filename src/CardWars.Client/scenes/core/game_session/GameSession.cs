@@ -7,7 +7,7 @@ using CardWars.BattleEngine.Input;
 using CardWars.Client.scripts.cardwars;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
-using CardWars.Core.Data.Global;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
@@ -24,6 +24,10 @@ public partial class GameSession : Node
 {
 	public ClientRegistry ClientRegistry { get; init; } = new();
 	public BattleEngineRegistry BattleEngineRegistry { get; init; } = new();
+
+	// Session-owned data context, consistent with Server.Data. Defaults to DataContext.Default
+	// so Phase 1 behavior is preserved while other client call sites still use the facade.
+	public DataContext Data { get; init; } = DataContext.Default;
 
 	public Server.Server? IntegratedServer { get; private set; }
 	public IConnection? Connection { get; private set; }
@@ -151,9 +155,9 @@ public partial class GameSession : Node
 
 	private void ScanCoreAssemblies()
 	{
-		DataTagTypeRegistry.ScanAssembly(typeof(DataTag).Assembly); // Load core
-		DataTagTypeRegistry.ScanAssembly(typeof(ModLoader.ModLoader).Assembly);
-		DataTagTypeRegistry.ScanAssembly(typeof(BattleEngine.BattleEngine).Assembly); // Already done in BattleEngine, but just in case
+		Data.ScanAssembly(typeof(DataTag).Assembly); // Load core
+		Data.ScanAssembly(typeof(ModLoader.ModLoader).Assembly);
+		Data.ScanAssembly(typeof(BattleEngine.BattleEngine).Assembly); // Already done in BattleEngine, but just in case
 	}
 
 	private void SetupModServer(ModLoader.ModLoader modLoader, Server.Server server)
