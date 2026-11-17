@@ -106,7 +106,33 @@ public class VanillaMod : IBattleEngineMod
 		RegisterAbilityTypes(registry, modContents);
 
 		// --- Card Definitions ---
-		RegisterCardDefinitions(registry, data, modContents);
+		var cardDefaults = ReadCardDefaults(modContents);
+		RegisterCardDefinitions(registry, cardDefaults, modContents);
+	}
+
+	// Reads the data-driven card-type default templates (content/server/card_defaults/*.json,
+	// Category ['card_defaults']) into a local map keyed by the template's category name
+	// (unit/hero/spell). The templates carry the defaults that used to be baked into C# switch
+	// arms (Finding 7): card_type, intrinsic_behaviours, target_filter, lose_condition. Loaded
+	// through the SAME ModContentResult.ReadAs<CompoundTag>() path as rules/attacks/ability_types.
+	// No static/global state (R1): the map is returned and passed as a local into
+	// RegisterCardDefinitions. These templates are NOT registered as card definitions.
+	private static Dictionary<string, CompoundTag> ReadCardDefaults(List<ModContentResult> modContents)
+	{
+		var defaults = new Dictionary<string, CompoundTag>();
+		foreach (var content in modContents)
+		{
+			if (content.Category is not ["card_defaults"]) continue;
+
+			var template = content.ReadAs<CompoundTag>();
+			if (template is null) continue;
+
+			// Key by the file stem (unit/hero/spell) — the last id segment.
+			var idText = content.Id.ToString();
+			var key = idText[(idText.LastIndexOf('/') + 1)..];
+			defaults[key] = template;
+		}
+		return defaults;
 	}
 
 	private static void RegisterDataDriven(BattleEngineRegistry registry)
@@ -200,10 +226,15 @@ public class VanillaMod : IBattleEngineMod
 		}
 	}
 
-	// Context-scoped (Phase 2): content tags baked at mod-load time serialize through the owning
-	// DataContext passed into OnLoad rather than the static DataTagMapper facade. Produced tags
-	// stay byte-identical when the owner uses DataContext.Default (the facade's backing context).
-	private static void RegisterCardDefinitions(BattleEngineRegistry registry, DataContext data, List<ModContentResult> modContents)
+	// Data-driven card-type defaults (Finding 7): the per-category defaults (card_type,
+	// intrinsic_behaviours, target_filter, lose_condition) now live in JSON templates under
+	// content/server/card_defaults/*.json and are passed in via `cardDefaults` keyed by category
+	// name (unit/spell/hero). Each template field is merged into the card tag fill-if-absent.
+	// This is behavior-identical to the former hardcoded C# switch arms: no vanilla card JSON
+	// defines card_type or intrinsic_behaviours today, so filling them only when absent produces
+	// the same tags the unconditional Set calls did; target_filter and lose_condition were already
+	// fill-if-absent. No DataContext is needed any more here because no tag is baked in C#.
+	private static void RegisterCardDefinitions(BattleEngineRegistry registry, Dictionary<string, CompoundTag> cardDefaults, List<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{
@@ -213,33 +244,7 @@ public class VanillaMod : IBattleEngineMod
 					var unitDataTag = content.ReadAs<CompoundTag>();
 					if (unitDataTag is null) continue;
 
-					unitDataTag.Set("card_type", "unit");
-					// Set unit card's intrinsic behaviour
-					unitDataTag.Set("intrinsic_behaviours", new ListTag().Add(new CompoundTag().Set("resource", "cardwars:summon_unit_card_to_unit_slot_behaviour")));
-					// Set unit card's default unit targetting
-					if (!unitDataTag.Has("target_filter"))
-						unitDataTag.Set("target_filter", data.ToTag(UnitTargetFilter.Create()));
-
-					// Set unit card's abilities
-					// var abilities = unitDataTag.GetList("abilities");
-					// if (abilities is ListTag { })
-					// {
-					// 	foreach (var a in abilities)
-					// 	{
-					// 		if (a is CompoundTag ability)
-					// 		{
-					// 			var abilityType = ability.Get<StringTag>("ability_type")?.Value ?? "";
-					// 			var abilityTypeId = registry.AbilityTypeDefinitions.Get(ResourceId.Parse(abilityType));
-					// 			if (abilityTypeId is { })
-					// 			{
-					// 				ability.Remove("ability_type");
-					// 				ability.Set("ability_type", abilityTypeId.GetString("name", ""));
-					// 				ability.Set("color", abilityTypeId.GetString("color", ""));
-					// 				ability.Set("texture", abilityTypeId.GetString("texture", ""));
-					// 			}
-					// 		}
-					// 	}
-					// }
+					ApplyCardDefaults(unitDataTag, cardDefaults, "unit");
 
 					registry.CardDefinitions.Register(content.Id, unitDataTag);
 					registry.Logger.Info($"Registered Unit Card: {content.Id}");
@@ -248,7 +253,8 @@ public class VanillaMod : IBattleEngineMod
 					var spellDataTag = content.ReadAs<CompoundTag>();
 					if (spellDataTag is null) continue;
 
-					spellDataTag.Set("card_type", "spell");
+					ApplyCardDefaults(spellDataTag, cardDefaults, "spell");
+
 					registry.CardDefinitions.Register(content.Id, spellDataTag);
 					registry.Logger.Info($"Registered Spell Card: {content.Id}");
 					break;
@@ -256,14 +262,26 @@ public class VanillaMod : IBattleEngineMod
 					var heroDataTag = content.ReadAs<CompoundTag>();
 					if (heroDataTag is null) continue;
 
-					heroDataTag.Set("card_type", "hero");
-					if (!heroDataTag.Has("lose_condition"))
-						heroDataTag.Set("lose_condition", data.ToTag(new ContentPointer(Resource: HeroHrtLoseCondition.Id)));
+					ApplyCardDefaults(heroDataTag, cardDefaults, "hero");
 
 					registry.CardDefinitions.Register(content.Id, heroDataTag);
 					registry.Logger.Info($"Registered Hero Card: {content.Id}");
 					break;
 			}
+		}
+	}
+
+	// Fill-if-absent merge of a card-type default template into a loaded card tag. Each top-level
+	// field from the template is copied (cloned) onto the card only when the card does not already
+	// define that field, so card JSON always wins over the default template.
+	private static void ApplyCardDefaults(CompoundTag card, Dictionary<string, CompoundTag> cardDefaults, string category)
+	{
+		if (!cardDefaults.TryGetValue(category, out var template)) return;
+
+		foreach (var (key, value) in template.Entries)
+		{
+			if (!card.Has(key))
+				card.Set(key, value.Clone());
 		}
 	}
 }

@@ -1,0 +1,6 @@
+{
+	"card_type": "hero",
+	"lose_condition": {
+		"resource": "cardwars:hero_lose_conditions/hrt"
+	}
+}

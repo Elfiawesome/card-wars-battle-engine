@@ -130,7 +130,11 @@ public sealed class CardTargetFilterTests
 			Category = ["cards", "units"]
 		};
 
-		new VanillaMod().OnLoad(registry, DataContext.Default, [content]);
+		// Phase 7: the default target_filter now comes from the data template, so feed it through
+		// the same mod-content load path the real loader uses.
+		var unitDefaults = TestGameData.CardDefaultContent("unit", provider);
+
+		new VanillaMod().OnLoad(registry, DataContext.Default, [content, unitDefaults]);
 
 		var definition = registry.CardDefinitions.Get(content.Id) ?? throw new InvalidOperationException("Unit definition was not registered");
 		Assert.True(definition.Has("target_filter"));

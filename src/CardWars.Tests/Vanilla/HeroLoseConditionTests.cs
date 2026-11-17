@@ -30,7 +30,11 @@ public sealed class HeroLoseConditionTests
 			Category = ["cards", "heroes"]
 		};
 
-		new VanillaMod().OnLoad(registry, CardWars.Core.Data.DataContext.Default, [content]);
+		// Phase 7: the default lose_condition now comes from the data template, so feed it through
+		// the same mod-content load path the real loader uses.
+		var heroDefaults = TestGameData.CardDefaultContent("hero", provider);
+
+		new VanillaMod().OnLoad(registry, CardWars.Core.Data.DataContext.Default, [content, heroDefaults]);
 
 		var definition = registry.CardDefinitions.Get(content.Id)
 			?? throw new InvalidOperationException("Hero definition was not registered");
