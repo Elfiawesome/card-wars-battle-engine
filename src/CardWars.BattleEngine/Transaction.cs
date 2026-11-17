@@ -6,6 +6,7 @@ using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data.Serialization.Json;
 using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine;
@@ -58,7 +59,7 @@ public class Transaction
 		foreach (var block in batch.Blocks ?? [])
 		{
 			Registry.BlockHandlers.Execute(State, block);
-			Log.Debug($"Executing Block [{block.GetType().Name}]: {Helper.SerializeBlock(block)}");
+			Log.Debug($"[2] Executing Block [{block.GetType().Name}]: {DataTagSerializer.Serialize(DataTagMapper.ToTag(block))}");
 		}
 		OnBlockBatchEvent?.Invoke(batch);
 	}
