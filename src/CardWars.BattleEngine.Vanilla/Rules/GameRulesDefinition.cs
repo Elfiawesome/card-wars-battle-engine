@@ -26,7 +26,7 @@ public sealed class GameRulesDefinition
 		return Math.Min(PtSchedule[index], PtCap);
 	}
 
-	public static GameRulesDefinition? Get(BattleEngineRegistry registry, DataContext data, ResourceId ruleId)
+	public static GameRulesDefinition? Get(BattleEngineRegistry registry, DataContext data, ResourceId ruleId, ILogger? logger = null)
 	{
 		if (registry.RuleDefinitions.Get(ruleId) is not CompoundTag tag) return null;
 
@@ -36,7 +36,7 @@ public sealed class GameRulesDefinition
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Could not parse game rules [{ruleId}]: {ex.Message}");
+			(logger ?? NullLogger.Instance).Warn($"Could not parse game rules [{ruleId}]: {ex.Message}");
 			return null;
 		}
 	}

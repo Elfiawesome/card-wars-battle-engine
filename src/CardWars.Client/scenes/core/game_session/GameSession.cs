@@ -29,6 +29,13 @@ public partial class GameSession : Node
 	// so Phase 1 behavior is preserved while other client call sites still use the facade.
 	public DataContext Data { get; init; } = DataContext.Default;
 
+	// Session-owned logger (Phase 3, R9/R1). Replaces the former static Log singleton: Identity
+	// and the OnLog sink live on this instance, and it is threaded to the Server, ModLoader,
+	// StorageManager and transport the same way Data is. NOTE: CardWars.Client targets Godot 4.7
+	// which is not installed in the engine CI sandbox, so this file is NOT compiled/verified there;
+	// the edits are kept minimal, mechanical and internally consistent with the engine changes.
+	public Logger Logger { get; init; } = new();
+
 	public Server.Server? IntegratedServer { get; private set; }
 	public IConnection? Connection { get; private set; }
 	public StorageManager? Storage { get; private set; } = null;
@@ -46,7 +53,11 @@ public partial class GameSession : Node
 		var args = OS.GetCmdlineArgs();
 		ConnectingUsername = args.Length > 2 ? args[2] : (args.Length > 0 ? args[^1] : "Elfiawesome");
 		GetWindow().Title = ConnectingUsername;
-		Core.Logging.Log.Identity = ConnectingUsername;
+		Logger.Identity = ConnectingUsername;
+
+		// Route this session's owned logger to the Godot console sink (replaces the old static
+		// Log.OnLog subscription that lived in the LoggerHook autoload).
+		GetNodeOrNull<scripts.core.global.LoggerHook>("/root/LoggerHook")?.Attach(Logger);
 
 		// Bootstrap type registration for base assemblies
 		ScanCoreAssemblies();
@@ -56,10 +67,10 @@ public partial class GameSession : Node
 		var clientDir = System.Environment.CurrentDirectory;
 		var projectRoot = provider.GetFullPath(provider.Combine(provider.Combine(clientDir, ".."), ".."));
 		var gamedataPath = provider.Combine(projectRoot, "gamedata");
-		Storage = new StorageManager(gamedataPath, provider);
+		Storage = new StorageManager(gamedataPath, provider, Logger);
 
 		// Start!
-		Log.Info($"Game Session started with username: {ConnectingUsername}");
+		Logger.Info($"Game Session started with username: {ConnectingUsername}");
 		
 		if (ConnectingUsername == "Elfiawesome") { StartIntegratedServer(); }
 		else { JoinServer(); }
@@ -69,17 +80,17 @@ public partial class GameSession : Node
 	{
 		if (Storage is null) { return; }
 		var sessionName = "session_1";
-		IntegratedServer = new Server.Server(Storage, sessionName);
+		IntegratedServer = new Server.Server(Storage, sessionName, Logger);
 
 		var modDirs = Storage.AllModDirectories;
-		ModLoader.ModLoader modLoader = new(modDirs);
+		ModLoader.ModLoader modLoader = new(modDirs, Data, Logger);
 		modLoader.Setup();
 
 		SetupModClient(modLoader);
 		SetupModServer(modLoader, IntegratedServer);
 
 		var localListener = new LocalListener() { IsSerialized = true };
-		var tcpListener = new TcpGameListener(5060);
+		var tcpListener = new TcpGameListener(5060, Logger);
 		IntegratedServer.Start(localListener, tcpListener);
 		Connection = localListener.ConnectClient();
 	}
@@ -88,13 +99,13 @@ public partial class GameSession : Node
 	{
 		if (Storage is null) { return; }
 		var modDirs = Storage.AllModDirectories;
-		ModLoader.ModLoader modLoader = new(modDirs);
+		ModLoader.ModLoader modLoader = new(modDirs, Data, Logger);
 		modLoader.Setup();
 
 		SetupModClient(modLoader);
 
 		var tcpClient = new TcpClient("127.0.0.1", 5060);
-		Connection = new TcpConnection(tcpClient);
+		Connection = new TcpConnection(tcpClient, Logger);
 	}
 
 	public override void _Process(double delta)
@@ -127,7 +138,7 @@ public partial class GameSession : Node
 
 	private void HandleIncomingPacket(IPacket packet)
 	{
-		Core.Logging.Log.Debug($"Client received packet from server: {packet.GetType().Name}");
+		Logger.Debug($"Client received packet from server: {packet.GetType().Name}");
 		PacketContextClient ctx = new() { Session = this };
 		Instance?.OnPacket(packet, ctx);
 		ClientRegistry.PacketHandlers.Execute(ctx, packet);

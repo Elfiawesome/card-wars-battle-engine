@@ -9,8 +9,10 @@ using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Targeting;
 
-public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven, DataContext data)
+public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven, DataContext data, ILogger? logger = null)
 {
+	private readonly ILogger _logger = logger ?? NullLogger.Instance;
+
 	public bool CanTarget(GameState state, GenericCard card, EntityId playerId, EntityId? targetId)
 	{
 		var filter = GetFilter(card);
@@ -57,7 +59,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven, Dat
 
 	private ScriptContext CreateContext(GameState state, GenericCard card, EntityId playerId)
 	{
-		var context = new ScriptContext(state, data, dataDriven);
+		var context = new ScriptContext(state, data, dataDriven, _logger);
 		context.PushScope();
 		context.DeclareVariable(TargetBindings.Card, new ObjectRefTag(card));
 		context.DeclareVariable(TargetBindings.Player, state.Get(playerId) is { } player ? new ObjectRefTag(player) : new NullTag());
@@ -82,7 +84,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven, Dat
 
 		if (tag is not CompoundTag compound)
 		{
-			Log.Warn($"Card [{card.Id}] target_filter must be a single expression");
+			_logger.Warn($"Card [{card.Id}] target_filter must be a single expression");
 			return null;
 		}
 
@@ -92,7 +94,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven, Dat
 		}
 		catch (Exception ex)
 		{
-			Log.Error($"Could not parse target_filter for card [{card.Id}]: {ex.Message}");
+			_logger.Error($"Could not parse target_filter for card [{card.Id}]: {ex.Message}");
 			return null;
 		}
 	}

@@ -66,7 +66,7 @@ public class TurnEndedEventHandler : IEventHandler<TurnEndedEvent>
 		var currentPlayerId = newTurnState.TurnOrder.ElementAtOrDefault(newTurnState.TurnIndex);
 		if (currentPlayerId.IsNone)
 		{
-			Log.Warn($"TurnOrder[{newTurnState.TurnIndex}] is null/empty, turn cannot advance");
+			context.Logger.Warn($"TurnOrder[{newTurnState.TurnIndex}] is null/empty, turn cannot advance");
 			return;
 		}
 
@@ -140,7 +140,7 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 		}
 
 		// Handle hero defeat and player loss
-		var heroEvaluator = new HeroLoseConditionEvaluator(context.Registry, context.Data);
+		var heroEvaluator = new HeroLoseConditionEvaluator(context.Registry, context.Data, context.Logger);
 		var defeatedHeroes = new List<(EntityId HeroCardId, EntityId PlayerId, EntityId BattlefieldId, int Hrt)>();
 		var defeatedPlayers = new List<(EntityId PlayerId, int Team)>();
 		var defeatBatch = new BlockBatch([]);
@@ -213,7 +213,7 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 		context.QueueEvent(new EndTurnEvent() { TurnState = nextTurnState, PhaseChanged = true });
 
 		var ruleId = context.State.RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.RuleId;
-		var rules = GameRulesDefinition.Get(context.Registry, context.Data, ruleId) ?? new GameRulesDefinition();
+		var rules = GameRulesDefinition.Get(context.Registry, context.Data, ruleId, context.Logger) ?? new GameRulesDefinition();
 		var targetPt = rules.GetPtForRound(nextTurnState.RoundNumber);
 		foreach (var player in context.State.OfType<Player>())
 		{

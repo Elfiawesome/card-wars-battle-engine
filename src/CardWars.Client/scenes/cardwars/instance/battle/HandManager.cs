@@ -191,7 +191,9 @@ public partial class HandManager : Control
 
 					if (!validator.CanPlayCard(instance.State, instance.MyPlayerId, card, targetId, out var reason))
 					{
-						Log.Debug($"Card play rejected: {reason}");
+						// No session logger is threaded to this UI node yet; use the immutable no-op
+						// fallback (R1). Not compiled here (client targets Godot 4.7, not installed).
+						NullLogger.Instance.Debug($"Card play rejected: {reason}");
 						ResetArrows();
 						return;
 					}

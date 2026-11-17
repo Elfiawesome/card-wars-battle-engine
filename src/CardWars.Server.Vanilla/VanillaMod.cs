@@ -22,7 +22,7 @@ public class VanillaMod : IServerMod
 		RegisterEvents(server, worldRegistry);
 		LoadWorldDefinitions(worldRegistry, modContents);
 
-		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.World, new WorldInstanceProvider(worldRegistry, server.Session, SharedIds.Instances.World));
+		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.World, new WorldInstanceProvider(worldRegistry, server.Session, SharedIds.Instances.World, server.Logger));
 		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.Battle, new BattleInstanceProvider(server.Session, server.SharedBattleEngineRegistry, SharedIds.Instances.Battle));
 	}
 
@@ -74,7 +74,7 @@ public class VanillaMod : IServerMod
 
 		if (worldRegistry.DefaultWorld.IsEmpty)
 		{
-			Log.Warn("No default world configured; player was not placed into a world.");
+			server.Logger.Warn("No default world configured; player was not placed into a world.");
 			return;
 		}
 
@@ -134,7 +134,7 @@ public class VanillaMod : IServerMod
 				case ["worlds"]:
 					var worldDataTag = content.ReadAs<CompoundTag>();
 					if (worldDataTag is null) continue;
-					Log.Info("Registered World: " + content.Id.ToString());
+					NullLogger.Instance.Info("Registered World: " + content.Id.ToString());
 					worldRegistry.Templates.Register(content.Id, worldDataTag);
 					break;
 				case []:
@@ -144,7 +144,7 @@ public class VanillaMod : IServerMod
 						if (configDataTag is null) continue;
 
 						worldRegistry.DefaultWorld = ResourceId.Parse(configDataTag.GetString("default_world"));
-						Log.Info("Registered default_world as: " + worldRegistry.DefaultWorld);
+						NullLogger.Instance.Info("Registered default_world as: " + worldRegistry.DefaultWorld);
 					}
 					break;
 			}

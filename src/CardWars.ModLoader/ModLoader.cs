@@ -31,15 +31,22 @@ public class ModLoader
 	// Phase 1 behavior is preserved; a host can pass its own owned context to scope scanning.
 	private readonly DataContext _data;
 
-	public ModLoader(StoragePath modDir, DataContext? data = null)
+	// The logger this loader logs through (R9). Mirrors the optional DataContext parameter:
+	// defaults to NullLogger.Instance so direct-construction call sites keep working, while a
+	// host can pass its own owned logger to make load diagnostics session-scoped.
+	private readonly ILogger _logger;
+
+	public ModLoader(StoragePath modDir, DataContext? data = null, ILogger? logger = null)
 	{
 		_modDirs = [modDir];
 		_data = data ?? DataContext.Default;
+		_logger = logger ?? NullLogger.Instance;
 	}
-	public ModLoader(IEnumerable<StoragePath> modDirs, DataContext? data = null)
+	public ModLoader(IEnumerable<StoragePath> modDirs, DataContext? data = null, ILogger? logger = null)
 	{
 		_modDirs = modDirs;
 		_data = data ?? DataContext.Default;
+		_logger = logger ?? NullLogger.Instance;
 	}
 
 	public void Setup()
@@ -58,7 +65,7 @@ public class ModLoader
 			var manifestPath = modDir.Combine("mod.json");
 			if (!manifestPath.Exists) continue;
 
-			Log.Info($"Mod found in '{modDir.FullPath}'");
+			_logger.Info($"Mod found in '{modDir.FullPath}'");
 
 			var manifest = ModManifest.Load(manifestPath);
 			_mods[manifest.Id] = new()
@@ -139,19 +146,19 @@ public class ModLoader
 			foreach (var dllPath in codeDir.GetFiles("*.dll"))
 			{
 				if (mod.Assemblies.Any(a => a.Location == dllPath.FullPath)) continue;
-				Log.Info($"Loading mod dll from '{dllPath}'");
+				_logger.Info($"Loading mod dll from '{dllPath}'");
 				try
 				{
 					using var stream = dllPath.OpenRead();
 					var assembly = loadContext.LoadFromStream(stream);
 					mod.Assemblies.Add(assembly);
 					mod.State = ModLoadState.AssemblyLoaded;
-					Log.Info($"Successfully loaded dll assembly for '{dllPath.FullPath}'");
+					_logger.Info($"Successfully loaded dll assembly for '{dllPath.FullPath}'");
 				}
 				catch (Exception ex)
 				{
 					mod.State = ModLoadState.Failed;
-					Log.Error($"Failed to load dll assembly for '{dllPath}': {ex.Message}");
+					_logger.Error($"Failed to load dll assembly for '{dllPath}': {ex.Message}");
 				}
 			}
 			
@@ -166,11 +173,11 @@ public class ModLoader
 	public List<TModEntry> LoadModEntry<TModEntry>()
 		where TModEntry : IModEntry
 	{
-		Log.Info($"Locating mod entry of type [{typeof(TModEntry)}]");
+		_logger.Info($"Locating mod entry of type [{typeof(TModEntry)}]");
 		List<TModEntry> modEntries = [];
 		foreach (var modId in _loadOrder)
 		{
-			Log.Info($"Scanning [{typeof(TModEntry)}] in [{modId}]...");
+			_logger.Info($"Scanning [{typeof(TModEntry)}] in [{modId}]...");
 			var mod = _mods[modId];
 
 			foreach (var assembly in mod.Assemblies)
@@ -180,7 +187,7 @@ public class ModLoader
 					.ToList()
 					.ForEach(t =>
 					{
-						Log.Info($"Found mod entry type '{typeof(TModEntry)}': '{t.FullName}'");
+						_logger.Info($"Found mod entry type '{typeof(TModEntry)}': '{t.FullName}'");
 						var modeEntry = (TModEntry?)Activator.CreateInstance(t);
 						if (modeEntry is not null)
 						{

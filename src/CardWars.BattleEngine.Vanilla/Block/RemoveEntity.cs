@@ -15,6 +15,6 @@ public class RemoveEntityBlockHandler : IBlockHandler<RemoveEntityBlock>
 	public void Handle(GameState context, RemoveEntityBlock request)
 	{
 		if (context.Remove(request.EntityId)) return;
-		Log.Warn($"Entity [{request.EntityId}] was not found for removal");
+		context.Logger.Warn($"Entity [{request.EntityId}] was not found for removal");
 	}
 }

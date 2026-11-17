@@ -26,10 +26,10 @@ public class SummonUnitCardToUnitSlotBehaviour : Behaviour<UseCardRequestEvent>
 		if (context.Owner is not GenericCard card) return BehaviourResult.Complete;
 		if (card.OwnerPlayerId is not { } ownerId) return BehaviourResult.Complete;
 
-		var validator = new BattleActionValidator(context.Registry, context.Data);
+		var validator = new BattleActionValidator(context.Registry, context.Data, context.Logger);
 		if (!validator.CanPlayCard(context.State, ownerId, card, evnt.TargetEntityId, out var reason))
 		{
-			Log.Warn($"Card play rejected: {reason}");
+			context.Logger.Warn($"Card play rejected: {reason}");
 			return BehaviourResult.Complete;
 		}
 
@@ -44,16 +44,16 @@ public class SummonUnitCardToUnitSlotBehaviour : Behaviour<UseCardRequestEvent>
 				batch.AnimationId = SharedIds.Animations.PlayCard.ToString();
 				batch.AnimationArgs.Set(SharedIds.Animations.Args.CardId, new GuidTag(card.Id.Value));
 				batch.AnimationArgs.Set(SharedIds.Animations.Args.SlotId, new GuidTag(unitSlot.Id.Value));
-				Log.Debug("We want to summon this unit " + context.OwnerEntityId + " to slot " + targetId);
+				context.Logger.Debug("We want to summon this unit " + context.OwnerEntityId + " to slot " + targetId);
 			}
 			else
 			{
-				Log.Warn("Could not resolve SummonUnitCardToUnitSlotBehaviour due to invalid UnitSlot target");
+				context.Logger.Warn("Could not resolve SummonUnitCardToUnitSlotBehaviour due to invalid UnitSlot target");
 			}
 		}
 		else
 		{
-			Log.Warn("Could not resolve SummonUnitCardToUnitSlotBehaviour due to empty/null TargetEntityId");
+			context.Logger.Warn("Could not resolve SummonUnitCardToUnitSlotBehaviour due to empty/null TargetEntityId");
 		}
 
 		context.StageBlocks(batch);

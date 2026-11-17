@@ -16,11 +16,17 @@ public class TcpConnection : IConnection
 	private readonly ConcurrentQueue<IPacket> _receiveQueue = new();
 	private readonly CancellationTokenSource _cts = new();
 
+	private readonly ILogger _logger;
+
 	public bool IsConnected => _tcpClient.Connected;
 
-	public TcpConnection(TcpClient tcpClient)
+	// NOTE: packet (de)serialization below still uses DataTagMapper/DataTagSerializer over
+	// DataContext.Default. Scoping the transport codec to an owned context is a Phase 5 concern
+	// and is intentionally out of scope here; only the logging was made session-scoped (R9).
+	public TcpConnection(TcpClient tcpClient, ILogger? logger = null)
 	{
 		_tcpClient = tcpClient;
+		_logger = logger ?? NullLogger.Instance;
 		_stream = tcpClient.GetStream();
 		Task.Run(() => ReceiveLoop(_cts.Token));
 	}
@@ -45,7 +51,7 @@ public class TcpConnection : IConnection
 		}
 		catch (Exception ex)
 		{
-			Log.Error($"TcpConnection: Send failed: {ex.Message}");
+			_logger.Error($"TcpConnection: Send failed: {ex.Message}");
 			Disconnect();
 		}
 	}
@@ -91,7 +97,7 @@ public class TcpConnection : IConnection
 			catch when (token.IsCancellationRequested) { break; }
 			catch (Exception ex)
 			{
-				Log.Error($"TcpConnection: Receive failed: {ex.Message}");
+				_logger.Error($"TcpConnection: Receive failed: {ex.Message}");
 			}
 		}
 

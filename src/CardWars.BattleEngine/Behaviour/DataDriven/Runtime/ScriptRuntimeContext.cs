@@ -8,7 +8,7 @@ public sealed class ScriptRuntimeContext : ScriptContext
 	public ScriptExecutor Executor { get; }
 
 	public ScriptRuntimeContext(BehaviourContext behaviour, DataDrivenRegistry dataDriven)
-		: base(behaviour.State, behaviour.Data, dataDriven)
+		: base(behaviour.State, behaviour.Data, dataDriven, behaviour.Logger)
 	{
 		Behaviour = behaviour;
 		Executor = new ScriptExecutor(this, dataDriven.InstructionHandlers);

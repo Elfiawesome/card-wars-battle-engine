@@ -5,10 +5,11 @@ using CardWars.Core.Network.Transport;
 
 namespace CardWars.Server.Listener;
 
-public class TcpGameListener(int port = 5060) : IListener
+public class TcpGameListener(int port = 5060, ILogger? logger = null) : IListener
 {
 	public Action<IConnection>? OnNewConnection { get; set; }
 
+	private readonly ILogger _logger = logger ?? NullLogger.Instance;
 	private TcpListener? _listener;
 	private CancellationTokenSource? _cts;
 
@@ -18,7 +19,7 @@ public class TcpGameListener(int port = 5060) : IListener
 		_listener.Start();
 		_cts = new CancellationTokenSource();
 		Task.Run(() => AcceptLoop(_cts.Token));
-		Log.Info($"TcpGameListener: Listening on port {port}");
+		_logger.Info($"TcpGameListener: Listening on port {port}");
 	}
 
 	public void Stop()
@@ -34,10 +35,10 @@ public class TcpGameListener(int port = 5060) : IListener
 			try
 			{
 				var client = _listener!.AcceptTcpClient();
-				OnNewConnection?.Invoke(new TcpConnection(client));
+				OnNewConnection?.Invoke(new TcpConnection(client, _logger));
 			}
 			catch when (token.IsCancellationRequested) { break; }
-			catch (Exception ex) { Log.Error($"TCP accept failed: {ex.Message}"); }
+			catch (Exception ex) { _logger.Error($"TCP accept failed: {ex.Message}"); }
 		}
 	}
 }

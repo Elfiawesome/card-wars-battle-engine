@@ -3,13 +3,15 @@ using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Targeting;
 using CardWars.Core.Data;
+using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Rules;
 
-public sealed class BattleActionValidator(BattleEngineRegistry registry, DataContext data)
+public sealed class BattleActionValidator(BattleEngineRegistry registry, DataContext data, ILogger? logger = null)
 {
-	private readonly AttackResolver _attackResolver = new(registry, data);
-	private readonly CardTargetFilterEvaluator _targetFilter = new(registry.DataDriven, data);
+	private readonly ILogger _logger = logger ?? NullLogger.Instance;
+	private readonly AttackResolver _attackResolver = new(registry, data, logger);
+	private readonly CardTargetFilterEvaluator _targetFilter = new(registry.DataDriven, data, logger);
 
 	public bool CanAct(GameState state, EntityId playerId)
 		=> state.Turn.AllowedPlayerInputs.Contains(playerId);
@@ -134,7 +136,7 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry, DataCon
 		=> AttackTargetResolver.GetValidTargets(state, attacker, attack);
 
 	public IReadOnlyCollection<EntityId> GetValidHeroTargets(GameState state, GenericCard attacker)
-		=> HeroTargetResolver.GetValidTargets(state, attacker, registry, data);
+		=> HeroTargetResolver.GetValidTargets(state, attacker, registry, data, _logger);
 
 	public bool CanTargetHero(
 		GameState state,
@@ -142,7 +144,7 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry, DataCon
 		GenericCard hero,
 		out string? reason)
 	{
-		if (HeroTargetResolver.CanTarget(state, attacker, hero.Id, registry, data))
+		if (HeroTargetResolver.CanTarget(state, attacker, hero.Id, registry, data, _logger))
 		{
 			reason = null;
 			return true;

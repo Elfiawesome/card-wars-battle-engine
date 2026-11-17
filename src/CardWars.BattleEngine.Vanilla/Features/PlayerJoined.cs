@@ -41,7 +41,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		if (context.State.Require<Player>(request.PlayerId) is not { } player) return;
 
 		var ruleId = context.State.RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.RuleId;
-		var rules = GameRulesDefinition.Get(context.Registry, context.Data, ruleId) ?? new GameRulesDefinition();
+		var rules = GameRulesDefinition.Get(context.Registry, context.Data, ruleId, context.Logger) ?? new GameRulesDefinition();
 		var batch = new BlockBatch([]);
 		if (context.State.RuleId.IsEmpty)
 			batch.Blocks.Add(new SetGameRuleBlock(ruleId));

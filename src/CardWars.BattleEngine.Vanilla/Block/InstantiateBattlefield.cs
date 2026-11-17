@@ -17,7 +17,7 @@ public class InstantiateBattlefieldBlockHandler : IBlockHandler<InstantiateBattl
 	{
 		if (context.Get(request.Id) is not null)
 		{
-			Log.Warn($"Entity [{request.Id}] already exists, skipping InstantiateBattlefield"); return;
+			context.Logger.Warn($"Entity [{request.Id}] already exists, skipping InstantiateBattlefield"); return;
 		}
 		var battlefield = new Battlefield(request.Id);
 		context.Add(battlefield);

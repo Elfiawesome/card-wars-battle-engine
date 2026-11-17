@@ -24,7 +24,7 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 	{
 		ResetExecution();
 
-		var eventId = GetRequestId(context.Data, evnt.GetType());
+		var eventId = GetRequestId(context.Data, context.Logger, evnt.GetType());
 		if (eventId is null) return BehaviourResult.Complete;
 
 		var hooks = definition.OnEvent?
@@ -72,7 +72,7 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 			return ContinueEvent();
 		}
 
-		var inputId = GetRequestId(context.Data, input.GetType());
+		var inputId = GetRequestId(context.Data, context.Logger, input.GetType());
 		if (inputId is null) return BehaviourResult.WaitForInput;
 
 		var hooks = definition.OnInput?
@@ -173,12 +173,12 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 		_waitingRuntime = null;
 	}
 
-	private static ResourceId? GetRequestId(DataContext data, Type type)
+	private static ResourceId? GetRequestId(DataContext data, ILogger logger, Type type)
 	{
 		var typeId = data.GetTypeId(type);
 		if (typeId is null)
 		{
-			Log.Warn($"Type [{type.Name}] is not registered as a data tag type");
+			logger.Warn($"Type [{type.Name}] is not registered as a data tag type");
 			return null;
 		}
 

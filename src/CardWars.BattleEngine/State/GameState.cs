@@ -14,6 +14,13 @@ public class GameState : IDataTagAccessible
 {
 	private readonly Dictionary<EntityId, IEntity> _entities = [];
 
+	/// <summary>
+	/// The logger this state logs through. Set by the owning <see cref="BattleEngine"/> so
+	/// <see cref="Require{T}"/> and block handlers (which receive <see cref="GameState"/> as their
+	/// context) log through the session logger. Defaults to the immutable no-op fallback.
+	/// </summary>
+	public ILogger Logger { get; set; } = NullLogger.Instance;
+
 	// --- CRUD ---
 
 	public void Add(IEntity entity) => _entities[entity.Id] = entity;
@@ -37,11 +44,11 @@ public class GameState : IDataTagAccessible
 		// Slow path — only on failure, only then do we build strings
 		var source = $"{Path.GetFileNameWithoutExtension(file)}.{member}";
 		if (id == EntityId.None)
-			Log.Warn($"[{source}] Require<{typeof(T).Name}> called with EntityId.None");
+			Logger.Warn($"[{source}] Require<{typeof(T).Name}> called with EntityId.None");
 		else if (entity is null)
-			Log.Warn($"[{source}] Entity not found: {typeof(T).Name} [{id}]");
+			Logger.Warn($"[{source}] Entity not found: {typeof(T).Name} [{id}]");
 		else
-			Log.Warn($"[{source}] Type mismatch: [{id}] is {entity.GetType().Name}, expected {typeof(T).Name}");
+			Logger.Warn($"[{source}] Type mismatch: [{id}] is {entity.GetType().Name}, expected {typeof(T).Name}");
 
 		return null;
 	}

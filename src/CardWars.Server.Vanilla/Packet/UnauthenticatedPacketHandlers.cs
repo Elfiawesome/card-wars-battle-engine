@@ -15,7 +15,7 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler() : IUnauthenticatedPa
 		{
 			persistentId = Guid.NewGuid();
 			context.Server.Session.SaveUsernameMapping(request.Username, persistentId);
-			Log.Info("Mapping does not exist, making one now");
+			context.Logger.Info("Mapping does not exist, making one now");
 		}
 
 		PlayerSession playerSession;
@@ -40,6 +40,6 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler() : IUnauthenticatedPa
 		context.Server.RemoveUnauthenticatedConnection(context.Connection);
 		context.Server.AddPlayer(playerSession);
 
-		Log.Info($"[{playerSession.Username}] [{playerSession.PlayerId}] has connected!");
+		context.Logger.Info($"[{playerSession.Username}] [{playerSession.PlayerId}] has connected!");
 	}
 }

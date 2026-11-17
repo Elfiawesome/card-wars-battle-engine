@@ -13,9 +13,12 @@ public class StorageManager
 
 	internal IFileProvider Provider { get; }
 
+	private readonly ILogger _logger;
 
-	public StorageManager(string dataRoot, IFileProvider provider)
+
+	public StorageManager(string dataRoot, IFileProvider provider, ILogger? logger = null)
 	{
+		_logger = logger ?? NullLogger.Instance;
 		DataRoot = provider.GetFullPath(dataRoot);
 		Provider = provider;
 
@@ -43,7 +46,7 @@ public class StorageManager
 
 		CurrentSession = new SessionStorage(this, sessionName, sessionRoot);
 		CurrentSession.EnsureDirectories();
-		Log.Info($"Storage: Opened session '{sessionName}' at '{sessionRoot.FullPath}'");
+		_logger.Info($"Storage: Opened session '{sessionName}' at '{sessionRoot.FullPath}'");
 		return CurrentSession;
 	}
 
@@ -51,7 +54,7 @@ public class StorageManager
 	{
 		if (CurrentSession is not null)
 		{
-			Log.Info($"Storage: Closed session '{CurrentSession.SessionName}'");
+			_logger.Info($"Storage: Closed session '{CurrentSession.SessionName}'");
 			CurrentSession = null;
 		}
 	}

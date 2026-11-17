@@ -17,7 +17,7 @@ public class InstantiateUnitSlotBlockHandler : IBlockHandler<InstantiateUnitSlot
 	{
 		if (context.Get(request.Id) is not null)
 		{
-			Log.Warn($"Entity [{request.Id}] already exists, skipping InstantiateUnitSlotBlock"); return;
+			context.Logger.Warn($"Entity [{request.Id}] already exists, skipping InstantiateUnitSlotBlock"); return;
 		}
 		var unitSlot = new UnitSlot(request.Id);
 		context.Add(unitSlot);

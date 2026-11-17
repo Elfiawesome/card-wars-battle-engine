@@ -21,7 +21,7 @@ public sealed class WhileInstructionHandler : IInstructionHandler<WhileInstructi
 		{
 			if (++iterations > context.MaxLoopIterations)
 			{
-				Log.Error($"While loop exceeded [{context.MaxLoopIterations}] iterations");
+				context.Logger.Error($"While loop exceeded [{context.MaxLoopIterations}] iterations");
 				yield break;
 			}
 

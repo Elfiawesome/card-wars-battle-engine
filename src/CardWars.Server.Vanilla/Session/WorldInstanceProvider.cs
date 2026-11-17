@@ -10,8 +10,11 @@ namespace CardWars.Server.Vanilla.Session;
 public class WorldInstanceProvider(
 	WorldRegistry worlds,
 	SessionStorage session,
-	ResourceId providerId) : ServerInstanceProvider<WorldInstance>
+	ResourceId providerId,
+	ILogger? logger = null) : ServerInstanceProvider<WorldInstance>
 {
+	private readonly ILogger _logger = logger ?? NullLogger.Instance;
+
 	public override WorldInstance Create(string saveId)
 	{
 		var worldId = ResourceId.Parse(saveId);
@@ -38,7 +41,7 @@ public class WorldInstanceProvider(
 			: new CompoundTag();
 
 		if (instance.TemplateData.Count == 0)
-			Log.Warn($"No world template found for '{worldId}'. World instance will have no template data.");
+			_logger.Warn($"No world template found for '{worldId}'. World instance will have no template data.");
 
 		return instance;
 	}

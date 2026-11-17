@@ -35,7 +35,7 @@ public sealed class ForInstructionHandler : IInstructionHandler<ForInstruction>
 			{
 				if (++iterations > context.MaxLoopIterations)
 				{
-					Log.Error($"For loop exceeded [{context.MaxLoopIterations}] iterations");
+					context.Logger.Error($"For loop exceeded [{context.MaxLoopIterations}] iterations");
 					yield break;
 				}
 

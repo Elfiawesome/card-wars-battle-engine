@@ -25,7 +25,7 @@ public sealed class AddExpressionHandler : IExpressionHandler<AddExpression>
 		if (!ExpressionValue.TryGetNumber(left, out var leftNumber) ||
 			!ExpressionValue.TryGetNumber(right, out var rightNumber))
 		{
-			Log.Error($"Cannot add [{left.Type}] and [{right.Type}]");
+			context.Logger.Error($"Cannot add [{left.Type}] and [{right.Type}]");
 			return new NullTag();
 		}
 

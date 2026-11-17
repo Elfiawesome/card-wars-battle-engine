@@ -2,6 +2,7 @@ using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data;
+using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Behaviour;
 
@@ -16,6 +17,9 @@ public class BehaviourContext
 
 	/// <summary>The owning transaction's data context, so script code can serialize through it.</summary>
 	public DataContext Data => _transaction.Data;
+
+	/// <summary>The owning transaction's logger, so script code logs through the session logger.</summary>
+	public ILogger Logger => _transaction.Logger;
 
 	internal BehaviourContext(Transaction transaction, GameState state, EntityId owner)
 	{

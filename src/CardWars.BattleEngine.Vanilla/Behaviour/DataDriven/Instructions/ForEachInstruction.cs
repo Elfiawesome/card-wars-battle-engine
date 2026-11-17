@@ -25,7 +25,7 @@ public sealed class ForEachInstructionHandler : IInstructionHandler<ForEachInstr
 		var items = GetItems(context.Data, collection);
 		if (items is null)
 		{
-			Log.Error($"ForEach collection type [{collection.Type}] is not enumerable");
+			context.Logger.Error($"ForEach collection type [{collection.Type}] is not enumerable");
 			yield return InstructionOutcome.Continue;
 			yield break;
 		}
@@ -38,7 +38,7 @@ public sealed class ForEachInstructionHandler : IInstructionHandler<ForEachInstr
 			{
 				if (++iterations > context.MaxLoopIterations)
 				{
-					Log.Error($"ForEach loop exceeded [{context.MaxLoopIterations}] iterations");
+					context.Logger.Error($"ForEach loop exceeded [{context.MaxLoopIterations}] iterations");
 					yield break;
 				}
 

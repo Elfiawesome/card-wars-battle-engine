@@ -6,8 +6,10 @@ using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Attacks;
 
-public sealed class AttackResolver(BattleEngineRegistry registry, DataContext data)
+public sealed class AttackResolver(BattleEngineRegistry registry, DataContext data, ILogger? logger = null)
 {
+	private readonly ILogger _logger = logger ?? NullLogger.Instance;
+
 	public AttackProfile Resolve(GenericCard card)
 	{
 		if (card.Data.GetList("sp_atks") is { Count: > 0 } spAtks)
@@ -30,7 +32,7 @@ public sealed class AttackResolver(BattleEngineRegistry registry, DataContext da
 					true);
 			}
 
-			Log.Warn($"Card [{card.Id}] has no valid sp_atk definitions, falling back to ba_atk");
+			_logger.Warn($"Card [{card.Id}] has no valid sp_atk definitions, falling back to ba_atk");
 		}
 
 		if (TryResolve(card.Data.Get("ba_atk"), "Basic Attack", out var basic))
@@ -54,7 +56,7 @@ public sealed class AttackResolver(BattleEngineRegistry registry, DataContext da
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Could not parse attack pointer for [{fallbackName}]: {ex.Message}");
+			_logger.Warn($"Could not parse attack pointer for [{fallbackName}]: {ex.Message}");
 			return false;
 		}
 
@@ -63,15 +65,15 @@ public sealed class AttackResolver(BattleEngineRegistry registry, DataContext da
 			var raw = registry.AttackDefinitions.Get(id);
 			if (raw is null)
 			{
-				Log.Warn($"Attack definition [{id}] was not found");
+				_logger.Warn($"Attack definition [{id}] was not found");
 				return false;
 			}
 
-			return AttackDefinitionParser.TryParse(raw, fallbackName, out definition);
+			return AttackDefinitionParser.TryParse(raw, fallbackName, out definition, _logger);
 		}
 
 		return pointer.Definition is { } inline
-			&& AttackDefinitionParser.TryParse(inline, fallbackName, out definition);
+			&& AttackDefinitionParser.TryParse(inline, fallbackName, out definition, _logger);
 	}
 
 	private static AttackProfile FromDefinition(AttackDefinition definition, bool isSpAtk)

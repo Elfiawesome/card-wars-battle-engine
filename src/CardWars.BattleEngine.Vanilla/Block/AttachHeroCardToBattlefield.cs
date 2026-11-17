@@ -24,6 +24,6 @@ public class AttachHeroCardToBattlefieldBlockHandler : IBlockHandler<AttachHeroC
 		if (!battlefield.HeroCardIds.Contains(card.Id))
 			battlefield.HeroCardIds.Add(card.Id);
 
-		Log.Debug($"Attached hero [{card.Id}] to battlefield [{battlefield.Id}]");
+		context.Logger.Debug($"Attached hero [{card.Id}] to battlefield [{battlefield.Id}]");
 	}
 }

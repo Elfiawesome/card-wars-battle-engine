@@ -6,6 +6,7 @@ using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 
 namespace CardWars.Tests.Support;
@@ -24,15 +25,15 @@ internal static class TestSupport
 		return registry;
 	}
 
-	public static BehaviourContext CreateBehaviourContext(BattleEngineRegistry registry, GameState state, EntityId owner)
+	public static BehaviourContext CreateBehaviourContext(BattleEngineRegistry registry, GameState state, EntityId owner, ILogger? logger = null)
 	{
-		var transaction = new Transaction { Registry = registry, State = state };
+		var transaction = new Transaction { Registry = registry, State = state, Logger = logger ?? NullLogger.Instance };
 		return new BehaviourContext(transaction, state, owner);
 	}
 
-	public static ScriptRuntimeContext CreateRuntime(BattleEngineRegistry registry, GameState state, EntityId owner)
+	public static ScriptRuntimeContext CreateRuntime(BattleEngineRegistry registry, GameState state, EntityId owner, ILogger? logger = null)
 	{
-		var context = CreateBehaviourContext(registry, state, owner);
+		var context = CreateBehaviourContext(registry, state, owner, logger);
 		return new ScriptRuntimeContext(context, registry.DataDriven);
 	}
 

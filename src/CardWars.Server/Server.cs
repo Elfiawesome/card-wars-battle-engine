@@ -27,6 +27,14 @@ public class Server
 	/// so Phase 1 behavior is preserved while other call sites still route through the facade.
 	/// </summary>
 	public DataContext Data { get; } = DataContext.Default;
+
+	/// <summary>
+	/// The logger this server owns (R9). Defaults to a real <see cref="Logger"/> so server console
+	/// output keeps working, and can be supplied via the constructor so a host (e.g. the client's
+	/// <c>GameSession</c>) can share its own owned logger. <see cref="Identity"/>/<c>OnLog</c> live
+	/// on this instance rather than in process-global static state (R1).
+	/// </summary>
+	public ILogger Logger { get; }
 	public BattleEngineRegistry SharedBattleEngineRegistry { get; private set; } = new();
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
 
@@ -55,8 +63,9 @@ public class Server
 	// private double _intervalSaveAccumulator = 0;
 	private CancellationTokenSource? _cts;
 
-	public Server(StorageManager storage, string sessionName = "default")
+	public Server(StorageManager storage, string sessionName = "default", ILogger? logger = null)
 	{
+		Logger = logger ?? new Logger();
 		Storage = storage;
 		Session = storage.OpenSession(sessionName);
 		ScanCoreAssemblies();
@@ -76,7 +85,7 @@ public class Server
 
 		_cts = new CancellationTokenSource();
 		Task.Run(() => ServerLoop(_cts.Token));
-		Log.Info("Server started successfully.");
+		Logger.Info("Server started successfully.");
 	}
 
 	public void Stop()
@@ -104,12 +113,12 @@ public class Server
 				conn.Disconnect();
 			_unauthenticatedConnections.Clear();
 		}
-		Log.Info("Server stopped.");
+		Logger.Info("Server stopped.");
 	}
 
 	private void OnConnectionReceived(IConnection connection)
 	{
-		Log.Debug($"Server: A new unauthenticated connection was received.");
+		Logger.Debug($"Server: A new unauthenticated connection was received.");
 		AddUnauthenticatedConnection(connection);
 	}
 
@@ -286,14 +295,14 @@ public class Server
 		{
 			_unauthenticatedConnections.Remove(conn);
 			conn.Disconnect();
-			Log.Debug($"Server: An unauthenticated connection timed out and was closed.");
+			Logger.Debug($"Server: An unauthenticated connection timed out and was closed.");
 		}
 
 		var deadUnauthenticated = _unauthenticatedConnections.Where(kv => !kv.Key.IsConnected).ToList();
 		foreach (var (conn, _) in deadUnauthenticated)
 		{
 			_unauthenticatedConnections.Remove(conn);
-			Log.Debug($"Server: An unauthenticated connection disconnected.");
+			Logger.Debug($"Server: An unauthenticated connection disconnected.");
 		}
 
 		var disconnected = _playerSessions
@@ -302,7 +311,7 @@ public class Server
 		foreach (var (id, session) in disconnected)
 		{
 			RemovePlayer(session);
-			Log.Debug($"Server: Player [{id}] disconnected.");
+			Logger.Debug($"Server: Player [{id}] disconnected.");
 		}
 	}
 

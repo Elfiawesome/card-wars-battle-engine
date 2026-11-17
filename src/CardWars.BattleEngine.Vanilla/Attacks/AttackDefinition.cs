@@ -45,8 +45,9 @@ public sealed record AttackProfile(
 
 public static class AttackDefinitionParser
 {
-	public static bool TryParse(CompoundTag tag, string fallbackName, out AttackDefinition definition)
+	public static bool TryParse(CompoundTag tag, string fallbackName, out AttackDefinition definition, ILogger? logger = null)
 	{
+		var log = logger ?? NullLogger.Instance;
 		definition = AttackDefinition.DefaultBasic;
 
 		var name = tag.GetString("name", fallbackName);
@@ -60,19 +61,19 @@ public static class AttackDefinitionParser
 			{
 				if (item is not CompoundTag patternTag)
 				{
-					Log.Warn($"Attack [{name}] pattern must be a compound");
+					log.Warn($"Attack [{name}] pattern must be a compound");
 					continue;
 				}
 
 				if (!TryParsePatternType(patternTag.GetString("type"), out var type))
 				{
-					Log.Warn($"Attack [{name}] has unknown pattern type [{patternTag.GetString("type")}]");
+					log.Warn($"Attack [{name}] has unknown pattern type [{patternTag.GetString("type")}]");
 					continue;
 				}
 
 				if (!TryParseDamage(patternTag.Get("value"), out var damage))
 				{
-					Log.Warn($"Attack [{name}] has invalid pattern value");
+					log.Warn($"Attack [{name}] has invalid pattern value");
 					continue;
 				}
 

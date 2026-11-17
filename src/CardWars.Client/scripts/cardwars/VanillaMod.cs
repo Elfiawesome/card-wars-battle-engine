@@ -52,7 +52,9 @@ public class VanillaMod : IClientMod
 		var GDContentLoader = new GDContentLoader("cardwars");
 		foreach (var (resourceId, resourcePath) in GDContentLoader.LoadAssets())
 		{
-			Log.Info("Registered Resource: " + resourceId);
+			// No session logger is in reach during mod load; fall back to the immutable no-op sink
+			// (R1). Not compiled here: CardWars.Client needs Godot 4.7, absent in the engine sandbox.
+			NullLogger.Instance.Info("Registered Resource: " + resourceId);
 			registry.Resources.Register(resourceId, resourcePath);
 		}
 

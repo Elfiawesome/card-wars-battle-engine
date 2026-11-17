@@ -22,7 +22,7 @@ public sealed class SubtractExpressionHandler : IExpressionHandler<SubtractExpre
 		if (!ExpressionValue.TryGetNumber(left, out var leftNumber) ||
 			!ExpressionValue.TryGetNumber(right, out var rightNumber))
 		{
-			Log.Error($"Cannot subtract [{right.Type}] from [{left.Type}]");
+			context.Logger.Error($"Cannot subtract [{right.Type}] from [{left.Type}]");
 			return new NullTag();
 		}
 

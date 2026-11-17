@@ -20,13 +20,13 @@ public sealed class NegateExpressionHandler : IExpressionHandler<NegateExpressio
 		{
 			IntTag intTag => new IntTag(-intTag.Value),
 			FloatTag floatTag => new FloatTag(-floatTag.Value),
-			_ => NegateFailed(value)
+			_ => NegateFailed(context, value)
 		};
 	}
 
-	private static DataTag NegateFailed(DataTag value)
+	private static DataTag NegateFailed(ScriptContext context, DataTag value)
 	{
-		Log.Error($"Cannot negate [{value.Type}]");
+		context.Logger.Error($"Cannot negate [{value.Type}]");
 		return new NullTag();
 	}
 }

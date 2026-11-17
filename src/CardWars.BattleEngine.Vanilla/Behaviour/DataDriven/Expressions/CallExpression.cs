@@ -20,7 +20,7 @@ public sealed class CallExpressionHandler : IExpressionHandler<CallExpression>
 		var function = context.DataDriven.Functions.Get(request.Function);
 		if (function is null)
 		{
-			Log.Error($"Unknown function [{request.Function}]");
+			context.Logger.Error($"Unknown function [{request.Function}]");
 			return new NullTag();
 		}
 

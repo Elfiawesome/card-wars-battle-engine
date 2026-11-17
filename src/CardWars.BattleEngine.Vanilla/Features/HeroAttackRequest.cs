@@ -27,11 +27,11 @@ public class AttackHeroRequestInputHandler : IInputHandler<AttackHeroRequestInpu
 
 		if (state.Require<GenericCard>(request.HeroCardId) is not { IsHero: true } hero)
 		{
-			Log.Warn($"Hero attack rejected: [{request.HeroCardId}] is not a hero");
+			context.Logger.Warn($"Hero attack rejected: [{request.HeroCardId}] is not a hero");
 			return;
 		}
 
-		var validator = new BattleActionValidator(context.Transaction.Registry, context.Data);
+		var validator = new BattleActionValidator(context.Transaction.Registry, context.Data, context.Logger);
 		var queuedAttackers = new HashSet<EntityId>();
 
 		foreach (var attackerSlotId in request.AttackerSlotIds ?? [])
@@ -42,13 +42,13 @@ public class AttackHeroRequestInputHandler : IInputHandler<AttackHeroRequestInpu
 
 			if (!validator.TryResolveAttack(state, context.PlayerId, attackerCard, out _, out var reason))
 			{
-				Log.Warn($"Hero attack rejected: {reason}");
+				context.Logger.Warn($"Hero attack rejected: {reason}");
 				continue;
 			}
 
 			if (!validator.CanTargetHero(state, attackerCard, hero, out reason))
 			{
-				Log.Warn($"Hero attack rejected: {reason}");
+				context.Logger.Warn($"Hero attack rejected: {reason}");
 				continue;
 			}
 
@@ -101,16 +101,16 @@ public class HeroAttackEventHandler : IEventHandler<HeroAttackEvent>
 
 		if (AttackTargetResolver.GetOwnerPlayerId(state, attackerCard) is not { } ownerId) return;
 
-		var validator = new BattleActionValidator(context.Registry, context.Data);
+		var validator = new BattleActionValidator(context.Registry, context.Data, context.Logger);
 		if (!validator.TryResolveAttack(state, ownerId, attackerCard, out var attack, out var reason))
 		{
-			Log.Warn($"Hero attack rejected: {reason}");
+			context.Logger.Warn($"Hero attack rejected: {reason}");
 			return;
 		}
 
 		if (!validator.CanTargetHero(state, attackerCard, hero, out reason))
 		{
-			Log.Warn($"Hero attack rejected: {reason}");
+			context.Logger.Warn($"Hero attack rejected: {reason}");
 			return;
 		}
 

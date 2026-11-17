@@ -10,8 +10,10 @@ using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Rules;
 
-public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry, DataContext data)
+public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry, DataContext data, ILogger? logger = null)
 {
+	private readonly ILogger _logger = logger ?? NullLogger.Instance;
+
 	public bool IsDefeated(GameState state, GenericCard hero)
 	{
 		var pointer = GetPointer(hero);
@@ -21,7 +23,7 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry, Da
 			var condition = registry.EntityConditions.Create(resourceId);
 			if (condition is null)
 			{
-				Log.Warn($"Unknown hero lose condition [{resourceId}] for hero [{hero.Id}]");
+				_logger.Warn($"Unknown hero lose condition [{resourceId}] for hero [{hero.Id}]");
 				return UseDefault(state, hero);
 			}
 
@@ -38,11 +40,11 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry, Da
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Could not parse lose_condition for hero [{hero.Id}]: {ex.Message}");
+			_logger.Warn($"Could not parse lose_condition for hero [{hero.Id}]: {ex.Message}");
 			return UseDefault(state, hero);
 		}
 
-		var context = new ScriptContext(state, data, registry.DataDriven);
+		var context = new ScriptContext(state, data, registry.DataDriven, _logger);
 		context.PushScope();
 		try
 		{
@@ -76,7 +78,7 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry, Da
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Could not parse lose_condition for hero [{hero.Id}]: {ex.Message}");
+			_logger.Warn($"Could not parse lose_condition for hero [{hero.Id}]: {ex.Message}");
 			return new ContentPointer(Resource: HeroHrtLoseCondition.Id);
 		}
 	}

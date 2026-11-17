@@ -169,7 +169,7 @@ public class VanillaMod : IBattleEngineMod
 			if (rules is null) continue;
 
 			registry.RuleDefinitions.Register(content.Id, rules);
-			Log.Info($"Registered Game Rules: {content.Id}");
+			NullLogger.Instance.Info($"Registered Game Rules: {content.Id}");
 		}
 	}
 
@@ -183,7 +183,7 @@ public class VanillaMod : IBattleEngineMod
 			if (attack is null) continue;
 
 			registry.AttackDefinitions.Register(content.Id, attack);
-			Log.Info($"Registered Attack: {content.Id}");
+			NullLogger.Instance.Info($"Registered Attack: {content.Id}");
 		}
 	}
 
@@ -196,7 +196,7 @@ public class VanillaMod : IBattleEngineMod
 				var abilityType = content.ReadAs<CompoundTag>();
 				if (abilityType is null) continue;
 				registry.AbilityTypeDefinitions.Register(content.Id, abilityType);
-				Log.Info($"Registered Ability Type: {content.Id}");
+				NullLogger.Instance.Info($"Registered Ability Type: {content.Id}");
 			}
 		}
 	}
@@ -240,7 +240,7 @@ public class VanillaMod : IBattleEngineMod
 					// }
 
 					registry.CardDefinitions.Register(content.Id, unitDataTag);
-					Log.Info($"Registered Unit Card: {content.Id}");
+					NullLogger.Instance.Info($"Registered Unit Card: {content.Id}");
 					break;
 				case ["cards", "spells"]:
 					var spellDataTag = content.ReadAs<CompoundTag>();
@@ -248,7 +248,7 @@ public class VanillaMod : IBattleEngineMod
 
 					spellDataTag.Set("card_type", "spell");
 					registry.CardDefinitions.Register(content.Id, spellDataTag);
-					Log.Info($"Registered Spell Card: {content.Id}");
+					NullLogger.Instance.Info($"Registered Spell Card: {content.Id}");
 					break;
 				case ["cards", "heroes"]:
 					var heroDataTag = content.ReadAs<CompoundTag>();
@@ -259,7 +259,7 @@ public class VanillaMod : IBattleEngineMod
 						heroDataTag.Set("lose_condition", DataTagMapper.ToTag(new ContentPointer(Resource: HeroHrtLoseCondition.Id)));
 
 					registry.CardDefinitions.Register(content.Id, heroDataTag);
-					Log.Info($"Registered Hero Card: {content.Id}");
+					NullLogger.Instance.Info($"Registered Hero Card: {content.Id}");
 					break;
 			}
 		}
