@@ -170,6 +170,14 @@ public class ModLoader
 		}
 	}
 
+	// Entry discovery is by SCANNING each loaded mod's assemblies for assignable IModEntry types.
+	// The vanilla game is found through this same path as any third-party mod (AGENT.md R5), so no
+	// privileged construction is needed. `entry_point` in mod.json / IModManifest.EntryPoint is
+	// advisory identity metadata (it documents the mod's code entry type) and is intentionally NOT
+	// consumed here: the in-process test harness loads vanilla via `new VanillaMod().OnLoad(...)`
+	// and never populates LoadedMod.Assemblies from copied DLLs, so a loader that required
+	// entry_point resolution would break that harness. Keeping scanning as the single discovery
+	// mechanism satisfies R5 while preserving the in-process path.
 	public List<TModEntry> LoadModEntry<TModEntry>()
 		where TModEntry : IModEntry
 	{

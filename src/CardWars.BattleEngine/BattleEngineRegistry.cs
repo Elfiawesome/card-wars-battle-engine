@@ -14,6 +14,12 @@ namespace CardWars.BattleEngine;
 // immutable no-op NullLogger.Instance is used. No mutable static state is read (R1).
 public class BattleEngineRegistry(ILogger? logger = null)
 {
+	// The owner's logger (or the no-op NullLogger.Instance when none was supplied). Exposed so
+	// mod-load code (e.g. the vanilla mod's Register* helpers) can route its "Registered ..."
+	// diagnostics through the owning session's sink instead of always falling back to
+	// NullLogger.Instance (R9). Immutable after construction; no mutable static state (R1).
+	public ILogger Logger { get; } = logger ?? NullLogger.Instance;
+
 	public HandlerRegistry<InputContext> InputHandlers = new(logger);
 	public HandlerRegistry<GameState> BlockHandlers = new(logger);
 	public HandlerRegistry<Transaction> EventHandlers = new(logger);

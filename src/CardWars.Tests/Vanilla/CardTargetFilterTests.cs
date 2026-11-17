@@ -130,7 +130,7 @@ public sealed class CardTargetFilterTests
 			Category = ["cards", "units"]
 		};
 
-		new VanillaMod().OnLoad(registry, [content]);
+		new VanillaMod().OnLoad(registry, DataContext.Default, [content]);
 
 		var definition = registry.CardDefinitions.Get(content.Id) ?? throw new InvalidOperationException("Unit definition was not registered");
 		Assert.True(definition.Has("target_filter"));

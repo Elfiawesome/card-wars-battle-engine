@@ -18,7 +18,7 @@ public sealed class TransactionIntegrationTests
 	public void BattleEngine_InstantiatesDataDrivenBehaviourFromPointer()
 	{
 		var engine = new BattleEngine.BattleEngine();
-		new VanillaMod().OnLoad(engine.Registry, []);
+		new VanillaMod().OnLoad(engine.Registry, engine.Data, []);
 		engine.Registry.InputHandlers.Register(new TestEventInputHandler());
 		engine.Registry.EventHandlers.Register(new TestEventHandler());
 

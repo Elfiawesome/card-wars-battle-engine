@@ -77,7 +77,9 @@ public class Server
 	}
 
 	public void LoadMod(IServerMod mod, List<ModContentResult> modContents) => mod.OnLoad(this, modContents);
-	public void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents) => mod.OnLoad(SharedBattleEngineRegistry, modContents);
+	// Thread the server's owned DataContext into engine-mod load so content tags baked at load
+	// time serialize through the owning context rather than the static DataTagMapper facade (Phase 2).
+	public void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents) => mod.OnLoad(SharedBattleEngineRegistry, Data, modContents);
 
 	public void Start(params IListener[] listeners)
 	{

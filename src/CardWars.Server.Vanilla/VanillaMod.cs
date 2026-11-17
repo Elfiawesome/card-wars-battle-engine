@@ -13,6 +13,9 @@ namespace CardWars.Server.Vanilla;
 
 public class VanillaMod : IServerMod
 {
+	public string Name => "Vanilla Mod";
+	public string Version => "0.0.0";
+
 	private Guid? _currentBattleInstanceId;
 
 	public void OnLoad(Server server, List<ModContentResult> modContents)

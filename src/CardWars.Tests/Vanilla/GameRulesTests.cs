@@ -52,7 +52,7 @@ public sealed class GameRulesTests
 			Category = ["rules"]
 		};
 
-		new VanillaMod().OnLoad(registry, [content]);
+		new VanillaMod().OnLoad(registry, CardWars.Core.Data.DataContext.Default, [content]);
 
 		var rules = GameRulesDefinition.Get(registry, CardWars.Core.Data.DataContext.Default, GameRulesDefinition.DefaultId)
 			?? throw new InvalidOperationException("Default rules were not registered");

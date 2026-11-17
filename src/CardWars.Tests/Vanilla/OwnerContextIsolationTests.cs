@@ -43,7 +43,7 @@ public sealed class OwnerContextIsolationTests
 	private static BattleEngine.BattleEngine CreateEngine(DataContext data)
 	{
 		var engine = new BattleEngine.BattleEngine { Data = data };
-		new VanillaMod().OnLoad(engine.Registry, []);
+		new VanillaMod().OnLoad(engine.Registry, engine.Data, []);
 		engine.Registry.InputHandlers.Register(new TestEventInputHandler());
 		engine.Registry.EventHandlers.Register(new TestEventHandler());
 		return engine;

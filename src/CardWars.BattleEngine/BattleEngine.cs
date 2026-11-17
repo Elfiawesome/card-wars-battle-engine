@@ -39,7 +39,9 @@ public class BattleEngine
 
 	public void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents)
 	{
-		mod.OnLoad(Registry, modContents);
+		// Thread this engine's owned DataContext into mod load so content tags baked at load time
+		// serialize through the owning context rather than the static DataTagMapper facade (Phase 2).
+		mod.OnLoad(Registry, Data, modContents);
 	}
 
 	public void HandleInput(EntityId playerId, IInput input)

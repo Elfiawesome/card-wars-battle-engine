@@ -125,7 +125,7 @@ public sealed class AttackDefinitionTests
 			Category = ["cards", "units"]
 		};
 
-		new VanillaMod().OnLoad(registry, [attackContent, unitContent]);
+		new VanillaMod().OnLoad(registry, CardWars.Core.Data.DataContext.Default, [attackContent, unitContent]);
 
 		var definition = registry.CardDefinitions.Get(unitContent.Id)
 			?? throw new InvalidOperationException("Unit definition was not registered");

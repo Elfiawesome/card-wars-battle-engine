@@ -30,7 +30,7 @@ public sealed class HeroLoseConditionTests
 			Category = ["cards", "heroes"]
 		};
 
-		new VanillaMod().OnLoad(registry, [content]);
+		new VanillaMod().OnLoad(registry, CardWars.Core.Data.DataContext.Default, [content]);
 
 		var definition = registry.CardDefinitions.Get(content.Id)
 			?? throw new InvalidOperationException("Hero definition was not registered");
