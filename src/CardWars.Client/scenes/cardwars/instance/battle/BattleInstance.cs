@@ -67,7 +67,11 @@ public partial class BattleInstance : ClientInstance
 
 	public override void _Ready()
 	{
-		if (Registry.Battle is { } registry) ActionValidator = new(registry);
+		// BattleActionValidator was given a session DataContext in a prior headless phase; thread
+		// the session-owned context (exposed on the instance Registry) so client-side validation
+		// runs against the same context as the server rather than a static facade.
+		if (Registry.Battle is { } registry && Registry.Data is { } data)
+			ActionValidator = new(registry, data);
 		if (HandManagerNode is not null) HandManagerNode.BattleInstance = this;
 		if (AttackControllerNode is not null) AttackControllerNode.Setup(this);
 		AnimationHandler.Completed += ReleasePendingNodes;

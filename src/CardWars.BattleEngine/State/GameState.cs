@@ -66,10 +66,16 @@ public class GameState : IDataTagAccessible
 	[DataTag]
 	public TurnState Turn { get; set; } = new();
 
+	// Layout is a CLIENT concept: layout handlers live only in the client BattleRegistry, and the
+	// engine has no layout registry, so the engine must not hardcode a vanilla layout id. Seed with
+	// ResourceId.Empty (the codebase's canonical "no id", as used for RuleId). The only consumer is
+	// the client BattleInstance.SyncState(): LayoutHandler.Get(State.Layout.Layout) ?? Get(DefaultLayoutId).
+	// LayoutHandler.Get(ResourceId.Empty) returns null, so the client falls back to its DefaultLayoutId
+	// exactly as it did with the old unresolvable placeholder. Behavior is preserved.
 	[DataTag]
 	public LayoutState Layout { get; set; } = new()
 	{
-		Layout = ResourceId.Vanilla("TODO: haha wrong layout id"),
+		Layout = ResourceId.Empty,
 		LayoutConfig = new CompoundTag()
 	};
 

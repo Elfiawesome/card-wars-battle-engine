@@ -3,6 +3,7 @@ using System;
 using CardWars.BattleEngine;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
+using CardWars.Core.Data;
 using CardWars.Core.Network.Packet;
 using Godot;
 
@@ -24,5 +25,8 @@ public partial class ClientInstance : Node
 
 public record struct ClientInstanceRegistry(
 	ClientRegistry? Client,
-	BattleEngineRegistry? Battle
+	BattleEngineRegistry? Battle,
+	// The owning session's DataContext (Phase 1/5): threaded in so instance-level validators and
+	// (de)serialization run against the session-scoped context rather than a static facade.
+	DataContext? Data
 );

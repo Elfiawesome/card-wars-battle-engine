@@ -20,6 +20,10 @@ using CardWars.ModLoader;
 using CardWars.Server;
 using CardWars.Server.Listener;
 using Godot;
+// Godot 4.7 introduced a `Godot.Logger` type that collides with the session logger
+// `CardWars.Core.Logging.Logger` imported above. Alias the Core type so every bare `Logger` in
+// this file unambiguously means the session logger (mechanical fix, no behavior change).
+using Logger = CardWars.Core.Logging.Logger;
 
 namespace CardWars.Client.scenes.core.game_session;
 
@@ -146,6 +150,7 @@ public partial class GameSession : Node
 		Instance.onPacketSent += SendPacket;
 		Instance.Registry.Client = ClientRegistry;
 		Instance.Registry.Battle = BattleEngineRegistry;
+		Instance.Registry.Data = Data;
 		Instance.MyPlayerId = playerId ?? Guid.Empty;
 		AddChild(Instance);
 	}
