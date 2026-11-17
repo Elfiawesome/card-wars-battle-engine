@@ -7,17 +7,21 @@ using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Client.scripts.cardwars.ui.card_inspection_panel;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.storage;
-using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
 using CardWars.Vanilla.Shared;
 
 namespace CardWars.Client.scripts.cardwars;
 
+// PROVISIONAL / UNCOMPILED (Phase 4): CardWars.Client needs Godot 4.7, absent in the engine
+// sandbox, so this file is not compiled/verified here; validate on a Godot-equipped machine in
+// Phase 6. Vanilla is now discovered and loaded through the same IModEntry/LoadModEntry<IClientMod>
+// mechanism as any third-party mod (no privileged `new VanillaMod()` path in GameSession, R5).
 public class VanillaMod : IClientMod
 {
-	public string ModName => throw new System.NotImplementedException();
-	public string Version => throw new System.NotImplementedException();
+	// Unified IModEntry identity (R5): real values, never throw (was NotImplementedException).
+	public string Name => "Vanilla Mod";
+	public string Version => "0.0.0";
 
 	public BattleRegistry BattleRegistry = new();
 
@@ -52,9 +56,11 @@ public class VanillaMod : IClientMod
 		var GDContentLoader = new GDContentLoader("cardwars");
 		foreach (var (resourceId, resourcePath) in GDContentLoader.LoadAssets())
 		{
-			// No session logger is in reach during mod load; fall back to the immutable no-op sink
-			// (R1). Not compiled here: CardWars.Client needs Godot 4.7, absent in the engine sandbox.
-			NullLogger.Instance.Info("Registered Resource: " + resourceId);
+			// Route through the owning session's logger (exposed on ClientRegistry, Phase 3/R9);
+			// it is the immutable no-op NullLogger.Instance when no session logger was supplied
+			// (R1). PROVISIONAL / UNCOMPILED: CardWars.Client needs Godot 4.7, absent here;
+			// validate in Phase 6.
+			registry.Logger.Info("Registered Resource: " + resourceId);
 			registry.Resources.Register(resourceId, resourcePath);
 		}
 

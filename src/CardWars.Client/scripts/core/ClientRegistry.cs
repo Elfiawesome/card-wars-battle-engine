@@ -2,12 +2,23 @@ using System;
 using System.Collections.Generic;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Client.scripts.core.registry;
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 
 namespace CardWars.Client.scripts.core;
 
-public class ClientRegistry
+// PROVISIONAL / UNCOMPILED (Phase 4): CardWars.Client needs Godot 4.7, absent in the engine
+// sandbox, so this file is not compiled/verified here; validate on a Godot-equipped machine in
+// Phase 6. The optional ctor logger mirrors BattleEngineRegistry(ILogger?) so the owning session
+// can supply its logger and mod-load diagnostics reach the session sink instead of always falling
+// back to NullLogger.Instance (Phase 3, R9). No mutable static state (R1).
+public class ClientRegistry(ILogger? logger = null)
 {
+	// The owning session's logger (or the immutable no-op NullLogger.Instance when none was
+	// supplied). Exposed so client mod-load code (the vanilla mod's resource-registration loop)
+	// can route its "Registered ..." diagnostics through the owning session's sink (R9).
+	public ILogger Logger { get; } = logger ?? NullLogger.Instance;
+
 	public HandlerRegistry<PacketContextClient> PacketHandlers = new();
 	public SceneRegistry<ResourceId> Instances = new();
 	public SceneRegistry<ResourceId> UserInterface = new();

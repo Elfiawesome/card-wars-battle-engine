@@ -4,7 +4,10 @@ using System.Linq;
 using System.Net.Sockets;
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.Input;
-using CardWars.Client.scripts.cardwars;
+// Phase 4 (R5/R8): the `using CardWars.Client.scripts.cardwars;` import was removed along with the
+// privileged `new VanillaMod()` path below. Core no longer references the vanilla namespace; the
+// vanilla client entry is discovered by scanning via modLoader.LoadModEntry<IClientMod>() like any
+// third-party mod. PROVISIONAL / UNCOMPILED: Godot 4.7 is absent here; validate in Phase 6.
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Core.Data;
@@ -22,19 +25,30 @@ namespace CardWars.Client.scenes.core.game_session;
 
 public partial class GameSession : Node
 {
-	public ClientRegistry ClientRegistry { get; init; } = new();
-	public BattleEngineRegistry BattleEngineRegistry { get; init; } = new();
+	// Session-owned logger (Phase 3, R9/R1). Replaces the former static Log singleton: Identity
+	// and the OnLog sink live on this instance, and it is threaded to the Server, ModLoader,
+	// StorageManager, the registries and transport the same way Data is. NOTE: CardWars.Client
+	// targets Godot 4.7 which is not installed in the engine CI sandbox, so this file is NOT
+	// compiled/verified there; the edits are kept minimal, mechanical and internally consistent
+	// with the engine changes (validate in Phase 6). Declared before the registries so its value
+	// is available to their initializers (field initializers run in textual order).
+	public Logger Logger { get; init; } = new();
+
+	// Phase 4/R9: thread this session's owned Logger into the registries so client mod-load
+	// diagnostics (the vanilla mod's "Registered ..." lines) reach the session sink instead of
+	// falling back to NullLogger.Instance. Mirrors the engine's BattleEngineRegistry(ILogger?).
+	public ClientRegistry ClientRegistry { get; init; }
+	public BattleEngineRegistry BattleEngineRegistry { get; init; }
 
 	// Session-owned data context, consistent with Server.Data. Defaults to DataContext.Default
 	// so Phase 1 behavior is preserved while other client call sites still use the facade.
 	public DataContext Data { get; init; } = DataContext.Default;
 
-	// Session-owned logger (Phase 3, R9/R1). Replaces the former static Log singleton: Identity
-	// and the OnLog sink live on this instance, and it is threaded to the Server, ModLoader,
-	// StorageManager and transport the same way Data is. NOTE: CardWars.Client targets Godot 4.7
-	// which is not installed in the engine CI sandbox, so this file is NOT compiled/verified there;
-	// the edits are kept minimal, mechanical and internally consistent with the engine changes.
-	public Logger Logger { get; init; } = new();
+	public GameSession()
+	{
+		ClientRegistry = new ClientRegistry(Logger);
+		BattleEngineRegistry = new BattleEngineRegistry(Logger);
+	}
 
 	public Server.Server? IntegratedServer { get; private set; }
 	public IConnection? Connection { get; private set; }
@@ -186,7 +200,10 @@ public partial class GameSession : Node
 			? modLoader.GetContentServer().ToList()
 			: clientContent;
 
-		new VanillaMod().OnLoad(ClientRegistry, clientContent); // TODO: Load dynamically via scanning current assembly bruh
+		// Phase 4 (R5): client mod load is driven SOLELY by scanning discovery. The privileged
+		// `new VanillaMod().OnLoad(...)` path was removed; vanilla's client entry is picked up here
+		// through LoadModEntry<IClientMod>() like any third-party mod (its assembly is among the
+		// loaded mod assemblies). Core no longer constructs or references the vanilla namespace (R8).
 		modLoader.LoadModEntry<IClientMod>().ForEach(m => LoadMod(m, clientContent));
 		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => LoadMod(m, battleContent)); // TODO: Maybe content is loaded and passed on by server. So we create a new battle registry each session and is given by server??
 
@@ -197,6 +214,10 @@ public partial class GameSession : Node
 	private void LoadMod(IClientMod mod, List<ModContentResult> modContents)
 		=> mod.OnLoad(ClientRegistry, modContents);
 
+	// Phase 4 (FEAT-001): IBattleEngineMod.OnLoad now takes the owning DataContext so content tags
+	// baked at mod-load time serialize through this session's context rather than the static
+	// DataTagMapper facade (Phase 2). Pass this session's Data, consistent with
+	// BattleEngine.LoadMod / Server.LoadMod on the headless side.
 	private void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents)
-		=> mod.OnLoad(BattleEngineRegistry, modContents);
+		=> mod.OnLoad(BattleEngineRegistry, Data, modContents);
 }
