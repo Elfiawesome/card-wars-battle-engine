@@ -1,3 +1,4 @@
+using CardWars.Core.Data;
 using CardWars.Core.Logging;
 
 namespace CardWars.Core.Storage;
@@ -15,10 +16,17 @@ public class StorageManager
 
 	private readonly ILogger _logger;
 
+	// The data context whose instance Serialize/Deserialize the sessions this manager opens use
+	// (Phase 5 storage scoping). Optional and defaulting to DataContext.Default so existing
+	// positional callers compile unchanged and behavior is preserved (DataContext.Default produces
+	// byte-identical JSON to the former static DataTagSerializer facade).
+	private readonly DataContext _data;
 
-	public StorageManager(string dataRoot, IFileProvider provider, ILogger? logger = null)
+
+	public StorageManager(string dataRoot, IFileProvider provider, ILogger? logger = null, DataContext? data = null)
 	{
 		_logger = logger ?? NullLogger.Instance;
+		_data = data ?? DataContext.Default;
 		DataRoot = provider.GetFullPath(dataRoot);
 		Provider = provider;
 
@@ -44,7 +52,7 @@ public class StorageManager
 		if (!sessionRoot.Exists)
 			sessionRoot.CreateDirectory();
 
-		CurrentSession = new SessionStorage(this, sessionName, sessionRoot);
+		CurrentSession = new SessionStorage(this, sessionName, sessionRoot, _data);
 		CurrentSession.EnsureDirectories();
 		_logger.Info($"Storage: Opened session '{sessionName}' at '{sessionRoot.FullPath}'");
 		return CurrentSession;

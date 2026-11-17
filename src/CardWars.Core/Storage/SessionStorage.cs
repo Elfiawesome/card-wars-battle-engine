@@ -1,4 +1,4 @@
-using CardWars.Core.Data.Serialization.Json;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 
 namespace CardWars.Core.Storage;
@@ -15,9 +15,14 @@ public class SessionStorage
 
 	private readonly StorageManager _manager;
 
-	internal SessionStorage(StorageManager manager, string sessionName, StoragePath root)
+	// The owning context whose instance Serialize/Deserialize this session uses (Phase 5 storage
+	// scoping), replacing the static DataTagSerializer facade. Supplied by the StorageManager.
+	private readonly DataContext _data;
+
+	internal SessionStorage(StorageManager manager, string sessionName, StoragePath root, DataContext data)
 	{
 		_manager = manager;
+		_data = data;
 		SessionName = sessionName;
 
 		Root = root;
@@ -40,12 +45,12 @@ public class SessionStorage
 
 	public DataTag? LoadData(StoragePath path)
 	{
-		if (path.Exists) return DataTagSerializer.Deserialize<CompoundTag>(path.ReadAllText());
+		if (path.Exists) return _data.Deserialize<CompoundTag>(path.ReadAllText());
 		return null;
 	}
 
 	public void SaveData(StoragePath path, DataTag data)
-		=> path.WriteAllText(DataTagSerializer.Serialize(data));
+		=> path.WriteAllText(_data.Serialize(data));
 
 	// --- World ---
 	public DataTag? LoadInstance(string name)
@@ -82,7 +87,7 @@ public class SessionStorage
 	private CompoundTag LoadUsernames()
 	{
 		if (UsernamesFile.Exists)
-			return DataTagSerializer.Deserialize<CompoundTag>(UsernamesFile.ReadAllText()) ?? new CompoundTag();
+			return _data.Deserialize<CompoundTag>(UsernamesFile.ReadAllText()) ?? new CompoundTag();
 		return new CompoundTag();
 	}
 }

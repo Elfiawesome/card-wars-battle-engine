@@ -81,7 +81,10 @@ public partial class GameSession : Node
 		var clientDir = System.Environment.CurrentDirectory;
 		var projectRoot = provider.GetFullPath(provider.Combine(provider.Combine(clientDir, ".."), ".."));
 		var gamedataPath = provider.Combine(projectRoot, "gamedata");
-		Storage = new StorageManager(gamedataPath, provider, Logger);
+		// Pass this session's owned DataContext so storage (de)serialization is scoped to it
+		// (Phase 5). PROVISIONAL / UNCOMPILED: the Godot client is not built in this environment;
+		// validate on a Godot VM in Phase 6.
+		Storage = new StorageManager(gamedataPath, provider, Logger, Data);
 
 		// Start!
 		Logger.Info($"Game Session started with username: {ConnectingUsername}");

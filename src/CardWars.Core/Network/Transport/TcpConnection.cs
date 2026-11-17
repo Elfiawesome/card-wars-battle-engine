@@ -21,8 +21,12 @@ public class TcpConnection : IConnection
 	public bool IsConnected => _tcpClient.Connected;
 
 	// NOTE: packet (de)serialization below still uses DataTagMapper/DataTagSerializer over
-	// DataContext.Default. Scoping the transport codec to an owned context is a Phase 5 concern
-	// and is intentionally out of scope here; only the logging was made session-scoped (R9).
+	// DataContext.Default. Phase 5 scoped the STORAGE layer (SessionStorage/StorageManager) to an
+	// owner-supplied DataContext, but transport-codec scoping was intentionally DEFERRED: threading
+	// a DataContext through PacketCodec and the IListener/IConnection implementations
+	// (TcpConnection, LocalSerializedConnection) expands into the network layer well beyond the
+	// storage slice, so it is left for a dedicated network-scoping pass. The transport codec stays
+	// on the DataContext.Default facade here; only the logging was made session-scoped (R9).
 	public TcpConnection(TcpClient tcpClient, ILogger? logger = null)
 	{
 		_tcpClient = tcpClient;
