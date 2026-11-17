@@ -59,7 +59,7 @@ public class Transaction
 		foreach (var block in batch.Blocks ?? [])
 		{
 			Registry.BlockHandlers.Execute(State, block);
-			Log.Debug($"[2] Executing Block [{block.GetType().Name}]: {DataTagSerializer.Serialize(DataTagMapper.ToTag(block))}");
+			Log.Debug($"Executing Block [{block.GetType().Name}]: {DataTagSerializer.Serialize(DataTagMapper.ToTag(block))}");
 		}
 		OnBlockBatchEvent?.Invoke(batch);
 	}
