@@ -79,7 +79,9 @@ public partial class HandManager : Control
 		if (BattleInstance is not { } instance || instance.State.Get<GenericCard>(id) is not { } entity) return;
 
 		// TODO: Get skin and place it inside
-		var card = instance.Registry.Client?.UserInterface.Instantiate<CardDisplay>(SharedIds.UI.StandardCardDisplay);
+		var displayIdN = BattleInstance.BattleRegistry?.DefaultCardDisplay;
+		if (displayIdN is not { } displayId) return;
+		var card = instance.Registry.Client?.UserInterface.Instantiate<CardDisplay>(displayId);
 		if (card is null) return;
 
 		card.Scale = Vector2.Zero;
@@ -239,7 +241,9 @@ public partial class HandManager : Control
 
 		foreach (var data in panels)
 		{
-			var panel = instance.Registry.Client?.UserInterface.Instantiate<Control>(SharedIds.UI.StandardCardInspectionPanel);
+			var displayIdN = BattleInstance.BattleRegistry?.DefaultCardInspectionPanel;
+			if (displayIdN is not { } displayId) continue;
+			var panel = instance.Registry.Client?.UserInterface.Instantiate<Control>(displayId);
 			if (panel is null) continue;
 
 			panel.MouseFilter = MouseFilterEnum.Ignore;
