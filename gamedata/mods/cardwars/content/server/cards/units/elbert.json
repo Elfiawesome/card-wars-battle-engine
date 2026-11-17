@@ -5,7 +5,7 @@
 	"atk": 3,
 	"sp_atks": [
 		{
-			"resource": "cardwars:attacks/cross"
+		"resource": "cardwars:attacks/sweep"
 		}
 	],
 	"abilities": [

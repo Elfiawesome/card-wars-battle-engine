@@ -5,5 +5,5 @@
 	"patterns": [
 		{ "type": "row", "value": "100%" }
 	],
-	"texture":"cardwars:attacks/sweep"
+	"texture":"cardwars:texture/icon/attacks/sweep"
 }
