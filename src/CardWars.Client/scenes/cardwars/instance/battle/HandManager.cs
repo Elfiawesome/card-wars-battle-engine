@@ -74,9 +74,12 @@ public partial class HandManager : Control
 
 	public void AddCard(EntityId id)
 	{
+		if (BattleInstance is not { } instance || instance.State.Get<GenericCard>(id) is not { } entity) return;
+
 		// TODO: Get skin and place it inside
-		var card = BattleInstance?.Registry.Client?.UserInterface.Instantiate<CardDisplay>(SharedIds.UI.StandardCardDisplay);
+		var card = instance.Registry.Client?.UserInterface.Instantiate<CardDisplay>(SharedIds.UI.StandardCardDisplay);
 		if (card is null) return;
+
 		card.Scale = Vector2.Zero;
 		card.Position = new(0, 0);
 
@@ -84,11 +87,8 @@ public partial class HandManager : Control
 		card.MouseExited += () => OnCardMouseExited(card);
 		card.GuiInput += (e) => OnCardGuiInput(e, card);
 		AddChild(card);
-		if (BattleInstance?.State.Get<GenericCard>(id) is { } entity)
-		{
-			card.SetData(entity.Data, BattleInstance.Registry);
-			card.SetDisplay(CardDisplay.DisplayType.Simplified);
-		}
+		card.SetData(entity.Data, instance.Registry);
+		card.SetDisplay(CardDisplay.DisplayType.Simplified);
 		_cards[id] = card;
 		ArrangeCard();
 	}
