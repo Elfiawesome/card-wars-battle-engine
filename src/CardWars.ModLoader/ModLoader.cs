@@ -190,20 +190,35 @@ public class ModLoader
 
 			foreach (var assembly in mod.Assemblies)
 			{
-				assembly.GetTypes()
-					.Where(t => typeof(TModEntry).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
-					.ToList()
-					.ForEach(t =>
-					{
-						_logger.Info($"Found mod entry type '{typeof(TModEntry)}': '{t.FullName}'");
-						var modeEntry = (TModEntry?)Activator.CreateInstance(t);
-						if (modeEntry is not null)
-						{
-							modEntries.Add(modeEntry);
-						}
-					});
+				modEntries.AddRange(ScanAssemblyForModEntry<TModEntry>(assembly));
 			}
 		}
+		return modEntries;
+	}
+
+	// Scan a single assembly for IModEntry implementations, using the SAME reflection filter as
+	// LoadModEntry. Hosts whose mod code is NOT in a mod's code/ folder but in an already-running
+	// assembly (e.g. the Godot client, whose vanilla client entry lives in the game assembly that
+	// Godot loads as the runtime assembly, not as a scanned mod DLL) use this to discover their
+	// IModEntry the same reflection way, with no privileged construction (AGENT.md R5). Mirrors
+	// DataContext.ScanAssembly; keeps scanning as the single discovery mechanism (R1: no static
+	// state involved).
+	public List<TModEntry> ScanAssemblyForModEntry<TModEntry>(Assembly assembly)
+		where TModEntry : IModEntry
+	{
+		List<TModEntry> modEntries = [];
+		assembly.GetTypes()
+			.Where(t => typeof(TModEntry).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
+			.ToList()
+			.ForEach(t =>
+			{
+				_logger.Info($"Found mod entry type '{typeof(TModEntry)}': '{t.FullName}'");
+				var modeEntry = (TModEntry?)Activator.CreateInstance(t);
+				if (modeEntry is not null)
+				{
+					modEntries.Add(modeEntry);
+				}
+			});
 		return modEntries;
 	}
 

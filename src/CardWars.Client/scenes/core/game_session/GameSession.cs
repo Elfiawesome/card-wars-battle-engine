@@ -6,8 +6,8 @@ using CardWars.BattleEngine;
 using CardWars.BattleEngine.Input;
 // Phase 4 (R5/R8): the `using CardWars.Client.scripts.cardwars;` import was removed along with the
 // privileged `new VanillaMod()` path below. Core no longer references the vanilla namespace; the
-// vanilla client entry is discovered by scanning via modLoader.LoadModEntry<IClientMod>() like any
-// third-party mod. PROVISIONAL / UNCOMPILED: Godot 4.7 is absent here; validate in Phase 6.
+// vanilla client entry is discovered by scanning (see SetupModClient). Phase 6: compiled and
+// validated against Godot 4.7; the plain core-client classes now live in CardWars.Client.Core.
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Core.Data;
@@ -31,11 +31,9 @@ public partial class GameSession : Node
 {
 	// Session-owned logger (Phase 3, R9/R1). Replaces the former static Log singleton: Identity
 	// and the OnLog sink live on this instance, and it is threaded to the Server, ModLoader,
-	// StorageManager, the registries and transport the same way Data is. NOTE: CardWars.Client
-	// targets Godot 4.7 which is not installed in the engine CI sandbox, so this file is NOT
-	// compiled/verified there; the edits are kept minimal, mechanical and internally consistent
-	// with the engine changes (validate in Phase 6). Declared before the registries so its value
-	// is available to their initializers (field initializers run in textual order).
+	// StorageManager, the registries and transport the same way Data is. Phase 6: compiled and
+	// validated against Godot 4.7. Declared before the registries so its value is available to
+	// their initializers (field initializers run in textual order).
 	public Logger Logger { get; init; } = new();
 
 	// Phase 4/R9: thread this session's owned Logger into the registries so client mod-load
@@ -86,8 +84,7 @@ public partial class GameSession : Node
 		var projectRoot = provider.GetFullPath(provider.Combine(provider.Combine(clientDir, ".."), ".."));
 		var gamedataPath = provider.Combine(projectRoot, "gamedata");
 		// Pass this session's owned DataContext so storage (de)serialization is scoped to it
-		// (Phase 5). PROVISIONAL / UNCOMPILED: the Godot client is not built in this environment;
-		// validate on a Godot VM in Phase 6.
+		// (Phase 5). Phase 6: compiled/validated against Godot 4.7.
 		Storage = new StorageManager(gamedataPath, provider, Logger, Data);
 
 		// Start!
@@ -208,11 +205,22 @@ public partial class GameSession : Node
 			? modLoader.GetContentServer().ToList()
 			: clientContent;
 
-		// Phase 4 (R5): client mod load is driven SOLELY by scanning discovery. The privileged
-		// `new VanillaMod().OnLoad(...)` path was removed; vanilla's client entry is picked up here
-		// through LoadModEntry<IClientMod>() like any third-party mod (its assembly is among the
-		// loaded mod assemblies). Core no longer constructs or references the vanilla namespace (R8).
-		modLoader.LoadModEntry<IClientMod>().ForEach(m => LoadMod(m, clientContent));
+		// Phase 6 (R5/R4): client mod load is driven SOLELY by scanning discovery, no privileged
+		// `new VanillaMod()` path. Two scan sources are combined because the client vanilla code
+		// lives in the game assembly (CardWars.Client.dll) which Godot loads as the runtime
+		// assembly, NOT as a mod DLL under gamedata/mods/<id>/code/:
+		//   1. LoadModEntry<IClientMod>() scans each loaded mod's assemblies (third-party client
+		//      mods shipped as DLLs).
+		//   2. ScanAssemblyForModEntry<IClientMod>(game assembly) finds the vanilla client entry
+		//      (VanillaMod : IClientMod) that ships inside the game assembly.
+		// Both paths run the identical reflection filter. Dedupe by concrete type so an entry found
+		// via both paths loads exactly once. Core (CardWars.Client.Core) cannot see the vanilla
+		// types, so the boundary stays compiler-enforced (R4).
+		var clientMods = modLoader.LoadModEntry<IClientMod>()
+			.Concat(modLoader.ScanAssemblyForModEntry<IClientMod>(typeof(GameSession).Assembly))
+			.GroupBy(m => m.GetType())
+			.Select(g => g.First());
+		foreach (var clientMod in clientMods) { LoadMod(clientMod, clientContent); }
 		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => LoadMod(m, battleContent)); // TODO: Maybe content is loaded and passed on by server. So we create a new battle registry each session and is given by server??
 
 		// If loaded client, use its shared battle engine registry to save on memory

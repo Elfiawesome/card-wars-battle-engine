@@ -7,11 +7,13 @@ using CardWars.Core.Registry;
 
 namespace CardWars.Client.scripts.core;
 
-// PROVISIONAL / UNCOMPILED (Phase 4): CardWars.Client needs Godot 4.7, absent in the engine
-// sandbox, so this file is not compiled/verified here; validate on a Godot-equipped machine in
-// Phase 6. The optional ctor logger mirrors BattleEngineRegistry(ILogger?) so the owning session
-// can supply its logger and mod-load diagnostics reach the session sink instead of always falling
-// back to NullLogger.Instance (Phase 3, R9). No mutable static state (R1).
+// Phase 6: compiled/validated against Godot 4.7. ClientRegistry stays in the game assembly (not
+// CardWars.Client.Core) because it references PacketContextClient, which is bound to the scene
+// Node GameSession; the compiler-enforced core/vanilla boundary lives in CardWars.Client.Core,
+// which carries the GameSession-free Godot registry/storage classes. The optional ctor logger
+// mirrors BattleEngineRegistry(ILogger?) so the owning session can supply its logger and mod-load
+// diagnostics reach the session sink instead of always falling back to NullLogger.Instance
+// (Phase 3, R9). No mutable static state (R1).
 public class ClientRegistry(ILogger? logger = null)
 {
 	// The owning session's logger (or the immutable no-op NullLogger.Instance when none was

@@ -13,10 +13,10 @@ using CardWars.Vanilla.Shared;
 
 namespace CardWars.Client.scripts.cardwars;
 
-// PROVISIONAL / UNCOMPILED (Phase 4): CardWars.Client needs Godot 4.7, absent in the engine
-// sandbox, so this file is not compiled/verified here; validate on a Godot-equipped machine in
-// Phase 6. Vanilla is now discovered and loaded through the same IModEntry/LoadModEntry<IClientMod>
-// mechanism as any third-party mod (no privileged `new VanillaMod()` path in GameSession, R5).
+// Phase 6: compiled/validated against Godot 4.7. Vanilla is discovered and loaded through the same
+// IModEntry scanning mechanism as any third-party mod (no privileged `new VanillaMod()` path in
+// GameSession, R5). Its code ships in the game assembly (CardWars.Client.dll), which Godot loads
+// as the runtime assembly, so GameSession.SetupModClient scans that assembly to find it.
 public class VanillaMod : IClientMod
 {
 	// Unified IModEntry identity (R5): real values, never throw (was NotImplementedException).
@@ -58,8 +58,7 @@ public class VanillaMod : IClientMod
 		{
 			// Route through the owning session's logger (exposed on ClientRegistry, Phase 3/R9);
 			// it is the immutable no-op NullLogger.Instance when no session logger was supplied
-			// (R1). PROVISIONAL / UNCOMPILED: CardWars.Client needs Godot 4.7, absent here;
-			// validate in Phase 6.
+			// (R1).
 			registry.Logger.Info("Registered Resource: " + resourceId);
 			registry.Resources.Register(resourceId, resourcePath);
 		}

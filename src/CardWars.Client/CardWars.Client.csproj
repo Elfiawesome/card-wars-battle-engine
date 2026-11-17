@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CardWars.Core\CardWars.Core.csproj" />
     <ProjectReference Include="..\CardWars.Server\CardWars.Server.csproj" />
+    <ProjectReference Include="..\CardWars.Client.Core\CardWars.Client.Core.csproj" />
     
     <!-- Temporary -->
     <ProjectReference Include="..\CardWars.Vanilla.Shared\CardWars.Vanilla.Shared.csproj" />
