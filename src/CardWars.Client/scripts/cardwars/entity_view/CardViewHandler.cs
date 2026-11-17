@@ -6,6 +6,7 @@ using CardWars.Client.scenes.cardwars.instance.battle;
 using CardWars.Client.scenes.cardwars.instance.battle.entities;
 using CardWars.Client.scenes.cardwars.ui.card_display;
 using CardWars.Client.scripts.cardwars.registry;
+using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared;
 using Godot;
 
@@ -51,11 +52,11 @@ public class CardViewHandler : IEntityViewHandler<GenericCard>
 
 			// TODO: Check for skins here
 			// but for now let's use default
-			var targetSkinId = SharedIds.UI.StandardCardDisplay; // Set the skin here
-			if (node.DisplayId != targetSkinId || node.Display is null)
+			var displayId = SharedIds.UI.StandardCardDisplay; // Set the skin here
+			if (node.DisplayId != displayId || node.Display is null)
 			{
-				var display = instance.Registry.Client?.UserInterface.Instantiate<CardDisplay>(targetSkinId);
-				if (display is not null) node.SetCardDisplay(targetSkinId, display);
+				var display = instance.Registry.Client?.UserInterface.Instantiate<CardDisplay>(displayId);
+				if (display is not null) node.SetCardDisplay(displayId, display);
 			}
 			node.SetCard(card, instance.Registry);
 		}

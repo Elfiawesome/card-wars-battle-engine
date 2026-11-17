@@ -14,7 +14,7 @@ shader_parameter/blur_amount = 2.000000095
 shader_parameter/saturation = 1.6
 shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 
-[node name="ExtraDisplayPanel" type="MarginContainer" unique_id=689193761 node_paths=PackedStringArray("grid_container", "icon_texture", "title_label", "content_label")]
+[node name="StandardCardInspectionPanel" type="MarginContainer" unique_id=689193761 node_paths=PackedStringArray("grid_container", "icon_texture", "title_label", "content_label")]
 offset_right = 140.0
 offset_bottom = 76.0
 script = ExtResource("1_o23xf")

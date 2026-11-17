@@ -6,7 +6,10 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Client.scenes.cardwars.ui.battle;
 using CardWars.Client.scenes.cardwars.ui.card_display;
+using CardWars.Client.scripts.cardwars.registry;
+using CardWars.Client.scripts.cardwars.ui.card_inspection_panel;
 using CardWars.Core.Logging;
+using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared;
 using Godot;
 
@@ -31,9 +34,8 @@ public partial class HandManager : Control
 
 	private Dictionary<EntityId, CardDisplay> _cards = [];
 	public IReadOnlyDictionary<EntityId, CardDisplay> Cards => _cards;
+	private readonly List<Control> _inspectionPanels = [];
 
-	public List<Control> SidePanels = [];
-	public Rect2 SidePanelRect = new();
 
 	public override void _Ready()
 	{
@@ -209,89 +211,114 @@ public partial class HandManager : Control
 		LineArrow = null;
 	}
 
-	private void ArrangeSidePanels()
+	private void ArrangeInspectionPanels(Rect2? cardRect, CardDisplay? card)
 	{
-		// Remove any side panels
-		foreach (var s in SidePanels) { RemoveChild(s); s.QueueFree(); }
-		SidePanels.Clear();
+		ClearInspectionPanels();
+		if (cardRect is not { } rect || card is null) return;
+		if (BattleInstance is not { } instance) return;
+		// Set middle pos
+		rect = new Rect2(rect.Position - rect.Size / 2, rect.Size);
 
-		if (HoveredCard is { } c)
+		var cardId = EntityId.None;
+		foreach (var entry in _cards)
 		{
-			// Populates side panels
-			for (var i = 0; i < 8; i++)
-			{
-				var display = GD.Load<PackedScene>("res://scenes/cardwars/ui/inspection/panels/card_inspection_panel.tscn").Instantiate<Control>();
-				AddChild(display);
-				SidePanels.Add(display);
-				display.MouseBehaviorRecursive = MouseBehaviorRecursiveEnum.Disabled;
-				display.MouseFilter = MouseFilterEnum.Ignore;
-
-				display.Call("set_content", [
-					"SP ATK",
-					BattleInstance?.Registry.Client?.Resources.Get("cardwars:texture/icon/attacks/spread")
-						?? new ImageTexture(),
-					"Damage!"
-				]);
-
-				if (i == 0)
-					display.Call("set_grid", [new Godot.Collections.Array(){
-						new Godot.Collections.Dictionary(),
-						new Godot.Collections.Dictionary() { ["filled"] = true },
-						new Godot.Collections.Dictionary(),
-
-						new Godot.Collections.Dictionary() { ["filled"] = true },
-						new Godot.Collections.Dictionary() { ["filled"] = true, ["crossed"] = true },
-						new Godot.Collections.Dictionary() { ["filled"] = true },
-
-						new Godot.Collections.Dictionary(),
-						new Godot.Collections.Dictionary() { ["filled"] = true },
-						new Godot.Collections.Dictionary(),
-					}, 3
-				]);
-			}
-
-
-			// Arrange: TODO: This is not done well and correctly
-			float totalDisplayHeight = 0f;
-			float totalDisplayWidth = 0f;
-			for (var i = 0; i < SidePanels.Count; i++)
-			{
-				var display = SidePanels[i];
-				display.Size = new(350, 100);
-				totalDisplayHeight += display.Size.Y;
-				totalDisplayWidth = display.Size.X;
-			}
-
-			Vector2 StartingCoords = new(
-				0,
-				Math.Min(
-					Size.Y - totalDisplayHeight,
-					SidePanelRect.Position.Y - SidePanelRect.Size.Y / 2
-				)
-			);
-			var LeftMost = SidePanelRect.Position.X - SidePanelRect.Size.X / 2 - totalDisplayWidth;
-			var RightMost = SidePanelRect.Position.X + SidePanelRect.Size.X / 2 + totalDisplayWidth;
-			if ((LeftMost - 0) > (Size.X - RightMost)) { StartingCoords.X = SidePanelRect.Position.X - SidePanelRect.Size.X / 2 - totalDisplayWidth; }
-			else { StartingCoords.X = SidePanelRect.Position.X + SidePanelRect.Size.X / 2; }
-
-			float prevHeight = 0;
-			for (var i = 0; i < SidePanels.Count; i++)
-			{
-				var display = SidePanels[i];
-				display.ZIndex = HoverZIndex - 1;
-				display.Position = StartingCoords + new Vector2(0, prevHeight);
-				prevHeight += display.Size.Y;
-
-
-				// TO move animation set by each display themselves
-				display.Modulate = new(display.Modulate, 0.0f);
-				var et = display.CreateTween();
-				et.SetParallel(true).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
-				et.TweenProperty(display, "modulate:a", 1.0, 0.5f).SetDelay(0.3 + i * 0.1);
-				et.TweenProperty(display, "position", display.Position, 0.5).SetDelay(0.3 + i * 0.1);
-				display.Position = new(SidePanelRect.Position.X - SidePanelRect.Size.X / 2, display.Position.Y);
-			}
+			if (entry.Value != card) continue;
+			cardId = entry.Key;
+			break;
 		}
+
+		if (cardId.IsNone || instance.State.Get<GenericCard>(cardId) is not { } entity) return;
+
+		var panels = CardInspectionCollector.Collect(entity.Data, instance.Registry);
+		if (panels.Count == 0) return;
+
+		var prepared = new List<Control>();
+		var totalHeight = 0f;
+		var panelWidth = 0f;
+		const float panelGap = 12f;
+
+		foreach (var data in panels)
+		{
+			var panel = instance.Registry.Client?.UserInterface.Instantiate<Control>(SharedIds.UI.StandardCardInspectionPanel);
+			if (panel is null) continue;
+
+			panel.MouseFilter = MouseFilterEnum.Ignore;
+			panel.MouseBehaviorRecursive = MouseBehaviorRecursiveEnum.Disabled;
+			ApplyInspectionData(panel, data, instance);
+
+			var minimum = panel.GetCombinedMinimumSize();
+			var size = new Vector2(Mathf.Max(350f, minimum.X), Mathf.Max(76f, minimum.Y));
+			panel.CustomMinimumSize = size;
+			panel.Size = size;
+			panelWidth = Mathf.Max(panelWidth, size.X);
+			totalHeight += size.Y;
+			prepared.Add(panel);
+		}
+
+		if (prepared.Count == 0) return;
+		totalHeight += (prepared.Count - 1) * panelGap;
+
+		var viewport = Size;
+		var leftSpace = rect.Position.X;
+		var rightSpace = viewport.X - rect.End.X;
+		var placeLeft = leftSpace > rightSpace;
+		const float cardGap = 16f;
+		var x = placeLeft ? rect.Position.X - panelWidth - cardGap : rect.End.X + cardGap;
+		x = Mathf.Clamp(x, 16f, Mathf.Max(16f, viewport.X - panelWidth - 16f));
+		// var y = Mathf.Clamp(rect.GetCenter().Y - totalHeight / 2f, 16f, Mathf.Max(16f, viewport.Y - totalHeight - 16f));
+		var y = Mathf.Clamp(rect.Position.Y, 0f, Mathf.Max(0f, viewport.Y - totalHeight));
+
+
+		var cursorY = y;
+		for (var index = 0; index < prepared.Count; index++)
+		{
+			var panel = prepared[index];
+			panel.Position = new Vector2(x, cursorY);
+			panel.ZIndex = HoverZIndex;
+			panel.Set("card_dimensions", rect);
+			panel.Set("panel_index", index);
+			panel.Set("animated_from_right", placeLeft);
+			AddChild(panel);
+			_inspectionPanels.Add(panel);
+			cursorY += panel.Size.Y + panelGap;
+		}
+	}
+
+	private static void ApplyInspectionData(Control panel, InspectionData data, BattleInstance instance)
+	{
+		if (panel.HasMethod("set_content"))
+		{
+			var texture = data.IconId is { } iconId
+				? instance.Registry.Client?.Resources.Instantiate<Texture2D>(iconId) ?? new ImageTexture()
+				: new ImageTexture();
+			panel.Call("set_content", data.Title, texture, data.Text);
+		}
+
+		if (data.Grid is not { } grid || !panel.HasMethod("set_grid")) return;
+
+		var cells = new Godot.Collections.Array();
+		foreach (var cell in grid.Cells)
+		{
+			var item = new Godot.Collections.Dictionary();
+			if (cell.Filled) item["filled"] = true;
+			if (cell.Crossed) item["crossed"] = true;
+			if (!string.IsNullOrWhiteSpace(cell.Text)) item["text"] = cell.Text;
+			cells.Add(item);
+		}
+
+		panel.Call("set_grid", cells, grid.Width);
+	}
+
+	private void ClearInspectionPanels()
+	{
+		foreach (var panel in _inspectionPanels)
+		{
+			if (!IsInstanceValid(panel)) continue;
+			panel.GetParent()?.RemoveChild(panel);
+			panel.QueueFree();
+		}
+
+		_inspectionPanels.Clear();
 	}
 
 	private void ArrangeCard()
@@ -301,8 +328,8 @@ public partial class HandManager : Control
 		if (totalCard == 0)
 		{
 			HoveredCard = null;
+			ClearInspectionPanels();
 			ResetArrows();
-			// ArrangeSidePanels();
 			return;
 		}
 
@@ -325,6 +352,7 @@ public partial class HandManager : Control
 		float maxRotationDeg = 12.0f;
 
 		float halfRange = (totalCard - 1) / 2.0f;
+		Rect2? inspectionRect = null;
 
 		for (var i = 0; i < totalCard; i++)
 		{
@@ -368,7 +396,7 @@ public partial class HandManager : Control
 							newRot = 0;
 							c.ZIndex = HoverZIndex;
 							newScale *= 1.2f;
-							SidePanelRect = new Rect2(newPos + c.Size / 2, newScale * c.Size);
+							inspectionRect = new Rect2(newPos + c.Size / 2, newScale * c.Size);
 						}
 					}
 					else
@@ -390,18 +418,7 @@ public partial class HandManager : Control
 			}
 		}
 
-		// ArrangeSidePanels();
-		// if (HoveredCard is not null)
-		// {
-		// 	var cardId = Cards.FirstOrDefault(entry => entry.Value == HoveredCard).Key;
-		// 	var cardData = BattleInstance?.State.Get<GenericCard>(cardId);
-		// 	if (cardData is not null)
-		// 	{
-		// 		BattleInstance?.Registry.Client?
-		// 			.CardInspectionHandlers?
-		// 			.Get(SharedIds.UI.DefaultCardDisplay /* TODO: pull the correct sking*/)?
-		// 			.SetPanels(this, SidePanelRect, cardData.Data);
-		// 	}
-		// }
+		// Arrange panels
+		ArrangeInspectionPanels(inspectionRect, HoveredCard);
 	}
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CardWars.Client.scripts.cardwars.layout;
 using CardWars.Client.scripts.cardwars.systems;
 using CardWars.Client.scripts.cardwars.ui.card_inspection_panel;
@@ -16,4 +17,5 @@ public class BattleRegistry : IClientRegistryExtension
 	public Registry<ResourceId, IBattleLayoutHandler> LayoutHandler = new();
 	public RegistryFactory<ResourceId, BattleAnimation> Animations = new();
 	public Registry<ResourceId, ICardInspectionHandler> CardInspectionHandlers = new();
+	public List<ResourceId> CardInspectionHandlerOrder = [];
 }
