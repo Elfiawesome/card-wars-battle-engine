@@ -10,9 +10,13 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry)
 	private readonly AttackResolver _attackResolver = new(registry);
 	private readonly CardTargetFilterEvaluator _targetFilter = new(registry.DataDriven);
 
+	// --- Playing Cards ---
 	// If a player can do inputs
 	public bool CanAct(GameState state, EntityId playerId)
 		=> state.Turn.AllowedPlayerInputs.Contains(playerId);
+
+	public bool CanAct(GameState state, EntityId playerId, TurnPhase phase)
+			=> CanAct(state, playerId) && phase == state.Turn.Phase;
 
 	// If a player can play THIS card
 	public bool CanStartPlayCard(GameState state, EntityId playerId, GenericCard card, out string? reason)
@@ -49,6 +53,8 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry)
 	public IReadOnlyCollection<EntityId> GetPlayableTargets(GameState state, EntityId playerId, GenericCard card)
 		=> _targetFilter.ResolveTargets(state, card, playerId);
 
+
+	// --- Attacking Cards ---
 	public bool TryResolveAttack(GameState state, EntityId playerId, GenericCard attacker, out AttackProfile attack, out string? reason)
 	{
 		reason = null;

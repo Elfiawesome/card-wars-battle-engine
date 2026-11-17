@@ -268,7 +268,6 @@ public partial class AttackController : Node
 	}
 
 	private bool CanAct()
-		=> BattleInstance is not null
-			&& BattleInstance.State.Turn.Phase == TurnPhase.Attacking
-			&& BattleInstance.State.Turn.AllowedPlayerInputs.Contains(BattleInstance.MyPlayerId);
+		=> BattleInstance?.ActionValidator?.CanAct(BattleInstance.State, BattleInstance.MyPlayerId, TurnPhase.Attacking)
+			?? false;
 }
