@@ -13,7 +13,7 @@ public class UnitSlot(EntityId id) : IEntity
 	[DataTag] public UnitSlotPos Position { get; set; } = new UnitSlotPos(0, 0);
 
 	public int BehaviourPriority => 0;
-	public List<ContentPointer> GetBehaviours() => [];
+	public List<ContentPointer> GetBehaviours(CardWars.Core.Data.DataContext data) => [];
 }
 
 public record struct UnitSlotPos(

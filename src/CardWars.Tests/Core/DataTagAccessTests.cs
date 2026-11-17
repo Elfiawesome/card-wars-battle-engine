@@ -82,7 +82,7 @@ public sealed class DataTagAccessTests
 	{
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
-		var context = new ScriptContext(state, registry.DataDriven);
+		var context = new ScriptContext(state, CardWars.Core.Data.DataContext.Default, registry.DataDriven);
 		var name = CardWars.Core.Registry.ResourceId.Vanilla("x");
 		context.DeclareVariable(name, new IntTag(6));
 

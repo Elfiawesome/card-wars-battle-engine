@@ -3,13 +3,13 @@ using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Targeting;
 
-public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven)
+public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven, DataContext data)
 {
 	public bool CanTarget(GameState state, GenericCard card, EntityId playerId, EntityId? targetId)
 	{
@@ -57,7 +57,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven)
 
 	private ScriptContext CreateContext(GameState state, GenericCard card, EntityId playerId)
 	{
-		var context = new ScriptContext(state, dataDriven);
+		var context = new ScriptContext(state, data, dataDriven);
 		context.PushScope();
 		context.DeclareVariable(TargetBindings.Card, new ObjectRefTag(card));
 		context.DeclareVariable(TargetBindings.Player, state.Get(playerId) is { } player ? new ObjectRefTag(player) : new NullTag());
@@ -75,7 +75,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven)
 	private static void BindCandidate(ScriptContext context, IEntity candidate)
 		=> context.DeclareVariable(TargetBindings.Candidate, new ObjectRefTag(candidate));
 
-	private static IExpression? GetFilter(GenericCard card)
+	private IExpression? GetFilter(GenericCard card)
 	{
 		var tag = card.Data.Get("target_filter");
 		if (tag is null) return null;
@@ -88,7 +88,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven)
 
 		try
 		{
-			return DataTagMapper.FromTag<IExpression>(compound);
+			return data.FromTag<IExpression>(compound);
 		}
 		catch (Exception ex)
 		{

@@ -1,8 +1,6 @@
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.Core.Data.Attributes;
-using CardWars.Core.Data.Global;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
@@ -19,14 +17,14 @@ public sealed class ConstructExpressionHandler : IExpressionHandler<ConstructExp
 {
 	public DataTag Handle(ScriptContext context, ConstructExpression request)
 	{
-		var type = DataTagTypeRegistry.GetType(request.Type.ToString());
+		var type = context.Data.GetType(request.Type.ToString());
 		if (type is null)
 		{
 			Log.Error($"Could not construct unknown type [{request.Type}]");
 			return new NullTag();
 		}
 
-		var compound = new CompoundTag().Set(DataTagMapper.TypeDiscriminatorKey, request.Type.ToString());
+		var compound = new CompoundTag().Set(context.Data.TypeDiscriminatorKey, request.Type.ToString());
 		foreach (var (key, argument) in request.Arguments ?? [])
 		{
 			compound.Set(key, context.Evaluate(argument));
@@ -34,7 +32,7 @@ public sealed class ConstructExpressionHandler : IExpressionHandler<ConstructExp
 
 		try
 		{
-			var instance = DataTagMapper.FromTag(compound, type);
+			var instance = context.Data.FromTag(compound, type);
 			return instance is null ? new NullTag() : new ObjectRefTag(instance);
 		}
 		catch (Exception ex)

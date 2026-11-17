@@ -140,7 +140,7 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 		}
 
 		// Handle hero defeat and player loss
-		var heroEvaluator = new HeroLoseConditionEvaluator(context.Registry);
+		var heroEvaluator = new HeroLoseConditionEvaluator(context.Registry, context.Data);
 		var defeatedHeroes = new List<(EntityId HeroCardId, EntityId PlayerId, EntityId BattlefieldId, int Hrt)>();
 		var defeatedPlayers = new List<(EntityId PlayerId, int Team)>();
 		var defeatBatch = new BlockBatch([]);
@@ -213,7 +213,7 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 		context.QueueEvent(new EndTurnEvent() { TurnState = nextTurnState, PhaseChanged = true });
 
 		var ruleId = context.State.RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.RuleId;
-		var rules = GameRulesDefinition.Get(context.Registry, ruleId) ?? new GameRulesDefinition();
+		var rules = GameRulesDefinition.Get(context.Registry, context.Data, ruleId) ?? new GameRulesDefinition();
 		var targetPt = rules.GetPtForRound(nextTurnState.RoundNumber);
 		foreach (var player in context.State.OfType<Player>())
 		{

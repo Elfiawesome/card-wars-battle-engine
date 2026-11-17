@@ -61,7 +61,7 @@ public sealed class AttackDefinitionTests
 						new CompoundTag().Set("type", "column").Set("value", "50%"))))))
 		};
 
-		var attack = new AttackResolver(registry).Resolve(card);
+		var attack = new AttackResolver(registry, CardWars.Core.Data.DataContext.Default).Resolve(card);
 
 		Assert.True(attack.IsSpAtk);
 		Assert.True(attack.Bypass);
@@ -78,7 +78,7 @@ public sealed class AttackDefinitionTests
 			Data = new CompoundTag()
 		};
 
-		var attack = new AttackResolver(registry).Resolve(card);
+		var attack = new AttackResolver(registry, CardWars.Core.Data.DataContext.Default).Resolve(card);
 
 		Assert.False(attack.IsSpAtk);
 		Assert.False(attack.Bypass);
@@ -134,7 +134,7 @@ public sealed class AttackDefinitionTests
 		Assert.Equal("cardwars:attacks/cross", pointer.GetString("resource"));
 
 		var card = new GenericCard(EntityId.New()) { Data = (CompoundTag)definition.Clone() };
-		var attack = new AttackResolver(registry).Resolve(card);
+		var attack = new AttackResolver(registry, CardWars.Core.Data.DataContext.Default).Resolve(card);
 		Assert.True(attack.IsSpAtk);
 		Assert.True(attack.Bypass);
 		Assert.Equal("Cross", attack.Name);

@@ -18,8 +18,8 @@ public class WinConditionCheckEventHandler : IEventHandler<WinConditionCheckEven
 	public void Handle(Transaction context, WinConditionCheckEvent request)
 	{
 		var state = context.State;
-		var rules = GameRulesDefinition.Get(context.Registry, state.RuleId) ?? new GameRulesDefinition();
-		var result = new WinConditionEvaluator(context.Registry).Evaluate(state, rules);
+		var rules = GameRulesDefinition.Get(context.Registry, context.Data, state.RuleId) ?? new GameRulesDefinition();
+		var result = new WinConditionEvaluator(context.Registry, context.Data).Evaluate(state, rules);
 		if (!result.IsGameOver) return;
 
 		GameOutcome outcome;

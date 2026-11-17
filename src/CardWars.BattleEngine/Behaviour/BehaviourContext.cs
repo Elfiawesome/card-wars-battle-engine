@@ -1,6 +1,7 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Behaviour;
 
@@ -12,6 +13,9 @@ public class BehaviourContext
 	public GameState State { get; }
 	public EntityId OwnerEntityId { get; init; }
 	public BattleEngineRegistry Registry => _transaction.Registry;
+
+	/// <summary>The owning transaction's data context, so script code can serialize through it.</summary>
+	public DataContext Data => _transaction.Data;
 
 	internal BehaviourContext(Transaction transaction, GameState state, EntityId owner)
 	{

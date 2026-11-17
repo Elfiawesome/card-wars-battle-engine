@@ -1,6 +1,6 @@
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Attributes;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
@@ -26,13 +26,13 @@ public sealed class GameRulesDefinition
 		return Math.Min(PtSchedule[index], PtCap);
 	}
 
-	public static GameRulesDefinition? Get(BattleEngineRegistry registry, ResourceId ruleId)
+	public static GameRulesDefinition? Get(BattleEngineRegistry registry, DataContext data, ResourceId ruleId)
 	{
 		if (registry.RuleDefinitions.Get(ruleId) is not CompoundTag tag) return null;
 
 		try
 		{
-			return DataTagMapper.FromTag<GameRulesDefinition>(tag);
+			return data.FromTag<GameRulesDefinition>(tag);
 		}
 		catch (Exception ex)
 		{

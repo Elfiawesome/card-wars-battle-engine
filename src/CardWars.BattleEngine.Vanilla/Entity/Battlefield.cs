@@ -14,5 +14,5 @@ public class Battlefield(EntityId id) : IEntity
 
 	public int BehaviourPriority => 0;
 
-	public List<ContentPointer> GetBehaviours() => [];
+	public List<ContentPointer> GetBehaviours(CardWars.Core.Data.DataContext data) => [];
 }

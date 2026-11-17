@@ -14,9 +14,10 @@ public class BattleEngine
 	/// <summary>
 	/// The data context this engine owns. Defaults to <see cref="DataContext.Default"/> so
 	/// existing <c>new BattleEngine()</c> / <c>new BattleEngine { Registry = ... }</c> call
-	/// sites keep working, while a session can supply its own isolated context. Phase 1 only
-	/// makes the engine a context owner; internal serialize calls still route through the
-	/// temporary static facade (which reads <see cref="DataContext.Default"/>).
+	/// sites keep working, while a session can supply its own isolated context. As of Phase 2
+	/// this context is flowed into the runtime serialize path (Transaction -> BehaviourContext
+	/// -> ScriptContext -> vanilla handlers), so assigning a non-default context here actually
+	/// changes how this engine resolves types and converters.
 	/// </summary>
 	public DataContext Data { get; set; } = DataContext.Default;
 	private Transaction? _transaction = null;
@@ -35,7 +36,7 @@ public class BattleEngine
 	{
 		if (_transaction is null)
 		{
-			_transaction = new Transaction { Registry = Registry, State = State, OnBlockBatchEvent = OnBlockBatchEvent };
+			_transaction = new Transaction { Registry = Registry, State = State, Data = Data, OnBlockBatchEvent = OnBlockBatchEvent };
 		}
 		_transaction.ProcessInput(playerId, input);
 

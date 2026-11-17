@@ -2,13 +2,14 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Targeting;
+using CardWars.Core.Data;
 
 namespace CardWars.BattleEngine.Vanilla.Rules;
 
-public sealed class BattleActionValidator(BattleEngineRegistry registry)
+public sealed class BattleActionValidator(BattleEngineRegistry registry, DataContext data)
 {
-	private readonly AttackResolver _attackResolver = new(registry);
-	private readonly CardTargetFilterEvaluator _targetFilter = new(registry.DataDriven);
+	private readonly AttackResolver _attackResolver = new(registry, data);
+	private readonly CardTargetFilterEvaluator _targetFilter = new(registry.DataDriven, data);
 
 	public bool CanAct(GameState state, EntityId playerId)
 		=> state.Turn.AllowedPlayerInputs.Contains(playerId);
@@ -133,7 +134,7 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry)
 		=> AttackTargetResolver.GetValidTargets(state, attacker, attack);
 
 	public IReadOnlyCollection<EntityId> GetValidHeroTargets(GameState state, GenericCard attacker)
-		=> HeroTargetResolver.GetValidTargets(state, attacker, registry);
+		=> HeroTargetResolver.GetValidTargets(state, attacker, registry, data);
 
 	public bool CanTargetHero(
 		GameState state,
@@ -141,7 +142,7 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry)
 		GenericCard hero,
 		out string? reason)
 	{
-		if (HeroTargetResolver.CanTarget(state, attacker, hero.Id, registry))
+		if (HeroTargetResolver.CanTarget(state, attacker, hero.Id, registry, data))
 		{
 			reason = null;
 			return true;

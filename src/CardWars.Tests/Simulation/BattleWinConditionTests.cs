@@ -74,7 +74,8 @@ public sealed class BattleWinConditionTests
 			battle.State,
 			attacker,
 			hero.Id,
-			battle.Engine.Registry));
+			battle.Engine.Registry,
+			battle.Engine.Data));
 	}
 
 	[Fact]

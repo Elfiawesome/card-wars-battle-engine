@@ -27,7 +27,7 @@ public class AttackRequestInputHandler : IInputHandler<AttackRequestInput>
 		if (state.Require<UnitSlot>(request.TargetSlotId) is not { HoldingCardId: { } targetCardId } targetSlot) return;
 		if (state.Require<GenericCard>(targetCardId) is null) return;
 
-		var validator = new BattleActionValidator(context.Transaction.Registry);
+		var validator = new BattleActionValidator(context.Transaction.Registry, context.Data);
 		var queuedAttackers = new HashSet<EntityId>();
 
 		foreach (var attackerSlotId in request.AttackerSlotIds ?? [])
@@ -119,7 +119,7 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 
 		if (AttackTargetResolver.GetOwnerPlayerId(state, attackerCard) is not { } ownerId) return;
 
-		var validator = new BattleActionValidator(context.Registry);
+		var validator = new BattleActionValidator(context.Registry, context.Data);
 		if (!validator.TryResolveAttack(state, ownerId, attackerCard, out var attack, out var reason))
 		{
 			Log.Warn($"Attack rejected: {reason}");

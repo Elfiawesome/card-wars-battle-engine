@@ -54,14 +54,14 @@ public sealed class GameRulesTests
 
 		new VanillaMod().OnLoad(registry, [content]);
 
-		var rules = GameRulesDefinition.Get(registry, GameRulesDefinition.DefaultId)
+		var rules = GameRulesDefinition.Get(registry, CardWars.Core.Data.DataContext.Default, GameRulesDefinition.DefaultId)
 			?? throw new InvalidOperationException("Default rules were not registered");
 
 		Assert.Equal(new[] { 5, 6 }, rules.PtSchedule);
 		Assert.Equal(50, rules.PtCap);
 		var predicate = Assert.IsType<AndExpression>(rules.WinCondition);
 
-		var context = new ScriptContext(new GameState(), registry.DataDriven);
+		var context = new ScriptContext(new GameState(), CardWars.Core.Data.DataContext.Default, registry.DataDriven);
 		context.DeclareVariable(WinBindings.Team, new IntTag(1));
 		context.DeclareVariable(WinBindings.TeamAlive, new BoolTag(true));
 		context.DeclareVariable(WinBindings.AliveTeamCount, new IntTag(1));

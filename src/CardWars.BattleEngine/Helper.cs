@@ -1,7 +1,7 @@
 using System.Text.Json;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
-using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Serialization.Json;
 using CardWars.Core.Data.Tags;
 
@@ -15,15 +15,17 @@ public static class Helper
 		return JsonSerializer.Serialize(block, block.GetType());
 	}
 
-	public static string GameStateDump(GameState state)
+	// Debug/test dump. Takes the owning DataContext so it serializes through the engine's own
+	// context rather than the static facade; it has no engine-runtime call site.
+	public static string GameStateDump(GameState state, DataContext data)
 	{
 		CompoundTag gameState = new();
-		gameState.Set("turn_state", DataTagMapper.ToTag(state.Turn));
-		
+		gameState.Set("turn_state", data.ToTag(state.Turn));
+
 		ListTag entities = new();
 		foreach (var entity in state.All)
 		{
-			entities.Add(DataTagMapper.ToTag(entity));
+			entities.Add(data.ToTag(entity));
 		}
 		gameState.Set("entities", entities);
 

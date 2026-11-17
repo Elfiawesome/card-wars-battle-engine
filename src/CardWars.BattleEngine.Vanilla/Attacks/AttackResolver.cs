@@ -1,12 +1,12 @@
 using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Attacks;
 
-public sealed class AttackResolver(BattleEngineRegistry registry)
+public sealed class AttackResolver(BattleEngineRegistry registry, DataContext data)
 {
 	public AttackProfile Resolve(GenericCard card)
 	{
@@ -50,7 +50,7 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 		ContentPointer pointer;
 		try
 		{
-			pointer = DataTagMapper.FromTag<ContentPointer>(pointerTag);
+			pointer = data.FromTag<ContentPointer>(pointerTag);
 		}
 		catch (Exception ex)
 		{

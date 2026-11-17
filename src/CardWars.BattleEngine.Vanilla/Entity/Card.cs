@@ -1,7 +1,7 @@
 using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Attributes;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 
 namespace CardWars.BattleEngine.Vanilla.Entity;
@@ -50,7 +50,7 @@ public class GenericCard(EntityId id) : IEntity
 	public static int AtkToHrt(int hpDamage)
 		=> hpDamage > 0 ? (int)Math.Ceiling(hpDamage / 10.0) : 0;
 
-	public List<ContentPointer> GetBehaviours()
+	public List<ContentPointer> GetBehaviours(DataContext data)
 	{
 		var result = new List<ContentPointer>();
 
@@ -59,14 +59,14 @@ public class GenericCard(EntityId id) : IEntity
 			foreach (var item in abilities.Items.OfType<CompoundTag>())
 			{
 				if (item.GetCompound("behaviour") is { } bTag)
-					result.Add(DataTagMapper.FromTag<ContentPointer>(bTag));// <- this feels and looks wrong? TODO: fix
+					result.Add(data.FromTag<ContentPointer>(bTag));// <- this feels and looks wrong? TODO: fix
 			}
 		}
 
 		if (Data.GetList("intrinsic_behaviours") is { } intrinsics)
 		{
 			foreach (var item in intrinsics.Items.OfType<CompoundTag>())
-				result.Add(DataTagMapper.FromTag<ContentPointer>(item)); // <- this feels and looks wrong?
+				result.Add(data.FromTag<ContentPointer>(item)); // <- this feels and looks wrong?
 		}
 
 		return result;

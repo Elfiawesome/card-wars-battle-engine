@@ -2,6 +2,7 @@ using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 
@@ -22,7 +23,7 @@ public readonly record struct WinConditionResult(IReadOnlyList<int> WinningTeams
 	public int? WinningTeam => WinningTeams.Count == 1 ? WinningTeams[0] : null;
 }
 
-public sealed class WinConditionEvaluator(BattleEngineRegistry registry)
+public sealed class WinConditionEvaluator(BattleEngineRegistry registry, DataContext data)
 {
 	public WinConditionResult Evaluate(GameState state, GameRulesDefinition rules)
 	{
@@ -45,7 +46,7 @@ public sealed class WinConditionEvaluator(BattleEngineRegistry registry)
 		var winningTeams = new List<int>();
 		foreach (var team in teams)
 		{
-			var context = new ScriptContext(state, registry.DataDriven);
+			var context = new ScriptContext(state, data, registry.DataDriven);
 			context.PushScope();
 			try
 			{

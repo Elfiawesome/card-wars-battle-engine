@@ -5,7 +5,7 @@ using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
-using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data;
 using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine;
@@ -15,6 +15,15 @@ public class Transaction
 	public const int ProcessStackLimit = 1000;
 	public required BattleEngineRegistry Registry { get; init; }
 	public required GameState State { get; init; }
+
+	/// <summary>
+	/// The data context this transaction serializes/deserializes through. Flowed from the
+	/// owning <see cref="BattleEngine"/>'s <see cref="BattleEngine.Data"/> so the engine's
+	/// own context (not <see cref="DataContext.Default"/>) resolves types and converters on
+	/// the runtime serialize path. Defaults to <see cref="DataContext.Default"/> for the few
+	/// test call sites that construct a transaction directly without an owning engine.
+	/// </summary>
+	public DataContext Data { get; init; } = DataContext.Default;
 
 	public bool IsIdle => _behaviourQueue.Count == 0 && _eventQueue.Count == 0 && _activeEvent is null;
 
@@ -128,7 +137,7 @@ public class Transaction
 	private void QueueBehavioursForEvent(IEvent evnt)
 	{
 		var eventType = evnt.GetType();
-		var pointers = State.GetAllBehaviourPointers();
+		var pointers = State.GetAllBehaviourPointers(Data);
 
 		var executions = new List<(
 			int entityPriority,
@@ -190,7 +199,7 @@ public class Transaction
 		{
 			try
 			{
-				var definition = DataTagMapper.FromTag<BehaviourDefinition>(definitionTag);
+				var definition = Data.FromTag<BehaviourDefinition>(definitionTag);
 				behaviour = new ScriptBehaviour(definition, Registry.DataDriven);
 			}
 			catch (Exception ex)

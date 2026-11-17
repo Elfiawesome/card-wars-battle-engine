@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.Rules;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Access;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
@@ -101,11 +102,11 @@ public class GameState : IDataTagAccessible
 
 	public bool TrySetIndex(DataTag index, DataTag value) => false;
 
-	public IEnumerable<(EntityId entityId, ContentPointer pointer)> GetAllBehaviourPointers()
+	public IEnumerable<(EntityId entityId, ContentPointer pointer)> GetAllBehaviourPointers(DataContext data)
 	{
 		return _entities.Values
 			.OrderBy(e => e.BehaviourPriority)
-			.SelectMany(e => e.GetBehaviours()
+			.SelectMany(e => e.GetBehaviours(data)
 				.OrderBy(b => 0) // Will be sorted by behaviour priority after instantiation
 				.Select(b => (e.Id, b)));
 	}

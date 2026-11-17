@@ -12,5 +12,5 @@ public class Deck(EntityId id) : IEntity
 	[DataTag] public List<EntityId> CardIds { get; set; } = [];
 
 	public int BehaviourPriority => 0;
-	public List<ContentPointer> GetBehaviours() => [];
+	public List<ContentPointer> GetBehaviours(CardWars.Core.Data.DataContext data) => [];
 }

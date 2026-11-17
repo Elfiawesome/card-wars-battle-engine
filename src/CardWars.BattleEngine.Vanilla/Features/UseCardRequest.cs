@@ -26,7 +26,7 @@ public class UseCardRequestInputHandler : IInputHandler<UseCardRequestInput>
 			return;
 		}
 
-		var validator = new BattleActionValidator(context.Transaction.Registry);
+		var validator = new BattleActionValidator(context.Transaction.Registry, context.Data);
 		if (!validator.CanPlayCard(state, context.PlayerId, card, request.TargetEntityId, out var reason))
 		{
 			Log.Warn($"Card play rejected: {reason}");

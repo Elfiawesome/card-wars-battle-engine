@@ -10,7 +10,6 @@ using CardWars.Core.Storage;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data;
 
 namespace CardWars.Server;
@@ -230,7 +229,7 @@ public class Server
 	public void RemovePlayer(PlayerSession player)
 	{
 		LeaveInstance(player);
-		Session.SavePlayer(player.PlayerId, DataTagMapper.ToTag(player, false));
+		Session.SavePlayer(player.PlayerId, Data.ToTag(player, false));
 		lock (_sync) { _playerSessions.Remove(player.PlayerId); }
 		OnRemovePlayer?.Invoke(player);
 	}
@@ -243,7 +242,7 @@ public class Server
 			{
 				// Logger.Debug(p.Key.ToString());
 				// Logger.Debug(p.Value.TimePlayed.ToString());
-				Session.SavePlayer(p.Key, DataTagMapper.ToTag(p.Value, false));
+				Session.SavePlayer(p.Key, Data.ToTag(p.Value, false));
 			}
 		}
 	}

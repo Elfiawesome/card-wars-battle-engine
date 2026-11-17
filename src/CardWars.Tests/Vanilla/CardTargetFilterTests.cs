@@ -6,6 +6,7 @@ using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Targeting;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
@@ -27,7 +28,7 @@ public sealed class CardTargetFilterTests
 		AddPlayer(state, out _, out var opponentSlot, out _);
 		var card = AddFilteredCard(state, player, UnitTargetFilter.Create());
 
-		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven);
+		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven, DataContext.Default);
 		var targets = evaluator.ResolveTargets(state, card, player.Id);
 
 		Assert.Contains(firstSlot.Id, targets);
@@ -59,7 +60,7 @@ public sealed class CardTargetFilterTests
 		AddPlayer(state, out _, out var opponentSlot, out _);
 		var card = AddFilteredCard(state, player, OwnUnitSlotFilter());
 
-		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven);
+		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven, DataContext.Default);
 		var targets = evaluator.ResolveTargets(state, card, player.Id);
 
 		Assert.Contains(playerSlot.Id, targets);
@@ -78,7 +79,7 @@ public sealed class CardTargetFilterTests
 		var card = new GenericCard(EntityId.New()) { OwnerPlayerId = player.Id };
 		state.Add(card);
 
-		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven);
+		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven, DataContext.Default);
 
 		Assert.Empty(evaluator.ResolveTargets(state, card, player.Id));
 		Assert.True(evaluator.CanTarget(state, card, player.Id, null));
@@ -95,7 +96,7 @@ public sealed class CardTargetFilterTests
 		card.Data.Set("target_filter", new ListTag());
 		state.Add(card);
 
-		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven);
+		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven, DataContext.Default);
 
 		Assert.Empty(evaluator.ResolveTargets(state, card, player.Id));
 		Assert.True(evaluator.CanTarget(state, card, player.Id, null));
@@ -110,7 +111,7 @@ public sealed class CardTargetFilterTests
 		var player = AddPlayer(state, out _, out _, out _);
 		var card = AddFilteredCard(state, player, UnitTargetFilter.Create());
 
-		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven);
+		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven, DataContext.Default);
 
 		Assert.False(evaluator.CanTarget(state, card, player.Id, EntityId.New()));
 	}
@@ -139,7 +140,7 @@ public sealed class CardTargetFilterTests
 		var card = new GenericCard(EntityId.New()) { OwnerPlayerId = player.Id, Data = (CompoundTag)definition.Clone() };
 		state.Add(card);
 
-		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven);
+		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven, DataContext.Default);
 		Assert.NotEmpty(evaluator.ResolveTargets(state, card, player.Id));
 	}
 
@@ -148,7 +149,7 @@ public sealed class CardTargetFilterTests
 	{
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
-		var context = new ScriptContext(state, registry.DataDriven);
+		var context = new ScriptContext(state, DataContext.Default, registry.DataDriven);
 
 		var result = context.Evaluate(new AddExpression(
 			new LiteralExpression(new IntTag(2)),

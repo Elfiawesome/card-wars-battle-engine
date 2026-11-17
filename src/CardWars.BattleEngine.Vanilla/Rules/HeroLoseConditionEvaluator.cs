@@ -4,13 +4,13 @@ using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Rules;
 
-public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry)
+public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry, DataContext data)
 {
 	public bool IsDefeated(GameState state, GenericCard hero)
 	{
@@ -34,7 +34,7 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry)
 		IExpression conditionExpression;
 		try
 		{
-			conditionExpression = DataTagMapper.FromTag<IExpression>(definition);
+			conditionExpression = data.FromTag<IExpression>(definition);
 		}
 		catch (Exception ex)
 		{
@@ -42,7 +42,7 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry)
 			return UseDefault(state, hero);
 		}
 
-		var context = new ScriptContext(state, registry.DataDriven);
+		var context = new ScriptContext(state, data, registry.DataDriven);
 		context.PushScope();
 		try
 		{
@@ -65,14 +65,14 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry)
 		return condition?.IsMet(state, hero.Id) ?? hero.Hrt <= 0;
 	}
 
-	private static ContentPointer GetPointer(GenericCard hero)
+	private ContentPointer GetPointer(GenericCard hero)
 	{
 		if (hero.Data.Get("lose_condition") is not CompoundTag pointerTag)
 			return new ContentPointer(Resource: HeroHrtLoseCondition.Id);
 
 		try
 		{
-			return DataTagMapper.FromTag<ContentPointer>(pointerTag);
+			return data.FromTag<ContentPointer>(pointerTag);
 		}
 		catch (Exception ex)
 		{

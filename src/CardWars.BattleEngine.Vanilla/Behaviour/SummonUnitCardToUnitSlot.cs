@@ -26,7 +26,7 @@ public class SummonUnitCardToUnitSlotBehaviour : Behaviour<UseCardRequestEvent>
 		if (context.Owner is not GenericCard card) return BehaviourResult.Complete;
 		if (card.OwnerPlayerId is not { } ownerId) return BehaviourResult.Complete;
 
-		var validator = new BattleActionValidator(context.Registry);
+		var validator = new BattleActionValidator(context.Registry, context.Data);
 		if (!validator.CanPlayCard(context.State, ownerId, card, evnt.TargetEntityId, out var reason))
 		{
 			Log.Warn($"Card play rejected: {reason}");

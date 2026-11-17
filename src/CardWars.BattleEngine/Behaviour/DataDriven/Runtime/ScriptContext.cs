@@ -1,7 +1,7 @@
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Access;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
@@ -14,15 +14,23 @@ public class ScriptContext : IDataTagAccessible
 
 	public GameState State { get; }
 	public DataDrivenRegistry DataDriven { get; }
+
+	/// <summary>
+	/// The data context all serialize/deserialize operations in this script run through, so a
+	/// session's own <see cref="DataContext"/> resolves types and converters rather than the
+	/// process-wide <see cref="DataContext.Default"/>.
+	/// </summary>
+	public DataContext Data { get; }
 	public ScriptScope GlobalScope { get; }
 	public ScriptScope CurrentScope => _scopes[^1];
 	public IReadOnlyDictionary<ResourceId, DataTag> Variables => CurrentScope.Variables;
 	public IReadOnlyDictionary<ResourceId, DataTag> GlobalVariables => GlobalScope.Variables;
 	public int MaxLoopIterations { get; set; } = 10_000;
 
-	public ScriptContext(GameState state, DataDrivenRegistry dataDriven)
+	public ScriptContext(GameState state, DataContext data, DataDrivenRegistry dataDriven)
 	{
 		State = state;
+		Data = data;
 		DataDriven = dataDriven;
 		GlobalScope = state.GlobalScope;
 	}
@@ -142,7 +150,7 @@ public class ScriptContext : IDataTagAccessible
 			case CompoundTag compound:
 				try
 				{
-					return DataTagMapper.FromTag<T>(compound);
+					return Data.FromTag<T>(compound);
 				}
 				catch (Exception ex)
 				{

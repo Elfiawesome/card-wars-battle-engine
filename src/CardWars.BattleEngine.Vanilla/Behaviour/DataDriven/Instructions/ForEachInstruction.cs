@@ -2,8 +2,8 @@ using System.Collections;
 using CardWars.BattleEngine.Behaviour.DataDriven.Instructions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Attributes;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
@@ -22,7 +22,7 @@ public sealed class ForEachInstructionHandler : IInstructionHandler<ForEachInstr
 	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, ForEachInstruction request)
 	{
 		var collection = context.Evaluate(request.Collection);
-		var items = GetItems(collection);
+		var items = GetItems(context.Data, collection);
 		if (items is null)
 		{
 			Log.Error($"ForEach collection type [{collection.Type}] is not enumerable");
@@ -68,12 +68,12 @@ public sealed class ForEachInstructionHandler : IInstructionHandler<ForEachInstr
 		}
 	}
 
-	private static IEnumerable<DataTag>? GetItems(DataTag collection) => collection switch
+	private static IEnumerable<DataTag>? GetItems(DataContext data, DataTag collection) => collection switch
 	{
 		ListTag list => list.Items,
 		ObjectRefTag { Value: IEnumerable enumerable } => enumerable
 			.Cast<object?>()
-			.Select(item => item is DataTag tag ? tag : DataTagMapper.ToValueTag(item) ?? new NullTag()),
+			.Select(item => item is DataTag tag ? tag : data.ToValueTag(item) ?? new NullTag()),
 		_ => null
 	};
 }

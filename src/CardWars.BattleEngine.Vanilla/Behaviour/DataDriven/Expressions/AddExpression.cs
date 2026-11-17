@@ -20,7 +20,7 @@ public sealed class AddExpressionHandler : IExpressionHandler<AddExpression>
 		var right = context.Evaluate(request.Right);
 
 		if (left is StringTag || right is StringTag)
-			return new StringTag(ExpressionValue.ToText(left) + ExpressionValue.ToText(right));
+			return new StringTag(ExpressionValue.ToText(context.Data, left) + ExpressionValue.ToText(context.Data, right));
 
 		if (!ExpressionValue.TryGetNumber(left, out var leftNumber) ||
 			!ExpressionValue.TryGetNumber(right, out var rightNumber))
