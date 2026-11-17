@@ -112,12 +112,12 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 		foreach (var card in context.State.OfType<GenericCard>())
 		{
 			if (!card.IsUnit || !card.IsFatal || card.OwnerUnitSlotId is not { } unitSlotId) continue;
-			if (context.State.Get<UnitSlot>(unitSlotId) is not { OwnerBattlefieldId: { } battlefieldId }) continue;
-			if (context.State.Get<Battlefield>(battlefieldId) is not { OwnerPlayerId: { } playerId }) continue;
+			if (context.State.GetParent<Battlefield>(unitSlotId) is not { } battlefield) continue;
+			if (context.State.GetParent<Player>(battlefield) is not { } player) continue;
 
 			discardBatch.Blocks.Add(new DetachCardFromUnitSlotBlock(unitSlotId, card.Id));
-			discardBatch.Blocks.Add(new AttachCardToGraveyardBlock(playerId, card.Id));
-			fatalUnits.Add((card.Id, playerId, battlefieldId, unitSlotId));
+			discardBatch.Blocks.Add(new AttachCardToGraveyardBlock(player.Id, card.Id));
+			fatalUnits.Add((card.Id, player.Id, battlefield.Id, unitSlotId));
 			fatalUnitsListTag.Add(card.Id.Value);
 		}
 

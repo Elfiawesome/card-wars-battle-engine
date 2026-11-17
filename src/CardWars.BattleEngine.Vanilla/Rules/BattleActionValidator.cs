@@ -109,16 +109,12 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry)
 
 	public static bool CanTarget(GameState state, GenericCard attacker, AttackProfile attack, EntityId targetSlotId)
 	{
-		if (state.GetParent<Player>(attacker)?.Id is not { } attackerPlayerId) return false;
-		if (state.Get<Player>(attackerPlayerId) is not { } attackerPlayer) return false;
+		if (state.GetParent<Player>(attacker) is not { } attackerPlayer) return false;
 
 		if (state.Get<UnitSlot>(targetSlotId) is not { } targetSlot) return false;
 		if (targetSlot.HoldingCardId is not { } targetCardId) return false;
 		if (state.Get<GenericCard>(targetCardId) is null) return false;
-		if (targetSlot.OwnerBattlefieldId is not { } targetBattlefieldId) return false;
-		if (state.Get<Battlefield>(targetBattlefieldId) is not { } targetBattlefield) return false;
-		if (targetBattlefield.OwnerPlayerId is not { } targetPlayerId) return false;
-		if (state.Get<Player>(targetPlayerId) is not { } targetPlayer) return false;
+		if (state.GetParent<Player>(targetSlot) is not { } targetPlayer) return false;
 
 		if (attackerPlayer.Team == targetPlayer.Team) return false;
 		if (!attack.Bypass && !CanTargetSlot(state, targetSlotId)) return false;
@@ -129,10 +125,7 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry)
 	public static bool CanTargetSlot(GameState state, EntityId targetSlotId)
 	{
 		if (state.Require<UnitSlot>(targetSlotId) is not { } targetSlot) return false;
-		if (targetSlot.OwnerBattlefieldId is null) return false;
-
-		var battlefield = state.Get<Battlefield>(targetSlot.OwnerBattlefieldId.Value);
-		if (battlefield is null) return false;
+		if (state.GetParent<Battlefield>(targetSlot) is not { } battlefield) return false;
 
 		var targetRow = targetSlot.Position.Y;
 

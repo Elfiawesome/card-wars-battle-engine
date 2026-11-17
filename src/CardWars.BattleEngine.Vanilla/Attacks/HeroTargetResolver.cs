@@ -8,16 +8,12 @@ public static class HeroTargetResolver
 {
 	public static bool CanTarget(GameState state, GenericCard attacker, EntityId heroCardId, BattleEngineRegistry registry)
 	{
-		
-		if (state.GetParent<Player>(attacker)?.Id is not { } attackerPlayerId) return false;
-		if (state.Get<Player>(attackerPlayerId) is not { } attackerPlayer) return false;
+		if (state.GetParent<Player>(attacker) is not { } attackerPlayer) return false;
 
 		if (state.Get<GenericCard>(heroCardId) is not { IsHero: true } hero) return false;
 		if (new HeroLoseConditionEvaluator(registry).IsDefeated(state, hero)) return false;
-		if (hero.OwnerBattlefieldId is not { } battlefieldId) return false;
-		if (state.Get<Battlefield>(battlefieldId) is not { } battlefield) return false;
-		if (battlefield.OwnerPlayerId is not { } targetPlayerId) return false;
-		if (state.Get<Player>(targetPlayerId) is not { } targetPlayer) return false;
+		if (state.GetParent<Battlefield>(hero) is not { } battlefield) return false;
+		if (state.GetParent<Player>(battlefield) is not { } targetPlayer) return false;
 
 		if (attackerPlayer.Team == targetPlayer.Team) return false;
 

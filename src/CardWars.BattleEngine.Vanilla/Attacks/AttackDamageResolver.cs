@@ -62,8 +62,7 @@ public static class AttackDamageResolver
 			yield break;
 		}
 
-		if (origin.OwnerBattlefieldId is not { } battlefieldId) yield break;
-		if (state.Get<Battlefield>(battlefieldId) is not { } battlefield) yield break;
+		if (state.GetParent<Battlefield>(origin) is not { } battlefield) yield break;
 
 		foreach (var slotId in battlefield.UnitSlotIds)
 		{
