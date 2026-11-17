@@ -32,7 +32,7 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry)
 		return true;
 	}
 
-	// Can play this card + the card's individual evaluator
+	// Can play this card + the card's target individual evaluator
 	public bool CanPlayCard(GameState state, EntityId playerId, GenericCard card, EntityId? targetId, out string? reason)
 	{
 		if (!CanStartPlayCard(state, playerId, card, out reason)) return false;
