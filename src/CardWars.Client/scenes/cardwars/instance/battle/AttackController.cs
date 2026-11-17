@@ -4,6 +4,7 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Client.scenes.cardwars.instance.battle.entities;
 using CardWars.Client.scenes.cardwars.ui.battle;
 using CardWars.Vanilla.Shared;
@@ -79,7 +80,7 @@ public partial class AttackController : Node
 		if (clicked is not UnitSlotNode slot) return;
 		if (slot.GetData<UnitSlot>() is not { } unitSlot) return;
 
-		var ownerPlayerId = AttackTargetResolver.GetOwnerPlayerId(BattleInstance.State, unitSlot);
+		var ownerPlayerId = BattleInstance.State.GetParent<Player>(unitSlot)?.Id;
 		if (ownerPlayerId == BattleInstance.MyPlayerId)
 		{
 			if (slot.GetData<GenericCard>(unitSlot.HoldingCardId) is not { } card) return;

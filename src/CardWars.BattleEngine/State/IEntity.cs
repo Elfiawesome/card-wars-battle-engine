@@ -9,3 +9,8 @@ public interface IEntity
 
 	public List<ContentPointer> GetBehaviours();
 }
+
+public interface IParentableEntity
+{
+	public EntityId? ParentId { get; }
+}

@@ -99,7 +99,7 @@ public class HeroAttackEventHandler : IEventHandler<HeroAttackEvent>
 		if (state.Require<GenericCard>(request.AttackerId) is not { } attackerCard) return;
 		if (state.Require<GenericCard>(request.HeroCardId) is not { IsHero: true } hero) return;
 
-		if (AttackTargetResolver.GetOwnerPlayerId(state, attackerCard) is not { } ownerId) return;
+		if (state.GetParent<Player>(attackerCard)?.Id is not { } ownerId) return;
 
 		var validator = new BattleActionValidator(context.Registry);
 		if (!validator.TryResolveAttack(state, ownerId, attackerCard, out var attack, out var reason))

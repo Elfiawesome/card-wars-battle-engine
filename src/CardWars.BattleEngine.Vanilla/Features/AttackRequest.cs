@@ -117,7 +117,7 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 		if (state.Require<GenericCard>(request.TargetId) is not { } targetCard) return;
 		if (targetCard.OwnerUnitSlotId is not { } targetSlotId) { Log.Error("Target Card is not on any OwnerUnitSlotId"); return; }
 
-		if (AttackTargetResolver.GetOwnerPlayerId(state, attackerCard) is not { } ownerId) return;
+		if (state.GetParent<Player>(attackerCard)?.Id is not { } ownerId) return;
 
 		var validator = new BattleActionValidator(context.Registry);
 		if (!validator.TryResolveAttack(state, ownerId, attackerCard, out var attack, out var reason))

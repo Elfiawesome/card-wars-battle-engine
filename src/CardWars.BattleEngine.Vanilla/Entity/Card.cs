@@ -8,12 +8,13 @@ namespace CardWars.BattleEngine.Vanilla.Entity;
 
 // TODO: Do the datatag here
 [DataTagType("battle/entity/card")]
-public class GenericCard(EntityId id) : IEntity
+public class GenericCard(EntityId id) : IEntity, IParentableEntity
 {
 	[DataTag] public EntityId Id { get; init; } = id;
 	[DataTag] public EntityId? OwnerPlayerId { get; set; }
 	[DataTag] public EntityId? OwnerUnitSlotId { get; set; }
 	[DataTag] public EntityId? OwnerBattlefieldId { get; set; }
+	public EntityId? ParentId => OwnerPlayerId ?? OwnerUnitSlotId ?? OwnerBattlefieldId;
 	public bool IsPlayed => (OwnerPlayerId is null) && (OwnerUnitSlotId is not null || OwnerBattlefieldId is not null);
 
 	[DataTag] public CompoundTag Data { get; set; } = new();

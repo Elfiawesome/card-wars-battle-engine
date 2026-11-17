@@ -3,9 +3,14 @@
 	"pt": 1,
 	"hp": 2,
 	"atk": 3,
+	"charge": 20,
+	"charge_max": 20,
 	"sp_atks": [
 		{
-		"resource": "cardwars:attacks/sweep"
+			"resource": "cardwars:attacks/sweep"
+		},
+		{
+			"resource": "cardwars:attacks/cross"
 		}
 	],
 	"abilities": [

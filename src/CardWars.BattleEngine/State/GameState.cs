@@ -25,6 +25,24 @@ public class GameState : IDataTagAccessible
 	public T? Get<T>(EntityId? id) where T : class, IEntity
 		=> Get(id) is T typed ? typed : null;
 
+
+	public T? GetParent<T>(EntityId? entityId) where T : class, IEntity
+		=> GetParent<T>(Get(entityId));
+
+	public T? GetParent<T>(IEntity? entity) where T : class, IEntity
+	{
+		var current = entity;
+		var depth = 0;
+
+		while (current is IParentableEntity parentable && parentable.ParentId is { } parentId && depth++ < 16)
+		{
+			var parent = Get(parentId);
+			if (parent is T match) return match;
+			current = parent;
+		}
+		return null;
+	}
+
 	public T? Require<T>(EntityId id,
 		[CallerFilePath] string file = "",
 		[CallerMemberName] string member = "") where T : class, IEntity

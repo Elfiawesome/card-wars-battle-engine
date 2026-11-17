@@ -8,7 +8,8 @@ public static class HeroTargetResolver
 {
 	public static bool CanTarget(GameState state, GenericCard attacker, EntityId heroCardId, BattleEngineRegistry registry)
 	{
-		if (AttackTargetResolver.GetOwnerPlayerId(state, attacker) is not { } attackerPlayerId) return false;
+		
+		if (state.GetParent<Player>(attacker)?.Id is not { } attackerPlayerId) return false;
 		if (state.Get<Player>(attackerPlayerId) is not { } attackerPlayer) return false;
 
 		if (state.Get<GenericCard>(heroCardId) is not { IsHero: true } hero) return false;
