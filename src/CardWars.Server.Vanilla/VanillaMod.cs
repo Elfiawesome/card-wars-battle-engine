@@ -20,10 +20,10 @@ public class VanillaMod : IServerMod
 		var worldRegistry = new WorldRegistry();
 		RegisterPackets(server.Registry);
 		RegisterEvents(server, worldRegistry);
-		LoadWorldDefinitions(worldRegistry, modContents);
+		LoadWorldDefinitions(server, worldRegistry, modContents);
 
 		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.World, new WorldInstanceProvider(worldRegistry, server.Session, SharedIds.Instances.World, server.Logger));
-		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.Battle, new BattleInstanceProvider(server.Session, server.SharedBattleEngineRegistry, SharedIds.Instances.Battle));
+		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.Battle, new BattleInstanceProvider(server.Session, server.SharedBattleEngineRegistry, SharedIds.Instances.Battle, server.Logger));
 	}
 
 	private void RegisterPackets(ServerRegistry registry)
@@ -125,7 +125,7 @@ public class VanillaMod : IServerMod
 		}
 	}
 
-	private void LoadWorldDefinitions(WorldRegistry worldRegistry, List<ModContentResult> modContents)
+	private void LoadWorldDefinitions(Server server, WorldRegistry worldRegistry, List<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{
@@ -134,7 +134,7 @@ public class VanillaMod : IServerMod
 				case ["worlds"]:
 					var worldDataTag = content.ReadAs<CompoundTag>();
 					if (worldDataTag is null) continue;
-					NullLogger.Instance.Info("Registered World: " + content.Id.ToString());
+					server.Logger.Info("Registered World: " + content.Id.ToString());
 					worldRegistry.Templates.Register(content.Id, worldDataTag);
 					break;
 				case []:
@@ -144,7 +144,7 @@ public class VanillaMod : IServerMod
 						if (configDataTag is null) continue;
 
 						worldRegistry.DefaultWorld = ResourceId.Parse(configDataTag.GetString("default_world"));
-						NullLogger.Instance.Info("Registered default_world as: " + worldRegistry.DefaultWorld);
+						server.Logger.Info("Registered default_world as: " + worldRegistry.DefaultWorld);
 					}
 					break;
 			}

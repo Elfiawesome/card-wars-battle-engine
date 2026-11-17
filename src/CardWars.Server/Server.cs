@@ -19,7 +19,7 @@ public class Server
 	private static readonly TimeSpan _tickRate = TimeSpan.FromMilliseconds(16);
 	private static readonly TimeSpan _unauthenticatedTimeout = TimeSpan.FromSeconds(30);
 
-	public ServerRegistry Registry { get; } = new();
+	public ServerRegistry Registry { get; }
 
 	/// <summary>
 	/// The data context this server owns, making it a context owner consistent with
@@ -35,7 +35,7 @@ public class Server
 	/// on this instance rather than in process-global static state (R1).
 	/// </summary>
 	public ILogger Logger { get; }
-	public BattleEngineRegistry SharedBattleEngineRegistry { get; private set; } = new();
+	public BattleEngineRegistry SharedBattleEngineRegistry { get; private set; }
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
 
 	public StorageManager Storage { get; }
@@ -66,6 +66,11 @@ public class Server
 	public Server(StorageManager storage, string sessionName = "default", ILogger? logger = null)
 	{
 		Logger = logger ?? new Logger();
+		// Thread the server's owned logger into the handler registries it owns so packet/input/
+		// block/event/script dispatch diagnostics reach the server console, matching the output the
+		// old static Log produced on a running server (behavior preservation).
+		Registry = new ServerRegistry(Logger);
+		SharedBattleEngineRegistry = new BattleEngineRegistry(Logger);
 		Storage = storage;
 		Session = storage.OpenSession(sessionName);
 		ScanCoreAssemblies();

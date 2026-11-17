@@ -8,6 +8,9 @@ using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
+using CardWars.Core.Storage;
+using CardWars.Server.Vanilla.Session;
+using CardWars.Vanilla.Shared;
 using CardWars.Tests.Support;
 using Xunit;
 
@@ -151,5 +154,47 @@ public sealed class LoggingTests
 
 		Assert.NotEmpty(otherReceived);
 		Assert.Equal(before, received.Count); // first engine's sink stayed silent
+	}
+
+	// --- (4) The SERVER threads its owned logger into the engine and the dispatch registries ---
+	// Guards the regression the reviewer found: a running server built engines (via
+	// BattleInstanceProvider) and handler registries (ServerRegistry/BattleEngineRegistry/
+	// DataDrivenRegistry) without wiring server.Logger, so engine/dispatch diagnostics that the old
+	// static Log always printed silently routed to NullLogger. A direct-engine test did not cover
+	// the server path, so the regression passed CI.
+
+	[Fact]
+	public void Server_ThreadsOwnedLogger_IntoEngineAndDispatchRegistries()
+	{
+		var recording = new RecordingLogger();
+		var storage = new StorageManager("data", new MemoryFileProvider(), recording);
+		var server = new CardWars.Server.Server(storage, "test", recording);
+
+		// The server owns the recording logger and injected it into the registries it owns.
+		Assert.Same(recording, server.Logger);
+
+		// Load the vanilla battle content into the server's SHARED registry (the one battle engines
+		// are built from) and the server-side vanilla mod (which registers the BattleInstanceProvider
+		// wired with server.Logger).
+		server.LoadMod(new BattleEngine.Vanilla.VanillaMod(), []);
+		TestCards.RegisterStarterDeck(server.SharedBattleEngineRegistry, null);
+		server.LoadMod(new Server.Vanilla.VanillaMod(), []);
+
+		// Create a battle instance through the real provider path and drive a server-side action.
+		var instance = (BattleInstance)server.CreateInstance(SharedIds.Instances.Battle, Guid.NewGuid().ToString());
+		Assert.NotNull(instance.Engine);
+		// The provider wired the engine to the server's logger (not NullLogger).
+		Assert.Same(recording, instance.Engine!.Logger);
+
+		recording.Entries.Clear();
+		instance.Engine!.HandleInput(EntityId.None, new PlayerJoinedRequestInput(EntityId.New(), 1));
+
+		// Engine path: Transaction.ApplyBlockBatch logs a DEBUG "Executing Block" line, now reaching
+		// the server's sink instead of NullLogger.
+		Assert.Contains(recording.Entries, e => e.Level == "DEBUG" && e.Message.StartsWith("Executing Block"));
+
+		// Dispatch path: BattleEngineRegistry's HandlerRegistry logs "Running handler ..." for the
+		// input it dispatches, confirming the registries carry server.Logger rather than NullLogger.
+		Assert.Contains(recording.Entries, e => e.Level == "DEBUG" && e.Message.StartsWith("Running handler"));
 	}
 }
