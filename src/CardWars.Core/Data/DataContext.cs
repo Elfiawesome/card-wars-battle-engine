@@ -37,8 +37,17 @@ public sealed class DataContext
 	public static DataContext Default { get; } = new();
 
 	// ---- Type map (formerly DataTagTypeRegistry's statics) ----
-	private readonly ConcurrentDictionary<string, Type> _idToType = new();
-	private readonly ConcurrentDictionary<Type, string> _typeToId = new();
+	// Converged onto the project's one registry pattern (CardWars.Core.Registry.Registry<,>)
+	// per AGENT.md R6 and doc.md Finding 2, replacing the bespoke ConcurrentDictionary pair.
+	// The conceptual id type is ResourceId, but string keys are used at this boundary: the
+	// discriminator id is already stringified at every call site that touches this map
+	// (attr.Id.ToString() / ResourceId.Vanilla(...).ToString() in ScanAssembly,
+	// compound.GetString(ctx.TypeDiscriminatorKey) in TagDeserializer, and
+	// request.Type.ToString() in ConstructExpression), and ToTag/FromTag read the
+	// discriminator back as a string. Keying on string avoids reparsing ResourceId on
+	// every lookup while keeping ResourceId as the id that produces those strings.
+	private readonly Registry<string, Type> _idToType = new();
+	private readonly Registry<Type, string> _typeToId = new();
 
 	// ---- Converters (formerly DataTagMapper._globalConverters) ----
 	private readonly ConcurrentDictionary<Type, IDataTagConverter> _converters = new();
@@ -86,15 +95,15 @@ public sealed class DataContext
 
 	public void Register(Type type, string id)
 	{
-		_idToType[id] = type;
-		_typeToId[type] = id;
+		_idToType.Register(id, type);
+		_typeToId.Register(type, id);
 	}
 
 	public Type? GetType(string typeId)
-		=> _idToType.GetValueOrDefault(typeId);
+		=> _idToType.Get(typeId);
 
 	public string? GetTypeId(Type type)
-		=> _typeToId.GetValueOrDefault(type);
+		=> _typeToId.Get(type);
 
 	public void Clear()
 	{
