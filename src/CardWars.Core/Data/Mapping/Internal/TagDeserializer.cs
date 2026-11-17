@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Reflection;
-using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Tags;
 
 namespace CardWars.Core.Data.Mapping.Internal;
 
 internal static class TagDeserializer
 {
-	public static object? Deserialize(DataTag? tag, Type targetType)
+	public static object? Deserialize(DataContext ctx, DataTag? tag, Type targetType)
 	{
 		if (tag is null) return GetDefault(targetType);
 
@@ -23,15 +22,15 @@ internal static class TagDeserializer
 		if (typeof(DataTag).IsAssignableFrom(targetType)) return tag.Clone();
 
 		// 1. Dynamic object resolution
-		if (actualType == typeof(object)) return DeserializeDynamic(tag);
+		if (actualType == typeof(object)) return DeserializeDynamic(ctx, tag);
 
 		// 2. Custom converters
-		if (DataTagMapper.TryGetConverter(actualType, out var converter))
+		if (ctx.TryGetConverter(actualType, out var converter))
 			return converter.FromTag(tag);
 
 		// 3. Dictionaries
 		if (typeof(IDictionary).IsAssignableFrom(actualType))
-			return DeserializeDictionary(tag, actualType);
+			return DeserializeDictionary(ctx, tag, actualType);
 
 		// 4. Tolerant primitive parsing (from Senior's implementation)
 		if (actualType == typeof(int)) return tag switch
@@ -104,35 +103,35 @@ internal static class TagDeserializer
 
 		// 7. Collections
 		if (tag is ListTag listTag && IsCollectionType(actualType))
-			return DeserializeList(listTag, actualType);
+			return DeserializeList(ctx, listTag, actualType);
 
 		// 8. Compounds
 		if (tag is CompoundTag compound)
-			return DeserializeCompound(compound, actualType);
+			return DeserializeCompound(ctx, compound, actualType);
 
 		return GetDefault(targetType);
 	}
 
-	private static object? DeserializeDynamic(DataTag tag) => tag switch
+	private static object? DeserializeDynamic(DataContext ctx, DataTag tag) => tag switch
 	{
 		IntTag it => it.Value,
 		FloatTag ft => ft.Value,
 		BoolTag bt => bt.Value,
 		StringTag st => st.Value,
 		GuidTag gt => gt.Value,
-		CompoundTag ct => DeserializeCompound(ct, typeof(object)),
-		ListTag lt => DeserializeList(lt, typeof(List<object>)),
+		CompoundTag ct => DeserializeCompound(ctx, ct, typeof(object)),
+		ListTag lt => DeserializeList(ctx, lt, typeof(List<object>)),
 		_ => tag
 	};
 
-	private static object DeserializeCompound(CompoundTag compound, Type targetType)
+	private static object DeserializeCompound(DataContext ctx, CompoundTag compound, Type targetType)
 	{
 		// Polymorphic resolution
 		var concreteType = targetType;
-		var typeId = compound.GetString(DataTagMapper.TypeDiscriminatorKey);
+		var typeId = compound.GetString(ctx.TypeDiscriminatorKey);
 		if (!string.IsNullOrEmpty(typeId))
 		{
-			var resolved = DataTagTypeRegistry.GetType(typeId);
+			var resolved = ctx.GetType(typeId);
 			if (resolved is not null && (targetType == typeof(object) || targetType.IsAssignableFrom(resolved)))
 			{
 				concreteType = resolved;
@@ -140,7 +139,7 @@ internal static class TagDeserializer
 		}
 		else if (targetType == typeof(object))
 		{
-			return DeserializeDictionary(compound, typeof(Dictionary<string, object>));
+			return DeserializeDictionary(ctx, compound, typeof(Dictionary<string, object>));
 		}
 
 		if (concreteType.IsInterface || concreteType.IsAbstract)
@@ -161,7 +160,7 @@ internal static class TagDeserializer
 				var paramTag = compound.Get(param.TagKey);
 
 				if (paramTag is not null)
-					args[i] = Deserialize(paramTag, param.ParamType);
+					args[i] = Deserialize(ctx, paramTag, param.ParamType);
 				else if (param.HasDefault)
 					args[i] = param.DefaultValue;
 				else
@@ -186,21 +185,21 @@ internal static class TagDeserializer
 			{
 				var val = prop.Converter is not null
 					? prop.Converter.FromTag(propTag)
-					: Deserialize(propTag, prop.PropertyInfo.PropertyType);
+					: Deserialize(ctx, propTag, prop.PropertyInfo.PropertyType);
 
 				prop.PropertyInfo.SetValue(instance, val);
 			}
 			else if (propTag is ListTag listTag && IsCollectionType(prop.PropertyInfo.PropertyType))
 			{
 				var existing = prop.PropertyInfo.GetValue(instance);
-				PopulateExistingCollection(existing, listTag, prop.PropertyInfo.PropertyType);
+				PopulateExistingCollection(ctx, existing, listTag, prop.PropertyInfo.PropertyType);
 			}
 		}
 
 		return instance;
 	}
 
-	private static object DeserializeDictionary(DataTag tag, Type targetType)
+	private static object DeserializeDictionary(DataContext ctx, DataTag tag, Type targetType)
 	{
 		Type keyType = typeof(object);
 		Type valType = typeof(object);
@@ -222,9 +221,9 @@ internal static class TagDeserializer
 		{
 			foreach (var (key, valTag) in compound.Entries)
 			{
-				if (key == DataTagMapper.TypeDiscriminatorKey) continue;
-				var k = keyType == typeof(string) || keyType == typeof(object) ? key : Deserialize(new StringTag(key), keyType);
-				dict[k!] = Deserialize(valTag, valType);
+				if (key == ctx.TypeDiscriminatorKey) continue;
+				var k = keyType == typeof(string) || keyType == typeof(object) ? key : Deserialize(ctx, new StringTag(key), keyType);
+				dict[k!] = Deserialize(ctx, valTag, valType);
 			}
 		}
 		else if (tag is ListTag listTag)
@@ -233,8 +232,8 @@ internal static class TagDeserializer
 			{
 				if (listTag.Get(i) is CompoundTag pairTag)
 				{
-					var k = Deserialize(pairTag.Get("k"), keyType);
-					var v = Deserialize(pairTag.Get("v"), valType);
+					var k = Deserialize(ctx, pairTag.Get("k"), keyType);
+					var v = Deserialize(ctx, pairTag.Get("v"), valType);
 					if (k is not null) dict[k] = v;
 				}
 			}
@@ -243,7 +242,7 @@ internal static class TagDeserializer
 		return dict;
 	}
 
-	private static object? DeserializeList(ListTag listTag, Type targetType)
+	private static object? DeserializeList(DataContext ctx, ListTag listTag, Type targetType)
 	{
 		var elemType = TagSerializer.GetElementType(targetType) ?? typeof(object);
 
@@ -252,7 +251,7 @@ internal static class TagDeserializer
 			var array = Array.CreateInstance(elemType, listTag.Count);
 			for (int i = 0; i < listTag.Count; i++)
 			{
-				array.SetValue(Deserialize(listTag.Get(i), elemType), i);
+				array.SetValue(Deserialize(ctx, listTag.Get(i), elemType), i);
 			}
 			return array;
 		}
@@ -264,7 +263,7 @@ internal static class TagDeserializer
 			var list = (IList)Activator.CreateInstance(listType, listTag.Count)!;
 			foreach (var item in listTag.Items)
 			{
-				list.Add(Deserialize(item, elemType));
+				list.Add(Deserialize(ctx, item, elemType));
 			}
 			return list;
 		}
@@ -276,7 +275,7 @@ internal static class TagDeserializer
 			var addMethod = setType.GetMethod("Add");
 			foreach (var item in listTag.Items)
 			{
-				var val = Deserialize(item, elemType);
+				var val = Deserialize(ctx, item, elemType);
 				if (val is not null) addMethod?.Invoke(set, [val]);
 			}
 			return set;
@@ -285,7 +284,7 @@ internal static class TagDeserializer
 		return null;
 	}
 
-	private static void PopulateExistingCollection(object? existing, ListTag listTag, Type collectionType)
+	private static void PopulateExistingCollection(DataContext ctx, object? existing, ListTag listTag, Type collectionType)
 	{
 		if (existing is null) return;
 		var elemType = TagSerializer.GetElementType(collectionType) ?? typeof(object);
@@ -293,7 +292,7 @@ internal static class TagDeserializer
 		if (existing is IList list)
 		{
 			foreach (var item in listTag.Items)
-				list.Add(Deserialize(item, elemType));
+				list.Add(Deserialize(ctx, item, elemType));
 			return;
 		}
 
@@ -302,7 +301,7 @@ internal static class TagDeserializer
 		{
 			foreach (var item in listTag.Items)
 			{
-				var val = Deserialize(item, elemType);
+				var val = Deserialize(ctx, item, elemType);
 				if (val is not null) addMethod.Invoke(existing, [val]);
 			}
 		}

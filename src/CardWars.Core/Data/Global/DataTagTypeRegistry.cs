@@ -1,56 +1,29 @@
-using System.Collections.Concurrent;
 using System.Reflection;
-using CardWars.Core.Data.Attributes;
-using CardWars.Core.Registry;
-using CardWars.Core.Utilities;
 
 namespace CardWars.Core.Data.Global;
 
+/// <summary>
+/// TEMPORARY Phase 1 compatibility shim. Delegates every call to
+/// <see cref="DataContext.Default"/>, which now owns the id&lt;-&gt;Type maps as instance
+/// state (doc.md §5, AGENT.md R1). Kept so existing callers keep compiling unchanged while
+/// the data layer migrates to per-instance <see cref="DataContext"/> ownership; slated for
+/// removal in a later phase.
+/// </summary>
 public static class DataTagTypeRegistry
 {
-	private static readonly ConcurrentDictionary<string, Type> _idToType = new();
-	private static readonly ConcurrentDictionary<Type, string> _typeToId = new();
-
 	/// <summary>
 	/// Scans an assembly for all types decorated with [DataTagType] and registers them.
 	/// Call this when loading mod assemblies.
 	/// </summary>
-	public static void ScanAssembly(Assembly assembly)
-	{
-		foreach (var type in assembly.GetTypes())
-		{
-			var attr = type.GetCustomAttribute<DataTagTypeAttribute>();
-			if (attr is not null)
-			{
-				if (attr.Id is null)
-				{
-					Register(type, ResourceId.Vanilla(NamingUtils.ToSnakeCase(type.Name)).ToString());
-				}
-				else
-				{
-					Register(type, attr.Id.ToString() ?? "unknown:unknown");
-				}
-			}
-		}
-	}
+	public static void ScanAssembly(Assembly assembly) => DataContext.Default.ScanAssembly(assembly);
 
-	public static void Register<T>(string id) => Register(typeof(T), id);
+	public static void Register<T>(string id) => DataContext.Default.Register<T>(id);
 
-	public static void Register(Type type, string id)
-	{
-		_idToType[id] = type;
-		_typeToId[type] = id;
-	}
+	public static void Register(Type type, string id) => DataContext.Default.Register(type, id);
 
-	public static Type? GetType(string typeId)
-		=> _idToType.GetValueOrDefault(typeId);
+	public static Type? GetType(string typeId) => DataContext.Default.GetType(typeId);
 
-	public static string? GetTypeId(Type type)
-		=> _typeToId.GetValueOrDefault(type);
+	public static string? GetTypeId(Type type) => DataContext.Default.GetTypeId(type);
 
-	public static void Clear()
-	{
-		_idToType.Clear();
-		_typeToId.Clear();
-	}
+	public static void Clear() => DataContext.Default.Clear();
 }

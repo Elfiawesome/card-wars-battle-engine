@@ -1,87 +1,63 @@
-using System.Collections.Concurrent;
-using System.Reflection;
-using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Converters;
-using CardWars.Core.Data.Mapping.Internal;
 using CardWars.Core.Data.Tags;
 
 namespace CardWars.Core.Data.Mapping;
 
+/// <summary>
+/// TEMPORARY Phase 1 compatibility shim. Delegates every call to
+/// <see cref="DataContext.Default"/>, which now owns the converter map and the
+/// polymorphic discriminator key as instance state (doc.md §5, AGENT.md R1). Kept so
+/// existing callers keep compiling unchanged while the data layer migrates to per-instance
+/// <see cref="DataContext"/> ownership; slated for removal in a later phase.
+/// </summary>
 public static class DataTagMapper
 {
 	/// <summary>
-	/// The discriminator key used for polymorphic types.
-	/// Defaulted to "_type" to match your senior's convention.
+	/// The discriminator key used for polymorphic types. Defaulted to "_type".
+	/// Proxies <see cref="DataContext.Default"/>'s key.
 	/// </summary>
-	public static string TypeDiscriminatorKey { get; set; } = "_type";
-
-	private static readonly ConcurrentDictionary<Type, IDataTagConverter> _globalConverters = new();
+	public static string TypeDiscriminatorKey
+	{
+		get => DataContext.Default.TypeDiscriminatorKey;
+		set => DataContext.Default.TypeDiscriminatorKey = value;
+	}
 
 	// ======================== PUBLIC SERIALIZATION ========================
 
 	public static CompoundTag ToTag(object obj, bool includeType = true)
-	{
-		ArgumentNullException.ThrowIfNull(obj);
-		return TagSerializer.SerializeObject(obj, obj.GetType(), includeType);
-	}
+		=> DataContext.Default.ToTag(obj, includeType);
 
 	public static CompoundTag ToTagAs<T>(T obj, bool includeType = true)
-	{
-		ArgumentNullException.ThrowIfNull(obj);
-		return TagSerializer.SerializeObject(obj, typeof(T), includeType);
-	}
+		=> DataContext.Default.ToTagAs(obj, includeType);
 
 	public static CompoundTag ToTagAs(object obj, Type declaredType, bool includeType = true)
-	{
-		ArgumentNullException.ThrowIfNull(obj);
-		ArgumentNullException.ThrowIfNull(declaredType);
-		return TagSerializer.SerializeObject(obj, declaredType, includeType);
-	}
+		=> DataContext.Default.ToTagAs(obj, declaredType, includeType);
 
 	// ======================== PUBLIC DESERIALIZATION ========================
 
-	public static T FromTag<T>(CompoundTag tag)
-	{
-		ArgumentNullException.ThrowIfNull(tag);
-		return (T)TagDeserializer.Deserialize(tag, typeof(T))!;
-	}
+	public static T FromTag<T>(CompoundTag tag) => DataContext.Default.FromTag<T>(tag);
 
 	public static object? FromTag(CompoundTag tag, Type targetType)
-	{
-		ArgumentNullException.ThrowIfNull(tag);
-		ArgumentNullException.ThrowIfNull(targetType);
-		return TagDeserializer.Deserialize(tag, targetType);
-	}
+		=> DataContext.Default.FromTag(tag, targetType);
 
 	// ======================== SINGLE VALUES ========================
 
 	public static DataTag? ToValueTag(object? value, Type? declaredType = null)
-	{
-		if (value is null) return null;
-		return TagSerializer.SerializeValue(value, declaredType ?? value.GetType());
-	}
+		=> DataContext.Default.ToValueTag(value, declaredType);
 
 	public static object? FromValueTag(DataTag? tag, Type targetType)
-		=> TagDeserializer.Deserialize(tag, targetType);
+		=> DataContext.Default.FromValueTag(tag, targetType);
 
 	// ======================== CONVERTERS ========================
 
-	public static void RegisterConverter<T>(DataTagConverter<T> converter) => _globalConverters[typeof(T)] = converter;
-	public static void RegisterConverter(Type type, IDataTagConverter converter) => _globalConverters[type] = converter;
+	public static void RegisterConverter<T>(DataTagConverter<T> converter)
+		=> DataContext.Default.RegisterConverter(converter);
 
-	public static bool HasConverter(Type type) => TryGetConverter(type, out _);
+	public static void RegisterConverter(Type type, IDataTagConverter converter)
+		=> DataContext.Default.RegisterConverter(type, converter);
+
+	public static bool HasConverter(Type type) => DataContext.Default.HasConverter(type);
 
 	internal static bool TryGetConverter(Type type, out IDataTagConverter converter)
-	{
-		if (_globalConverters.TryGetValue(type, out converter!)) return true;
-
-		var attr = type.GetCustomAttribute<DataTagConverterAttribute>();
-		if (attr is not null)
-		{
-			converter = TypeMetadataCache.GetConverterInstance(attr.ConverterType);
-			return true;
-		}
-
-		return false;
-	}
+		=> DataContext.Default.TryGetConverter(type, out converter);
 }

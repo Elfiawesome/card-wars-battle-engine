@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Reflection;
 using CardWars.Core.Data.Converters;
-using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Tags;
 
 namespace CardWars.Core.Data.Mapping.Internal;
 
 internal static class TagSerializer
 {
-	public static CompoundTag SerializeObject(object obj, Type declaredType, bool includeType = true)
+	public static CompoundTag SerializeObject(DataContext ctx, object obj, Type declaredType, bool includeType = true)
 	{
 		if (obj is CompoundTag existing) return (CompoundTag)existing.Clone();
 
@@ -17,10 +16,10 @@ internal static class TagSerializer
 
 		if (includeType)
 		{
-			var runtimeTypeId = DataTagTypeRegistry.GetTypeId(runtimeType);
+			var runtimeTypeId = ctx.GetTypeId(runtimeType);
 			if (runtimeTypeId is not null)
 			{
-				compound.Set(DataTagMapper.TypeDiscriminatorKey, runtimeTypeId);
+				compound.Set(ctx.TypeDiscriminatorKey, runtimeTypeId);
 			}
 		}
 
@@ -32,7 +31,7 @@ internal static class TagSerializer
 			var val = prop.PropertyInfo.GetValue(obj);
 			if (val is null) continue;
 
-			var tag = SerializeValue(val, prop.PropertyInfo.PropertyType, prop.Converter);
+			var tag = SerializeValue(ctx, val, prop.PropertyInfo.PropertyType, prop.Converter);
 			if (tag is not null)
 			{
 				compound.Set(prop.TagKey, tag);
@@ -42,7 +41,7 @@ internal static class TagSerializer
 		return compound;
 	}
 
-	public static DataTag? SerializeValue(object? value, Type declaredType, IDataTagConverter? propertyConverter = null)
+	public static DataTag? SerializeValue(DataContext ctx, object? value, Type declaredType, IDataTagConverter? propertyConverter = null)
 	{
 		if (value is null) return null;
 		if (value is DataTag directTag) return directTag.Clone();
@@ -51,8 +50,8 @@ internal static class TagSerializer
 
 		// 1. Property or Type Converters
 		if (propertyConverter is not null) return propertyConverter.ToTag(value);
-		if (DataTagMapper.TryGetConverter(actualType, out var typeConverter) ||
-			DataTagMapper.TryGetConverter(value.GetType(), out typeConverter))
+		if (ctx.TryGetConverter(actualType, out var typeConverter) ||
+			ctx.TryGetConverter(value.GetType(), out typeConverter))
 		{
 			return typeConverter.ToTag(value);
 		}
@@ -60,7 +59,7 @@ internal static class TagSerializer
 		// 2. Dictionaries (Checked BEFORE generic IEnumerable)
 		if (value is IDictionary dict)
 		{
-			return SerializeDictionary(dict);
+			return SerializeDictionary(ctx, dict);
 		}
 
 		// 3. Primitives
@@ -81,13 +80,13 @@ internal static class TagSerializer
 
 		// 5. Collections
 		if (value is IEnumerable list)
-			return SerializeList(list, actualType);
+			return SerializeList(ctx, list, actualType);
 
 		// 6. Complex objects / Single-value wrappers
-		return SerializeComplexValue(value);
+		return SerializeComplexValue(ctx, value);
 	}
 
-	private static DataTag SerializeDictionary(IDictionary dict)
+	private static DataTag SerializeDictionary(DataContext ctx, IDictionary dict)
 	{
 		var dictType = dict.GetType();
 		var keyType = dictType.IsGenericType ? dictType.GetGenericArguments()[0] : typeof(object);
@@ -100,7 +99,7 @@ internal static class TagSerializer
 			{
 				if (entry.Key is string keyStr)
 				{
-					var valTag = SerializeValue(entry.Value, entry.Value?.GetType() ?? typeof(object));
+					var valTag = SerializeValue(ctx, entry.Value, entry.Value?.GetType() ?? typeof(object));
 					if (valTag is not null) compound.Set(keyStr, valTag);
 				}
 			}
@@ -111,8 +110,8 @@ internal static class TagSerializer
 		var listTag = new ListTag();
 		foreach (DictionaryEntry entry in dict)
 		{
-			var kTag = SerializeValue(entry.Key, entry.Key?.GetType() ?? typeof(object));
-			var vTag = SerializeValue(entry.Value, entry.Value?.GetType() ?? typeof(object));
+			var kTag = SerializeValue(ctx, entry.Key, entry.Key?.GetType() ?? typeof(object));
+			var vTag = SerializeValue(ctx, entry.Value, entry.Value?.GetType() ?? typeof(object));
 
 			if (kTag is not null && vTag is not null)
 			{
@@ -122,20 +121,20 @@ internal static class TagSerializer
 		return listTag;
 	}
 
-	private static ListTag SerializeList(IEnumerable list, Type collectionType)
+	private static ListTag SerializeList(DataContext ctx, IEnumerable list, Type collectionType)
 	{
 		var elemType = GetElementType(collectionType) ?? typeof(object);
 		var tagList = new ListTag();
 		foreach (var item in list)
 		{
 			if (item is null) continue;
-			var tag = SerializeValue(item, elemType);
+			var tag = SerializeValue(ctx, item, elemType);
 			if (tag is not null) tagList.Add(tag);
 		}
 		return tagList;
 	}
 
-	private static DataTag SerializeComplexValue(object value)
+	private static DataTag SerializeComplexValue(DataContext ctx, object value)
 	{
 		var type = value.GetType();
 
@@ -147,7 +146,7 @@ internal static class TagSerializer
 		if (type.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, [typeof(string)]) is not null)
 			return new StringTag(value.ToString() ?? string.Empty);
 
-		return SerializeObject(value, type);
+		return SerializeObject(ctx, value, type);
 	}
 
 	public static Type? GetElementType(Type collectionType)
