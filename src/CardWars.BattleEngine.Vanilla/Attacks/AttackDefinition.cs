@@ -1,6 +1,7 @@
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Attacks;
@@ -99,11 +100,11 @@ public sealed record AttackProfile
 
 			// Entire horizontal row: offset applies to Y only
 			AttackPatternType.Row =>
-				target.Y == origin.Y + pattern.Offset.Y,
+				target.X == origin.X + pattern.Offset.X,
 
 			// Entire vertical column: offset applies to X only
 			AttackPatternType.Column =>
-				target.X == origin.X + pattern.Offset.X,
+				target.Y == origin.Y + pattern.Offset.Y,
 
 			// Everything, offset is ignored
 			AttackPatternType.All => true,
