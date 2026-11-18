@@ -48,7 +48,12 @@ public sealed class CardInspectionAttackHandler : ICardInspectionHandler
 					filled = true;
 					if (spec.Percent != 0.0) { text = $"{(int)Math.Round(spec.Percent * 100)}%"; }
 					else if (spec.Amount != 0.0) { text = $"{spec.Amount}"; }
-					if (attack.Definition.Bypass) crossed = true;
+				}
+
+				if (Midpoint == x && Midpoint == y)
+				{
+					text = "";
+					if (attack.Definition.Bypass) { crossed = true; }
 				}
 
 				inspectionGridCells.Add(new(

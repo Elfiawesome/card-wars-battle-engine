@@ -3,7 +3,7 @@
 	"charge_cost": 1,
 	"bypass": true,
 	"patterns": [
-		{ "type": "all", "value": "100%" }
+		{ "type": "all", "damage": { "percent": 1.0 } }
 	],
 	"texture":"cardwars:texture/icon/attacks/spread"
 }

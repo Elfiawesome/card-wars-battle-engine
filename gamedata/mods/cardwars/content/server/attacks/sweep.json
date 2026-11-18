@@ -3,7 +3,7 @@
 	"charge_cost": 1,
 	"bypass": false,
 	"patterns": [
-		{ "type": "row", "value": "100%" }
+		{ "type": "row", "damage": { "percent": 1.0 } }
 	],
 	"texture":"cardwars:texture/icon/attacks/sweep"
 }
