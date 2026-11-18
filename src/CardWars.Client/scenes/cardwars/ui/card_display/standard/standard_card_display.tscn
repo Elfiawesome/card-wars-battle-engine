@@ -258,6 +258,7 @@ theme_override_constants/margin_bottom = 15
 [node name="SideStatsContainer" type="VBoxContainer" parent="InfoContainer/MarginContainer" unique_id=1916151776]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 8
 script = ExtResource("12_dc")
 item_scene = ExtResource("14_sp")
 

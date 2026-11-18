@@ -92,7 +92,7 @@ public partial class HandManager : Control
 		card.GuiInput += (e) => OnCardGuiInput(e, card);
 		AddChild(card);
 		card.SetData(entity.Data, instance.Registry);
-		card.SetDisplay(CardDisplay.DisplayType.Simplified);
+		card.SetDisplay(CardDisplay.DisplayType.Full);
 		_cards[id] = card;
 		ArrangeCard();
 	}
@@ -218,73 +218,57 @@ public partial class HandManager : Control
 		ClearInspectionPanels();
 		if (cardRect is not { } rect || card is null) return;
 		if (BattleInstance is not { } instance) return;
-		// Set middle pos
-		rect = new Rect2(rect.Position - rect.Size / 2, rect.Size);
-
-		var cardId = EntityId.None;
-		foreach (var entry in _cards)
-		{
-			if (entry.Value != card) continue;
-			cardId = entry.Key;
-			break;
-		}
+		// Get Card Id
+		var cardId = Cards.FirstOrDefault(c => c.Value == card).Key;
 
 		if (cardId.IsNone || instance.State.Get<GenericCard>(cardId) is not { } entity) return;
 
 		var panels = CardInspectionCollector.Collect(entity.Data, instance.Registry);
 		if (panels.Count == 0) return;
 
-		var prepared = new List<Control>();
+		var preparedPanels = new List<Control>();
 		var totalHeight = 0f;
-		var panelWidth = 0f;
+		var panelWidth = rect.Size.X;
 		const float panelGap = 12f;
 
-		foreach (var data in panels)
+		foreach (var inspectionData in panels)
 		{
-			var displayIdN = BattleInstance.BattleRegistry?.DefaultCardInspectionPanel;
-			if (displayIdN is not { } displayId) continue;
+			// Get the inspection design skin TODO: Maybe switch it up with skins?
+			if (BattleInstance.BattleRegistry?.DefaultCardInspectionPanel is not { } displayId) continue;
 			var panel = instance.Registry.Client?.UserInterface.Instantiate<Control>(displayId);
 			if (panel is null) continue;
 
+			// Create and add this new panel over
+			AddChild(panel);
 			panel.MouseFilter = MouseFilterEnum.Ignore;
 			panel.MouseBehaviorRecursive = MouseBehaviorRecursiveEnum.Disabled;
-			ApplyInspectionData(panel, data, instance);
 
-			var minimum = panel.GetCombinedMinimumSize();
-			var size = new Vector2(Mathf.Max(350f, minimum.X), Mathf.Max(76f, minimum.Y));
-			panel.CustomMinimumSize = size;
-			panel.Size = size;
-			panelWidth = Mathf.Max(panelWidth, size.X);
-			totalHeight += size.Y;
-			prepared.Add(panel);
+			ApplyInspectionData(panel, inspectionData, instance);
+
+			panelWidth = Mathf.Max(panelWidth, panel.GetMinimumSize().X);
+			totalHeight += panel.GetMinimumSize().Y + panelGap;
+			preparedPanels.Add(panel);
 		}
 
-		if (prepared.Count == 0) return;
-		totalHeight += (prepared.Count - 1) * panelGap;
+		var xside = Math.Sign(Size.X / 2 - rect.Position.X);
+		if (xside == 0) xside = 1;
+		float x = rect.Position.X + xside * (rect.Size.X / 2 + panelGap);
+		float y = Math.Min(rect.Position.Y - rect.Size.Y / 2, Size.Y - totalHeight);
+		if (xside == -1) x -= panelWidth;
 
-		var viewport = Size;
-		var leftSpace = rect.Position.X;
-		var rightSpace = viewport.X - rect.End.X;
-		var placeLeft = leftSpace > rightSpace;
-		const float cardGap = 16f;
-		var x = placeLeft ? rect.Position.X - panelWidth - cardGap : rect.End.X + cardGap;
-		x = Mathf.Clamp(x, 16f, Mathf.Max(16f, viewport.X - panelWidth - 16f));
-		// var y = Mathf.Clamp(rect.GetCenter().Y - totalHeight / 2f, 16f, Mathf.Max(16f, viewport.Y - totalHeight - 16f));
-		var y = Mathf.Clamp(rect.Position.Y, 0f, Mathf.Max(0f, viewport.Y - totalHeight));
-
-
-		var cursorY = y;
-		for (var index = 0; index < prepared.Count; index++)
+		float currentY = 0;
+		for (var index = 0; index < preparedPanels.Count; index++)
 		{
-			var panel = prepared[index];
-			panel.Position = new Vector2(x, cursorY);
+			var panel = preparedPanels[index];
 			panel.ZIndex = HoverZIndex;
-			panel.Set("card_dimensions", rect);
-			panel.Set("panel_index", index);
-			panel.Set("animated_from_right", placeLeft);
-			AddChild(panel);
+			panel.Position = new(x, y + currentY);
 			_inspectionPanels.Add(panel);
-			cursorY += panel.Size.Y + panelGap;
+			currentY += panel.Size.Y + panelGap;
+			// To make it neater, we standardize the x
+			panel.Size = new(panelWidth, panel.Size.Y);
+			// Play animation
+			panel.Set("card_rect", rect);
+			if (panel.HasMethod("play_intro")) panel.Call("play_intro", [index * 0.03]);
 		}
 	}
 

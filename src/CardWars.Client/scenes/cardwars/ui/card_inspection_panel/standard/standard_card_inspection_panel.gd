@@ -5,32 +5,22 @@ extends MarginContainer
 @export var title_label: Label
 @export var content_label: Label
 
-# We can set from the consumer to set where the card is at so we can animate if needed
-@export var card_dimensions: Rect2
-@export var panel_index: int = 0
-@export var animated_from_right: bool = false
+var card_rect: Rect2
 
 func _ready() -> void:
-	if card_dimensions.size == Vector2.ZERO:
-		return
+	pass
 
-	var target := position
-	var offset := 32.0 if animated_from_right else -32.0
-	position = target + Vector2(offset, 0.0)
+func play_intro(delay: float = 0) -> void:
+	var duration: float = 0.25
+	var t: Tween = create_tween()
+	t.set_parallel(true).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	t.tween_property(self, "modulate:a", modulate.a, duration).set_delay(delay)
+	t.tween_property(self, "position", position, duration).set_delay(delay)
+
 	modulate.a = 0.0
+	z_index -= 1
+	position.x = card_rect.position.x - get_minimum_size().x / 2
 
-	var tween := create_tween()
-	tween.set_parallel(true).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	var delay := 0.03 * panel_index
-	tween.tween_property(self, "position", target, 0.25).set_delay(delay)
-	tween.tween_property(self, "modulate:a", 1.0, 0.25).set_delay(delay)
-
-	# Grid Example
-	# grid_container.set_items([
-	# 	{},{"text":"5","filled":true},{},
-	# 	{"text":"5","filled":true},{"crossed":true,"filled":true},{"text":"5","filled":true},
-	# 	{},{"text":"5","filled":true},{}
-	# ])
 
 func set_grid(items: Array, grid_width: int = 3) -> void:
 	if items.size() > 0:
