@@ -207,7 +207,7 @@ public class VanillaMod : IBattleEngineMod
 		{
 			switch (content.Category)
 			{
-				case ["cards", "units"]:
+				case ["cards", "units", ..]:
 					var unitDataTag = content.ReadAs<CompoundTag>();
 					if (unitDataTag is null) continue;
 
@@ -242,7 +242,7 @@ public class VanillaMod : IBattleEngineMod
 					registry.CardDefinitions.Register(content.Id, unitDataTag);
 					Log.Info($"Registered Unit Card: {content.Id}");
 					break;
-				case ["cards", "spells"]:
+				case ["cards", "spells", ..]:
 					var spellDataTag = content.ReadAs<CompoundTag>();
 					if (spellDataTag is null) continue;
 
@@ -250,7 +250,7 @@ public class VanillaMod : IBattleEngineMod
 					registry.CardDefinitions.Register(content.Id, spellDataTag);
 					Log.Info($"Registered Spell Card: {content.Id}");
 					break;
-				case ["cards", "heroes"]:
+				case ["cards", "heroes", ..]:
 					var heroDataTag = content.ReadAs<CompoundTag>();
 					if (heroDataTag is null) continue;
 

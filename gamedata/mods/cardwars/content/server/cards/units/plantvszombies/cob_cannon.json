@@ -1,0 +1,17 @@
+{
+	"name": "Cob Cannon",
+	"world": "Plants vs. Zombies",
+	"pt": 1,
+	"hp": 2,
+	"atk": 3,
+	"sp_atks": [
+		{
+			"resource": "cardwars:attacks/spread"
+		}
+	],
+	"textures": {
+		"main": "cardwars:texture/cards/units/plantvszombies/cob_cannon",
+		"background": "cardwars:texture/cards/worlds/plantvszombies"
+	},
+	"abilities": []
+}

@@ -1,11 +1,7 @@
 {
 	"name": "Captain",
-	"pt": 1,
-	"hp": 2,
-	"atk": 3,
-	"sp_atks": [],
+	"hrt": 10,
 	"textures": {
 		"main": "cardwars:texture/cards/heroes/captain"
-	},
-	"abilities": []
+	}
 }

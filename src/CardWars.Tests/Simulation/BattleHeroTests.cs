@@ -62,7 +62,7 @@ public sealed class BattleHeroTests
 	{
 		var battle = BattleTestHarness.Create((id, definition) =>
 		{
-			if (id != TestCards.By) return;
+			if (id != TestCards.CobCannon) return;
 
 			definition.Set("sp_atks", new ListTag().Add(TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(
 			[

@@ -78,7 +78,7 @@ public sealed class BattleAttackTests
 	{
 		var battle = BattleTestHarness.Create((id, definition) =>
 		{
-			if (id == TestCards.By) definition.Set("charge", 0);
+			if (id == TestCards.CobCannon) definition.Set("charge", 0);
 		});
 		battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));
 		var attacker = battle.CardIn(battle.SlotOf(battle.Player1Id, new UnitSlotPos(0, 0)));

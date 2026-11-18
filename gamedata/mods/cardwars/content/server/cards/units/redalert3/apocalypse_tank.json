@@ -1,0 +1,13 @@
+{
+	"name": "Apocalypse Tank",
+	"world": "Red Alert 3",
+	"pt": 1,
+	"hp": 2,
+	"atk": 3,
+	"sp_atks": [],
+	"textures": {
+		"main": "cardwars:texture/cards/units/redalert3/apocalypse_tank",
+		"background": "cardwars:texture/cards/worlds/redalert3"
+	},
+	"abilities": []
+}

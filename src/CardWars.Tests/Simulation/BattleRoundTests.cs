@@ -43,7 +43,7 @@ public sealed class BattleRoundTests
 	{
 		var battle = BattleTestHarness.Create((id, definition) =>
 		{
-			if (id == TestCards.By) definition.Set("hp", 1);
+			if (id == TestCards.CobCannon) definition.Set("hp", 1);
 		});
 
 		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));
