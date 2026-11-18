@@ -7,7 +7,7 @@ namespace CardWars.BattleEngine.Vanilla.Rules;
 
 public sealed class BattleActionValidator(BattleEngineRegistry registry)
 {
-	private readonly AttackResolver _attackResolver = new();
+	private readonly AttackResolver _attackResolver = new(registry);
 	private readonly CardTargetFilterEvaluator _targetFilter = new(registry.DataDriven);
 
 	// --- Playing Cards ---

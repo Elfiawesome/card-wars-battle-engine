@@ -6,7 +6,7 @@ using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Attacks;
 
-public sealed class AttackResolver
+public sealed class AttackResolver(BattleEngineRegistry registry)
 {
 	public AttackProfile Resolve(GenericCard card)
 	{
@@ -18,8 +18,7 @@ public sealed class AttackResolver
 			{
 				if (item is CompoundTag compoundTag)
 				{
-					var def = DataTagMapper.FromTag<AttackDefinition>(compoundTag);
-					definitions.Add(def);
+					GetAttackDefinitionFromPointer(compoundTag);
 				}
 			}
 
@@ -39,7 +38,7 @@ public sealed class AttackResolver
 		// Get the custom BA (if have any)
 		if (card.Data.Get("ba_atk") is CompoundTag baAtk)
 		{
-			var def = DataTagMapper.FromTag<AttackDefinition>(baAtk);
+			var def = GetAttackDefinitionFromPointer(baAtk);
 			return new AttackProfile(false, def);
 		}
 
@@ -49,4 +48,25 @@ public sealed class AttackResolver
 
 	public bool CanAfford(GenericCard card, AttackProfile attack)
 		=> card.Charge >= attack.ChargeCost;
+
+
+	public AttackDefinition? GetAttackDefinitionFromPointer(CompoundTag compoundTag)
+	{
+		var pointer = DataTagMapper.FromTag<ContentPointer>(compoundTag);
+		if (pointer.Resource is { } resourceId)
+		{
+			var definition = registry.AttackDefinitions.Get(resourceId);
+			if (definition is not null)
+			{
+				var def = DataTagMapper.FromTag<AttackDefinition>(definition);
+				return def;
+			}
+		}
+		else if (pointer.Definition is { } definition)
+		{
+			var def = DataTagMapper.FromTag<AttackDefinition>(definition);
+			return def;
+		}
+		return null;
+	}
 }
