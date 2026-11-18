@@ -16,7 +16,7 @@ public sealed class BattleSpAttackTests
 	{
 		var battle = BattleTestHarness.Create((id, definition) =>
 		{
-			if (id != TestCards.John) return;
+			if (id != TestCards.By) return;
 
 			definition.Set("charge", 2);
 			definition.Set("sp_atks", new ListTag()
@@ -43,7 +43,7 @@ public sealed class BattleSpAttackTests
 	{
 		var battle = BattleTestHarness.Create((id, definition) =>
 		{
-			if (id != TestCards.John) return;
+			if (id != TestCards.By) return;
 
 			definition.Set("charge", 1);
 			definition.Set("ba_atk", BaAtk(Pattern(AttackPatternType.Cell, 100)));
@@ -71,10 +71,10 @@ public sealed class BattleSpAttackTests
 	{
 		var battle = BattleTestHarness.Create((id, definition) =>
 		{
-			if (id != TestCards.John) return;
+			if (id != TestCards.By) return;
 
 			definition.Set("sp_atks", new ListTag()
-				.Add(SpAtk("Pierce", 0, true, Pattern(AttackPatternType.Cell, 1, 0, -1))));
+				.Add(SpAtk("Pierce", 0, true, Pattern(AttackPatternType.Cell, 1))));
 		});
 
 		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));
@@ -98,7 +98,7 @@ public sealed class BattleSpAttackTests
 	{
 		var battle = BattleTestHarness.Create((id, definition) =>
 		{
-			if (id != TestCards.John) return;
+			if (id != TestCards.By) return;
 
 			definition.Set("ba_atk", BaAtk(Pattern(AttackPatternType.Row, 2)));
 		});

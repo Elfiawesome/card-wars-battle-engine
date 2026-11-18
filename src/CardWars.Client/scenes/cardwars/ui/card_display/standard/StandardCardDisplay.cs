@@ -11,6 +11,8 @@ namespace CardWars.Client.scenes.cardwars.ui.card_display.standard;
 
 public partial class StandardCardDisplay : CardDisplay
 {
+	[Export] TextureRect? BackgroundArt;
+	[Export] TextureRect? MainArt;
 	[Export] Control? PtContainer;
 	[Export] Label? PtLabel;
 	[Export] Control? HrtContainer;
@@ -32,6 +34,8 @@ public partial class StandardCardDisplay : CardDisplay
 
 	public override void SetData(CompoundTag data, ClientInstanceRegistry registry)
 	{
+		if (BackgroundArt is not { } backgroundArt) return;
+		if (MainArt is not { } mainArt) return;
 		if (PtContainer is not { } ptContainer) return;
 		if (PtLabel is not { } ptLabel) return;
 		if (HrtContainer is not { } hrtContainer) return;
@@ -55,6 +59,17 @@ public partial class StandardCardDisplay : CardDisplay
 		atkLabel.Text = $"{data.GetInt("atk")}";
 		flavourTextLabel.Text = data.GetString("flavour_text");
 		hrtLabel.Text = $"{data.GetInt("hrt")}";
+
+		if (data.GetCompound("textures") is CompoundTag textures)
+		{
+			ResourceId mainResourceId = ResourceId.Parse(textures.GetString("main"));
+			if (registry.Client?.Resources.Instantiate<Texture2D>(mainResourceId) is { } mainResource)
+				mainArt.Texture = mainResource;
+			
+			ResourceId backgroundResourceId = ResourceId.Parse(textures.GetString("background"));
+			if (registry.Client?.Resources.Instantiate<Texture2D>(backgroundResourceId) is { } backgroundResource)
+				backgroundArt.Texture = backgroundResource;
+		}
 
 		statContainer.Visible = false;
 		ptContainer.Visible = false;

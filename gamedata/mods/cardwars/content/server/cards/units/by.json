@@ -1,0 +1,11 @@
+{
+	"name": "BY",
+	"pt": 1,
+	"hp": 2,
+	"atk": 3,
+	"sp_atks": [],
+	"textures": {
+		"main": "cardwars:texture/cards/by"
+	},
+	"abilities": []
+}

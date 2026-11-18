@@ -3,6 +3,7 @@ using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Entity;
 
@@ -23,6 +24,9 @@ public class GenericCard(EntityId id) : IEntity, IParentableEntity
 
 	// --- Base Card Data ---
 	public string Name => Data.GetString("name");
+	public ResourceId BackgroundTexture => ResourceId.Parse(Textures.GetString("background"));
+	public ResourceId MainTexture => ResourceId.Parse(Textures.GetString("main"));
+	public CompoundTag Textures => Data.GetCompound("textures") ?? new();
 
 	// --- Unit Specific Data ---
 	public int Pt => Data.GetInt("pt");

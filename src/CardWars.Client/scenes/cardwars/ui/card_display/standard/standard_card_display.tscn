@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://bk7jiwgxicc04"]
 
 [ext_resource type="Script" uid="uid://yaf3mpip7sn6" path="res://scenes/cardwars/ui/card_display/standard/StandardCardDisplay.cs" id="1_ivaen"]
-[ext_resource type="Texture2D" uid="uid://b77joxtigr563" path="res://assets/cardwars/texture/cards/by.jpg" id="2_8dmay"]
 [ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/cardwars/shader/blur.gdshader" id="3_deubm"]
 [ext_resource type="Texture2D" uid="uid://d1pxi4dbq0ieq" path="res://assets/cardwars/texture/icon/stat/pt.svg" id="4_mt1s7"]
 [ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="5_cx7xc"]
@@ -34,13 +33,15 @@ shader_parameter/blur_amount = 2.000000095
 shader_parameter/saturation = 1.6
 shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 
-[node name="StandardCardDisplay" type="Control" unique_id=934905130 node_paths=PackedStringArray("PtContainer", "PtLabel", "HrtContainer", "HrtLabel", "NameLabel", "WorldLabel", "CardTypeLabel", "SideStatsContainer", "BtmDivStarTexture", "BtmDivGradTexture", "StatContainer", "HpLabel", "AtkLabel", "FlavourTextLabel", "AbilitiesContainer")]
+[node name="StandardCardDisplay" type="Control" unique_id=934905130 node_paths=PackedStringArray("BackgroundArt", "MainArt", "PtContainer", "PtLabel", "HrtContainer", "HrtLabel", "NameLabel", "WorldLabel", "CardTypeLabel", "SideStatsContainer", "BtmDivStarTexture", "BtmDivGradTexture", "StatContainer", "HpLabel", "AtkLabel", "FlavourTextLabel", "AbilitiesContainer")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1408.0
 offset_bottom = 1968.0
 pivot_offset_ratio = Vector2(0.5, 0.5)
 script = ExtResource("1_ivaen")
+BackgroundArt = NodePath("TextureContainer/BackgroundArt")
+MainArt = NodePath("TextureContainer/CharacterArt")
 PtContainer = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox")
 PtLabel = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/PointBox/MarginContainer/Label")
 HrtContainer = NodePath("InfoContainer/TopInfoContainer/NameInfoContainer/HBoxContainer/HrtBox")
@@ -67,6 +68,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="BackgroundArt" type="TextureRect" parent="TextureContainer" unique_id=1775090872]
+clip_contents = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -77,13 +79,13 @@ expand_mode = 5
 stretch_mode = 6
 
 [node name="CharacterArt" type="TextureRect" parent="TextureContainer" unique_id=1134226534]
+clip_contents = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_8dmay")
 expand_mode = 5
 stretch_mode = 6
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b77joxtigr563"
-path="res://.godot/imported/by.jpg-2382d892d1a73eeeb134bd58ebb53407.ctex"
+uid="uid://bts0xoyipqqg4"
+path="res://.godot/imported/by.png-e88928cd64e1fa78e231d79b675465bb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cardwars/texture/cards/by.jpg"
-dest_files=["res://.godot/imported/by.jpg-2382d892d1a73eeeb134bd58ebb53407.ctex"]
+source_file="res://assets/cardwars/texture/cards/by.png"
+dest_files=["res://.godot/imported/by.png-e88928cd64e1fa78e231d79b675465bb.ctex"]
 
 [params]
 

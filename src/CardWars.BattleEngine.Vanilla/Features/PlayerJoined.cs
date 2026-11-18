@@ -23,11 +23,15 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 	// TODO: Remove starter deck with player's deck itself. Using this as a test first
 	private static readonly ResourceId[] StarterDeck =
 	[
-		ResourceId.Vanilla("cards/units/john"),
-		ResourceId.Vanilla("cards/units/elbert"),
-		ResourceId.Vanilla("cards/units/nicholas"),
-		ResourceId.Vanilla("cards/units/john"),
-		ResourceId.Vanilla("cards/units/john"),
+		ResourceId.Vanilla("cards/units/by"),
+		ResourceId.Vanilla("cards/units/bz"),
+		ResourceId.Vanilla("cards/units/captain"),
+		ResourceId.Vanilla("cards/units/engineer"),
+		ResourceId.Vanilla("cards/units/faketree"),
+		ResourceId.Vanilla("cards/units/hacker"),
+		ResourceId.Vanilla("cards/units/king"),
+		ResourceId.Vanilla("cards/units/psycho"),
+		ResourceId.Vanilla("cards/units/universal"),
 	];
 
 	private static readonly ResourceId[] Heroes =

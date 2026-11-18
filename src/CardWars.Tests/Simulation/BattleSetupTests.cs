@@ -17,7 +17,7 @@ public sealed class BattleSetupTests
 		Assert.Single(player.DeckIds);
 		Assert.Single(player.BattlefieldIds);
 		Assert.Empty(player.HandCardIds);
-		Assert.Equal(5, battle.DeckOf(player.Id).CardIds.Count);
+		Assert.Equal(9, battle.DeckOf(player.Id).CardIds.Count);
 
 		var slots = battle.SlotsOf(player.Id);
 		Assert.Equal(4, slots.Count);
@@ -120,7 +120,7 @@ public sealed class BattleSetupTests
 			new DrawCardRequestInput(deck.Id, battle.Player2Id));
 
 		Assert.Equal(handCount, battle.Player2.HandCardIds.Count);
-		Assert.Equal(5, deck.CardIds.Count);
+		Assert.Equal(9, deck.CardIds.Count);
 	}
 
 	[Fact]
