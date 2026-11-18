@@ -12,7 +12,7 @@ namespace CardWars.Tests.Simulation;
 public sealed class BattleHeroTests
 {
 	[Fact]
-	public void PlayerJoin_CreatesAndAttachesIlyasForBothPlayers()
+	public void PlayerJoin_CreatesAndAttachesCaptainForBothPlayers()
 	{
 		var battle = BattleTestHarness.Create();
 
@@ -20,7 +20,7 @@ public sealed class BattleHeroTests
 		var opponentHero = battle.HeroOf(battle.Player2Id);
 
 		Assert.True(hero.IsHero);
-		Assert.Equal("Ilyas", hero.Name);
+		Assert.Equal("Captain", hero.Name);
 		Assert.Equal(10, hero.Hrt);
 		Assert.Equal(battle.BattlefieldOf(battle.Player1Id).Id, hero.OwnerBattlefieldId);
 		Assert.Equal(opponentHero.OwnerBattlefieldId, battle.BattlefieldOf(battle.Player2Id).Id);

@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using CardWars.Client.scripts.cardwars.layout;
 using CardWars.Client.scripts.cardwars.systems;
-using CardWars.Client.scripts.cardwars.ui.card_inspection_panel;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.registry;
 using CardWars.Core.Registry;
@@ -21,6 +19,5 @@ public class BattleRegistry : IClientRegistryExtension
 	public ResourceId DefaultCardDisplay;
 	public ResourceId DefaultCardInspectionPanel;
 	
-	public Registry<ResourceId, ICardInspectionHandler> CardInspectionHandlers = new();
-	public List<ResourceId> CardInspectionHandlerOrder = [];
+	public CardInspectionHandlerRegistry CardInspectionHandlers = new();
 }

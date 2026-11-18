@@ -46,9 +46,6 @@ public class VanillaMod : IClientMod
 		BattleRegistry.CardInspectionHandlers.Register(ResourceId.Vanilla("attack"), new CardInspectionAttackHandler());
 		BattleRegistry.CardInspectionHandlers.Register(ResourceId.Vanilla("abilities"), new CardInspectionAbilitiesHandler());
 		BattleRegistry.CardInspectionHandlers.Register(ResourceId.Vanilla("keywords"), new CardInspectionKeywordHandler());
-		BattleRegistry.CardInspectionHandlerOrder.Add(ResourceId.Vanilla("attack"));
-		BattleRegistry.CardInspectionHandlerOrder.Add(ResourceId.Vanilla("abilities"));
-		BattleRegistry.CardInspectionHandlerOrder.Add(ResourceId.Vanilla("keywords"));
 
 		// Set display
 		BattleRegistry.DefaultCardDisplay = SharedIds.UI.StandardCardDisplay;

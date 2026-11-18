@@ -223,7 +223,8 @@ public partial class HandManager : Control
 
 		if (cardId.IsNone || instance.State.Get<GenericCard>(cardId) is not { } entity) return;
 
-		var panels = CardInspectionCollector.Collect(entity.Data, instance.Registry);
+		if (instance.BattleRegistry is not { } battleRegistry) return;
+		var panels = battleRegistry.CardInspectionHandlers.Collect(entity.Data, instance.Registry);
 		if (panels.Count == 0) return;
 
 		var preparedPanels = new List<Control>();
