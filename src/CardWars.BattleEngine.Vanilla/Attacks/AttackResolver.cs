@@ -6,7 +6,7 @@ using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Attacks;
 
-public sealed class AttackResolver(BattleEngineRegistry registry)
+public sealed class AttackResolver
 {
 	public AttackProfile Resolve(GenericCard card)
 	{
@@ -16,8 +16,10 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 
 			foreach (var item in spAtks.Items)
 			{
-				if (TryResolve(item, "SP ATK", out var definition))
-					definitions.Add(definition);
+				if (item is CompoundTag compoundTag)
+				{
+					var def = DataTagMapper.FromTag<AttackDefinition>(compoundTag);
+				}
 			}
 
 			if (definitions.Count > 0)
@@ -33,52 +35,17 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 			Log.Warn($"Card [{card.Id}] has no valid sp_atk definitions, falling back to ba_atk");
 		}
 
-		if (TryResolve(card.Data.Get("ba_atk"), "Basic Attack", out var basic))
-			return FromDefinition(basic, false);
+		// Get the custom BA (if have any)
+		if (card.Data.Get("ba_atk") is CompoundTag baAtk)
+		{
+			var def = DataTagMapper.FromTag<AttackDefinition>(baAtk);
+			return new AttackProfile(false, def);
+		}
 
-		return FromDefinition(AttackDefinition.DefaultBasic, false);
+		// Default
+		return new AttackProfile(false, new AttackDefinition([]));
 	}
 
 	public bool CanAfford(GenericCard card, AttackProfile attack)
 		=> card.Charge >= attack.ChargeCost;
-
-	private bool TryResolve(DataTag? tag, string fallbackName, out AttackDefinition definition)
-	{
-		definition = AttackDefinition.DefaultBasic;
-		if (tag is not CompoundTag pointerTag) return false;
-
-		ContentPointer pointer;
-		try
-		{
-			pointer = DataTagMapper.FromTag<ContentPointer>(pointerTag);
-		}
-		catch (Exception ex)
-		{
-			Log.Warn($"Could not parse attack pointer for [{fallbackName}]: {ex.Message}");
-			return false;
-		}
-
-		if (pointer.Resource is { } id)
-		{
-			var raw = registry.AttackDefinitions.Get(id);
-			if (raw is null)
-			{
-				Log.Warn($"Attack definition [{id}] was not found");
-				return false;
-			}
-
-			return AttackDefinitionParser.TryParse(raw, fallbackName, out definition);
-		}
-
-		return pointer.Definition is { } inline
-			&& AttackDefinitionParser.TryParse(inline, fallbackName, out definition);
-	}
-
-	private static AttackProfile FromDefinition(AttackDefinition definition, bool isSpAtk)
-		=> new(
-			definition.Name,
-			definition.ChargeCost,
-			definition.Bypass,
-			definition.Patterns,
-			isSpAtk);
 }

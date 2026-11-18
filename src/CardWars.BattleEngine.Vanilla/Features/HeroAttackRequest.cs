@@ -114,7 +114,6 @@ public class HeroAttackEventHandler : IEventHandler<HeroAttackEvent>
 			return;
 		}
 
-		var damage = AttackDamageResolver.GetOriginDamage(attackerCard, attack);
 		var batch = new BlockBatch([])
 		{
 			AnimationId = SharedIds.Animations.Attack.ToString(),
@@ -131,12 +130,15 @@ public class HeroAttackEventHandler : IEventHandler<HeroAttackEvent>
 				new IntTag(attackerCard.Charge - attack.ChargeCost)));
 		}
 
-		context.QueueEvent(new HeroTakeDamageEvent()
+		if (attack.IsHit(out var spec))
 		{
-			HeroCardId = hero.Id,
-			Amount = damage,
-			SourceId = attackerCard.Id
-		});
+			context.QueueEvent(new HeroTakeDamageEvent()
+			{
+				HeroCardId = hero.Id,
+				Amount = spec.Resolve(attackerCard.Atk),
+				SourceId = attackerCard.Id
+			});
+		}
 
 		context.ApplyBlockBatch(batch);
 	}

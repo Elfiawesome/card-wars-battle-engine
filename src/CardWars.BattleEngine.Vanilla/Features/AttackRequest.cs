@@ -114,7 +114,10 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 
 		// Check if Attacker & Target Unit are valid
 		if (state.Require<GenericCard>(request.AttackerId) is not { } attackerCard) return;
+		if (attackerCard.OwnerUnitSlotId is not { } attackerOwnerUnitSlotId) return;
+		if (state.Require<UnitSlot>(attackerOwnerUnitSlotId) is not { } attackerUnitSlot) return;
 		if (state.Require<GenericCard>(request.TargetId) is not { } targetCard) return;
+		if (state.GetParent<Battlefield>(request.TargetId) is not { } battlefield) return;
 		if (targetCard.OwnerUnitSlotId is not { } targetSlotId) { Log.Error("Target Card is not on any OwnerUnitSlotId"); return; }
 
 		if (state.GetParent<Player>(attackerCard)?.Id is not { } ownerId) return;
@@ -132,7 +135,6 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 			return;
 		}
 
-		var damage = AttackDamageResolver.Resolve(state, attackerCard, attack, targetSlotId);
 		var batch = new BlockBatch([])
 		{
 			AnimationId = SharedIds.Animations.Attack.ToString(),
@@ -149,19 +151,22 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 				new IntTag(attackerCard.Charge - attack.ChargeCost)));
 		}
 
-		foreach (var (slotId, amount) in damage)
+		foreach (var unitSlotId in battlefield.UnitSlotIds)
 		{
-			if (state.Get<UnitSlot>(slotId) is not { HoldingCardId: { } damagedCardId }) continue;
+			if (state.Get<UnitSlot>(unitSlotId) is not { } unitSlot) continue;
+			if (unitSlot.HoldingCardId is not { } damagedUnitId) continue;
 
-			context.QueueEvent(new UnitTakeDamageEvent()
+			if (attack.IsHit(attackerUnitSlot.Position, unitSlot.Position, out var spec))
 			{
-				Amt = amount,
-				DamagedUnitId = damagedCardId,
-				EntitySourceId = attackerCard.Id,
-				IsSPAtk = attack.IsSpAtk
-			});
+				context.QueueEvent(new UnitTakeDamageEvent()
+				{
+					Amt = spec.Resolve(attackerCard.Atk),
+					DamagedUnitId = damagedUnitId,
+					EntitySourceId = attackerCard.Id,
+					IsSPAtk = attack.IsSpAtk
+				});
+			}
 		}
-
 		context.ApplyBlockBatch(batch);
 	}
 }

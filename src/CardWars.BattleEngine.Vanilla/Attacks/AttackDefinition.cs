@@ -1,139 +1,117 @@
+using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Attacks;
 
-public enum AttackPatternType
-{
-	Single,
-	Row,
-	Column,
-	All,
-	Cell
-}
+public enum AttackPatternType { Row, Column, All, Cell }
 
-public readonly record struct AttackDamageSpec(bool IsPercent, int Value)
+public readonly record struct AttackDamageSpec(
+	float Percent = 0.0f,
+	int Amount = 0
+)
 {
-	public int Resolve(int attack)
-		=> IsPercent ? attack * Value / 100 : Value;
+	public int Resolve(int atkValue)
+		// Take the highest of each pattern's attack spec
+		=> Math.Max(
+			(int)Math.Round(atkValue * Percent),
+			Amount
+		);
 }
 
 public readonly record struct AttackPattern(
-	AttackPatternType Type,
-	int X,
-	int Y,
-	AttackDamageSpec Damage
+	[property: DataTag] AttackPatternType Type,
+	[property: DataTag] UnitSlotPos Offset,
+	[property: DataTag] AttackDamageSpec Damage
 );
 
 public sealed record AttackDefinition(
-	string Name,
-	int ChargeCost,
-	bool Bypass,
-	IReadOnlyList<AttackPattern> Patterns
-)
-{
-	public static AttackDefinition DefaultBasic { get; } = new("Basic Attack", 1, false, []);
-}
-
-public sealed record AttackProfile(
-	string Name,
-	int ChargeCost,
-	bool Bypass,
-	IReadOnlyList<AttackPattern> Patterns,
-	bool IsSpAtk
+	[property: DataTag] IReadOnlyList<AttackPattern> Patterns,
+	[property: DataTag] string Name = "BA Atk",
+	[property: DataTag] int ChargeCost = 1,
+	[property: DataTag] bool Bypass = false
 );
 
-public static class AttackDefinitionParser
+
+public sealed record AttackProfile
 {
-	public static bool TryParse(CompoundTag tag, string fallbackName, out AttackDefinition definition)
+	public string Name;
+	public int ChargeCost;
+	public bool Bypass;
+	public IReadOnlyList<AttackPattern> Patterns;
+	public bool IsSpAtk;
+
+	public AttackProfile(string name, int chargeCost, bool bypass, IReadOnlyList<AttackPattern> patterns, bool isSpAtk)
 	{
-		definition = AttackDefinition.DefaultBasic;
+		Name = name;
+		ChargeCost = chargeCost;
+		Bypass = bypass;
+		Patterns = patterns;
+		IsSpAtk = isSpAtk;
+	}
 
-		var name = tag.GetString("name", fallbackName);
-		var chargeCost = Math.Max(0, tag.GetInt("charge_cost", 1));
-		var bypass = tag.GetBool("bypass");
-		var patterns = new List<AttackPattern>();
+	public AttackProfile(bool isSpAtk, AttackDefinition? definition = null)
+	{
+		definition ??= new AttackDefinition([]);
+		Name = definition.Name;
+		ChargeCost = definition.ChargeCost;
+		Bypass = definition.Bypass;
+		Patterns = definition.Patterns;
+		IsSpAtk = isSpAtk;
+	}
 
-		if (tag.GetList("patterns") is { } patternList)
+	public bool IsHit(out AttackDamageSpec attackDamageSpec)
+		=> IsHit(new(0, 0), new(0, 0), out attackDamageSpec);
+
+	public bool IsHit(UnitSlotPos initialTargetPos, UnitSlotPos targetPos, out AttackDamageSpec attackDamageSpec)
+	{
+		bool hit = false;
+		float percent = 0f;
+		int amount = 0;
+
+		foreach (var pattern in Patterns)
 		{
-			foreach (var item in patternList.Items)
+			if (!PatternMatches(pattern, initialTargetPos, targetPos))
+				continue;
+
+			if (!hit)
 			{
-				if (item is not CompoundTag patternTag)
-				{
-					Log.Warn($"Attack [{name}] pattern must be a compound");
-					continue;
-				}
-
-				if (!TryParsePatternType(patternTag.GetString("type"), out var type))
-				{
-					Log.Warn($"Attack [{name}] has unknown pattern type [{patternTag.GetString("type")}]");
-					continue;
-				}
-
-				if (!TryParseDamage(patternTag.Get("value"), out var damage))
-				{
-					Log.Warn($"Attack [{name}] has invalid pattern value");
-					continue;
-				}
-
-				patterns.Add(new AttackPattern(
-					type,
-					patternTag.GetInt("x"),
-					patternTag.GetInt("y"),
-					damage));
+				percent = pattern.Damage.Percent;
+				amount = pattern.Damage.Amount;
+				hit = true;
+			}
+			else
+			{
+				percent = Math.Max(percent, pattern.Damage.Percent);
+				amount = Math.Max(amount, pattern.Damage.Amount);
 			}
 		}
 
-		definition = new AttackDefinition(name, chargeCost, bypass, patterns);
-		return true;
+		attackDamageSpec = hit ? new AttackDamageSpec(percent, amount) : default;
+		return hit;
 	}
 
-	private static bool TryParsePatternType(string value, out AttackPatternType type)
+	private static bool PatternMatches(AttackPattern pattern, UnitSlotPos origin, UnitSlotPos target)
 	{
-		switch (value.Trim().ToLowerInvariant())
+		return pattern.Type switch
 		{
-			case "single": type = AttackPatternType.Single; return true;
-			case "row": type = AttackPatternType.Row; return true;
-			case "column": type = AttackPatternType.Column; return true;
-			case "all": type = AttackPatternType.All; return true;
-			case "cell": type = AttackPatternType.Cell; return true;
-			default: type = default; return false;
-		}
-	}
+			// Single cell at origin + offset
+			AttackPatternType.Cell =>
+				target.X == origin.X + pattern.Offset.X &&
+				target.Y == origin.Y + pattern.Offset.Y,
 
-	private static bool TryParseDamage(DataTag? tag, out AttackDamageSpec damage)
-	{
-		damage = default;
+			// Entire horizontal row: offset applies to Y only
+			AttackPatternType.Row =>
+				target.Y == origin.Y + pattern.Offset.Y,
 
-		switch (tag)
-		{
-			case IntTag integer when integer.Value >= 0:
-				damage = new AttackDamageSpec(false, integer.Value);
-				return true;
-			case FloatTag number when number.Value >= 0f:
-				damage = new AttackDamageSpec(false, (int)MathF.Floor(number.Value));
-				return true;
-			case StringTag text:
-				return TryParseTextDamage(text.Value, out damage);
-			default:
-				return false;
-		}
-	}
+			// Entire vertical column: offset applies to X only
+			AttackPatternType.Column =>
+				target.X == origin.X + pattern.Offset.X,
 
-	private static bool TryParseTextDamage(string text, out AttackDamageSpec damage)
-	{
-		damage = default;
-		text = text.Trim();
+			// Everything, offset is ignored
+			AttackPatternType.All => true,
 
-		if (text.EndsWith('%'))
-		{
-			if (!int.TryParse(text[..^1], out var percent) || percent < 0) return false;
-			damage = new AttackDamageSpec(true, percent);
-			return true;
-		}
-
-		if (!int.TryParse(text, out var flat) || flat < 0) return false;
-		damage = new AttackDamageSpec(false, flat);
-		return true;
+			_ => false
+		};
 	}
 }
