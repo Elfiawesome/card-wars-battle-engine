@@ -1,5 +1,7 @@
+using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Tests.Support;
 using Xunit;
@@ -61,12 +63,13 @@ public sealed class BattleHeroTests
 		{
 			if (id != TestCards.John) return;
 
-			definition.Set("sp_atks", new ListTag()
-				.Add(TestSupport.AttackPointer(new CompoundTag()
-					.Set("name", "Origin Bonus")
-					.Set("charge_cost", 0)
-					.Set("patterns", new ListTag().Add(
-						new CompoundTag().Set("type", "single").Set("value", 10))))));
+			definition.Set("sp_atks", new ListTag().Add(DataTagMapper.ToTag(new AttackDefinition(
+			[
+				new AttackPattern(
+					AttackPatternType.Cell,
+					new UnitSlotPos(0, 0),
+					new AttackDamageSpec(0f, 10))
+			], "Origin Bonus", 0, false))));
 		});
 
 		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));
@@ -79,7 +82,7 @@ public sealed class BattleHeroTests
 			battle.SlotOf(battle.Player1Id, new UnitSlotPos(0, 0)),
 			hero);
 
-		Assert.Equal(heroHrt - GenericCard.AtkToHrt(attacker.Atk + 10), hero.Hrt);
+		Assert.Equal(heroHrt - GenericCard.AtkToHrt(10), hero.Hrt);
 	}
 
 	[Fact]

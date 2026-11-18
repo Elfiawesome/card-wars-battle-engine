@@ -1,4 +1,8 @@
+using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data.Tags;
+using CardWars.Core.Registry;
 using CardWars.Tests.Support;
 using Xunit;
 
@@ -6,6 +10,26 @@ namespace CardWars.Tests.Simulation;
 
 public sealed class BattleAttackTests
 {
+	private static readonly AttackPattern[] PatternsForAll =
+	[
+		new AttackPattern(
+			AttackPatternType.All,
+			new UnitSlotPos(0, 0),
+			new AttackDamageSpec(1.0f, 0))
+	];
+
+	private static readonly AttackPattern[] PatternsForFrontAndBack =
+	[
+		new AttackPattern(
+			AttackPatternType.Cell,
+			new UnitSlotPos(0, 0),
+			new AttackDamageSpec(1.0f, 0)),
+		new AttackPattern(
+			AttackPatternType.Cell,
+			new UnitSlotPos(0, -1),
+			new AttackDamageSpec(1.0f, 0))
+	];
+
 	[Fact]
 	public void BasicAttack_DamagesTargetAndConsumesAttackerCharge()
 	{
@@ -73,9 +97,9 @@ public sealed class BattleAttackTests
 	}
 
 	[Fact]
-	public void BackRow_IsProtectedUntilFrontRowIsFatal()
+	public void BackRow_CannotBeSelectedUntilFrontRowIsFatal()
 	{
-		var battle = BattleTestHarness.Create();
+		var battle = BattleTestHarness.Create(ConfigureAllUnits(PatternsForFrontAndBack));
 		var attacker = battle.DrawCards(battle.Player1Id, 2)[1];
 		battle.PlayCard(battle.Player1Id, attacker, battle.SlotOf(battle.Player1Id, new UnitSlotPos(0, 0)));
 
@@ -94,15 +118,13 @@ public sealed class BattleAttackTests
 
 		battle.Attack(battle.Player1Id, battle.SlotOf(battle.Player1Id, new UnitSlotPos(0, 0)), frontSlot);
 		Assert.True(front.IsFatal);
-
-		battle.Attack(battle.Player1Id, battle.SlotOf(battle.Player1Id, new UnitSlotPos(0, 0)), backSlot);
 		Assert.Equal(1, back.Hp);
 	}
 
 	[Fact]
 	public void MultipleAttackers_DamageTheSameTarget()
 	{
-		var battle = BattleTestHarness.Create();
+		var battle = BattleTestHarness.Create(ConfigureAllUnits(PatternsForAll));
 		var p1Cards = battle.DrawCards(battle.Player1Id, 2);
 		battle.PlayCard(battle.Player1Id, p1Cards[0], battle.SlotOf(battle.Player1Id, new UnitSlotPos(0, 0)));
 		battle.PlayCard(battle.Player1Id, p1Cards[1], battle.SlotOf(battle.Player1Id, new UnitSlotPos(-1, 0)));
@@ -139,4 +161,11 @@ public sealed class BattleAttackTests
 		Assert.Equal(charge, attacker.Charge);
 		Assert.Null(battle.SlotOf(battle.Player2Id, new UnitSlotPos(0, 0)).HoldingCardId);
 	}
+
+	private static Action<ResourceId, CompoundTag> ConfigureAllUnits(params AttackPattern[] patterns)
+		=> (_, definition) =>
+		{
+			if (definition.GetString("card_type") != "unit") return;
+			definition.Set("ba_atk", DataTagMapper.ToTag(new AttackDefinition(patterns, "Test BA", 1, false)));
+		};
 }
