@@ -267,6 +267,7 @@ item_scene = ExtResource("14_sp")
 z_index = 1
 custom_minimum_size = Vector2(4, 4)
 layout_mode = 2
+mouse_filter = 1
 color = Color(0.16078432, 0.4745098, 1, 1)
 
 [node name="BottomInfoContainer" type="MarginContainer" parent="InfoContainer" unique_id=563711645]
