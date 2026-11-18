@@ -19,6 +19,7 @@ public sealed class AttackResolver
 				if (item is CompoundTag compoundTag)
 				{
 					var def = DataTagMapper.FromTag<AttackDefinition>(compoundTag);
+					definitions.Add(def);
 				}
 			}
 
@@ -43,7 +44,7 @@ public sealed class AttackResolver
 		}
 
 		// Default
-		return new AttackProfile(false, new AttackDefinition([]));
+		return new AttackProfile(false, AttackDefinition.DefaultBasic);
 	}
 
 	public bool CanAfford(GenericCard card, AttackProfile attack)

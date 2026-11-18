@@ -7,8 +7,8 @@ namespace CardWars.BattleEngine.Vanilla.Attacks;
 public enum AttackPatternType { Row, Column, All, Cell }
 
 public readonly record struct AttackDamageSpec(
-	float Percent = 0.0f,
-	int Amount = 0
+	[property: DataTag] float Percent = 0.0f,
+	[property: DataTag] int Amount = 0
 )
 {
 	public int Resolve(int atkValue)
@@ -30,7 +30,15 @@ public sealed record AttackDefinition(
 	[property: DataTag] string Name = "BA Atk",
 	[property: DataTag] int ChargeCost = 1,
 	[property: DataTag] bool Bypass = false
-);
+)
+{
+	public static AttackDefinition DefaultBasic { get; } = new([
+		new AttackPattern(
+			AttackPatternType.Cell,
+			new UnitSlotPos(0, 0),
+			new AttackDamageSpec(1.0f, 0))
+	]);
+}
 
 
 public sealed record AttackProfile
@@ -52,7 +60,7 @@ public sealed record AttackProfile
 
 	public AttackProfile(bool isSpAtk, AttackDefinition? definition = null)
 	{
-		definition ??= new AttackDefinition([]);
+		definition ??= AttackDefinition.DefaultBasic;
 		Name = definition.Name;
 		ChargeCost = definition.ChargeCost;
 		Bypass = definition.Bypass;
