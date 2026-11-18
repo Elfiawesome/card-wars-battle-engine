@@ -1,5 +1,6 @@
 {
 	"name": "Empowered",
 	"color": "#22c55e",
-	"texture": "cardwars:texture/icon/abilities/empowered"
+	"texture": "cardwars:texture/icon/abilities/empowered",
+	"text": "When buffed"
 }

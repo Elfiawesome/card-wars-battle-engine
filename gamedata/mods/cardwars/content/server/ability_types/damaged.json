@@ -1,5 +1,6 @@
 {
 	"name": "Damaged",
 	"color": "#f97316",
-	"texture": "cardwars:texture/icon/abilities/damaged"
+	"texture": "cardwars:texture/icon/abilities/damaged",
+	"text": "When taking damage"
 }

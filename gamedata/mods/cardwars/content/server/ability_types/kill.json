@@ -1,5 +1,6 @@
 {
 	"name": "Kill",
 	"color": "#991b1b",
-	"texture": "cardwars:texture/icon/abilities/kill"
+	"texture": "cardwars:texture/icon/abilities/kill",
+	"text": "When this unit kills another unit"
 }

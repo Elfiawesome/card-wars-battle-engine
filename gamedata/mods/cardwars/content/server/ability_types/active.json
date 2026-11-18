@@ -1,5 +1,6 @@
 {
 	"name": "Active",
 	"color": "#06b6d4",
-	"texture": "cardwars:texture/icon/abilities/active"
+	"texture": "cardwars:texture/icon/abilities/active",
+	"text": "When player chooses to activate this ability"
 }

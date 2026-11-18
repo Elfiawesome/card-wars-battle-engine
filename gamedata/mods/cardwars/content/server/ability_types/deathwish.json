@@ -1,5 +1,6 @@
 {
 	"name": "Deathwish",
 	"color": "#64748b",
-	"texture": "cardwars:texture/icon/abilities/deathwish"
+	"texture": "cardwars:texture/icon/abilities/deathwish",
+	"text": "When this unit dies at the end of a round"
 }

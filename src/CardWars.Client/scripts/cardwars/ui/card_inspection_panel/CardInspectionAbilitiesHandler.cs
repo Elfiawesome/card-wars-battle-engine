@@ -25,7 +25,7 @@ public sealed class CardInspectionAbilitiesHandler : ICardInspectionHandler
 
 			panels.Add(new InspectionData(
 				title,
-				ability.GetString("description") ?? "",
+				abilityType?.GetString("text") ?? "",
 				ParseResource(abilityType?.GetString("texture")),
 				null,
 				abilityType?.GetString("color") ?? "#ffffff"

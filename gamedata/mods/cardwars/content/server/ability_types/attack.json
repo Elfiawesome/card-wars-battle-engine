@@ -1,5 +1,6 @@
 {
 	"name": "Attack",
 	"color": "#ef4444",
-	"texture": "cardwars:texture/icon/abilities/attack"
+	"texture": "cardwars:texture/icon/abilities/attack",
+	"text": "When attacking another unit"
 }

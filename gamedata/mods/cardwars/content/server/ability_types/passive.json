@@ -1,5 +1,6 @@
 {
 	"name": "Passive",
 	"color": "#4287f5",
-	"texture": "cardwars:texture/icon/abilities/passive"
+	"texture": "cardwars:texture/icon/abilities/passive",
+	"text": "Activates at the end of every round"
 }

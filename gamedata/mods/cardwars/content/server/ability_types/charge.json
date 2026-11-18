@@ -1,5 +1,6 @@
 {
 	"name": "Charge",
 	"color": "#facc15",
-	"texture": "cardwars:texture/icon/abilities/charge"
+	"texture": "cardwars:texture/icon/abilities/charge",
+	"text": "Consumes this unit's charge to activate this ability"
 }
