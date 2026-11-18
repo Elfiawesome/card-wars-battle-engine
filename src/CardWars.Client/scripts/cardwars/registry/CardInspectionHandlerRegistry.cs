@@ -16,10 +16,10 @@ public sealed class CardInspectionHandlerRegistry : Registry<ResourceId, ICardIn
 		base.Register(id, handler);
 	}
 
-	public IReadOnlyList<InspectionData> Collect(CompoundTag data, ClientInstanceRegistry registry)
+	public IReadOnlyList<CardInspectionData> Collect(CompoundTag data, ClientInstanceRegistry registry)
 	{
 		var context = new CardInspectionContext(data, registry);
-		var panels = new List<InspectionData>();
+		var panels = new List<CardInspectionData>();
 
 		foreach (var id in _order)
 		{

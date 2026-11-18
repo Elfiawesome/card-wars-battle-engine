@@ -10,26 +10,26 @@ public readonly record struct CardInspectionContext(
 	ClientInstanceRegistry Registry
 );
 
-public sealed record InspectionGrid(
+public sealed record CardInspectionGrid(
 	int Width,
-	IReadOnlyList<InspectionGridCell> Cells
+	IReadOnlyList<CardInspectionGridCell> Cells
 );
 
-public readonly record struct InspectionGridCell(
+public readonly record struct CardInspectionGridCell(
 	bool Filled,
 	bool Crossed,
 	string Text
 );
 
-public sealed record InspectionData(
+public sealed record CardInspectionData(
 	string Title,
 	string Text,
 	ResourceId? IconId,
-	InspectionGrid? Grid,
+	CardInspectionGrid? Grid,
 	string Color = "#ffffff"
 );
 
 public interface ICardInspectionHandler
 {
-	IReadOnlyList<InspectionData> GetInspectionPanels(CardInspectionContext context);
+	IReadOnlyList<CardInspectionData> GetInspectionPanels(CardInspectionContext context);
 }

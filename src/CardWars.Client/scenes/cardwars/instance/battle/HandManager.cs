@@ -272,7 +272,7 @@ public partial class HandManager : Control
 		}
 	}
 
-	private static void ApplyInspectionData(Control panel, InspectionData data, BattleInstance instance)
+	private static void ApplyInspectionData(Control panel, CardInspectionData data, BattleInstance instance)
 	{
 		if (panel.HasMethod("set_content"))
 		{

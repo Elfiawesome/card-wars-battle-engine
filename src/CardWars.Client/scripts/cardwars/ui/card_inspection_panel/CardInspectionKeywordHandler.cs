@@ -6,9 +6,9 @@ namespace CardWars.Client.scripts.cardwars.ui.card_inspection_panel;
 
 public sealed class CardInspectionKeywordHandler : ICardInspectionHandler
 {
-	public IReadOnlyList<InspectionData> GetInspectionPanels(CardInspectionContext context)
+	public IReadOnlyList<CardInspectionData> GetInspectionPanels(CardInspectionContext context)
 	{
-		var panels = new List<InspectionData>();
+		var panels = new List<CardInspectionData>();
 		if (context.Data.GetList("keywords") is not { } keywords) return panels;
 
 		foreach (var tag in keywords.Items)
@@ -18,7 +18,7 @@ public sealed class CardInspectionKeywordHandler : ICardInspectionHandler
 			var title = keyword.GetString("name");
 			if (string.IsNullOrWhiteSpace(title)) title = "Keyword";
 
-			panels.Add(new InspectionData(
+			panels.Add(new CardInspectionData(
 				title,
 				keyword.GetString("description") ?? "",
 				ParseResource(keyword.GetString("texture")),

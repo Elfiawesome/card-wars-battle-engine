@@ -7,9 +7,9 @@ namespace CardWars.Client.scripts.cardwars.ui.card_inspection_panel;
 
 public sealed class CardInspectionAttackHandler : ICardInspectionHandler
 {
-	public IReadOnlyList<InspectionData> GetInspectionPanels(CardInspectionContext context)
+	public IReadOnlyList<CardInspectionData> GetInspectionPanels(CardInspectionContext context)
 	{
-		var panels = new List<InspectionData>();
+		var panels = new List<CardInspectionData>();
 		if (context.Data.GetList("sp_atks") is not { } spAtks) return panels;
 		if (context.Registry.Battle is not { } battleRegistry) return panels;
 
@@ -21,16 +21,16 @@ public sealed class CardInspectionAttackHandler : ICardInspectionHandler
 			var charge = attack.Definition.ChargeCost;
 			var text = attack.Definition.Bypass ? $"CHARGE {charge} · BYPASS" : $"CHARGE {charge}"; ;
 
-			panels.Add(new InspectionData(
+			panels.Add(new CardInspectionData(
 				title, text, attack.Definition.Texture, BuildGrid(3, attack)
 			));
 		}
 		return panels;
 	}
 
-	private InspectionGrid BuildGrid(int size, AttackProfile attack)
+	private CardInspectionGrid BuildGrid(int size, AttackProfile attack)
 	{
-		List<InspectionGridCell> inspectionGridCells = [];
+		List<CardInspectionGridCell> inspectionGridCells = [];
 
 		int Midpoint = size / 2;
 		for (var y = 0; y < size; y++)
@@ -59,6 +59,6 @@ public sealed class CardInspectionAttackHandler : ICardInspectionHandler
 			}
 		}
 
-		return new InspectionGrid(size, inspectionGridCells);
+		return new CardInspectionGrid(size, inspectionGridCells);
 	}
 }
