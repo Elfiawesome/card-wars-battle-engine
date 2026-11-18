@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c7c0m1nf8s1g8"
-path="res://.godot/imported/engineer.png-d56689c70ffbd8d29952a481a9d44e44.ctex"
+uid="uid://6uxmlrjwyq1l"
+path="res://.godot/imported/cob_cannon.png-7d7ab641786eca47de685e80e3b48737.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cardwars/texture/cards/engineer.png"
-dest_files=["res://.godot/imported/engineer.png-d56689c70ffbd8d29952a481a9d44e44.ctex"]
+source_file="res://assets/cardwars/texture/cards/units/plantvszombies/cob_cannon.png"
+dest_files=["res://.godot/imported/cob_cannon.png-7d7ab641786eca47de685e80e3b48737.ctex"]
 
 [params]
 

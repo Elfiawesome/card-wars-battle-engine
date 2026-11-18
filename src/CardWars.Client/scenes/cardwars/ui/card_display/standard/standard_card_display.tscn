@@ -86,8 +86,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-expand_mode = 5
-stretch_mode = 6
+stretch_mode = 5
 
 [node name="BlurBackBufferCopy" type="BackBufferCopy" parent="." unique_id=2038642834]
 copy_mode = 2

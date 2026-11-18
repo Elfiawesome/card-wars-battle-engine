@@ -5,7 +5,7 @@
 	"atk": 3,
 	"sp_atks": [],
 	"textures": {
-		"main": "cardwars:texture/cards/engineer"
+		"main": "cardwars:texture/cards/heroes/engineer"
 	},
 	"abilities": []
 }

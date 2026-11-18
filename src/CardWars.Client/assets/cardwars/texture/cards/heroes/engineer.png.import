@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://w6c2t4e4g6fo"
-path="res://.godot/imported/hacker.png-475cd9e6d189285ce86a9e60d676c93b.ctex"
+uid="uid://c7c0m1nf8s1g8"
+path="res://.godot/imported/engineer.png-4b12454fe0d62d395fe9db9e7f07b496.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cardwars/texture/cards/hacker.png"
-dest_files=["res://.godot/imported/hacker.png-475cd9e6d189285ce86a9e60d676c93b.ctex"]
+source_file="res://assets/cardwars/texture/cards/heroes/engineer.png"
+dest_files=["res://.godot/imported/engineer.png-4b12454fe0d62d395fe9db9e7f07b496.ctex"]
 
 [params]
 

@@ -5,7 +5,7 @@
 	"atk": 3,
 	"sp_atks": [],
 	"textures": {
-		"main": "cardwars:texture/cards/bz"
+		"main": "cardwars:texture/cards/heroes/bz"
 	},
 	"abilities": []
 }

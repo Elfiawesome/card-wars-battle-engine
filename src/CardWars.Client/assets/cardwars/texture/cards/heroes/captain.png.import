@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://biedwf3kolr1s"
-path="res://.godot/imported/king.png-420e66b5db138df95460e397e2ea594f.ctex"
+uid="uid://o64naebloxrr"
+path="res://.godot/imported/captain.png-546562cd6a357fad90bad07d484ee475.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cardwars/texture/cards/king.png"
-dest_files=["res://.godot/imported/king.png-420e66b5db138df95460e397e2ea594f.ctex"]
+source_file="res://assets/cardwars/texture/cards/heroes/captain.png"
+dest_files=["res://.godot/imported/captain.png-546562cd6a357fad90bad07d484ee475.ctex"]
 
 [params]
 

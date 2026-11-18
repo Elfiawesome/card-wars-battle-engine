@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://wpmcnek6bc0y"
-path="res://.godot/imported/faketree.png-05ff4571309cd7fd60d459f58f8c4d8c.ctex"
+uid="uid://bts0xoyipqqg4"
+path="res://.godot/imported/by.png-57498e88cd2542787c43c94f537c5f24.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cardwars/texture/cards/faketree.png"
-dest_files=["res://.godot/imported/faketree.png-05ff4571309cd7fd60d459f58f8c4d8c.ctex"]
+source_file="res://assets/cardwars/texture/cards/heroes/by.png"
+dest_files=["res://.godot/imported/by.png-57498e88cd2542787c43c94f537c5f24.ctex"]
 
 [params]
 

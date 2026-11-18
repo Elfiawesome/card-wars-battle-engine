@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://o64naebloxrr"
-path="res://.godot/imported/captain.png-f450d4640ff0559a475637315c65c64f.ctex"
+uid="uid://b18mpq5unegbq"
+path="res://.godot/imported/apocalypse_tank.png-4afeed68db445fbc347458aa08aea7e8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cardwars/texture/cards/captain.png"
-dest_files=["res://.godot/imported/captain.png-f450d4640ff0559a475637315c65c64f.ctex"]
+source_file="res://assets/cardwars/texture/cards/units/redalert3/apocalypse_tank.png"
+dest_files=["res://.godot/imported/apocalypse_tank.png-4afeed68db445fbc347458aa08aea7e8.ctex"]
 
 [params]
 

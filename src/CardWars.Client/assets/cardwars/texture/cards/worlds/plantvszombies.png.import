@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b77joxtigr563"
-path="res://.godot/imported/bz.jpg-0cc66cfa30c1e028ddcfb2d1ebbe4602.ctex"
+uid="uid://dpeljq4wpll71"
+path="res://.godot/imported/plantvszombies.png-033a56f40f4d8bd81d7ced9296c2f10b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cardwars/texture/cards/bz.jpg"
-dest_files=["res://.godot/imported/bz.jpg-0cc66cfa30c1e028ddcfb2d1ebbe4602.ctex"]
+source_file="res://assets/cardwars/texture/cards/worlds/plantvszombies.png"
+dest_files=["res://.godot/imported/plantvszombies.png-033a56f40f4d8bd81d7ced9296c2f10b.ctex"]
 
 [params]
 
