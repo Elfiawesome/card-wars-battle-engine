@@ -1,6 +1,7 @@
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Attacks;
 
@@ -27,17 +28,21 @@ public readonly record struct AttackPattern(
 
 public sealed record AttackDefinition(
 	[property: DataTag] IReadOnlyList<AttackPattern> Patterns,
+	[property: DataTag] ResourceId Texture,
 	[property: DataTag] string Name = "BA Atk",
 	[property: DataTag] int ChargeCost = 1,
 	[property: DataTag] bool Bypass = false
 )
 {
-	public static AttackDefinition DefaultBasic { get; } = new([
-		new AttackPattern(
+	public static AttackDefinition DefaultBasic { get; } = new(
+		[
+			new AttackPattern(
 			AttackPatternType.Cell,
 			new UnitSlotPos(0, 0),
 			new AttackDamageSpec(1.0f, 0))
-	]);
+		],
+		"cardwars:texture/icon/stat/atk"
+	);
 }
 
 

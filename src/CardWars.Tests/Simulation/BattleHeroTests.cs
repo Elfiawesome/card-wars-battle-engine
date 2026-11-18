@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Registry;
 using CardWars.Tests.Support;
 using Xunit;
 
@@ -69,7 +70,7 @@ public sealed class BattleHeroTests
 					AttackPatternType.Cell,
 					new UnitSlotPos(0, 0),
 					new AttackDamageSpec(0f, 10))
-			], "Origin Bonus", 0, false)))));
+			], ResourceId.Vanilla("texture/icon/attacks/origin"), "Origin Bonus", 0, false)))));
 		});
 
 		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));

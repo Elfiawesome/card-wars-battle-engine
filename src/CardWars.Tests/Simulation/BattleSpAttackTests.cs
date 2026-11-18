@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Registry;
 using CardWars.Tests.Support;
 using Xunit;
 
@@ -168,10 +169,10 @@ public sealed class BattleSpAttackTests
 		int chargeCost,
 		bool bypass,
 		params AttackPattern[] patterns)
-		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, name, chargeCost, bypass)));
+		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, ResourceId.Vanilla("texture/icon/attacks/test"), name, chargeCost, bypass)));
 
 	private static CompoundTag BaAtk(params AttackPattern[] patterns)
-		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, "Test BA", 1, false)));
+		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, ResourceId.Vanilla("texture/icon/attacks/test"), "Test BA", 1, false)));
 
 	private static AttackPattern Pattern(
 		AttackPatternType type,

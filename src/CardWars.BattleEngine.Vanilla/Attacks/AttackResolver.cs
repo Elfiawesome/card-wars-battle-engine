@@ -51,9 +51,14 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 		=> card.Charge >= attack.ChargeCost;
 
 
+	public AttackDefinition? GetAttackDefinitionFromPointer(DataTag tag)
+		=> tag is CompoundTag compoundTag ? GetAttackDefinitionFromPointer(compoundTag) : null;
+
 	public AttackDefinition? GetAttackDefinitionFromPointer(CompoundTag compoundTag)
+		=> GetAttackDefinitionFromPointer(DataTagMapper.FromTag<ContentPointer>(compoundTag));
+
+	public AttackDefinition? GetAttackDefinitionFromPointer(ContentPointer pointer)
 	{
-		var pointer = DataTagMapper.FromTag<ContentPointer>(compoundTag);
 		if (pointer.Resource is { } resourceId)
 		{
 			var definition = registry.AttackDefinitions.Get(resourceId);

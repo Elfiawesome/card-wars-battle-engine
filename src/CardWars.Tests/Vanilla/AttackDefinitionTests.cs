@@ -23,12 +23,13 @@ public sealed class AttackDefinitionTests
 			new AttackPattern(
 				AttackPatternType.Row,
 				new UnitSlotPos(0, 1),
-				new AttackDamageSpec(1.0f, 0))
-		], "Cross", 2, true);
+				new AttackDamageSpec(0.5f, 0))
+		], ResourceId.Vanilla("texture/icon/attacks/cross"), "Cross", 2, true);
 
 		var parsed = DataTagMapper.FromTag<AttackDefinition>(DataTagMapper.ToTag(definition));
 
 		Assert.Equal("Cross", parsed.Name);
+		Assert.Equal(ResourceId.Vanilla("texture/icon/attacks/cross"), parsed.Texture);
 		Assert.Equal(2, parsed.ChargeCost);
 		Assert.True(parsed.Bypass);
 		Assert.Equal(2, parsed.Patterns.Count);
@@ -70,7 +71,7 @@ public sealed class AttackDefinitionTests
 		var definition = new AttackDefinition(
 		[
 			Pattern(AttackPatternType.Cell, 3)
-		], "Registered", 2, true);
+		], ResourceId.Vanilla("texture/icon/attacks/registered"), "Registered", 2, true);
 		registry.AttackDefinitions.Register(
 			ResourceId.Vanilla("attacks/registered"),
 			DataTagMapper.ToTag(definition));
@@ -118,7 +119,7 @@ public sealed class AttackDefinitionTests
 			Data = new CompoundTag().Set("ba_atk", TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(
 			[
 				Pattern(AttackPatternType.Cell, 4, 1, 0)
-			], "Custom BA", 0, false))))
+			], ResourceId.Vanilla("texture/icon/attacks/custom"), "Custom BA", 0, false))))
 		};
 
 		var attack = new AttackResolver(TestSupport.CreateRegistry()).Resolve(card);
@@ -142,7 +143,7 @@ public sealed class AttackDefinitionTests
 		int chargeCost,
 		bool bypass,
 		params AttackPattern[] patterns)
-		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, name, chargeCost, bypass)));
+		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, ResourceId.Vanilla("texture/icon/attacks/test"), name, chargeCost, bypass)));
 
 	private static AttackPattern Pattern(
 		AttackPatternType type,
