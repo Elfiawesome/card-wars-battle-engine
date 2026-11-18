@@ -166,6 +166,6 @@ public sealed class BattleAttackTests
 		=> (_, definition) =>
 		{
 			if (definition.GetString("card_type") != "unit") return;
-			definition.Set("ba_atk", DataTagMapper.ToTag(new AttackDefinition(patterns, "Test BA", 1, false)));
+			definition.Set("ba_atk", TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, "Test BA", 1, false))));
 		};
 }

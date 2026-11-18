@@ -63,13 +63,13 @@ public sealed class BattleHeroTests
 		{
 			if (id != TestCards.John) return;
 
-			definition.Set("sp_atks", new ListTag().Add(DataTagMapper.ToTag(new AttackDefinition(
+			definition.Set("sp_atks", new ListTag().Add(TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(
 			[
 				new AttackPattern(
 					AttackPatternType.Cell,
 					new UnitSlotPos(0, 0),
 					new AttackDamageSpec(0f, 10))
-			], "Origin Bonus", 0, false))));
+			], "Origin Bonus", 0, false)))));
 		});
 
 		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));

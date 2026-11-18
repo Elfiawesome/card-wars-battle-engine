@@ -168,10 +168,10 @@ public sealed class BattleSpAttackTests
 		int chargeCost,
 		bool bypass,
 		params AttackPattern[] patterns)
-		=> DataTagMapper.ToTag(new AttackDefinition(patterns, name, chargeCost, bypass));
+		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, name, chargeCost, bypass)));
 
 	private static CompoundTag BaAtk(params AttackPattern[] patterns)
-		=> DataTagMapper.ToTag(new AttackDefinition(patterns, "Test BA", 1, false));
+		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, "Test BA", 1, false)));
 
 	private static AttackPattern Pattern(
 		AttackPatternType type,

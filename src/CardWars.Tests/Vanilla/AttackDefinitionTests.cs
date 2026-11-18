@@ -3,6 +3,8 @@ using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Registry;
+using CardWars.Tests.Support;
 using Xunit;
 
 namespace CardWars.Tests.Vanilla;
@@ -47,7 +49,7 @@ public sealed class AttackDefinitionTests
 				.Add(SpAtk("Sweep", 2, false, Pattern(AttackPatternType.Row, 2))))
 		};
 
-		var attack = new AttackResolver().Resolve(card);
+		var attack = new AttackResolver(TestSupport.CreateRegistry()).Resolve(card);
 
 		Assert.True(attack.IsSpAtk);
 		Assert.True(attack.Bypass);
@@ -62,6 +64,32 @@ public sealed class AttackDefinitionTests
 	}
 
 	[Fact]
+	public void Resolver_ResolvesRegisteredSpAtkPointer()
+	{
+		var registry = TestSupport.CreateRegistry();
+		var definition = new AttackDefinition(
+		[
+			Pattern(AttackPatternType.Cell, 3)
+		], "Registered", 2, true);
+		registry.AttackDefinitions.Register(
+			ResourceId.Vanilla("attacks/registered"),
+			DataTagMapper.ToTag(definition));
+
+		var card = new GenericCard(EntityId.New())
+		{
+			Data = new CompoundTag().Set("sp_atks", new ListTag()
+				.Add(TestSupport.AttackPointer(ResourceId.Vanilla("attacks/registered"))))
+		};
+
+		var attack = new AttackResolver(registry).Resolve(card);
+
+		Assert.True(attack.IsSpAtk);
+		Assert.True(attack.Bypass);
+		Assert.Equal(2, attack.ChargeCost);
+		Assert.Equal("Registered", attack.Name);
+		Assert.Single(attack.Patterns);
+	}
+	[Fact]
 	public void Resolver_UsesDefaultBasicAttackWhenNoSpAtkExists()
 	{
 		var card = new GenericCard(EntityId.New())
@@ -69,7 +97,7 @@ public sealed class AttackDefinitionTests
 			Data = new CompoundTag()
 		};
 
-		var attack = new AttackResolver().Resolve(card);
+		var attack = new AttackResolver(TestSupport.CreateRegistry()).Resolve(card);
 
 		Assert.False(attack.IsSpAtk);
 		Assert.False(attack.Bypass);
@@ -87,13 +115,13 @@ public sealed class AttackDefinitionTests
 	{
 		var card = new GenericCard(EntityId.New())
 		{
-			Data = new CompoundTag().Set("ba_atk", DataTagMapper.ToTag(new AttackDefinition(
+			Data = new CompoundTag().Set("ba_atk", TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(
 			[
 				Pattern(AttackPatternType.Cell, 4, 1, 0)
-			], "Custom BA", 0, false)))
+			], "Custom BA", 0, false))))
 		};
 
-		var attack = new AttackResolver().Resolve(card);
+		var attack = new AttackResolver(TestSupport.CreateRegistry()).Resolve(card);
 
 		Assert.False(attack.IsSpAtk);
 		Assert.Equal("Custom BA", attack.Name);
@@ -114,7 +142,7 @@ public sealed class AttackDefinitionTests
 		int chargeCost,
 		bool bypass,
 		params AttackPattern[] patterns)
-		=> DataTagMapper.ToTag(new AttackDefinition(patterns, name, chargeCost, bypass));
+		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, name, chargeCost, bypass)));
 
 	private static AttackPattern Pattern(
 		AttackPatternType type,

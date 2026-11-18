@@ -18,7 +18,8 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 			{
 				if (item is CompoundTag compoundTag)
 				{
-					GetAttackDefinitionFromPointer(compoundTag);
+					var definition = GetAttackDefinitionFromPointer(compoundTag);
+					if (definition is not null) definitions.Add(definition);
 				}
 			}
 
