@@ -3,7 +3,6 @@ using CardWars.Client.scripts.cardwars.systems;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.registry;
 using CardWars.Core.Registry;
-using Godot;
 
 namespace CardWars.Client.scripts.cardwars.registry;
 

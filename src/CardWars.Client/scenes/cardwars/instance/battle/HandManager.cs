@@ -6,10 +6,8 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Client.scenes.cardwars.ui.battle;
 using CardWars.Client.scenes.cardwars.ui.card_display;
-using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Client.scripts.cardwars.ui.card_inspection_panel;
 using CardWars.Core.Logging;
-using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared;
 using Godot;
 

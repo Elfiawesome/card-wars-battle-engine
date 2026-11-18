@@ -2,9 +2,6 @@ using System;
 using System.Collections.Generic;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
-using CardWars.Core.Registry;
 
 namespace CardWars.Client.scripts.cardwars.ui.card_inspection_panel;
 
