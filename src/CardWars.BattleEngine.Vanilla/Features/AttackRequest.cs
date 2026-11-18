@@ -154,9 +154,10 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 		foreach (var unitSlotId in battlefield.UnitSlotIds)
 		{
 			if (state.Get<UnitSlot>(unitSlotId) is not { } unitSlot) continue;
+			if (state.Get<UnitSlot>(targetSlotId) is not { } targetSlot) continue;
 			if (unitSlot.HoldingCardId is not { } damagedUnitId) continue;
 
-			if (attack.IsHit(attackerUnitSlot.Position, unitSlot.Position, out var spec))
+			if (attack.IsHit(targetSlot.Position, unitSlot.Position, out var spec))
 			{
 				context.QueueEvent(new UnitTakeDamageEvent()
 				{

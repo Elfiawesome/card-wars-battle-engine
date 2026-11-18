@@ -100,11 +100,11 @@ public sealed record AttackProfile
 
 			// Entire horizontal row: offset applies to Y only
 			AttackPatternType.Row =>
-				target.X == origin.Y + pattern.Offset.Y,
+				target.Y == origin.Y + pattern.Offset.Y,
 
 			// Entire vertical column: offset applies to X only
 			AttackPatternType.Column =>
-				target.Y == origin.X + pattern.Offset.X,
+				target.X == origin.X + pattern.Offset.X,
 
 			// Everything, offset is ignored
 			AttackPatternType.All => true,

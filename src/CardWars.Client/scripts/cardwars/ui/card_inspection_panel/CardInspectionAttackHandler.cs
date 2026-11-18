@@ -36,9 +36,9 @@ public sealed class CardInspectionAttackHandler : ICardInspectionHandler
 		List<InspectionGridCell> inspectionGridCells = [];
 
 		int Midpoint = size / 2;
-		for (var x = 0; x < size; x++)
+		for (var y = 0; y < size; y++)
 		{
-			for (var y = 0; y < size; y++)
+			for (var x = 0; x < size; x++)
 			{
 				bool filled = false;
 				bool crossed = false;
