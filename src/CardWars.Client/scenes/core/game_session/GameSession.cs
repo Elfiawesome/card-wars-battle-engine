@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net.Sockets;
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.Input;
-using CardWars.Client.scripts.cardwars;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Core.Data.Global;
@@ -171,13 +170,23 @@ public partial class GameSession : Node
 			? modLoader.GetContentServer().ToList()
 			: clientContent;
 
-		new VanillaMod().OnLoad(ClientRegistry, clientContent); // TODO: Load dynamically via scanning current assembly bruh
+		foreach (var mod in CreateModEntries<IClientMod>())
+			LoadMod(mod, clientContent); // Load Vanilla Mod TODO: FIx and maybe change this...
+
 		modLoader.LoadModEntry<IClientMod>().ForEach(m => LoadMod(m, clientContent));
 		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => LoadMod(m, battleContent)); // TODO: Maybe content is loaded and passed on by server. So we create a new battle registry each session and is given by server??
 
 		// If loaded client, use its shared battle engine registry to save on memory
 		IntegratedServer?.OverrideRegistry(BattleEngineRegistry);
 	}
+
+	private static IEnumerable<TMod> CreateModEntries<TMod>()
+		where TMod : class, IModEntry
+		=> typeof(GameSession).Assembly
+			.GetTypes()
+			.Where(type => typeof(TMod).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+			.Select(type => Activator.CreateInstance(type) as TMod)
+			.OfType<TMod>();
 
 	private void LoadMod(IClientMod mod, List<ModContentResult> modContents)
 		=> mod.OnLoad(ClientRegistry, modContents);
