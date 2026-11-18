@@ -1,3 +1,4 @@
+using System;
 using CardWars.Client.scenes.cardwars.instance.battle;
 using CardWars.Client.scenes.cardwars.instance.battle.entities;
 using CardWars.Client.scripts.cardwars.systems;
@@ -22,10 +23,20 @@ public sealed class TakeDamageAnimation : BattleAnimation
 			.SetTrans(Tween.TransitionType.Quad)
 			.SetEase(Tween.EaseType.Out);
 
-		tween.TweenProperty(card, "position", start + new Vector3(0.07f, 0f, 0f), 0.04);
-		tween.TweenProperty(card, "position", start - new Vector3(0.07f, 0f, 0f), 0.06);
-		tween.TweenProperty(card, "position", start + new Vector3(0.04f, 0f, 0f), 0.05);
-		tween.TweenProperty(card, "position", start, 0.05);
+
+		float dur = 0.02f;
+		int maxShakeTimes = 4;
+		float maxShakeAmt = 0.06f;
+		var rand = new Random();
+		for (var i = 0; i < maxShakeTimes; i++)
+		{
+			tween.TweenProperty(card, "position", start + new Vector3(
+				maxShakeAmt * (1.0f - i / (float)maxShakeTimes) * rand.Next(-1, 1),
+				0f,
+				maxShakeAmt * (1.0f - i / (float)maxShakeTimes) * rand.Next(-1, 1)), dur
+			);
+		}
+		tween.TweenProperty(card, "position", start, dur);
 		tween.Finished += Complete;
 	}
 }
