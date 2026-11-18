@@ -16,7 +16,7 @@ shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 
 [node name="StandardCardInspectionPanel" type="MarginContainer" unique_id=689193761 node_paths=PackedStringArray("grid_container", "icon_texture", "title_label", "content_label")]
 offset_right = 140.0
-offset_bottom = 76.0
+offset_bottom = 98.0
 script = ExtResource("1_o23xf")
 grid_container = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/GridContainer")
 icon_texture = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer/TextureRect")
@@ -64,7 +64,7 @@ stretch_mode = 5
 [node name="TitleLabel" type="Label" parent="VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=155473973]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_1bhno")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 text = "Tittle"
 uppercase = true
 
@@ -84,7 +84,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
 theme_override_fonts/font = ExtResource("5_1cc1h")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 text = "Error Text"
 autowrap_mode = 3
 

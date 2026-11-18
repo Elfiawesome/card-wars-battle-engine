@@ -17,12 +17,12 @@ public partial class HandManager : Control
 {
 	public const float HandAngleDeg = 100.0f;
 	public const float CardAngleDeg = 180.0f;
-	public const float HoverRaiseAmount = 60.0f;
+	public const float HoverRaiseAmount = 300.0f;
 	public const float SelectedLowerAmount = 180.0f;
 	public const int IndexGap = 3;
 	public int HoverZIndex => _cards.Count * IndexGap;
 
-	public Vector2 CardScale = Vector2.One * 0.2f; // 0.15f;
+	public Vector2 CardScale = Vector2.One * 0.25f; // 0.15f;
 
 	public CardDisplay? HoveredCard = null;
 	public CardDisplay? SelectedCard = null;
@@ -326,7 +326,7 @@ public partial class HandManager : Control
 		float cardWidth = cardSize.X * CardScale.X;
 		float cardHeight = cardSize.Y * CardScale.Y;
 
-		Vector2 handCenter = new(Size.X / 2, Size.Y - cardHeight / 2);
+		Vector2 handCenter = new(Size.X / 2, Size.Y /*- cardHeight / 2*/ );
 
 		float margin = 200f;
 		float availableWidth = Size.X - margin * 2;
@@ -370,7 +370,7 @@ public partial class HandManager : Control
 					newRot = 0;
 					c.ZIndex = HoverZIndex;
 					// c.Modulate = new Color(Modulate, 0.5f);
-					newScale *= 1.2f;
+					newScale *= 0.8f;
 
 					if (LineArrow is not null) LineArrow.Position = newPos + c.Size / 2;
 				}
