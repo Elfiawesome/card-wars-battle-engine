@@ -27,7 +27,9 @@ public sealed class CardInspectionAbilitiesHandler : ICardInspectionHandler
 				title,
 				ability.GetString("description") ?? "",
 				ParseResource(abilityType?.GetString("texture")),
-				null));
+				null,
+				abilityType?.GetString("color") ?? "#ffffff"
+				));
 		}
 
 		return panels;

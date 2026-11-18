@@ -25,7 +25,8 @@ public sealed record InspectionData(
 	string Title,
 	string Text,
 	ResourceId? IconId,
-	InspectionGrid? Grid
+	InspectionGrid? Grid,
+	string Color = "#ffffff"
 );
 
 public interface ICardInspectionHandler

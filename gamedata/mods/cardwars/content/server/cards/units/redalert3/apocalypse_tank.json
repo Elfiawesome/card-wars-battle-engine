@@ -9,5 +9,13 @@
 		"main": "cardwars:texture/cards/units/redalert3/apocalypse_tank",
 		"background": "cardwars:texture/cards/worlds/redalert3"
 	},
-	"abilities": []
+	"abilities": [
+		{
+			"description": "Deal 50% more damage on front row units",
+			"ability_type": "cardwars:ability_types/attack",
+			"behaviour": {
+				"resource": "test_ability"
+			}
+		}
+	]
 }

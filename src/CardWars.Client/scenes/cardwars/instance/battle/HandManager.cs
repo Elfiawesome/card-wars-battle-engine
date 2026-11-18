@@ -240,6 +240,7 @@ public partial class HandManager : Control
 
 			// Create and add this new panel over
 			AddChild(panel);
+			panel.Modulate = Color.FromString(inspectionData.Color, Colors.White).Lightened(0.8f);
 			panel.MouseFilter = MouseFilterEnum.Ignore;
 			panel.MouseBehaviorRecursive = MouseBehaviorRecursiveEnum.Disabled;
 

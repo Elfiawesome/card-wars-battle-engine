@@ -12,5 +12,13 @@
 	"textures": {
 		"main": "cardwars:texture/cards/units/southpark/fastpass"
 	},
-	"abilities": []
+	"abilities": [
+		{
+			"description": "Burn 6 ATK",
+			"ability_type": "cardwars:ability_types/attack",
+			"behaviour": {
+				"resource": "test_ability"
+			}
+		}
+	]
 }
