@@ -24,7 +24,7 @@ public sealed class TakeDamageAnimation : BattleAnimation
 			.SetEase(Tween.EaseType.Out);
 
 
-		float dur = 0.02f;
+		float dur = 0.04f;
 		int maxShakeTimes = 4;
 		float maxShakeAmt = 0.06f;
 		var rand = new Random();
@@ -35,8 +35,11 @@ public sealed class TakeDamageAnimation : BattleAnimation
 				0f,
 				maxShakeAmt * (1.0f - i / (float)maxShakeTimes) * rand.Next(-1, 1)), dur
 			);
+			if (i < maxShakeAmt / 2)
+			{
+				tween.TweenCallback(Callable.From(Complete));
+			}
 		}
 		tween.TweenProperty(card, "position", start, dur);
-		tween.Finished += Complete;
 	}
 }
