@@ -2,5 +2,10 @@
 	"name": "John",
 	"pt": 2,
 	"hp": 6,
-	"atk": 4
+	"atk": 4,
+	"sp_atks": [
+		{
+			"resource": "cardwars:attacks/cross"
+		}
+	]
 }
