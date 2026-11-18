@@ -143,12 +143,12 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 				.Set(SharedIds.Animations.Args.Target, new GuidTag(targetCard.Id.Value))
 		};
 
-		if (attack.ChargeCost > 0)
+		if (attack.Definition.ChargeCost > 0)
 		{
 			batch.Blocks.Add(new SetCardDataBlock(
 				attackerCard.Id,
 				"charge",
-				new IntTag(attackerCard.Charge - attack.ChargeCost)));
+				new IntTag(attackerCard.Charge - attack.Definition.ChargeCost)));
 		}
 
 		foreach (var unitSlotId in battlefield.UnitSlotIds)

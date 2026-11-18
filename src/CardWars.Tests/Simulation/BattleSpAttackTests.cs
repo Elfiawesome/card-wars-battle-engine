@@ -119,13 +119,21 @@ public sealed class BattleSpAttackTests
 	[Fact]
 	public void AttackProfile_UsesHighestOverlappingDamageSpec()
 	{
-		var attack = new AttackProfile("Test", 1, true,
-		[
-			Pattern(AttackPatternType.Row, 1),
-			Pattern(AttackPatternType.Column, 2),
-			Pattern(AttackPatternType.All, 3),
-			Pattern(AttackPatternType.Cell, 4, 0, -1)
-		], true);
+		var attack = new AttackProfile(
+			true,
+			new AttackDefinition(
+				[
+					Pattern(AttackPatternType.Row, 1),
+					Pattern(AttackPatternType.Column, 2),
+					Pattern(AttackPatternType.All, 3),
+					Pattern(AttackPatternType.Cell, 4, 0, -1)
+				],
+				AttackDefinition.DefaultBasic.Texture,
+				"Test", 
+				1,
+				true
+			)
+		);
 
 		Assert.True(attack.IsHit(
 			new UnitSlotPos(0, 0),

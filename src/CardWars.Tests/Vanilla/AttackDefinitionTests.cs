@@ -53,9 +53,9 @@ public sealed class AttackDefinitionTests
 		var attack = new AttackResolver(TestSupport.CreateRegistry()).Resolve(card);
 
 		Assert.True(attack.IsSpAtk);
-		Assert.True(attack.Bypass);
-		Assert.Equal(3, attack.ChargeCost);
-		Assert.Equal(2, attack.Patterns.Count);
+		Assert.True(attack.Definition.Bypass);
+		Assert.Equal(3, attack.Definition.ChargeCost);
+		Assert.Equal(2, attack.Definition.Patterns.Count);
 
 		Assert.True(attack.IsHit(
 			new UnitSlotPos(0, 0),
@@ -85,10 +85,10 @@ public sealed class AttackDefinitionTests
 		var attack = new AttackResolver(registry).Resolve(card);
 
 		Assert.True(attack.IsSpAtk);
-		Assert.True(attack.Bypass);
-		Assert.Equal(2, attack.ChargeCost);
-		Assert.Equal("Registered", attack.Name);
-		Assert.Single(attack.Patterns);
+		Assert.True(attack.Definition.Bypass);
+		Assert.Equal(2, attack.Definition.ChargeCost);
+		Assert.Equal("Registered", attack.Definition.Name);
+		Assert.Single(attack.Definition.Patterns);
 	}
 	[Fact]
 	public void Resolver_UsesDefaultBasicAttackWhenNoSpAtkExists()
@@ -101,9 +101,9 @@ public sealed class AttackDefinitionTests
 		var attack = new AttackResolver(TestSupport.CreateRegistry()).Resolve(card);
 
 		Assert.False(attack.IsSpAtk);
-		Assert.False(attack.Bypass);
-		Assert.Equal(1, attack.ChargeCost);
-		Assert.Single(attack.Patterns);
+		Assert.False(attack.Definition.Bypass);
+		Assert.Equal(1, attack.Definition.ChargeCost);
+		Assert.Single(attack.Definition.Patterns);
 		Assert.True(attack.IsHit(
 			new UnitSlotPos(0, 0),
 			new UnitSlotPos(0, 0),
@@ -125,8 +125,8 @@ public sealed class AttackDefinitionTests
 		var attack = new AttackResolver(TestSupport.CreateRegistry()).Resolve(card);
 
 		Assert.False(attack.IsSpAtk);
-		Assert.Equal("Custom BA", attack.Name);
-		Assert.Equal(0, attack.ChargeCost);
+		Assert.Equal("Custom BA", attack.Definition.Name);
+		Assert.Equal(0, attack.Definition.ChargeCost);
 		Assert.False(attack.IsHit(
 			new UnitSlotPos(0, 0),
 			new UnitSlotPos(0, 0),

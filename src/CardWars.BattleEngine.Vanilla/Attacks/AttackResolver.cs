@@ -26,11 +26,15 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 			if (definitions.Count > 0)
 			{
 				return new AttackProfile(
-					string.Join(" + ", definitions.Select(definition => definition.Name)),
-					definitions.Sum(definition => definition.ChargeCost),
-					definitions.Any(definition => definition.Bypass),
-					definitions.SelectMany(definition => definition.Patterns).ToList(),
-					true);
+					true, 
+					new AttackDefinition(
+						definitions.SelectMany(definition => definition.Patterns).ToList(),
+						definitions.First().Texture,
+						string.Join(" + ", definitions.Select(definition => definition.Name)),
+						definitions.Sum(definition => definition.ChargeCost),
+						definitions.Any(definition => definition.Bypass)
+					)
+					);
 			}
 
 			Log.Warn($"Card [{card.Id}] has no valid sp_atk definitions, falling back to ba_atk");
@@ -48,7 +52,7 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 	}
 
 	public bool CanAfford(GenericCard card, AttackProfile attack)
-		=> card.Charge >= attack.ChargeCost;
+		=> card.Charge >= attack.Definition.ChargeCost;
 
 
 	public AttackDefinition? GetAttackDefinitionFromPointer(DataTag tag)

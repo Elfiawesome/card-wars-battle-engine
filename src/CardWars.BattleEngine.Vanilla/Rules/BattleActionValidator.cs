@@ -66,7 +66,7 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry)
 		// 3) Attacher not owned by player
 		if (state.GetParent<Player>(attacker)?.Id != playerId) { reason = $"attacker [{attacker.Id}] is not owned by player [{playerId}]"; return false; }
 		// 4) Not enough pt
-		if (!_attackResolver.CanAfford(attacker, attack)) { reason = $"attacker [{attacker.Id}] cannot afford [{attack.Name}]"; return false; }
+		if (!_attackResolver.CanAfford(attacker, attack)) { reason = $"attacker [{attacker.Id}] cannot afford [{attack.Definition.Name}]"; return false; }
 
 		return true;
 	}
@@ -117,7 +117,7 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry)
 		if (state.GetParent<Player>(targetSlot) is not { } targetPlayer) return false;
 
 		if (attackerPlayer.Team == targetPlayer.Team) return false;
-		if (!attack.Bypass && !CanTargetSlot(state, targetSlotId)) return false;
+		if (!attack.Definition.Bypass && !CanTargetSlot(state, targetSlotId)) return false;
 
 		return true;
 	}

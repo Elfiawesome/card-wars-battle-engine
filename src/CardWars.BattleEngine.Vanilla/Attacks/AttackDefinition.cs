@@ -48,28 +48,12 @@ public sealed record AttackDefinition(
 
 public sealed record AttackProfile
 {
-	public string Name;
-	public int ChargeCost;
-	public bool Bypass;
-	public IReadOnlyList<AttackPattern> Patterns;
-	public bool IsSpAtk;
-
-	public AttackProfile(string name, int chargeCost, bool bypass, IReadOnlyList<AttackPattern> patterns, bool isSpAtk)
-	{
-		Name = name;
-		ChargeCost = chargeCost;
-		Bypass = bypass;
-		Patterns = patterns;
-		IsSpAtk = isSpAtk;
-	}
+	public AttackDefinition Definition;
+	public bool IsSpAtk; // TODO: Wtf is this for???
 
 	public AttackProfile(bool isSpAtk, AttackDefinition? definition = null)
 	{
-		definition ??= AttackDefinition.DefaultBasic;
-		Name = definition.Name;
-		ChargeCost = definition.ChargeCost;
-		Bypass = definition.Bypass;
-		Patterns = definition.Patterns;
+		Definition = definition ?? AttackDefinition.DefaultBasic;
 		IsSpAtk = isSpAtk;
 	}
 
@@ -82,7 +66,7 @@ public sealed record AttackProfile
 		float percent = 0f;
 		int amount = 0;
 
-		foreach (var pattern in Patterns)
+		foreach (var pattern in Definition.Patterns)
 		{
 			if (!PatternMatches(pattern, initialTargetPos, targetPos))
 				continue;
