@@ -327,6 +327,7 @@ expand_mode = 3
 [node name="Divider" type="ColorRect" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer" unique_id=570978827]
 custom_minimum_size = Vector2(4, 4)
 layout_mode = 2
+mouse_filter = 1
 color = Color(1, 1, 1, 0.3019608)
 
 [node name="AtkContainer" type="MarginContainer" parent="InfoContainer/BottomInfoContainer/MainInfoContainer/MainInfoContainer/StatContainer/HBoxContainer" unique_id=1215420418]
