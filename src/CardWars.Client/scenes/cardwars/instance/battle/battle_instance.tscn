@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dfmfjvoykx3r2" path="res://scenes/cardwars/instance/battle/MouseControl.cs" id="2_3esg4"]
 [ext_resource type="Script" uid="uid://b7e2pum6t8sfj" path="res://scenes/cardwars/instance/battle/HandManager.cs" id="2_4cb27"]
 [ext_resource type="Texture2D" uid="uid://c2n6a1kcehf1m" path="res://assets/cardwars/texture/ui/wood_texture.jpg" id="4_3esg4"]
+[ext_resource type="Script" uid="uid://dcvfjhtw2ibf2" path="res://scenes/cardwars/instance/battle/InspectionPanelManager.cs" id="5_1aoxh"]
 [ext_resource type="Script" uid="uid://d0bhmtleyro4k" path="res://scenes/cardwars/instance/battle/Camera.cs" id="5_4jex4"]
 [ext_resource type="Script" uid="uid://cevyuc4l4qfr3" path="res://scenes/cardwars/instance/battle/AttackController.cs" id="6_attack"]
 
@@ -14,9 +15,10 @@ albedo_texture = ExtResource("4_3esg4")
 material = SubResource("StandardMaterial3D_4jex4")
 size = Vector2(32, 32)
 
-[node name="BattleScene" type="Node" unique_id=587125568 node_paths=PackedStringArray("ButtonsOverlayNode", "HandManagerNode", "MouseControlNode", "AttackControllerNode", "PlayspaceNode", "CameraNode")]
+[node name="BattleScene" type="Node" unique_id=587125568 node_paths=PackedStringArray("ButtonsOverlayNode", "InspectionPanelManagerNode", "HandManagerNode", "MouseControlNode", "AttackControllerNode", "PlayspaceNode", "CameraNode")]
 script = ExtResource("1_kka0g")
 ButtonsOverlayNode = NodePath("UI/ButtonsOverlay")
+InspectionPanelManagerNode = NodePath("UI/InspectionPanelManager")
 HandManagerNode = NodePath("UI/ButtonsOverlay/HandManager")
 MouseControlNode = NodePath("UI/ButtonsOverlay/HandManager/MouseControl")
 AttackControllerNode = NodePath("AttackController")
@@ -53,6 +55,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
+
+[node name="InspectionPanelManager" type="Control" parent="UI" unique_id=555001752]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("5_1aoxh")
 
 [node name="ButtonsOverlay" type="Control" parent="UI" unique_id=1300867907]
 layout_mode = 1

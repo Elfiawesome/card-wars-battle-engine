@@ -25,6 +25,7 @@ public partial class BattleInstance : ClientInstance
 	public BattleRegistry? BattleRegistry => Registry.Client?.GetExtension<BattleRegistry>();
 
 	[Export] public Control? ButtonsOverlayNode;
+	[Export] public InspectionPanelManager? InspectionPanelManagerNode;
 	[Export] public HandManager? HandManagerNode;
 	[Export] public MouseControl? MouseControlNode;
 	[Export] public AttackController? AttackControllerNode;

@@ -6,7 +6,6 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Client.scenes.cardwars.ui.battle;
 using CardWars.Client.scenes.cardwars.ui.card_display;
-using CardWars.Client.scripts.cardwars.ui.card_inspection_panel;
 using CardWars.Core.Logging;
 using CardWars.Vanilla.Shared;
 using Godot;
@@ -32,7 +31,7 @@ public partial class HandManager : Control
 
 	private Dictionary<EntityId, CardDisplay> _cards = [];
 	public IReadOnlyDictionary<EntityId, CardDisplay> Cards => _cards;
-	private readonly List<Control> _inspectionPanels = [];
+	// private readonly List<Control> _inspectionPanels = [];
 
 
 	public override void _Ready()
@@ -211,104 +210,6 @@ public partial class HandManager : Control
 		LineArrow = null;
 	}
 
-	private void ArrangeInspectionPanels(Rect2? cardRect, CardDisplay? card)
-	{
-		ClearInspectionPanels();
-		if (cardRect is not { } rect || card is null) return;
-		if (BattleInstance is not { } instance) return;
-		// Get Card Id
-		var cardId = Cards.FirstOrDefault(c => c.Value == card).Key;
-
-		if (cardId.IsNone || instance.State.Get<GenericCard>(cardId) is not { } entity) return;
-
-		if (instance.BattleRegistry is not { } battleRegistry) return;
-		var panels = battleRegistry.CardInspectionHandlers.Collect(entity.Data, instance.Registry);
-		if (panels.Count == 0) return;
-
-		var preparedPanels = new List<Control>();
-		var totalHeight = 0f;
-		var panelWidth = rect.Size.X;
-		const float panelGap = 12f;
-
-		foreach (var inspectionData in panels)
-		{
-			// Get the inspection design skin TODO: Maybe switch it up with skins?
-			if (BattleInstance.BattleRegistry?.DefaultCardInspectionPanel is not { } displayId) continue;
-			var panel = instance.Registry.Client?.UserInterface.Instantiate<Control>(displayId);
-			if (panel is null) continue;
-
-			// Create and add this new panel over
-			AddChild(panel);
-			panel.Modulate = Color.FromString(inspectionData.Color, Colors.White).Lightened(0.8f);
-			panel.MouseFilter = MouseFilterEnum.Ignore;
-			panel.MouseBehaviorRecursive = MouseBehaviorRecursiveEnum.Disabled;
-
-			ApplyInspectionData(panel, inspectionData, instance);
-
-			panelWidth = Mathf.Max(panelWidth, panel.GetMinimumSize().X);
-			totalHeight += panel.GetMinimumSize().Y + panelGap;
-			preparedPanels.Add(panel);
-		}
-
-		var xside = Math.Sign(Size.X / 2 - rect.Position.X);
-		if (xside == 0) xside = 1;
-		float x = rect.Position.X + xside * (rect.Size.X / 2 + panelGap);
-		float y = Math.Min(rect.Position.Y - rect.Size.Y / 2, Size.Y - totalHeight);
-		if (xside == -1) x -= panelWidth;
-
-		float currentY = 0;
-		for (var index = 0; index < preparedPanels.Count; index++)
-		{
-			var panel = preparedPanels[index];
-			panel.ZIndex = HoverZIndex;
-			panel.Position = new(x, y + currentY);
-			_inspectionPanels.Add(panel);
-			currentY += panel.Size.Y + panelGap;
-			// To make it neater, we standardize the x
-			panel.Size = new(panelWidth, panel.Size.Y);
-			// Play animation
-			panel.Set("card_rect", rect);
-			if (panel.HasMethod("play_intro")) panel.Call("play_intro", [index * 0.03]);
-		}
-	}
-
-	private static void ApplyInspectionData(Control panel, CardInspectionData data, BattleInstance instance)
-	{
-		if (panel.HasMethod("set_content"))
-		{
-			var texture = data.IconId is { } iconId
-				? instance.Registry.Client?.Resources.Instantiate<Texture2D>(iconId) ?? new ImageTexture()
-				: new ImageTexture();
-			panel.Call("set_content", data.Title, texture, data.Text);
-		}
-
-		if (data.Grid is not { } grid || !panel.HasMethod("set_grid")) return;
-
-		var cells = new Godot.Collections.Array();
-		foreach (var cell in grid.Cells)
-		{
-			var item = new Godot.Collections.Dictionary();
-			if (cell.Filled) item["filled"] = true;
-			if (cell.Crossed) item["crossed"] = true;
-			if (!string.IsNullOrWhiteSpace(cell.Text)) item["text"] = cell.Text;
-			cells.Add(item);
-		}
-
-		panel.Call("set_grid", cells, grid.Width);
-	}
-
-	private void ClearInspectionPanels()
-	{
-		foreach (var panel in _inspectionPanels)
-		{
-			if (!IsInstanceValid(panel)) continue;
-			panel.GetParent()?.RemoveChild(panel);
-			panel.QueueFree();
-		}
-
-		_inspectionPanels.Clear();
-	}
-
 	private void ArrangeCard()
 	{
 		var cards = _cards.Select(s => s.Value).ToList();
@@ -316,7 +217,7 @@ public partial class HandManager : Control
 		if (totalCard == 0)
 		{
 			HoveredCard = null;
-			ClearInspectionPanels();
+			BattleInstance?.InspectionPanelManagerNode?.ClearInspectionPanels();
 			ResetArrows();
 			return;
 		}
@@ -407,6 +308,21 @@ public partial class HandManager : Control
 		}
 
 		// Arrange panels
-		ArrangeInspectionPanels(inspectionRect, HoveredCard);
+		if (HoveredCard is not null)
+		{
+			if (inspectionRect is { } rect)
+			{
+				if (BattleInstance?.State.Get<GenericCard>(Cards.FirstOrDefault(s => s.Value == HoveredCard).Key) is { } card
+					&& BattleInstance.BattleRegistry is { } battleRegistry)
+				{
+					BattleInstance.InspectionPanelManagerNode?.PopulatePanels(card, battleRegistry, BattleInstance.Registry);
+					BattleInstance.InspectionPanelManagerNode?.ArrangePanels(rect);
+				}
+			}
+		}
+		else
+		{
+			BattleInstance?.InspectionPanelManagerNode?.ClearInspectionPanels();
+		}
 	}
 }
