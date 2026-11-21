@@ -311,10 +311,13 @@ public partial class HandManager : Control
 			if (inspectionRect is { } rect)
 			{
 				if (BattleInstance?.State.Get<GenericCard>(Cards.FirstOrDefault(s => s.Value == HoveredCard).Key) is { } card
-					&& BattleInstance.BattleRegistry is { } battleRegistry)
+					&& BattleInstance.BattleRegistry is { } battleRegistry
+					&& BattleInstance.InspectionPanelManagerNode is { } managerNode
+				)
 				{
-					BattleInstance.InspectionPanelManagerNode?.PopulatePanels(card, battleRegistry, BattleInstance.Registry);
-					BattleInstance.InspectionPanelManagerNode?.ArrangePanels(rect);
+					managerNode.ZIndex = HoverZIndex;
+					managerNode.PopulatePanels(card, battleRegistry, BattleInstance.Registry);
+					managerNode.ArrangePanels(rect);
 				}
 			}
 		}

@@ -17,7 +17,7 @@ public partial class InspectionPanelManager : Control
 	private readonly List<Control> _inspectionPanels = [];
 
 	private float PanelHeights => _inspectionPanels.Sum(s => s.Size.X + PANEL_GAP);
-	private float PanelWidths => _inspectionPanels.Sum(s => s.GetMinimumSize().X);
+	private float PanelWidths => _inspectionPanels.Max(s => s.GetMinimumSize().X);
 
 	public void PopulatePanels(GenericCard card, BattleRegistry battleRegistry, ClientInstanceRegistry clientInstanceRegistry)
 	{
@@ -51,22 +51,24 @@ public partial class InspectionPanelManager : Control
 
 	public void ArrangePanels(Rect2 rect)
 	{
+		if (_inspectionPanels.Count == 0) return;
+
+		var panelWidth = Math.Max(PanelWidths, rect.Size.X);
 		var xside = Math.Sign(Size.X / 2 - rect.Position.X);
 		if (xside == 0) xside = 1;
 		float x = rect.Position.X + xside * (rect.Size.X / 2 + PANEL_GAP);
 		float y = Math.Min(rect.Position.Y - rect.Size.Y / 2, Size.Y - PanelHeights);
-		if (xside == -1) x -= PanelWidths;
+		if (xside == -1) x -= panelWidth;
 
 		float currentY = 0;
 		for (var index = 0; index < _inspectionPanels.Count; index++)
 		{
-			Log.Info(_inspectionPanels.Count);
 			var panel = _inspectionPanels[index];
 			panel.Position = new(x, y + currentY);
-			
+
 			currentY += panel.Size.Y + PANEL_GAP;
 			// To make it neater, we standardize the x
-			panel.Size = new(PanelWidths, panel.Size.Y);
+			panel.Size = new(panelWidth, panel.Size.Y);
 			// Play animation
 			panel.Set("card_rect", rect);
 			if (panel.HasMethod("play_intro")) panel.Call("play_intro", [index * 0.03]);
