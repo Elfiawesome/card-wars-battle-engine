@@ -31,8 +31,6 @@ public partial class HandManager : Control
 
 	private Dictionary<EntityId, CardDisplay> _cards = [];
 	public IReadOnlyDictionary<EntityId, CardDisplay> Cards => _cards;
-	// private readonly List<Control> _inspectionPanels = [];
-
 
 	public override void _Ready()
 	{
