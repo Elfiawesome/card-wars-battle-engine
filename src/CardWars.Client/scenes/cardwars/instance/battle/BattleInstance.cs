@@ -152,7 +152,7 @@ public partial class BattleInstance : ClientInstance
 		AttackControllerNode?.OnStateSynced();
 
 		// Update pt label TODO: Temp...
-		GetNode<Label>("UI/ButtonsOverlay/MarginContainer/VBoxContainer/Label").Text = $"Pt: {State.Get<Player>(MyPlayerId)?.Pt ?? 0}";
+		// GetNode<Label>("UI/ButtonsOverlay/MarginContainer/VBoxContainer/Label").Text = $"Pt: {State.Get<Player>(MyPlayerId)?.Pt ?? 0}";
 	}
 
 	private void UpdateGameOver()
