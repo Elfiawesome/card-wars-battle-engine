@@ -32,6 +32,8 @@ public partial class HandManager : Control
 	private Dictionary<EntityId, CardDisplay> _cards = [];
 	public IReadOnlyDictionary<EntityId, CardDisplay> Cards => _cards;
 
+	private Node? _isHoldingCardChanged;
+
 	public override void _Ready()
 	{
 		Resized += ArrangeCard;
@@ -39,12 +41,39 @@ public partial class HandManager : Control
 
 	public override void _Process(double delta)
 	{
-		if (LineArrow is not { } lineArrow || BattleInstance?.CameraNode is not { } camera) return;
+		if (BattleInstance?.Hovered3DTarget is { } target && BattleInstance.CameraNode is { } camera)
+		{
+			// Tbh using process to scan battleinstance's 3d target is such a lazy thing to do so uh yeah
+			if (LineArrow is { } lineArrow)
+			{
+				if (ArrowTargets.Contains(target.EntityId))
+					lineArrow.SnapTo(camera, target);
+				else
+					lineArrow.FollowMouse();
+			}
 
-		if (BattleInstance.Hovered3DTarget is { } target && ArrowTargets.Contains(target.EntityId))
-			lineArrow.SnapTo(camera, target);
-		else
-			lineArrow.FollowMouse();
+			// FUCKING HELL THIS IS UNHOLY
+			if (_isHoldingCardChanged != target)
+			{ BattleInstance.InspectionPanelManagerNode?.ClearInspectionPanels(); _isHoldingCardChanged = target; }
+			else
+				return;
+
+			var id = BattleInstance.EntityNodes.First(s => s.Value == target).Key;
+			if ((BattleInstance.State.Get<UnitSlot>(id)?.HoldingCardId) is { } cardId
+				&& BattleInstance.State.Get<GenericCard>(cardId) is { } card
+				&& BattleInstance.BattleRegistry is { } battleRegistry)
+			{
+				var pos = camera.UnprojectPosition(target.Position);
+				var rect = new Rect2(pos, Vector2.One * 100);
+				Log.Info(rect);
+				BattleInstance?.InspectionPanelManagerNode?.PopulateAndArrangePanels(
+					card,
+					battleRegistry,
+					BattleInstance.Registry,
+					rect
+				);
+			}
+		}
 	}
 
 
