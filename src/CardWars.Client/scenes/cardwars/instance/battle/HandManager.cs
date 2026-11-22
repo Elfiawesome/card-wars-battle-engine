@@ -44,16 +44,19 @@ public partial class HandManager : Control
 
 	public override void _Process(double delta)
 	{
-		if (BattleInstance?.Hovered3DTarget is { } target && BattleInstance.CameraNode is { } camera)
+		// TODO: FIX THIS MESS BROSKI
+		// Tbh using process to scan battleinstance's 3d target is such a lazy thing to do so uh yeah
+		if (LineArrow is { } lineArrow)
 		{
-			// Tbh using process to scan battleinstance's 3d target is such a lazy thing to do so uh yeah
-			if (LineArrow is { } lineArrow)
+			if (!(BattleInstance?.Hovered3DTarget is { } target) || !(BattleInstance.CameraNode is { } camera))
 			{
-				if (ArrowTargets.Contains(target.EntityId))
-					lineArrow.SnapTo(camera, target);
-				else
-					lineArrow.FollowMouse();
+				lineArrow.FollowMouse(); return;
 			}
+
+			if (ArrowTargets.Contains(target.EntityId))
+				lineArrow.SnapTo(camera, target);
+			else
+				lineArrow.FollowMouse();
 
 			// FUCKING HELL THIS IS UNHOLY
 			if (_isHoldingCardChanged != target)
