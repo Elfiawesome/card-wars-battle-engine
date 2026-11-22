@@ -10,7 +10,8 @@
 		}
 	],
 	"textures": {
-		"main": "cardwars:texture/cards/units/southpark/fastpass"
+		"main": "cardwars:texture/cards/units/southpark/fastpass",
+		"background": "cardwars:texture/cards/units/southpark/fastpass_bg"
 	},
 	"abilities": [
 		{

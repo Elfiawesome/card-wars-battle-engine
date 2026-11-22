@@ -1,6 +1,7 @@
 using System.Linq;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using Godot;
 
@@ -28,6 +29,9 @@ public partial class StandardCardDisplay : CardDisplay
 
 	public Vector2 PortraitSize = new(1408.0f, 1968.0f);
 	public Vector2 LandscapeSize = new(1968.0f, 1408.0f);
+
+	private float _idleTime;
+	private Vector2 _mouseOffset;
 
 	public override void SetData(CompoundTag data, ClientInstanceRegistry registry)
 	{
@@ -62,7 +66,7 @@ public partial class StandardCardDisplay : CardDisplay
 			ResourceId mainResourceId = ResourceId.Parse(textures.GetString("main"));
 			if (registry.Client?.Resources.Instantiate<Texture2D>(mainResourceId) is { } mainResource)
 				mainArt.Texture = mainResource;
-			
+
 			ResourceId backgroundResourceId = ResourceId.Parse(textures.GetString("background"));
 			if (registry.Client?.Resources.Instantiate<Texture2D>(backgroundResourceId) is { } backgroundResource)
 				backgroundArt.Texture = backgroundResource;
@@ -156,17 +160,44 @@ public partial class StandardCardDisplay : CardDisplay
 
 	public override void SetDisplay(DisplayType displayType)
 	{
+		Display = displayType;
 		if (FlavourTextLabel is not { } flavourTextLabel) return;
 		if (AbilitiesContainer is not { } abilitiesContainer) return;
-		if (displayType == DisplayType.Full)
+		if (Display == DisplayType.Full)
 		{
 			flavourTextLabel.Visible = true;
 			abilitiesContainer.Visible = true;
 		}
-		else if (displayType == DisplayType.Simplified)
+		else if (Display == DisplayType.Simplified)
 		{
 			flavourTextLabel.Visible = false;
 			abilitiesContainer.Visible = false;
 		}
+	}
+
+	public override void _Process(double delta)
+	{
+		if (MainArt is not { } mainArt) return;
+		if (Display != DisplayType.Full) return;
+
+		_idleTime += (float)delta;
+
+		var idle = new Vector2(
+			Mathf.Sin(_idleTime * 0.6f),
+			Mathf.Sin(_idleTime * 0.43f + 1.3f));
+
+		var mouse = Vector2.Zero;
+		if (Size.X > 0.0f && Size.Y > 0.0f)
+			mouse = (GetLocalMousePosition() / Size).Clamp(Vector2.Zero, Vector2.One) * 2.0f - Vector2.One;
+
+		var weight = 1.0f - Mathf.Exp(-8.0f * (float)delta);
+		_mouseOffset = _mouseOffset.Lerp(mouse, weight);
+
+		var shift = idle * mainArt.Size * 0.012f + _mouseOffset * mainArt.Size * 0.02f;
+
+		mainArt.OffsetLeft = shift.X;
+		mainArt.OffsetTop = shift.Y;
+		mainArt.OffsetRight = shift.X;
+		mainArt.OffsetBottom = shift.Y;
 	}
 }
