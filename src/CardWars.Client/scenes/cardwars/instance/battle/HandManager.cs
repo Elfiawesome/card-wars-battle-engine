@@ -42,10 +42,8 @@ public partial class HandManager : Control
 		Resized += ArrangeCard;
 	}
 
-	public override void _Process(double delta)
+	private void HandleLineArrow()
 	{
-		// TODO: FIX THIS MESS BROSKI
-		// Tbh using process to scan battleinstance's 3d target is such a lazy thing to do so uh yeah
 		if (LineArrow is { } lineArrow)
 		{
 			if (!(BattleInstance?.Hovered3DTarget is { } target) || !(BattleInstance.CameraNode is { } camera))
@@ -57,12 +55,22 @@ public partial class HandManager : Control
 				lineArrow.SnapTo(camera, target);
 			else
 				lineArrow.FollowMouse();
+		}
+	}
 
+	private void HandleEnitity3DPanels()
+	{
+		if ((BattleInstance?.Hovered3DTarget is { } target) && (BattleInstance.CameraNode is { } camera))
+		{
 			// FUCKING HELL THIS IS UNHOLY
 			if (_isHoldingCardChanged != target)
-			{ BattleInstance.InspectionPanelManagerNode?.ClearInspectionPanels(); _isHoldingCardChanged = target; }
+			{
+				BattleInstance.InspectionPanelManagerNode?.ClearInspectionPanels(); _isHoldingCardChanged = target;
+			}
 			else
+			{
 				return;
+			}
 
 			var id = BattleInstance.EntityNodes.First(s => s.Value == target).Key;
 			if ((BattleInstance.State.Get<UnitSlot>(id)?.HoldingCardId) is { } cardId
@@ -73,7 +81,6 @@ public partial class HandManager : Control
 			)
 			{
 				var rect = GetScreenRect(card3D, camera);
-				// BattleInstance?.InspectionPanelManagerNode?.AddPanel(new("FUck u", "hi!", "", null, ""), battleRegistry, BattleInstance.Registry);
 				if (card.Data.GetList("abilities") is { } abilities)
 				{
 					foreach (var tag in abilities.Items)
@@ -110,6 +117,14 @@ public partial class HandManager : Control
 				);
 			}
 		}
+	}
+
+	public override void _Process(double delta)
+	{
+		// TODO: FIX THIS MESS BROSKI
+		// Tbh using process to scan battleinstance's 3d target is such a lazy thing to do so uh yeah
+		HandleLineArrow();
+		HandleEnitity3DPanels();
 	}
 
 	private static Rect2 GetScreenRect(Card3D card, Camera3D camera)
