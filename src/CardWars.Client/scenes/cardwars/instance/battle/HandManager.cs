@@ -70,19 +70,39 @@ public partial class HandManager : Control
 				var rect = GetScreenRect(card3D, camera);
 				GetNode<Panel>("Panel").Position = rect.Position;
 				GetNode<Panel>("Panel").Size = rect.Size;
-				// BattleInstance?.InspectionPanelManagerNode?.PopulateAndArrangePanels(
-				// 	card,
-				// 	battleRegistry,
-				// 	BattleInstance.Registry,
-				// 	rect
-				// );
+				BattleInstance?.InspectionPanelManagerNode?.PopulateAndArrangePanels(
+					card,
+					battleRegistry,
+					BattleInstance.Registry,
+					rect
+				);
 			}
 		}
 	}
 
 	private static Rect2 GetScreenRect(Card3D card, Camera3D camera)
 	{
-		return new(); // TODO
+		if (card.CollisionShape is not { } collisionShape) return new();
+
+		var half = card.BoxShape.Size / 2.0f;
+		var transform = collisionShape.GlobalTransform;
+
+		var min = new Vector2(float.MaxValue, float.MaxValue);
+		var max = new Vector2(float.MinValue, float.MinValue);
+
+		for (var i = 0; i < 8; i++)
+		{
+			var corner = new Vector3(
+				(i & 1) == 0 ? -half.X : half.X,
+				(i & 2) == 0 ? -half.Y : half.Y,
+				(i & 4) == 0 ? -half.Z : half.Z);
+
+			var screen = camera.UnprojectPosition(transform * corner);
+			min = min.Min(screen);
+			max = max.Max(screen);
+		}
+
+		return new Rect2(min, max - min);
 	}
 
 
