@@ -4,6 +4,7 @@ using System.Linq;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
+using CardWars.Client.scenes.cardwars.instance.battle.entities;
 using CardWars.Client.scenes.cardwars.ui.battle;
 using CardWars.Client.scenes.cardwars.ui.card_display;
 using CardWars.Core.Logging;
@@ -61,19 +62,27 @@ public partial class HandManager : Control
 			var id = BattleInstance.EntityNodes.First(s => s.Value == target).Key;
 			if ((BattleInstance.State.Get<UnitSlot>(id)?.HoldingCardId) is { } cardId
 				&& BattleInstance.State.Get<GenericCard>(cardId) is { } card
-				&& BattleInstance.BattleRegistry is { } battleRegistry)
+				&& BattleInstance.BattleRegistry is { } battleRegistry
+				&& BattleInstance.EntityNodes.TryGetValue(cardId, out var cardTarget)
+				&& cardTarget is Card3D card3D
+			)
 			{
-				var pos = camera.UnprojectPosition(target.Position);
-				var rect = new Rect2(pos, Vector2.One * 100);
-				Log.Info(rect);
-				BattleInstance?.InspectionPanelManagerNode?.PopulateAndArrangePanels(
-					card,
-					battleRegistry,
-					BattleInstance.Registry,
-					rect
-				);
+				var rect = GetScreenRect(card3D, camera);
+				GetNode<Panel>("Panel").Position = rect.Position;
+				GetNode<Panel>("Panel").Size = rect.Size;
+				// BattleInstance?.InspectionPanelManagerNode?.PopulateAndArrangePanels(
+				// 	card,
+				// 	battleRegistry,
+				// 	BattleInstance.Registry,
+				// 	rect
+				// );
 			}
 		}
+	}
+
+	private static Rect2 GetScreenRect(Card3D card, Camera3D camera)
+	{
+		return new(); // TODO
 	}
 
 

@@ -86,6 +86,12 @@ mouse_filter = 1
 script = ExtResource("2_3esg4")
 CameraNode = NodePath("../../../../Camera")
 
+[node name="Panel" type="Panel" parent="UI/ButtonsOverlay/HandManager" unique_id=1024115744]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
 [node name="InspectionPanelManager" type="Control" parent="UI" unique_id=555001752]
 layout_mode = 1
 anchors_preset = 15
