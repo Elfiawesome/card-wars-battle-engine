@@ -14,7 +14,7 @@ public class TcpGameListener(int port = 5060) : IListener
 
 	public void Start()
 	{
-		_listener = new TcpListener(IPAddress.Loopback, port);
+		_listener = new TcpListener(IPAddress.Any, port);
 		_listener.Start();
 		_cts = new CancellationTokenSource();
 		Task.Run(() => AcceptLoop(_cts.Token));
