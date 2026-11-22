@@ -21,6 +21,7 @@ public class TcpConnection : IConnection
 	public TcpConnection(TcpClient tcpClient)
 	{
 		_tcpClient = tcpClient;
+		_tcpClient.NoDelay = true;
 		_stream = tcpClient.GetStream();
 		Task.Run(() => ReceiveLoop(_cts.Token));
 	}
@@ -33,13 +34,15 @@ public class TcpConnection : IConnection
 		{
 			var tag = DataTagMapper.ToTag(packet);
 			var json = DataTagSerializer.Serialize(tag);
-			var bytes = Encoding.UTF8.GetBytes(json);
-			var length = BitConverter.GetBytes(bytes.Length);
+			var payload = Encoding.UTF8.GetBytes(json);
+
+			var buffer = new byte[4 + payload.Length];
+			BitConverter.TryWriteBytes(buffer.AsSpan(0, 4), payload.Length);
+			payload.CopyTo(buffer, 4);
 
 			lock (_stream)
 			{
-				_stream.Write(length, 0, length.Length);
-				_stream.Write(bytes, 0, bytes.Length);
+				_stream.Write(buffer, 0, buffer.Length);
 				_stream.Flush();
 			}
 		}
