@@ -7,7 +7,9 @@ using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Client.scenes.cardwars.instance.battle.entities;
 using CardWars.Client.scenes.cardwars.ui.battle;
 using CardWars.Client.scenes.cardwars.ui.card_display;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
+using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared;
 using Godot;
 
@@ -68,6 +70,35 @@ public partial class HandManager : Control
 			)
 			{
 				var rect = GetScreenRect(card3D, camera);
+				// BattleInstance?.InspectionPanelManagerNode?.AddPanel(new("FUck u", "hi!", "", null, ""), battleRegistry, BattleInstance.Registry);
+				if (card.Data.GetList("abilities") is { } abilities)
+				{
+					foreach (var tag in abilities.Items)
+					{
+						if (tag is not CompoundTag ability) continue;
+
+						var typePointer = ability.GetString("ability_type");
+						var abilityType = string.IsNullOrWhiteSpace(typePointer)
+							? null
+							: BattleInstance?.Registry.Battle?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
+
+						var title = abilityType?.GetString("name") ?? ability.GetString("name");
+						if (string.IsNullOrWhiteSpace(title)) title = "Ability";
+
+						BattleInstance?.InspectionPanelManagerNode?.AddPanel(
+							new(
+								title,
+								abilityType?.GetString("text") ?? "",
+								null,
+								null,
+								abilityType?.GetString("color") ?? "#ffffff"
+							),
+							battleRegistry,
+							BattleInstance.Registry
+						);
+					}
+				}
+
 				BattleInstance?.InspectionPanelManagerNode?.PopulateAndArrangePanels(
 					card,
 					battleRegistry,
@@ -362,6 +393,7 @@ public partial class HandManager : Control
 		}
 
 		// Arrange panels
+		BattleInstance?.InspectionPanelManagerNode?.ClearInspectionPanels();
 		if (HoveredCard is not null)
 		{
 			if (inspectionRect is { } rect)
@@ -376,10 +408,6 @@ public partial class HandManager : Control
 					managerNode.ArrangePanels(rect);
 				}
 			}
-		}
-		else
-		{
-			BattleInstance?.InspectionPanelManagerNode?.ClearInspectionPanels();
 		}
 	}
 }

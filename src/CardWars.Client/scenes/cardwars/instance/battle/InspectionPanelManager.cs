@@ -15,9 +15,7 @@ public partial class InspectionPanelManager : Control
 	private const float PANEL_GAP = 12f;
 
 	private readonly List<Control> _inspectionPanels = [];
-
-	private float PanelHeights => _inspectionPanels.Sum(s => s.Size.X + PANEL_GAP);
-	private float PanelWidths => _inspectionPanels.Max(s => s.GetMinimumSize().X);
+	public VBoxContainer Container => GetNode<VBoxContainer>("VBoxContainer");
 
 	public void PopulatePanels(GenericCard card, BattleRegistry battleRegistry, ClientInstanceRegistry clientInstanceRegistry)
 	{
@@ -37,9 +35,7 @@ public partial class InspectionPanelManager : Control
 		var panel = clientInstanceRegistry.Client?.UserInterface.Instantiate<Control>(battleRegistry.DefaultCardInspectionPanel);
 		if (panel is null) return null;
 
-		AddChild(panel);
-		// TODO: Fucking change this design choice please
-		panel.Modulate = Color.FromString(inspectionData.Color, Colors.White).Lightened(0.8f);
+		Container.AddChild(panel);
 		panel.MouseFilter = MouseFilterEnum.Ignore;
 		panel.MouseBehaviorRecursive = MouseBehaviorRecursiveEnum.Disabled;
 
@@ -53,24 +49,19 @@ public partial class InspectionPanelManager : Control
 	{
 		if (_inspectionPanels.Count == 0) return;
 
-		var panelWidth = Math.Max(PanelWidths, rect.Size.X);
+		Container.Size = new(rect.Size.X, 0);
+
 		var xside = Math.Sign(Size.X / 2 - rect.Position.X);
 		if (xside == 0) xside = 1;
 		float x = rect.Position.X + xside * (rect.Size.X / 2 + PANEL_GAP);
-		float y = Math.Min(rect.Position.Y - rect.Size.Y / 2, Size.Y - PanelHeights);
-		if (xside == -1) x -= panelWidth;
+		float y = Math.Min(rect.Position.Y - rect.Size.Y / 2, Size.Y - Container.Size.Y);
+		if (xside == -1) x -= Container.Size.X;
+		Container.Position = new Vector2(x, y);
 
-		float currentY = 0;
 		for (var index = 0; index < _inspectionPanels.Count; index++)
 		{
 			var panel = _inspectionPanels[index];
-			panel.Position = new(x, y + currentY);
-
-			currentY += panel.Size.Y + PANEL_GAP;
-			// To make it neater, we standardize the x
-			panel.Size = new(panelWidth, panel.Size.Y);
-			// Play animation
-			panel.Set("card_rect", rect);
+			panel.Set("card_rect", new Rect2(rect.Position - Container.Position, rect.Size));
 			if (panel.HasMethod("play_intro")) panel.Call("play_intro", [index * 0.03]);
 		}
 	}
@@ -105,7 +96,7 @@ public partial class InspectionPanelManager : Control
 			var texture = data.IconId is { } iconId
 				? clientInstanceRegistry.Client?.Resources.Instantiate<Texture2D>(iconId) ?? new ImageTexture()
 				: new ImageTexture();
-			panel.Call("set_content", data.Title, texture, data.Text);
+			panel.Call("set_content", data.Title, texture, data.Text, data.Color);
 		}
 
 		if (data.Grid is not { } grid || !panel.HasMethod("set_grid")) return;

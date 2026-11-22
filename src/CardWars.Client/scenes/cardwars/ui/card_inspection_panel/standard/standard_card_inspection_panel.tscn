@@ -17,6 +17,8 @@ shader_parameter/tint = Color(0.03137255, 0.039215688, 0.08627451, 0.4509804)
 [node name="StandardCardInspectionPanel" type="MarginContainer" unique_id=689193761 node_paths=PackedStringArray("grid_container", "icon_texture", "title_label", "content_label")]
 offset_right = 140.0
 offset_bottom = 98.0
+size_flags_vertical = 0
+offset_transform_enabled = true
 script = ExtResource("1_o23xf")
 grid_container = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/GridContainer")
 icon_texture = NodePath("VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer/TextureRect")

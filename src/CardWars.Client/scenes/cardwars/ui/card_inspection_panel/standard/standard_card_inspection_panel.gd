@@ -15,12 +15,14 @@ func play_intro(delay: float = 0) -> void:
 	var t: Tween = create_tween()
 	t.set_parallel(true).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	t.tween_property(self, "modulate:a", modulate.a, duration).set_delay(delay)
-	t.tween_property(self, "position", position, duration).set_delay(delay)
+	t.tween_property(self, "offset_transform_position", Vector2.ZERO, duration).set_delay(delay)
 
-	modulate.a = 0.0
 	z_index -= 1
-	position.x = card_rect.position.x - get_minimum_size().x / 2
-
+	modulate.a = 0.0
+	
+	print(card_rect.position)
+	print(position)
+	offset_transform_position.x = (card_rect.position - position).x
 
 func set_grid(items: Array, grid_width: int = 3) -> void:
 	if items.size() > 0:
@@ -36,7 +38,10 @@ func set_grid(items: Array, grid_width: int = 3) -> void:
 		grid_container.visible = false
 
 
-func set_content(title: String, texture: Texture2D, text: String) -> void:
+func set_content(title: String, texture: Texture2D, text: String, color: Color) -> void:
 	icon_texture.texture = texture
 	title_label.text = title
 	content_label.text = text
+	
+	$VBoxContainer/Top.color = color
+	$VBoxContainer/MarginContainer/MarginContainer/VBoxContainer/HBoxContainer/TextureRect.modulate = color
