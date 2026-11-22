@@ -68,8 +68,6 @@ public partial class HandManager : Control
 			)
 			{
 				var rect = GetScreenRect(card3D, camera);
-				GetNode<Panel>("Panel").Position = rect.Position;
-				GetNode<Panel>("Panel").Size = rect.Size;
 				BattleInstance?.InspectionPanelManagerNode?.PopulateAndArrangePanels(
 					card,
 					battleRegistry,
@@ -102,7 +100,7 @@ public partial class HandManager : Control
 			max = max.Max(screen);
 		}
 
-		return new Rect2(min, max - min);
+		return new Rect2((min + max) / 2.0f, max - min);
 	}
 
 
