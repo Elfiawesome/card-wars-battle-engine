@@ -27,6 +27,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		ResourceId.Vanilla("cards/units/redalert3/apocalypse_tank"),
 		ResourceId.Vanilla("cards/units/redalert3/assault_destroyer"),
 		ResourceId.Vanilla("cards/units/southpark/fastpass"),
+		ResourceId.Vanilla("cards/units/madnesscombat/auditor"),
 	];
 
 	private static readonly ResourceId[] Heroes =
