@@ -17,6 +17,4 @@ public class BattleRegistry : IClientRegistryExtension
 	
 	public ResourceId DefaultCardDisplay;
 	public ResourceId DefaultCardInspectionPanel;
-	
-	public CardInspectionHandlerRegistry CardInspectionHandlers = new();
 }
