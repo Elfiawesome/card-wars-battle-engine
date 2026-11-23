@@ -9,5 +9,13 @@
 		"main": "cardwars:texture/cards/units/madnesscombat/auditor",
 		"background": "cardwars:texture/cards/worlds/madnesscombat"
 	},
-	"abilities": []
+	"abilities": [
+		{
+			"description": "On ally death, +8 ATK +12 HP",
+			"ability_type": "cardwars:ability_types/unit_death",
+			"behaviour": {
+				"resource": "test_ability"
+			}
+		}
+	]
 }

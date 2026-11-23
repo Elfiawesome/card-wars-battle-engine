@@ -1,0 +1,6 @@
+{
+	"name": "Unit Death",
+	"color": "#a83700",
+	"texture": "cardwars:texture/icon/abilities/unit_death",
+	"text": "When a enemy/ally unit dies"
+}
