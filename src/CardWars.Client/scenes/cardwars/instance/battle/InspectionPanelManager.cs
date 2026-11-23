@@ -13,7 +13,7 @@ namespace CardWars.Client.scenes.cardwars.instance.battle;
 
 public partial class InspectionPanelManager : Control
 {
-	public enum PanelGroupings { Abilities, SpAtks }
+	public enum PanelGroupings { Ability, AbilityType, SpAtks }
 
 	private const float PANEL_GAP = 12f;
 
@@ -24,10 +24,11 @@ public partial class InspectionPanelManager : Control
 	{
 		// For now, all the details are hardcoded
 		List<CardInspectionData> panels = [
-			..GetPanelsData(PanelGroupings.Abilities, card, clientInstanceRegistry),
+			..GetPanelsData(PanelGroupings.Ability, card, clientInstanceRegistry),
+			..GetPanelsData(PanelGroupings.AbilityType, card, clientInstanceRegistry),
 			..GetPanelsData(PanelGroupings.SpAtks, card, clientInstanceRegistry)
 		];
-		
+
 		if (panels.Count == 0) return;
 
 		foreach (var inspectionData in panels)
@@ -129,51 +130,84 @@ public partial class InspectionPanelManager : Control
 		List<CardInspectionData> panelDataList = [];
 		switch (panelGroupings)
 		{
-			case PanelGroupings.Abilities:
-				if (card.Data.GetList("abilities") is { } abilities)
+			case PanelGroupings.AbilityType:
 				{
-					// Add Ability Panels
-					foreach (var tag in abilities.Items)
+					if (card.Data.GetList("abilities") is { } abilities)
 					{
-						if (tag is not CompoundTag ability) continue;
+						foreach (var tag in abilities.Items)
+						{
+							if (tag is not CompoundTag ability) continue;
 
-						var typePointer = ability.GetString("ability_type");
-						var abilityType = string.IsNullOrWhiteSpace(typePointer)
-							? null
-							: registry.Battle?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
+							var typePointer = ability.GetString("ability_type");
+							var abilityType = string.IsNullOrWhiteSpace(typePointer)
+								? null
+								: registry.Battle?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
 
-						var title = abilityType?.GetString("name") ?? ability.GetString("name");
-						if (string.IsNullOrWhiteSpace(title)) title = "Ability";
+							var title = abilityType?.GetString("name") ?? ability.GetString("name");
+							if (string.IsNullOrWhiteSpace(title)) title = "Ability";
 
-						ResourceId? textureId = null;
-						if (abilityType?.GetString("texture") is { } abilityTextureId)
-							textureId = ResourceId.Parse(abilityTextureId);
+							ResourceId? textureId = null;
+							if (abilityType?.GetString("texture") is { } abilityTextureId)
+								textureId = ResourceId.Parse(abilityTextureId);
 
-						panelDataList.Add(new CardInspectionData(
-							title,
-							abilityType?.GetString("text") ?? "",
-							textureId,
-							null,
-							abilityType?.GetString("color") ?? "#ffffff"
-						));
+							panelDataList.Add(new CardInspectionData(
+								title,
+								abilityType?.GetString("text") ?? "",
+								textureId,
+								null,
+								abilityType?.GetString("color") ?? "#ffffff"
+							));
+						}
+					}
+				}
+				break;
+			case PanelGroupings.Ability:
+				{
+					if (card.Data.GetList("abilities") is { } abilities)
+					{
+						foreach (var tag in abilities.Items)
+						{
+							if (tag is not CompoundTag ability) continue;
+
+							var typePointer = ability.GetString("ability_type");
+							var abilityType = string.IsNullOrWhiteSpace(typePointer)
+								? null
+								: registry.Battle?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
+
+							var title = abilityType?.GetString("name") ?? ability.GetString("name");
+							if (string.IsNullOrWhiteSpace(title)) title = "Ability";
+
+							ResourceId? textureId = null;
+							if (abilityType?.GetString("texture") is { } abilityTextureId)
+								textureId = ResourceId.Parse(abilityTextureId);
+
+							panelDataList.Add(new CardInspectionData(
+								title,
+								ability?.GetString("description") ?? "",
+								textureId,
+								null,
+								abilityType?.GetString("color") ?? "#ffffff"
+							));
+						}
 					}
 				}
 				break;
 			case PanelGroupings.SpAtks:
-				// SP Atk
-				if (card.Data.GetList("sp_atks") is { } spAtks)
 				{
-					foreach (var tag in spAtks.Items)
+					if (card.Data.GetList("sp_atks") is { } spAtks)
 					{
-						var resolver = new AttackResolver(battleRegistry);
-						var attack = new AttackProfile(true, resolver.GetAttackDefinitionFromPointer(tag));
-						var title = attack.Definition.Name;
-						var charge = attack.Definition.ChargeCost;
-						var text = attack.Definition.Bypass ? $"CHARGE {charge} · BYPASS" : $"CHARGE {charge}"; ;
+						foreach (var tag in spAtks.Items)
+						{
+							var resolver = new AttackResolver(battleRegistry);
+							var attack = new AttackProfile(true, resolver.GetAttackDefinitionFromPointer(tag));
+							var title = attack.Definition.Name;
+							var charge = attack.Definition.ChargeCost;
+							var text = attack.Definition.Bypass ? $"CHARGE {charge} · BYPASS" : $"CHARGE {charge}"; ;
 
-						panelDataList.Add(new CardInspectionData(
-							title, text, attack.Definition.Texture, attack.RenderPattern(3)
-						));
+							panelDataList.Add(new CardInspectionData(
+								title, text, attack.Definition.Texture, attack.RenderPattern(3)
+							));
+						}
 					}
 				}
 				break;
