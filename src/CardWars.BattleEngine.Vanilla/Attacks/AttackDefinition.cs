@@ -111,4 +111,46 @@ public sealed record AttackProfile
 			_ => false
 		};
 	}
+
+	public RenderedAttackPatternGrid RenderPattern(int targetSize = 3)
+	{
+		List<RenderedAttackPatternCell> inspectionGridCells = [];
+
+		int Midpoint = targetSize / 2;
+		for (var y = 0; y < targetSize; y++)
+		{
+			for (var x = 0; x < targetSize; x++)
+			{
+				var isCenter = Midpoint == x && Midpoint == y;
+				var text = "";
+				var filled = false;
+				var crossed = false;
+				if (IsHit(new UnitSlotPos(Midpoint, Midpoint), new UnitSlotPos(x, y), out var spec))
+				{
+					crossed = isCenter;
+					filled = true;
+					text = isCenter ? "" :
+						spec.Percent != 0.0 ? $"{(int)Math.Round(spec.Percent * 100)}%" :
+						spec.Amount != 0.0 ? $"{spec.Amount}" :
+						string.Empty;
+				}
+				inspectionGridCells.Add(
+					new RenderedAttackPatternCell(spec, filled, crossed, text)
+				);
+			}
+		}
+		return new RenderedAttackPatternGrid(targetSize, inspectionGridCells);
+	}
+
+	public sealed record class RenderedAttackPatternGrid(
+		int Width,
+		IReadOnlyList<RenderedAttackPatternCell> Cells
+	);
+
+	public sealed record class RenderedAttackPatternCell(
+		AttackDamageSpec? Spec = null,
+		bool Filled = false,
+		bool Crossed = false,
+		string Text = ""
+	);
 }
