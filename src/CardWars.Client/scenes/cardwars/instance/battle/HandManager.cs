@@ -81,34 +81,6 @@ public partial class HandManager : Control
 			)
 			{
 				var rect = GetScreenRect(card3D, camera);
-				if (card.Data.GetList("abilities") is { } abilities)
-				{
-					foreach (var tag in abilities.Items)
-					{
-						if (tag is not CompoundTag ability) continue;
-
-						var typePointer = ability.GetString("ability_type");
-						var abilityType = string.IsNullOrWhiteSpace(typePointer)
-							? null
-							: BattleInstance?.Registry.Battle?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
-
-						var title = abilityType?.GetString("name") ?? ability.GetString("name");
-						if (string.IsNullOrWhiteSpace(title)) title = "Ability";
-
-						BattleInstance?.InspectionPanelManagerNode?.AddPanel(
-							new(
-								title,
-								abilityType?.GetString("text") ?? "",
-								null,
-								null,
-								abilityType?.GetString("color") ?? "#ffffff"
-							),
-							battleRegistry,
-							BattleInstance.Registry
-						);
-					}
-				}
-
 				BattleInstance?.InspectionPanelManagerNode?.PopulateAndArrangePanels(
 					card,
 					battleRegistry,
