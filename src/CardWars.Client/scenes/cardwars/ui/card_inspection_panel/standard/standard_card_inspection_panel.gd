@@ -19,9 +19,6 @@ func play_intro(delay: float = 0) -> void:
 
 	z_index -= 1
 	modulate.a = 0.0
-	
-	print(card_rect.position)
-	print(position)
 	offset_transform_position.x = (card_rect.position - position).x
 
 func set_grid(items: Array, grid_width: int = 3) -> void:
