@@ -29,6 +29,8 @@ public partial class GameSession : Node
 	public StorageManager? Storage { get; private set; } = null;
 
 	public string ConnectingUsername = "";
+	public string TargetIpAddress = "127.0.0.1";
+	public int TargetPort = 5060;
 
 	public Action? OnProcess { get; set; }
 	public Action<IInput>? OnBattleInput { get; set; }
@@ -39,7 +41,10 @@ public partial class GameSession : Node
 	{
 		// Set username from cmd line args
 		var args = OS.GetCmdlineArgs();
-		ConnectingUsername = args.Length > 2 ? args[2] : (args.Length > 0 ? args[^1] : "Elfiawesome");
+		Log.Info(args);
+		ConnectingUsername = args.Length > 2 ? args[2] : "Elfiawesome";
+		TargetIpAddress = args.Length > 3 ? args[3] : TargetIpAddress;
+		TargetPort = args.Length > 4 ? args[4].ToInt() : TargetPort;
 		GetWindow().Title = ConnectingUsername;
 		Core.Logging.Log.Identity = ConnectingUsername;
 
@@ -55,7 +60,7 @@ public partial class GameSession : Node
 
 		// Start!
 		Log.Info($"Game Session started with username: {ConnectingUsername}");
-		
+
 		if (ConnectingUsername == "Elfiawesome") { StartIntegratedServer(); }
 		else { JoinServer(); }
 	}
@@ -88,7 +93,7 @@ public partial class GameSession : Node
 
 		SetupModClient(modLoader);
 
-		var tcpClient = new TcpClient("127.0.0.1", 5060);
+		var tcpClient = new TcpClient(TargetIpAddress, TargetPort);
 		Connection = new TcpConnection(tcpClient);
 	}
 
