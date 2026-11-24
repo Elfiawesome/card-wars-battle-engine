@@ -4,10 +4,16 @@
 [ext_resource type="Texture2D" uid="uid://c41agu56cgkoy" path="res://assets/cardwars/texture/icon/error.svg" id="2_lx3wp"]
 [ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="3_ulykp"]
 [ext_resource type="FontVariation" uid="uid://c3rx16v67f23f" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans.tres" id="4_at12j"]
+[ext_resource type="Script" uid="uid://fioyctdu1xsk" path="res://scenes/core/ui/MoreRichTextLabel.cs" id="5_35d4a"]
+[ext_resource type="StyleBox" uid="uid://cgp57yy810fy1" path="res://scenes/core/ui/default_rich_stylebox.tres" id="6_el424"]
+
+[sub_resource type="Theme" id="Theme_35d4a"]
+default_font = ExtResource("4_at12j")
+default_font_size = 60
 
 [node name="Ability" type="HBoxContainer" unique_id=1097095912]
-offset_right = 260.0
-offset_bottom = 68.0
+offset_right = 818.0
+offset_bottom = 158.0
 size_flags_horizontal = 3
 theme_override_constants/separation = 32
 script = ExtResource("1_yurro")
@@ -56,13 +62,16 @@ theme_override_font_sizes/font_size = 60
 text = "Error"
 uppercase = true
 
-[node name="AbilityDescription" type="Label" parent="." unique_id=34148518]
-custom_minimum_size = Vector2(120, 0)
+[node name="AbilityDescription" type="Control" parent="." unique_id=545709277]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 1
-theme_override_fonts/font = ExtResource("4_at12j")
-theme_override_font_sizes/font_size = 60
-text = "Ability Text"
-vertical_alignment = 1
-autowrap_mode = 3
+mouse_filter = 1
+theme = SubResource("Theme_35d4a")
+script = ExtResource("5_35d4a")
+Text = "Error Text! [img=128x128]uid://d3stda5ajnn4v[/img]
+
+Keyword testing:
+[panel modulate=#f87171][margin=2] ATK [img=64x64]res://assets/cardwars/texture/icon/stat/atk.svg[/img] [/margin][/panel]
+[panel modulate=#4ade80][margin=2] HP [img=64x64]res://assets/cardwars/texture/icon/stat/hp.svg[/img] [/margin][/panel]
+[panel modulate=#059669][margin=2] HRT [img=64x64]res://assets/cardwars/texture/icon/stat/hrt.svg[/img] [/margin][/panel]"
+DefaultPanelStyle = ExtResource("6_el424")

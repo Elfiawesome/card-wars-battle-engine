@@ -3,7 +3,7 @@ extends HBoxContainer
 @onready var color_rect: ColorRect = $AbilityTriggerContainer/ColorRect
 @onready var texture_rect: TextureRect = $AbilityTriggerContainer/HBoxContainer/Control/MarginContainer/TextureRect
 @onready var label: Label = $AbilityTriggerContainer/HBoxContainer/MarginContainer/Label
-@onready var ability_description: Label = $AbilityDescription
+@onready var ability_description := $AbilityDescription
 
 func set_data(data: Dictionary = {}) -> void:
 	var color_value: Variant = data.get("color", Color.RED)
@@ -15,4 +15,4 @@ func set_data(data: Dictionary = {}) -> void:
 		texture_rect.texture = texture_value
 
 	label.text = str(data.get("ability_type", "ERROR"))
-	ability_description.text = str(data.get("description", "DESCRIPTION ERROR"))
+	ability_description.set("Text", str(data.get("description", "DESCRIPTION ERROR")))
