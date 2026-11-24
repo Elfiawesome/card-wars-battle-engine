@@ -3,13 +3,12 @@
 [ext_resource type="Script" uid="uid://pixq23g4y1w0" path="res://scenes/cardwars/ui/card_display/standard/parts/ability_text.gd" id="1_yurro"]
 [ext_resource type="Texture2D" uid="uid://c41agu56cgkoy" path="res://assets/cardwars/texture/icon/error.svg" id="2_lx3wp"]
 [ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="3_ulykp"]
-[ext_resource type="FontVariation" uid="uid://c3rx16v67f23f" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans.tres" id="4_at12j"]
 [ext_resource type="Script" uid="uid://fioyctdu1xsk" path="res://scenes/core/ui/MoreRichTextLabel.cs" id="5_35d4a"]
 [ext_resource type="StyleBox" uid="uid://cgp57yy810fy1" path="res://scenes/core/ui/default_rich_stylebox.tres" id="6_el424"]
 
 [sub_resource type="Theme" id="Theme_35d4a"]
-default_font = ExtResource("4_at12j")
-default_font_size = 60
+default_font = ExtResource("3_ulykp")
+default_font_size = 56
 
 [node name="Ability" type="HBoxContainer" unique_id=1097095912]
 offset_right = 818.0

@@ -4,7 +4,6 @@
 [ext_resource type="Shader" uid="uid://barudjfba1sse" path="res://assets/cardwars/shader/blur.gdshader" id="2_dqn7l"]
 [ext_resource type="Texture2D" uid="uid://c41agu56cgkoy" path="res://assets/cardwars/texture/icon/error.svg" id="3_66gck"]
 [ext_resource type="FontVariation" uid="uid://dfurxb3bwptnm" path="res://assets/cardwars/font/rajdhani/rajdhani.tres" id="4_1bhno"]
-[ext_resource type="FontVariation" uid="uid://c3rx16v67f23f" path="res://assets/cardwars/font/hedvig_letters_sans/hedvig_letters_sans.tres" id="5_1cc1h"]
 [ext_resource type="Script" uid="uid://cml7web851mlt" path="res://scenes/core/ui/data_container.gd" id="6_n55vb"]
 [ext_resource type="PackedScene" uid="uid://c0kxlqqmfr52" path="res://scenes/cardwars/ui/card_inspection_panel/standard/grid_tile.tscn" id="7_7di0a"]
 
@@ -85,7 +84,7 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
-theme_override_fonts/font = ExtResource("5_1cc1h")
+theme_override_fonts/font = ExtResource("4_1bhno")
 theme_override_font_sizes/font_size = 18
 text = "Error Text"
 autowrap_mode = 3

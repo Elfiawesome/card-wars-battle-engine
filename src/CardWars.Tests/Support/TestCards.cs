@@ -12,6 +12,7 @@ internal static class TestCards
 	public static readonly ResourceId ApocalypseTank = ResourceId.Vanilla("cards/units/redalert3/apocalypse_tank");
 	public static readonly ResourceId AssaultDestroyer = ResourceId.Vanilla("cards/units/redalert3/assault_destroyer");
 	public static readonly ResourceId Fastpass = ResourceId.Vanilla("cards/units/southpark/fastpass");
+	public static readonly ResourceId Auditor = ResourceId.Vanilla("cards/units/madnesscombat/auditor");
 	public static readonly ResourceId CaptainHero = ResourceId.Vanilla("cards/heroes/captain");
 
 	public static void RegisterStarterDeck(
@@ -22,6 +23,7 @@ internal static class TestCards
 		Register(registry, ApocalypseTank, Unit("Apocalypse Tank", hp: 10, atk: 5, pt: 3, charge: 2), configure);
 		Register(registry, AssaultDestroyer, Unit("Assault Destroyer", hp: 4, atk: 3, pt: 1, charge: 1), configure);
 		Register(registry, Fastpass, Unit("Fastpass", hp: 6, atk: 4, pt: 2, charge: 1), configure);
+		Register(registry, Auditor, Unit("Auditor", hp: 6, atk: 4, pt: 2, charge: 1), configure);
 		Register(registry, CaptainHero, Hero("Captain", hrt: 10), configure);
 	}
 
