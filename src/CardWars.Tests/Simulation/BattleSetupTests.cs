@@ -31,7 +31,7 @@ public sealed class BattleSetupTests
 	public void PlayerJoin_DoesNotMutateCardDefinitions()
 	{
 		var battle = BattleTestHarness.Create();
-		var definition = battle.Engine.Registry.CardDefinitions.Get(TestCards.CobCannon)
+		var definition = TestSupport.Definitions(battle.Engine.Registry).CardDefinitions.Get(TestCards.CobCannon)
 			?? throw new InvalidOperationException("Cob Cannon definition was not registered");
 
 		Assert.False(definition.Has("hp_max"));

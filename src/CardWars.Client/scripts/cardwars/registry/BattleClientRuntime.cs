@@ -1,9 +1,10 @@
 using CardWars.BattleEngine;
-using CardWars.Client.scripts.core;
+using CardWars.BattleEngine.Vanilla;
 
 namespace CardWars.Client.scripts.cardwars.registry;
 
-public sealed class BattleClientRuntime(BattleEngineRegistry engine) : IClientRegistryExtension
+public sealed class BattleClientRuntime(BattleEngineRegistry engine)
 {
 	public BattleEngineRegistry Engine { get; } = engine;
+	public CardWarsDefinitions? Definitions { get; } = engine.GetExtension<CardWarsDefinitions>();
 }

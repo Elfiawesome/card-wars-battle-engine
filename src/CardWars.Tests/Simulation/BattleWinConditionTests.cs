@@ -182,7 +182,7 @@ public sealed class BattleWinConditionTests
 				new LiteralExpression(new IntTag(2)))
 		};
 
-		battle.Engine.Registry.RuleDefinitions.Register(ruleId, DataTagMapper.ToTag(rule));
+		TestSupport.Definitions(battle.Engine.Registry).RuleDefinitions.Register(ruleId, DataTagMapper.ToTag(rule));
 		battle.State.RuleId = ruleId;
 
 		battle.AdvanceToAttackingPhase();

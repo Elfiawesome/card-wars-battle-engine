@@ -127,6 +127,7 @@ public partial class InspectionPanelManager : Control
 	{
 		if (registry.Client?.GetExtension<BattleClientRuntime>() is not { } battleRuntime) return [];
 		var battleEngine = battleRuntime.Engine;
+		var definitions = battleRuntime.Definitions;
 
 		List<CardInspectionData> panelDataList = [];
 		switch (panelGroupings)
@@ -142,7 +143,7 @@ public partial class InspectionPanelManager : Control
 							var typePointer = ability.GetString("ability_type");
 							var abilityType = string.IsNullOrWhiteSpace(typePointer)
 								? null
-								: battleEngine?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
+								: definitions?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
 
 							var title = abilityType?.GetString("name") ?? ability.GetString("name");
 							if (string.IsNullOrWhiteSpace(title)) title = "Ability";
@@ -173,7 +174,7 @@ public partial class InspectionPanelManager : Control
 							var typePointer = ability.GetString("ability_type");
 							var abilityType = string.IsNullOrWhiteSpace(typePointer)
 								? null
-								: battleEngine?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
+								: definitions?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
 
 							var title = abilityType?.GetString("name") ?? ability.GetString("name");
 							if (string.IsNullOrWhiteSpace(title)) title = "Ability";

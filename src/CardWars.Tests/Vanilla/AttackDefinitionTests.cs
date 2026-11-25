@@ -72,7 +72,7 @@ public sealed class AttackDefinitionTests
 		[
 			Pattern(AttackPatternType.Cell, 3)
 		], ResourceId.Vanilla("texture/icon/attacks/registered"), "Registered", 2, true);
-		registry.AttackDefinitions.Register(
+		TestSupport.Definitions(registry).AttackDefinitions.Register(
 			ResourceId.Vanilla("attacks/registered"),
 			DataTagMapper.ToTag(definition));
 

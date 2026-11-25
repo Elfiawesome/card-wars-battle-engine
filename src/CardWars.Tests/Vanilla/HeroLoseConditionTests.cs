@@ -32,7 +32,7 @@ public sealed class HeroLoseConditionTests
 
 		new VanillaMod().OnLoad(registry, [content]);
 
-		var definition = registry.CardDefinitions.Get(content.Id)
+		var definition = TestSupport.Definitions(registry).CardDefinitions.Get(content.Id)
 			?? throw new InvalidOperationException("Hero definition was not registered");
 		var pointer = definition.GetCompound("lose_condition")
 			?? throw new InvalidOperationException("Default lose condition was not injected");

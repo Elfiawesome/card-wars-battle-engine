@@ -131,7 +131,7 @@ public sealed class CardTargetFilterTests
 
 		new VanillaMod().OnLoad(registry, [content]);
 
-		var definition = registry.CardDefinitions.Get(content.Id) ?? throw new InvalidOperationException("Unit definition was not registered");
+		var definition = TestSupport.Definitions(registry).CardDefinitions.Get(content.Id) ?? throw new InvalidOperationException("Unit definition was not registered");
 		Assert.True(definition.Has("target_filter"));
 
 		var state = new GameState();

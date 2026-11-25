@@ -54,7 +54,7 @@ public partial class StandardCardDisplay : CardDisplay
 		if (FlavourTextLabel is not { } flavourTextLabel) return;
 		if (AbilitiesContainer is not { } abilitiesContainer) return;
 
-		var battleEngine = registry.Client?.GetExtension<BattleClientRuntime>()?.Engine;
+		var definitions = registry.Client?.GetExtension<BattleClientRuntime>()?.Definitions;
 
 		nameLabel.Text = data.GetString("name");
 		worldLabel.Text = data.GetString("world");
@@ -97,7 +97,7 @@ public partial class StandardCardDisplay : CardDisplay
 					foreach (var tag in abilities.Items.OfType<CompoundTag>())
 					{
 						var aTypePointer = tag.GetString("ability_type");
-						CompoundTag? aType = battleEngine?.AbilityTypeDefinitions.Get(
+						CompoundTag? aType = definitions?.AbilityTypeDefinitions.Get(
 							ResourceId.Parse(aTypePointer)
 						);
 						if (aType is null) continue;
@@ -131,7 +131,7 @@ public partial class StandardCardDisplay : CardDisplay
 						else
 						{
 							var resourceId = ResourceId.Parse(spAtk.GetString("resource"));
-							attackDef = battleEngine?.AttackDefinitions.Get(resourceId);
+							attackDef = definitions?.AttackDefinitions.Get(resourceId);
 						}
 
 						if (attackDef is null) continue;

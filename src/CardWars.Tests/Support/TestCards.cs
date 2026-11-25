@@ -34,7 +34,7 @@ internal static class TestCards
 		Action<ResourceId, CompoundTag>? configure = null)
 	{
 		configure?.Invoke(id, definition);
-		registry.CardDefinitions.Register(id, definition);
+		TestSupport.Definitions(registry).CardDefinitions.Register(id, definition);
 	}
 
 	public static CompoundTag Hero(string name, int hrt)

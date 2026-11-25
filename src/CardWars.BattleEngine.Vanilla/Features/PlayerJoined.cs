@@ -52,10 +52,12 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		batch.Blocks.Add(new InstantiateDeckBlock(deckId));
 		batch.Blocks.Add(new AttachDeckToPlayerBlock(request.PlayerId, deckId));
 
+		var definitions = context.Registry.GetExtension<CardWarsDefinitions>();
+
 		// Populate deck with card
 		foreach (var defId in StarterDeck)
 		{
-			var def = context.Registry.CardDefinitions.Get(defId)?.Clone();
+			var def = definitions?.CardDefinitions.Get(defId)?.Clone();
 			var cardId = EntityId.New();
 
 			// Add other data in a card that may not exist
@@ -108,7 +110,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		// Create Heroes
 		foreach (var heroDefinitionId in Heroes)
 		{
-			var heroDefinition = context.Registry.CardDefinitions.Get(heroDefinitionId)?.Clone();
+			var heroDefinition = definitions?.CardDefinitions.Get(heroDefinitionId)?.Clone();
 			if (heroDefinition is null) continue;
 
 			if (!heroDefinition.Has("hrt")) heroDefinition.Set("hrt", 0);

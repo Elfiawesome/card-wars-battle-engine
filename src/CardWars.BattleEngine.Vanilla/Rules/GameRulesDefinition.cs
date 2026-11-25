@@ -28,7 +28,7 @@ public sealed class GameRulesDefinition
 
 	public static GameRulesDefinition? Get(BattleEngineRegistry registry, ResourceId ruleId)
 	{
-		if (registry.RuleDefinitions.Get(ruleId) is not CompoundTag tag) return null;
+		if (registry.GetExtension<CardWarsDefinitions>()?.RuleDefinitions.Get(ruleId) is not CompoundTag tag) return null;
 
 		try
 		{

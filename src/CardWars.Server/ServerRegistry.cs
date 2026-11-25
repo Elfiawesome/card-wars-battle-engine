@@ -4,7 +4,7 @@ using CardWars.Server.Session;
 
 namespace CardWars.Server;
 
-public class ServerRegistry
+public class ServerRegistry : ExtensibleRegistry
 {
 	public HandlerRegistry<PacketContextServer> PacketHandlers = new();
 	public HandlerRegistry<PacketUnauthenticatedContextServer> UnauthenticatedPacketHandlers = new();

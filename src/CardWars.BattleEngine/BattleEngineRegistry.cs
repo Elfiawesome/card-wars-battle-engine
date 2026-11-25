@@ -3,12 +3,11 @@ using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
-using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine;
 
-public class BattleEngineRegistry
+public class BattleEngineRegistry : ExtensibleRegistry
 {
 	public HandlerRegistry<InputContext> InputHandlers = new();
 	public HandlerRegistry<GameState> BlockHandlers = new();
@@ -17,10 +16,5 @@ public class BattleEngineRegistry
 	public RegistryFactory<ResourceId, IBehaviour> Behaviours { get; } = new();
 	public RegistryFactory<ResourceId, EntityId, IEntity> Entities { get; } = new();
 	public RegistryFactory<ResourceId, IEntityCondition> EntityConditions { get; } = new();
-
-	public Registry<ResourceId, CompoundTag> CardDefinitions { get; } = new();
-	public Registry<ResourceId, CompoundTag> AttackDefinitions { get; } = new();
-	public Registry<ResourceId, CompoundTag> RuleDefinitions { get; } = new();
-	public Registry<ResourceId, CompoundTag> AbilityTypeDefinitions { get; } = new(); // TODO: Should this be here???
 	public Registry<ResourceId, object> CustomContent {get;} = new(); // Other modded data content
 }

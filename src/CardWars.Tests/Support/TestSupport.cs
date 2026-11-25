@@ -16,13 +16,17 @@ internal static class TestSupport
 	{
 		var registry = new BattleEngineRegistry();
 		new VanillaMod().OnLoad(registry, []);
-		registry.RuleDefinitions.Register(GameRulesDefinition.DefaultId, DataTagMapper.ToTag(new GameRulesDefinition
+		Definitions(registry).RuleDefinitions.Register(GameRulesDefinition.DefaultId, DataTagMapper.ToTag(new GameRulesDefinition
 		{
 			PtSchedule = [5, 6, 8, 11, 15, 20, 26, 33, 41, 50],
 			PtCap = 50
 		}));
 		return registry;
 	}
+
+	public static CardWarsDefinitions Definitions(BattleEngineRegistry registry)
+		=> registry.GetExtension<CardWarsDefinitions>()
+			?? throw new InvalidOperationException("CardWars definitions are not registered.");
 
 	public static BehaviourContext CreateBehaviourContext(BattleEngineRegistry registry, GameState state, EntityId owner)
 	{

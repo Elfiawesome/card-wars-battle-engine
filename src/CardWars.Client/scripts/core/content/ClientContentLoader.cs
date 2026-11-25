@@ -48,7 +48,10 @@ public sealed class ClientContentLoader(ResourceRegistry<ResourceId> resources)
 
 			var modName = item.TrimEnd('/');
 			foreach (var (resourceId, resourcePath) in new GDContentLoader(modName).LoadAssets())
+			{
 				resources.Register(resourceId, resourcePath);
+				Log.Debug($"Registered mounted asset [{resourceId}]");
+			}
 		}
 	}
 

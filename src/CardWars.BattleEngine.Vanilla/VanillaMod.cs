@@ -21,6 +21,8 @@ public class VanillaMod : IBattleEngineMod
 
 	public void OnLoad(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
 	{
+		var definitions = registry.GetOrCreateExtension<CardWarsDefinitions>();
+
 		// --- Input Handlers ---
 		registry.InputHandlers.Register(new PlayerJoinedRequestInputHandler());
 		registry.InputHandlers.Register(new EndTurnRequestInputHandler());
@@ -98,16 +100,16 @@ public class VanillaMod : IBattleEngineMod
 		RegisterDataDriven(registry);
 
 		// --- Game Rules ---
-		RegisterGameRules(registry, modContents);
+		RegisterGameRules(definitions, modContents);
 
 		// --- Attack Definitions ---
-		RegisterAttackDefinitions(registry, modContents);
+		RegisterAttackDefinitions(definitions, modContents);
 
 		// --- Register Ability Types ---
-		RegisterAbilityTypes(registry, modContents);
+		RegisterAbilityTypes(definitions, modContents);
 
 		// --- Card Definitions ---
-		RegisterCardDefinitions(registry, modContents);
+		RegisterCardDefinitions(definitions, modContents);
 	}
 
 	private static void RegisterDataDriven(BattleEngineRegistry registry)
@@ -159,7 +161,7 @@ public class VanillaMod : IBattleEngineMod
 	}
 
 
-	private static void RegisterGameRules(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
+	private static void RegisterGameRules(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{
@@ -168,12 +170,12 @@ public class VanillaMod : IBattleEngineMod
 			var rules = content.ReadAs<CompoundTag>();
 			if (rules is null) continue;
 
-			registry.RuleDefinitions.Register(content.Id, rules);
+			definitions.RuleDefinitions.Register(content.Id, rules);
 			Log.Info($"Registered Game Rules: {content.Id}");
 		}
 	}
 
-	private static void RegisterAttackDefinitions(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
+	private static void RegisterAttackDefinitions(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{
@@ -182,12 +184,12 @@ public class VanillaMod : IBattleEngineMod
 			var attack = content.ReadAs<CompoundTag>();
 			if (attack is null) continue;
 
-			registry.AttackDefinitions.Register(content.Id, attack);
+			definitions.AttackDefinitions.Register(content.Id, attack);
 			Log.Info($"Registered Attack: {content.Id}");
 		}
 	}
 
-	public static void RegisterAbilityTypes(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
+	public static void RegisterAbilityTypes(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{
@@ -195,13 +197,13 @@ public class VanillaMod : IBattleEngineMod
 			{
 				var abilityType = content.ReadAs<CompoundTag>();
 				if (abilityType is null) continue;
-				registry.AbilityTypeDefinitions.Register(content.Id, abilityType);
+				definitions.AbilityTypeDefinitions.Register(content.Id, abilityType);
 				Log.Info($"Registered Ability Type: {content.Id}");
 			}
 		}
 	}
 
-	private static void RegisterCardDefinitions(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
+	private static void RegisterCardDefinitions(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{
@@ -239,7 +241,7 @@ public class VanillaMod : IBattleEngineMod
 					// 	}
 					// }
 
-					registry.CardDefinitions.Register(content.Id, unitDataTag);
+					definitions.CardDefinitions.Register(content.Id, unitDataTag);
 					Log.Info($"Registered Unit Card: {content.Id}");
 					break;
 				case ["cards", "spells", ..]:
@@ -247,7 +249,7 @@ public class VanillaMod : IBattleEngineMod
 					if (spellDataTag is null) continue;
 
 					spellDataTag.Set("card_type", "spell");
-					registry.CardDefinitions.Register(content.Id, spellDataTag);
+					definitions.CardDefinitions.Register(content.Id, spellDataTag);
 					Log.Info($"Registered Spell Card: {content.Id}");
 					break;
 				case ["cards", "heroes", ..]:
@@ -258,7 +260,7 @@ public class VanillaMod : IBattleEngineMod
 					if (!heroDataTag.Has("lose_condition"))
 						heroDataTag.Set("lose_condition", DataTagMapper.ToTag(new ContentPointer(Resource: HeroHrtLoseCondition.Id)));
 
-					registry.CardDefinitions.Register(content.Id, heroDataTag);
+					definitions.CardDefinitions.Register(content.Id, heroDataTag);
 					Log.Info($"Registered Hero Card: {content.Id}");
 					break;
 			}

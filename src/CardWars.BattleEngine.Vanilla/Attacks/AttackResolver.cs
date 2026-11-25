@@ -65,7 +65,7 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 	{
 		if (pointer.Resource is { } resourceId)
 		{
-			var definition = registry.AttackDefinitions.Get(resourceId);
+			var definition = registry.GetExtension<CardWarsDefinitions>()?.AttackDefinitions.Get(resourceId);
 			if (definition is not null)
 			{
 				var def = DataTagMapper.FromTag<AttackDefinition>(definition);
