@@ -1,7 +1,6 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
-using CardWars.ModLoader;
 
 namespace CardWars.BattleEngine;
 
@@ -14,11 +13,6 @@ public class BattleEngine
 
 	public BattleEngine()
 	{
-	}
-
-	public void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents)
-	{
-		mod.OnLoad(Registry, modContents);
 	}
 
 	public void HandleInput(EntityId playerId, IInput input)

@@ -12,9 +12,9 @@ internal sealed class MemoryFileProvider : IFileProvider
 
 	public void AddFile(string path, string content) => _files[NormalizePath(path)] = content;
 
-	public bool Exists(string path) => _files.ContainsKey(NormalizePath(path));
+	public bool Exists(string path) => IsFile(path) || IsDirectory(path);
 
-	public bool IsFile(string path) => Exists(path);
+	public bool IsFile(string path) => _files.ContainsKey(NormalizePath(path));
 
 	public bool IsDirectory(string path)
 	{

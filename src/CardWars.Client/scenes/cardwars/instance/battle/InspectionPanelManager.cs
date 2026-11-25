@@ -20,7 +20,7 @@ public partial class InspectionPanelManager : Control
 	private readonly List<Control> _inspectionPanels = [];
 	public VBoxContainer Container => GetNode<VBoxContainer>("VBoxContainer");
 
-	public void PopulatePanels(GenericCard card, BattleRegistry battleRegistry, ClientInstanceRegistry clientInstanceRegistry)
+	public void PopulatePanels(GenericCard card, BattleViewRegistry battleView, ClientInstanceRegistry clientInstanceRegistry)
 	{
 		// For now, all the details are hardcoded
 		List<CardInspectionData> panels = [
@@ -33,15 +33,15 @@ public partial class InspectionPanelManager : Control
 
 		foreach (var inspectionData in panels)
 		{
-			var panel = AddPanel(inspectionData, battleRegistry, clientInstanceRegistry);
+			var panel = AddPanel(inspectionData, battleView, clientInstanceRegistry);
 			if (panel == null) return;
 		}
 	}
 
-	public Control? AddPanel(CardInspectionData inspectionData, BattleRegistry battleRegistry, ClientInstanceRegistry clientInstanceRegistry)
+	public Control? AddPanel(CardInspectionData inspectionData, BattleViewRegistry battleView, ClientInstanceRegistry clientInstanceRegistry)
 	{
 		// Get the inspection design skin TODO: Maybe switch it up with skins?
-		var panel = clientInstanceRegistry.Client?.UserInterface.Instantiate<Control>(battleRegistry.DefaultCardInspectionPanel);
+		var panel = clientInstanceRegistry.Client?.UserInterface.Instantiate<Control>(battleView.DefaultCardInspectionPanel);
 		if (panel is null) return null;
 
 		Container.AddChild(panel);
@@ -77,12 +77,12 @@ public partial class InspectionPanelManager : Control
 
 	public void PopulateAndArrangePanels(
 		GenericCard card,
-		BattleRegistry battleRegistry,
+		BattleViewRegistry battleView,
 		ClientInstanceRegistry clientInstanceRegistry,
 		Rect2 rect
 	)
 	{
-		PopulatePanels(card, battleRegistry, clientInstanceRegistry);
+		PopulatePanels(card, battleView, clientInstanceRegistry);
 		ArrangePanels(rect);
 	}
 
@@ -125,7 +125,8 @@ public partial class InspectionPanelManager : Control
 
 	public List<CardInspectionData> GetPanelsData(PanelGroupings panelGroupings, GenericCard card, ClientInstanceRegistry registry)
 	{
-		if (registry.Battle is not { } battleRegistry) return [];
+		if (registry.Client?.GetExtension<BattleClientRuntime>() is not { } battleRuntime) return [];
+		var battleEngine = battleRuntime.Engine;
 
 		List<CardInspectionData> panelDataList = [];
 		switch (panelGroupings)
@@ -141,7 +142,7 @@ public partial class InspectionPanelManager : Control
 							var typePointer = ability.GetString("ability_type");
 							var abilityType = string.IsNullOrWhiteSpace(typePointer)
 								? null
-								: registry.Battle?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
+								: battleEngine?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
 
 							var title = abilityType?.GetString("name") ?? ability.GetString("name");
 							if (string.IsNullOrWhiteSpace(title)) title = "Ability";
@@ -172,7 +173,7 @@ public partial class InspectionPanelManager : Control
 							var typePointer = ability.GetString("ability_type");
 							var abilityType = string.IsNullOrWhiteSpace(typePointer)
 								? null
-								: registry.Battle?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
+								: battleEngine?.AbilityTypeDefinitions.Get(ResourceId.Parse(typePointer));
 
 							var title = abilityType?.GetString("name") ?? ability.GetString("name");
 							if (string.IsNullOrWhiteSpace(title)) title = "Ability";
@@ -198,7 +199,7 @@ public partial class InspectionPanelManager : Control
 					{
 						foreach (var tag in spAtks.Items)
 						{
-							var resolver = new AttackResolver(battleRegistry);
+							var resolver = new AttackResolver(battleEngine);
 							var attack = new AttackProfile(true, resolver.GetAttackDefinitionFromPointer(tag));
 							var title = attack.Definition.Name;
 							var charge = attack.Definition.ChargeCost;

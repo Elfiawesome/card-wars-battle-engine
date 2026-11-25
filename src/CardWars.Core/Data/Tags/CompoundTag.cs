@@ -96,7 +96,7 @@ public sealed class CompoundTag : DataTag
 			_entries[key] = tag.Clone();
 	}
 
-	public override DataTag Clone()
+	public override CompoundTag Clone()
 	{
 		var clone = new CompoundTag();
 		foreach (var (key, tag) in _entries)

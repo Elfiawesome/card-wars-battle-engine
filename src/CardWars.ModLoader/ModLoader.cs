@@ -24,8 +24,9 @@ public class LoadedMod
 public class ModLoader
 {
 	private readonly IEnumerable<StoragePath> _modDirs;
-	private Dictionary<string, LoadedMod> _mods = [];
+	private readonly Dictionary<string, LoadedMod> _mods = [];
 	private readonly List<string> _loadOrder = [];
+	private readonly Dictionary<(string ContentRoot, string? AssetRoot), ModContentFiles> _content = [];
 
 	public ModLoader(StoragePath modDir) { _modDirs = [modDir]; }
 	public ModLoader(IEnumerable<StoragePath> modDirs)
@@ -38,6 +39,7 @@ public class ModLoader
 		DiscoverMods();
 		ResolveDependencies();
 		LoadAssemblies();
+		DataTagTypeRegistry.ScanLoadedAssemblies();
 	}
 
 	public void DiscoverMods()
@@ -146,11 +148,6 @@ public class ModLoader
 				}
 			}
 			
-			// Load data registry AFTER
-			foreach (var assembly in loadContext.Assemblies)
-			{
-				DataTagTypeRegistry.ScanAssembly(assembly);
-			}
 		}
 	}
 
@@ -183,38 +180,80 @@ public class ModLoader
 		return modEntries;
 	}
 
-	public IEnumerable<ModContentResult> GetContentServer() => GetContent("server");
-	public IEnumerable<ModContentResult> GetContentClient() => GetContent("client");
-
-
-	private IEnumerable<ModContentResult> GetContent(string side)
+	public ModContentFiles GetContent(string contentRoot, string? assetRoot = null)
 	{
+		var key = (contentRoot, assetRoot);
+		if (_content.TryGetValue(key, out var cached)) return cached;
+
+		var data = new List<ModContentResult>();
+		var assets = new List<ModContentResult>();
+
 		foreach (var modId in _loadOrder)
 		{
 			var mod = _mods[modId];
-			var contentDir = mod.RootPath.Combine("content").Combine(side);
-			if (!contentDir.Exists) continue;
-
-			foreach (var (filePath, relPath) in contentDir.Walk())
+			foreach (var contentPath in mod.Manifest.ContentPaths)
 			{
-				var dir = filePath.GetDirectoryName(relPath);
-				var stem = filePath.GetFileNameWithoutExtension(relPath);
-				var sanePath = dir.Length > 0 ? filePath.JoinPath(dir, stem) : stem;
+				var rootDir = mod.RootPath.Combine(contentPath).Combine(contentRoot);
+				if (!rootDir.Exists) continue;
 
-				var id = new ResourceId(modId, sanePath);
-				var parts = filePath.SplitPath(sanePath);
-				var category = parts.Length > 1 ? parts[..^1] : [];
+				LoadContentFiles(modId, rootDir, assetRoot, data, assets);
+			}
+		}
 
-				yield return new ModContentResult()
-				{
-					Id = id,
-					FilePath = filePath,
-					Category = category
-				};
+		var result = new ModContentFiles(data, assets);
+		_content[key] = result;
+		Log.Info($"Content loaded [{contentRoot}]: data {data.Count}, assets {assets.Count}");
+		return result;
+	}
+
+	private static void LoadContentFiles(
+		string modId,
+		StoragePath rootDir,
+		string? assetRoot,
+		List<ModContentResult> data,
+		List<ModContentResult> assets)
+	{
+		foreach (var (filePath, relPath) in rootDir.Walk())
+		{
+			var parts = filePath.SplitPath(relPath);
+			var isAsset = false;
+			var idPath = relPath;
+			if (assetRoot is { } assetFolder && parts.Length > 1 && parts[0] == assetFolder)
+			{
+				isAsset = true;
+				idPath = relPath[(assetFolder.Length + 1)..];
+			}
+
+			var idParts = isAsset ? parts[1..] : parts;
+			if (idParts.Length == 0) continue;
+
+			var dir = filePath.GetDirectoryName(idPath);
+			var stem = filePath.GetFileNameWithoutExtension(idPath);
+			var sanePath = dir.Length > 0 ? filePath.JoinPath(dir, stem) : stem;
+			var category = idParts.Length > 1 ? idParts[..^1] : [];
+
+			var result = new ModContentResult
+			{
+				Id = new ResourceId(modId, sanePath),
+				FilePath = filePath,
+				Category = category
+			};
+
+			if (isAsset)
+			{
+				assets.Add(result);
+			}
+			else
+			{
+				data.Add(result);
 			}
 		}
 	}
 }
+
+public sealed record ModContentFiles(
+	IReadOnlyList<ModContentResult> Data,
+	IReadOnlyList<ModContentResult> Assets);
 
 public class ModContentResult
 {
@@ -224,6 +263,14 @@ public class ModContentResult
 
 	public Stream OpenStream() => FilePath.OpenRead();
 	public string ReadAllText() => FilePath.ReadAllText();
+
+	public byte[] ReadAllBytes()
+	{
+		using var stream = OpenStream();
+		using var memory = new MemoryStream();
+		stream.CopyTo(memory);
+		return memory.ToArray();
+	}
 
 	public T? ReadAs<T>()
 		where T : DataTag

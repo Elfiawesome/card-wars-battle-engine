@@ -24,7 +24,7 @@ public class InstantiateCardBlockHandler : IBlockHandler<InstantiateCardBlock>
 
 		var card = new GenericCard(request.Id);
 		if (request.Data is { } data)
-			card.Data = (CompoundTag)data.Clone();
+			card.Data = data.Clone();
 		context.Add(card);
 	}
 }

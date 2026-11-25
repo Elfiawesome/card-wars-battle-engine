@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using CardWars.BattleEngine;
-using CardWars.BattleEngine.Input;
+using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Client.scripts.core;
-using CardWars.Client.scripts.core.packet;
-using CardWars.Core.Data.Global;
-using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
-using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;
 using CardWars.ModLoader;
@@ -21,21 +17,13 @@ namespace CardWars.Client.scenes.core.game_session;
 
 public partial class GameSession : Node
 {
-	public ClientRegistry ClientRegistry { get; init; } = new();
-	public BattleEngineRegistry BattleEngineRegistry { get; init; } = new();
-
+	public ClientSession? Client { get; private set; }
 	public Server.Server? IntegratedServer { get; private set; }
-	public IConnection? Connection { get; private set; }
-	public StorageManager? Storage { get; private set; } = null;
+	public StorageManager? Storage { get; private set; }
 
 	public string ConnectingUsername = "";
 	public string TargetIpAddress = "127.0.0.1";
 	public int TargetPort = 5060;
-
-	public Action? OnProcess { get; set; }
-	public Action<IInput>? OnBattleInput { get; set; }
-
-	public ClientInstance? Instance;
 
 	public override void _Ready()
 	{
@@ -45,10 +33,7 @@ public partial class GameSession : Node
 		TargetIpAddress = args.Length > 3 ? args[3] : TargetIpAddress;
 		TargetPort = args.Length > 4 ? args[4].ToInt() : TargetPort;
 		GetWindow().Title = ConnectingUsername;
-		Core.Logging.Log.Identity = ConnectingUsername;
-
-		// Bootstrap type registration for base assemblies
-		ScanCoreAssemblies();
+		Log.Identity = ConnectingUsername;
 
 		// Setup storage & providers
 		var provider = new LocalFileProvider();
@@ -59,83 +44,69 @@ public partial class GameSession : Node
 
 		// Start!
 		Log.Info($"Game Session started with username: {ConnectingUsername}");
+		StartSession();
+	}
 
-		if (ConnectingUsername == "Elfiawesome") { StartIntegratedServer(); }
+	private void StartSession()
+	{
+		if (Storage is null) { return; }
+
+		// Set up ModLoader & scan for all DLLs Mod in dir
+		var modLoader = new ModLoader.ModLoader(Storage.AllModDirectories);
+		modLoader.Setup();
+
+		// Get all contents from every mod
+		var content = GameContent.Load(modLoader);
+
+		// Create a shared Battle registry
+		var battleRegistry = new BattleEngineRegistry();
+		foreach (var mod in modLoader.LoadModEntry<IBattleEngineMod>())
+			mod.OnLoad(battleRegistry, content.BattleData);
+
+		var clientRegistry = new ClientRegistry();
+		clientRegistry.RegisterExtension(new BattleClientRuntime(battleRegistry));
+
+		Client = new ClientSession(this, ConnectingUsername, clientRegistry);
+		Client.OnDebugStatus = SetDebugStatus;
+		Client.OnDebugWorld = SetDebugWorld;
+		Client.OnDebugPlayers = SetDebugPlayers;
+
+		// Load client mod (built within the current assembly)
+		var clientMods = CreateModEntries<IClientMod>().Concat(modLoader.LoadModEntry<IClientMod>()); // Get all  IClientMod in the current assembly + modloader's loaded mod assemblies
+		Client.LoadContent(clientMods, content.ClientPacks, content.ClientData, content.BattleAssets);
+
+		// Start either server or client!
+		if (ConnectingUsername == "Elfiawesome") { StartIntegratedServer(modLoader, content, battleRegistry); }
 		else { JoinServer(); }
 	}
 
-	private void StartIntegratedServer()
+	private void StartIntegratedServer(ModLoader.ModLoader modLoader, GameContent content, BattleEngineRegistry battleRegistry)
 	{
-		if (Storage is null) { return; }
-		var sessionName = "session_1";
-		IntegratedServer = new Server.Server(Storage, sessionName);
+		if (Storage is null || Client is null) { return; }
 
-		var modDirs = Storage.AllModDirectories;
-		ModLoader.ModLoader modLoader = new(modDirs);
-		modLoader.Setup();
-
-		SetupModClient(modLoader);
-		SetupModServer(modLoader, IntegratedServer);
+		IntegratedServer = new Server.Server(Storage, battleRegistry, "session_1");
+		foreach (var mod in modLoader.LoadModEntry<IServerMod>())
+			mod.OnLoad(IntegratedServer, content.ServerData);
 
 		var localListener = new LocalListener() { IsSerialized = true };
-		var tcpListener = new TcpGameListener(5060);
+		var tcpListener = new TcpGameListener(TargetPort);
 		IntegratedServer.Start(localListener, tcpListener);
-		Connection = localListener.ConnectClient();
+		Client.Connect(localListener.ConnectClient());
 	}
 
 	private void JoinServer()
 	{
-		if (Storage is null) { return; }
-		var modDirs = Storage.AllModDirectories;
-		ModLoader.ModLoader modLoader = new(modDirs);
-		modLoader.Setup();
-
-		SetupModClient(modLoader);
+		if (Client is null) { return; }
 
 		var tcpClient = new TcpClient(TargetIpAddress, TargetPort);
-		Connection = new TcpConnection(tcpClient);
+		Client.Connect(new TcpConnection(tcpClient));
 	}
 
-	public override void _Process(double delta)
-	{
-		if (Connection is { IsConnected: true } connection)
-		{
-			while (connection.TryReceive(out var packet))
-			{
-				if (packet is { } received) HandleIncomingPacket(received);
-			}
-		}
+	public override void _Process(double delta) => Client?.Process();
 
-		OnProcess?.Invoke();
-	}
-
-	public void SwitchInstance(ClientInstance newInstance, Guid? playerId)
-	{
-		if (Instance is { } oldInstance) { RemoveChild(oldInstance); oldInstance.onPacketSent -= SendPacket; }
-
-		Instance = newInstance;
-		Instance.onPacketSent += SendPacket;
-		Instance.Registry.Client = ClientRegistry;
-		Instance.Registry.Battle = BattleEngineRegistry;
-		Instance.MyPlayerId = playerId ?? Guid.Empty;
-		AddChild(Instance);
-	}
-
-	public void SendPacket(IPacket packet)
-		=> Connection?.Send(packet);
-
-	private void HandleIncomingPacket(IPacket packet)
-	{
-		Core.Logging.Log.Debug($"Client received packet from server: {packet.GetType().Name}");
-		PacketContextClient ctx = new() { Session = this };
-		Instance?.OnPacket(packet, ctx);
-		ClientRegistry.PacketHandlers.Execute(ctx, packet);
-	}
-
-	// TODO REMOVE LATER
-	public void SetDebugStatus(string value) => GetNode<Node>("Control/VBoxContainer/Status").Set("content", value);
-	public void SetDebugWorld(string value) => GetNode<Node>("Control/VBoxContainer/World").Set("content", value);
-	public void SetDebugPlayers(string value) => GetNode<Node>("Control/VBoxContainer/Players").Set("content", value);
+	private void SetDebugStatus(string value) => GetNode<Node>("Control/VBoxContainer/Status").Set("content", value);
+	private void SetDebugWorld(string value) => GetNode<Node>("Control/VBoxContainer/World").Set("content", value);
+	private void SetDebugPlayers(string value) => GetNode<Node>("Control/VBoxContainer/Players").Set("content", value);
 
 	public override void _ExitTree() => ExitCleanup();
 
@@ -147,41 +118,9 @@ public partial class GameSession : Node
 	private void ExitCleanup()
 	{
 		GD.Print("Cleaning up");
-		Connection?.Disconnect();
+		Client?.Disconnect();
 		IntegratedServer?.Stop();
 		GetTree().Quit();
-	}
-
-	private void ScanCoreAssemblies()
-	{
-		DataTagTypeRegistry.ScanAssembly(typeof(DataTag).Assembly); // Load core
-		DataTagTypeRegistry.ScanAssembly(typeof(ModLoader.ModLoader).Assembly);
-		DataTagTypeRegistry.ScanAssembly(typeof(BattleEngine.BattleEngine).Assembly); // Already done in BattleEngine, but just in case
-	}
-
-	private void SetupModServer(ModLoader.ModLoader modLoader, Server.Server server)
-	{
-		var serverContent = modLoader.GetContentServer().ToList();
-
-		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => server.LoadMod(m, serverContent));
-		modLoader.LoadModEntry<IServerMod>().ForEach(m => server.LoadMod(m, serverContent));
-	}
-
-	private void SetupModClient(ModLoader.ModLoader modLoader)
-	{
-		var clientContent = modLoader.GetContentClient().ToList();
-		var battleContent = IntegratedServer is null
-			? modLoader.GetContentServer().ToList()
-			: clientContent;
-
-		foreach (var mod in CreateModEntries<IClientMod>())
-			LoadMod(mod, clientContent); // Load Vanilla Mod TODO: FIx and maybe change this...
-
-		modLoader.LoadModEntry<IClientMod>().ForEach(m => LoadMod(m, clientContent));
-		modLoader.LoadModEntry<IBattleEngineMod>().ForEach(m => LoadMod(m, battleContent)); // TODO: Maybe content is loaded and passed on by server. So we create a new battle registry each session and is given by server??
-
-		// If loaded client, use its shared battle engine registry to save on memory
-		IntegratedServer?.OverrideRegistry(BattleEngineRegistry);
 	}
 
 	private static IEnumerable<TMod> CreateModEntries<TMod>()
@@ -191,10 +130,4 @@ public partial class GameSession : Node
 			.Where(type => typeof(TMod).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
 			.Select(type => Activator.CreateInstance(type) as TMod)
 			.OfType<TMod>();
-
-	private void LoadMod(IClientMod mod, List<ModContentResult> modContents)
-		=> mod.OnLoad(ClientRegistry, modContents);
-
-	private void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents)
-		=> mod.OnLoad(BattleEngineRegistry, modContents);
 }

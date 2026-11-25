@@ -1,6 +1,5 @@
 
 using System;
-using CardWars.BattleEngine;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Core.Network.Packet;
@@ -12,8 +11,6 @@ public partial class ClientInstance : Node
 {
 	public Guid MyPlayerId = Guid.Empty;
 	public Action<IPacket>? onPacketSent;
-	// public ClientRegistry? Registry.ClientRegistry;
-	// public BattleEngineRegistry? BattleEngineRegistry;
 	public ClientInstanceRegistry Registry = new();
 
 	public virtual void OnPacket(IPacket packet, PacketContextClient context) { }
@@ -23,6 +20,5 @@ public partial class ClientInstance : Node
 }
 
 public record struct ClientInstanceRegistry(
-	ClientRegistry? Client,
-	BattleEngineRegistry? Battle
+	ClientRegistry? Client
 );

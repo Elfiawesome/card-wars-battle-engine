@@ -7,5 +7,5 @@ public interface IBattleEngineMod : IModEntry
 	string ModName { get; }
 	string Version { get; }
 
-	public void OnLoad(BattleEngineRegistry registry, List<ModContentResult> modContents);
+	public void OnLoad(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents);
 }

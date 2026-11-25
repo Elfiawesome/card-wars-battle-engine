@@ -28,6 +28,28 @@ public sealed class BattleSetupTests
 	}
 
 	[Fact]
+	public void PlayerJoin_DoesNotMutateCardDefinitions()
+	{
+		var battle = BattleTestHarness.Create();
+		var definition = battle.Engine.Registry.CardDefinitions.Get(TestCards.CobCannon)
+			?? throw new InvalidOperationException("Cob Cannon definition was not registered");
+
+		Assert.False(definition.Has("hp_max"));
+		Assert.False(definition.Has("atk_max"));
+		Assert.False(definition.Has("pt_max"));
+		Assert.False(definition.Has("charge_max"));
+
+		var deck = battle.DeckOf(battle.Player1Id);
+		var card = battle.State.Require<GenericCard>(deck.CardIds[0])
+			?? throw new InvalidOperationException("Starter card was not created");
+
+		Assert.Equal(card.Data.GetInt("hp"), card.Data.GetInt("hp_max"));
+		Assert.Equal(card.Data.GetInt("atk"), card.Data.GetInt("atk_max"));
+		Assert.Equal(card.Data.GetInt("pt"), card.Data.GetInt("pt_max"));
+		Assert.Equal(card.Data.GetInt("charge"), card.Data.GetInt("charge_max"));
+	}
+
+	[Fact]
 	public void DrawCard_MovesCardFromDeckToHand()
 	{
 		var battle = BattleTestHarness.Create();

@@ -8,7 +8,7 @@ namespace CardWars.Server.Vanilla.Session;
 
 public class BattleInstanceProvider(
 	SessionStorage session,
-	BattleEngineRegistry sharedRegistry,
+	BattleEngineRegistry battleEngineRegistry,
 	ResourceId providerId) : ServerInstanceProvider<BattleInstance>
 {
 	public override BattleInstance Create(string saveId)
@@ -20,7 +20,7 @@ public class BattleInstanceProvider(
 		};
 		instance.Engine = new BattleEngine.BattleEngine
 		{
-			Registry = sharedRegistry,
+			Registry = battleEngineRegistry,
 			OnBlockBatchEvent = instance.BroadcastBatch
 		};
 		return instance;

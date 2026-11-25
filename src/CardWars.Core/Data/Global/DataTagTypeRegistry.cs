@@ -1,15 +1,33 @@
+using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Reflection;
 using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 using CardWars.Core.Utilities;
 
 namespace CardWars.Core.Data.Global;
 
+// TODO: Replace this process-global registry with a session-owned catalog to satisfy the no-static philosophy.
 public static class DataTagTypeRegistry
 {
 	private static readonly ConcurrentDictionary<string, Type> _idToType = new();
 	private static readonly ConcurrentDictionary<Type, string> _typeToId = new();
+
+	public static void ScanLoadedAssemblies()
+	{
+		var coreAssembly = typeof(DataTag).Assembly;
+		var coreName = coreAssembly.GetName().Name;
+
+		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		{
+			if (assembly != coreAssembly && !assembly.GetReferencedAssemblies().Any(reference => reference.Name == coreName))
+				continue;
+
+			ScanAssembly(assembly);
+		}
+	}
 
 	/// <summary>
 	/// Scans an assembly for all types decorated with [DataTagType] and registers them.

@@ -75,7 +75,7 @@ public partial class HandManager : Control
 			var id = BattleInstance.EntityNodes.First(s => s.Value == target).Key;
 			if ((BattleInstance.State.Get<UnitSlot>(id)?.HoldingCardId) is { } cardId
 				&& BattleInstance.State.Get<GenericCard>(cardId) is { } card
-				&& BattleInstance.BattleRegistry is { } battleRegistry
+				&& BattleInstance.BattleView is { } battleView
 				&& BattleInstance.EntityNodes.TryGetValue(cardId, out var cardTarget)
 				&& cardTarget is Card3D card3D
 			)
@@ -83,7 +83,7 @@ public partial class HandManager : Control
 				var rect = GetScreenRect(card3D, camera);
 				BattleInstance?.InspectionPanelManagerNode?.PopulateAndArrangePanels(
 					card,
-					battleRegistry,
+					battleView,
 					BattleInstance.Registry,
 					rect
 				);
@@ -151,7 +151,7 @@ public partial class HandManager : Control
 		if (BattleInstance is not { } instance || instance.State.Get<GenericCard>(id) is not { } entity) return;
 
 		// TODO: Get skin and place it inside
-		var displayIdN = BattleInstance.BattleRegistry?.DefaultCardDisplay;
+		var displayIdN = BattleInstance.BattleView?.DefaultCardDisplay;
 		if (displayIdN is not { } displayId) return;
 		var card = instance.Registry.Client?.UserInterface.Instantiate<CardDisplay>(displayId);
 		if (card is null) return;
@@ -389,12 +389,12 @@ public partial class HandManager : Control
 			if (inspectionRect is { } rect)
 			{
 				if (BattleInstance?.State.Get<GenericCard>(Cards.FirstOrDefault(s => s.Value == HoveredCard).Key) is { } card
-					&& BattleInstance.BattleRegistry is { } battleRegistry
+					&& BattleInstance.BattleView is { } battleView
 					&& BattleInstance.InspectionPanelManagerNode is { } managerNode
 				)
 				{
 					managerNode.ZIndex = HoverZIndex;
-					managerNode.PopulatePanels(card, battleRegistry, BattleInstance.Registry);
+					managerNode.PopulatePanels(card, battleView, BattleInstance.Registry);
 					managerNode.ArrangePanels(rect);
 				}
 			}

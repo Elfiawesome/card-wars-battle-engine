@@ -55,7 +55,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		// Populate deck with card
 		foreach (var defId in StarterDeck)
 		{
-			var def = context.Registry.CardDefinitions.Get(defId);
+			var def = context.Registry.CardDefinitions.Get(defId)?.Clone();
 			var cardId = EntityId.New();
 
 			// Add other data in a card that may not exist
@@ -108,7 +108,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		// Create Heroes
 		foreach (var heroDefinitionId in Heroes)
 		{
-			var heroDefinition = context.Registry.CardDefinitions.Get(heroDefinitionId);
+			var heroDefinition = context.Registry.CardDefinitions.Get(heroDefinitionId)?.Clone();
 			if (heroDefinition is null) continue;
 
 			if (!heroDefinition.Has("hrt")) heroDefinition.Set("hrt", 0);

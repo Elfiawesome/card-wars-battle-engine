@@ -4,14 +4,11 @@ using CardWars.Core.Logging;
 using CardWars.Server.Listener;
 using CardWars.Core.Network.Transport;
 using CardWars.Server.Packet;
-using CardWars.ModLoader;
 using CardWars.Server.Session;
 using CardWars.Core.Storage;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
-using CardWars.Core.Data.Tags;
 using CardWars.Core.Data.Mapping;
-using CardWars.Core.Data.Global;
 
 namespace CardWars.Server;
 
@@ -21,7 +18,7 @@ public class Server
 	private static readonly TimeSpan _unauthenticatedTimeout = TimeSpan.FromSeconds(30);
 
 	public ServerRegistry Registry { get; } = new();
-	public BattleEngineRegistry SharedBattleEngineRegistry { get; private set; } = new();
+	public BattleEngineRegistry BattleEngineRegistry { get; }
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
 
 	public StorageManager Storage { get; }
@@ -49,15 +46,12 @@ public class Server
 	// private double _intervalSaveAccumulator = 0;
 	private CancellationTokenSource? _cts;
 
-	public Server(StorageManager storage, string sessionName = "default")
+	public Server(StorageManager storage, BattleEngineRegistry battleEngineRegistry, string sessionName = "default")
 	{
 		Storage = storage;
+		BattleEngineRegistry = battleEngineRegistry;
 		Session = storage.OpenSession(sessionName);
-		ScanCoreAssemblies();
 	}
-
-	public void LoadMod(IServerMod mod, List<ModContentResult> modContents) => mod.OnLoad(this, modContents);
-	public void LoadMod(IBattleEngineMod mod, List<ModContentResult> modContents) => mod.OnLoad(SharedBattleEngineRegistry, modContents);
 
 	public void Start(params IListener[] listeners)
 	{
@@ -337,16 +331,4 @@ public class Server
 		=> Registry.PacketHandlers.Execute(
 			new PacketContextServer() { Server = this, PlayerSession = playerSession },
 			packet);
-
-
-	public void OverrideRegistry(BattleEngineRegistry registry)
-		=> SharedBattleEngineRegistry = registry;
-
-	private void ScanCoreAssemblies()
-	{
-		DataTagTypeRegistry.ScanAssembly(typeof(DataTag).Assembly); // Load core
-		DataTagTypeRegistry.ScanAssembly(typeof(ModLoader.ModLoader).Assembly);
-		DataTagTypeRegistry.ScanAssembly(typeof(BattleEngine.BattleEngine).Assembly); // Already done in BattleEngine, but just in case
-		DataTagTypeRegistry.ScanAssembly(typeof(Server).Assembly);
-	}
 }

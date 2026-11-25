@@ -19,7 +19,7 @@ public class VanillaMod : IBattleEngineMod
 	public string ModName => "Vanilla Mod";
 	public string Version => "0.0.0";
 
-	public void OnLoad(BattleEngineRegistry registry, List<ModContentResult> modContents)
+	public void OnLoad(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
 	{
 		// --- Input Handlers ---
 		registry.InputHandlers.Register(new PlayerJoinedRequestInputHandler());
@@ -159,7 +159,7 @@ public class VanillaMod : IBattleEngineMod
 	}
 
 
-	private static void RegisterGameRules(BattleEngineRegistry registry, List<ModContentResult> modContents)
+	private static void RegisterGameRules(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{
@@ -173,7 +173,7 @@ public class VanillaMod : IBattleEngineMod
 		}
 	}
 
-	private static void RegisterAttackDefinitions(BattleEngineRegistry registry, List<ModContentResult> modContents)
+	private static void RegisterAttackDefinitions(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{
@@ -187,7 +187,7 @@ public class VanillaMod : IBattleEngineMod
 		}
 	}
 
-	public static void RegisterAbilityTypes(BattleEngineRegistry registry, List<ModContentResult> modContents)
+	public static void RegisterAbilityTypes(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{
@@ -201,7 +201,7 @@ public class VanillaMod : IBattleEngineMod
 		}
 	}
 
-	private static void RegisterCardDefinitions(BattleEngineRegistry registry, List<ModContentResult> modContents)
+	private static void RegisterCardDefinitions(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{

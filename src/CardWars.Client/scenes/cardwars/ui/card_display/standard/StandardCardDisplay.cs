@@ -1,5 +1,6 @@
 using System.Linq;
 using CardWars.Client.scenes.core.game_session;
+using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
@@ -53,6 +54,8 @@ public partial class StandardCardDisplay : CardDisplay
 		if (FlavourTextLabel is not { } flavourTextLabel) return;
 		if (AbilitiesContainer is not { } abilitiesContainer) return;
 
+		var battleEngine = registry.Client?.GetExtension<BattleClientRuntime>()?.Engine;
+
 		nameLabel.Text = data.GetString("name");
 		worldLabel.Text = data.GetString("world");
 		ptLabel.Text = $"{data.GetInt("pt")}";
@@ -94,7 +97,7 @@ public partial class StandardCardDisplay : CardDisplay
 					foreach (var tag in abilities.Items.OfType<CompoundTag>())
 					{
 						var aTypePointer = tag.GetString("ability_type");
-						CompoundTag? aType = registry.Battle?.AbilityTypeDefinitions.Get(
+						CompoundTag? aType = battleEngine?.AbilityTypeDefinitions.Get(
 							ResourceId.Parse(aTypePointer)
 						);
 						if (aType is null) continue;
@@ -128,7 +131,7 @@ public partial class StandardCardDisplay : CardDisplay
 						else
 						{
 							var resourceId = ResourceId.Parse(spAtk.GetString("resource"));
-							attackDef = registry.Battle?.AttackDefinitions.Get(resourceId);
+							attackDef = battleEngine?.AttackDefinitions.Get(resourceId);
 						}
 
 						if (attackDef is null) continue;

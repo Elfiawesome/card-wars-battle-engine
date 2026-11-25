@@ -21,7 +21,7 @@ public class CardViewHandler : IEntityViewHandler<GenericCard>
 
 	private static void SyncBoard(BattleInstance instance, IReadOnlyCollection<GenericCard> entities)
 	{
-		if (instance.BattleRegistry is not { } battleRegistry) return;
+		if (instance.BattleView is not { } battleView) return;
 
 		var boardCards = entities
 			.Where(entity => entity.OwnerUnitSlotId is not null || entity.OwnerBattlefieldId is not null)
@@ -53,7 +53,7 @@ public class CardViewHandler : IEntityViewHandler<GenericCard>
 
 			// TODO: Check for skins here
 			// but for now let's use default
-			var displayId = battleRegistry.DefaultCardDisplay;
+			var displayId = battleView.DefaultCardDisplay;
 			if (node.DisplayId != displayId || node.Display is null)
 			{
 				var display = instance.Registry.Client?.UserInterface.Instantiate<CardDisplay>(displayId);

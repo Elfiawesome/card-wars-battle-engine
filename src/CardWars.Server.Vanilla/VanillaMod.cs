@@ -15,7 +15,7 @@ public class VanillaMod : IServerMod
 {
 	private Guid? _currentBattleInstanceId;
 
-	public void OnLoad(Server server, List<ModContentResult> modContents)
+	public void OnLoad(Server server, IReadOnlyList<ModContentResult> modContents)
 	{
 		var worldRegistry = new WorldRegistry();
 		RegisterPackets(server.Registry);
@@ -23,7 +23,7 @@ public class VanillaMod : IServerMod
 		LoadWorldDefinitions(worldRegistry, modContents);
 
 		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.World, new WorldInstanceProvider(worldRegistry, server.Session, SharedIds.Instances.World));
-		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.Battle, new BattleInstanceProvider(server.Session, server.SharedBattleEngineRegistry, SharedIds.Instances.Battle));
+		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.Battle, new BattleInstanceProvider(server.Session, server.BattleEngineRegistry, SharedIds.Instances.Battle));
 	}
 
 	private void RegisterPackets(ServerRegistry registry)
@@ -125,7 +125,7 @@ public class VanillaMod : IServerMod
 		}
 	}
 
-	private void LoadWorldDefinitions(WorldRegistry worldRegistry, List<ModContentResult> modContents)
+	private void LoadWorldDefinitions(WorldRegistry worldRegistry, IReadOnlyList<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{

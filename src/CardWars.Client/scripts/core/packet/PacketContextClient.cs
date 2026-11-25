@@ -5,8 +5,8 @@ using CardWars.Core.Network.Transport;
 namespace CardWars.Client.scripts.core.packet;
 
 public record struct PacketContextClient(
-	GameSession Session
+	ClientSession Session
 )
 {
-	public readonly IConnection Connection => Session.Connection ?? throw new Exception();
+	public readonly IConnection Connection => Session.Connection ?? throw new InvalidOperationException("Client is not connected.");
 };

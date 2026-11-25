@@ -22,7 +22,8 @@ namespace CardWars.Client.scenes.cardwars.instance.battle;
 
 public partial class BattleInstance : ClientInstance
 {
-	public BattleRegistry? BattleRegistry => Registry.Client?.GetExtension<BattleRegistry>();
+	public BattleViewRegistry? BattleView => Registry.Client?.GetExtension<BattleViewRegistry>();
+	public BattleClientRuntime? BattleRuntime => Registry.Client?.GetExtension<BattleClientRuntime>();
 
 	[Export] public Control? ButtonsOverlayNode;
 	[Export] public InspectionPanelManager? InspectionPanelManagerNode;
@@ -68,7 +69,7 @@ public partial class BattleInstance : ClientInstance
 
 	public override void _Ready()
 	{
-		if (Registry.Battle is { } registry) ActionValidator = new(registry);
+		if (BattleRuntime is { } runtime) ActionValidator = new(runtime.Engine);
 		if (HandManagerNode is not null) HandManagerNode.BattleInstance = this;
 		if (AttackControllerNode is not null) AttackControllerNode.Setup(this);
 		AnimationHandler.Completed += ReleasePendingNodes;
@@ -119,14 +120,14 @@ public partial class BattleInstance : ClientInstance
 	{
 		foreach (var block in batch.Blocks)
 		{
-			Registry.Battle?.BlockHandlers.Execute(State, block);
+			BattleRuntime?.Engine.BlockHandlers.Execute(State, block);
 		}
 		SyncState();
 		// Play animation
 		var parsedAnimationId = ResourceId.Parse(batch.AnimationId);
 		if (!parsedAnimationId.IsEmpty)
 		{
-			var animation = BattleRegistry?.Animations.Create(parsedAnimationId);
+			var animation = BattleView?.Animations.Create(parsedAnimationId);
 			if (animation is not null) { animation.Data = batch.AnimationArgs; AnimationHandler.QueueAnimation(animation); return; }
 		}
 		if (!AnimationHandler.IsBusy) ReleasePendingNodes();
@@ -134,17 +135,17 @@ public partial class BattleInstance : ClientInstance
 
 	public void SyncState()
 	{
-		if (BattleRegistry is null) return;
+		if (BattleView is null) return;
 		if (PlayspaceNode is null) return;
 
 		// Handle Entity Clenup & Handling
-		BattleRegistry.EntityViewHandlers.Execute(this, State);
+		BattleView.EntityViewHandlers.Execute(this, State);
 		HandManagerNode?.RefreshTargeting();
 		TargetHighlighter.Invalidate();
 
 		// Handle Layout
-		var defaultId = BattleRegistry.DefaultLayoutId;
-		var layoutHandler = BattleRegistry.LayoutHandler.Get(State.Layout.Layout) ?? BattleRegistry?.LayoutHandler.Get(defaultId);
+		var defaultId = BattleView.DefaultLayoutId;
+		var layoutHandler = BattleView.LayoutHandler.Get(State.Layout.Layout) ?? BattleView.LayoutHandler.Get(defaultId);
 		layoutHandler?.Compute(this);
 
 		// Set Camera
@@ -202,7 +203,7 @@ public partial class BattleInstance : ClientInstance
 	public T? GetOrCreateEntityNode<T>(ResourceId sceneId, EntityId id) where T : EntityNode3D
 	{
 		if (_entityNodes.TryGetValue(id, out var existing) && existing is T existingTyped) return existingTyped;
-		var node = BattleRegistry?.EntityScene.Instantiate<T>(sceneId);
+		var node = BattleView?.EntityScene.Instantiate<T>(sceneId);
 		if (node is null) return null;
 
 		node.Name = id.ToString();
