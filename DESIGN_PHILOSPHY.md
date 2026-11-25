@@ -44,3 +44,8 @@ That means, all the client needs to connect to the server is just the client dll
 
 ## Concistency, Consistency, Consistency!
 When using a certian design style choice, we need to question 1. is this a standard and optimal approach? 2. Is this approach style we used previously in other parts of the code. If we encounter whereby 1 & 2 clashes, we need to find out why we use differing approaches. Then we standardize the format to use that styling/approach.
+
+# Code Styling
+A list of patterns we use and NOT use
+- Never use Null-Forgiving Operator: `!`
+- Never use Casting `(T)value` unless it is really needed
