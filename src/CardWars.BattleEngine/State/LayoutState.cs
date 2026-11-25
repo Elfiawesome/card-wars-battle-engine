@@ -12,6 +12,6 @@ public record struct LayoutState(
 	public LayoutState Copy() => new()
 	{
 		Layout = this.Layout,
-		LayoutConfig = (CompoundTag)this.LayoutConfig.Clone() // Is this okay to cast?
+		LayoutConfig = this.LayoutConfig.Clone()
 	};
 };

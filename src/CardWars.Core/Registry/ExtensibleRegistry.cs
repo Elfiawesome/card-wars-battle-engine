@@ -8,7 +8,7 @@ public abstract class ExtensibleRegistry
 		=> _extensions[typeof(T)] = extension;
 
 	public T? GetExtension<T>() where T : class
-		=> _extensions.TryGetValue(typeof(T), out var extension) ? extension as T : null;
+		=> _extensions.TryGetValue(typeof(T), out var extension) && extension is T typed ? typed : null;
 
 	public T GetOrCreateExtension<T>() where T : class, new()
 	{

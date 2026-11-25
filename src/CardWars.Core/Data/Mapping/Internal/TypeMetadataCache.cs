@@ -35,7 +35,9 @@ internal static class TypeMetadataCache
 	public static TypeMetadata Get(Type type) => _metadataCache.GetOrAdd(type, static t => BuildMetadata(t));
 
 	public static IDataTagConverter GetConverterInstance(Type converterType) =>
-		_converterInstances.GetOrAdd(converterType, ct => (IDataTagConverter)Activator.CreateInstance(ct)!);
+		_converterInstances.GetOrAdd(converterType, static ct =>
+			Activator.CreateInstance(ct) as IDataTagConverter
+			?? throw new InvalidOperationException($"Converter [{ct.FullName}] could not be created."));
 
 	private static TypeMetadata BuildMetadata(Type type)
 	{

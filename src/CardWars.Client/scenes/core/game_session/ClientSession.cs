@@ -80,7 +80,7 @@ public sealed class ClientSession(Node root, string connectingUsername, ClientRe
 	{
 		Log.Debug($"Client received packet from server: {packet.GetType().Name}");
 		var context = new PacketContextClient(this);
-		Instance?.OnPacket(packet, context);
+		if (Instance is { } instance && instance.OnPacket(packet, context)) return;
 		Registry.PacketHandlers.Execute(context, packet);
 	}
 }

@@ -12,7 +12,7 @@ namespace CardWars.Vanilla.Shared.Packet;
 public class S2C_PlayerJoinedRequestPacket : IPacket
 {
 	[DataTag] public string ServerGreetingMessage { get; set; } = "Hello";
-	[DataTag] public string Version => "TODO";
+	[DataTag] public string Version => "0.0.0";
 }
 
 [DataTagType()]

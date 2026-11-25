@@ -7,7 +7,6 @@ using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Entity;
 
-// TODO: Do the datatag here
 [DataTagType("battle/entity/card")]
 public class GenericCard(EntityId id) : IEntity, IParentableEntity
 {
@@ -37,7 +36,7 @@ public class GenericCard(EntityId id) : IEntity, IParentableEntity
 	public int AtkMax => Data.GetInt("atk_max");
 	public int Charge => Data.GetInt("charge"); // Amount of attacks per unit
 	public int ChargeMax => Data.GetInt("charge_max");
-	public ListTag SpAtk => Data.GetList("sp_atks") ?? new(); // idk todo later
+	public ListTag SpAtk => Data.GetList("sp_atks") ?? new();
 	public bool IsFatal => (Hp <= 0) && IsUnit;
 	public bool HasCharge => Charge > 0;
 
@@ -64,14 +63,14 @@ public class GenericCard(EntityId id) : IEntity, IParentableEntity
 			foreach (var item in abilities.Items.OfType<CompoundTag>())
 			{
 				if (item.GetCompound("behaviour") is { } bTag)
-					result.Add(DataTagMapper.FromTag<ContentPointer>(bTag));// <- this feels and looks wrong? TODO: fix
+					result.Add(DataTagMapper.FromTag<ContentPointer>(bTag));
 			}
 		}
 
 		if (Data.GetList("intrinsic_behaviours") is { } intrinsics)
 		{
 			foreach (var item in intrinsics.Items.OfType<CompoundTag>())
-				result.Add(DataTagMapper.FromTag<ContentPointer>(item)); // <- this feels and looks wrong?
+				result.Add(DataTagMapper.FromTag<ContentPointer>(item));
 		}
 
 		return result;

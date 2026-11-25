@@ -33,7 +33,8 @@ public class TcpGameListener(int port = 5060) : IListener
 		{
 			try
 			{
-				var client = _listener!.AcceptTcpClient();
+				if (_listener is not { } listener) break;
+				var client = listener.AcceptTcpClient();
 				OnNewConnection?.Invoke(new TcpConnection(client));
 			}
 			catch when (token.IsCancellationRequested) { break; }

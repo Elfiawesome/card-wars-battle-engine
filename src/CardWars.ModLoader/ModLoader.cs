@@ -118,7 +118,8 @@ public class ModLoader
 
 		loadContext.Resolving += (_, assemblyName) =>
 		{
-			if (!dllPathsBySimpleName.TryGetValue(assemblyName.Name!, out var dllPath)) return null;
+			if (assemblyName.Name is not { } name) return null;
+			if (!dllPathsBySimpleName.TryGetValue(name, out var dllPath)) return null;
 			using var stream = dllPath.OpenRead();
 			return loadContext.LoadFromStream(stream);
 		};

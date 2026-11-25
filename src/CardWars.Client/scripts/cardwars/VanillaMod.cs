@@ -13,19 +13,17 @@ namespace CardWars.Client.scripts.cardwars;
 
 public class VanillaMod : IClientMod
 {
-	public string ModName => throw new System.NotImplementedException();
-	public string Version => throw new System.NotImplementedException();
+	public string ModName => "Card Wars Vanilla Client";
+	public string Version => "0.0.0";
 
 	public BattleViewRegistry BattleViewRegistry = new();
 
 	public void OnLoad(ClientRegistry registry, IReadOnlyList<ModContentResult> modContents)
 	{
-		registry.PacketHandlers.Register(new S2C_CustomModPacketHandler());
 		registry.PacketHandlers.Register(new S2C_PlayerJoinedRequestPacketHandler());
 		registry.PacketHandlers.Register(new S2C_ConnectionConfirmedPacketHandler());
 		registry.PacketHandlers.Register(new S2C_EnterInstancePacketHandler());
 		registry.PacketHandlers.Register(new S2C_LeaveInstancePacketHandler());
-		registry.PacketHandlers.Register(new S2C_BattleBlockBatchHandler());
 
 		// Instances
 		registry.Instances.Register(SharedIds.Instances.World, "res://scenes/cardwars/instance/world/world_instance.tscn");

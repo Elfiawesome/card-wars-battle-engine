@@ -13,7 +13,7 @@ public partial class ClientInstance : Node
 	public Action<IPacket>? onPacketSent;
 	public ClientInstanceRegistry Registry = new();
 
-	public virtual void OnPacket(IPacket packet, PacketContextClient context) { }
+	public virtual bool OnPacket(IPacket packet, PacketContextClient context) => false;
 
 	public void SendPacket(IPacket packet)
 		=> onPacketSent?.Invoke(packet);

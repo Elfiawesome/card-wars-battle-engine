@@ -79,7 +79,7 @@ public class GameState : IDataTagAccessible
 	[DataTag]
 	public LayoutState Layout { get; set; } = new()
 	{
-		Layout = ResourceId.Vanilla("TODO: haha wrong layout id"),
+		Layout = ResourceId.Empty,
 		LayoutConfig = new CompoundTag()
 	};
 

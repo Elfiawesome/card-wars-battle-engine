@@ -15,7 +15,7 @@ public interface IServerInstance
 	void AddPlayer(PlayerSession player);
 	void RemovePlayer(PlayerSession player);
 
-	void HandlePacket(PacketContextServer context, IPacket packet);
+	bool HandlePacket(PacketContextServer context, IPacket packet);
 	void Tick(float deltaTime);
 }
 
@@ -39,6 +39,6 @@ public abstract class ServerInstance : IServerInstance
 	public virtual void RemovePlayer(PlayerSession player)
 		=> _players.Remove(player);
 
-	public abstract void HandlePacket(PacketContextServer context, IPacket packet);
+	public abstract bool HandlePacket(PacketContextServer context, IPacket packet);
 	public abstract void Tick(float deltaTime);
 }

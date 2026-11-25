@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Converters;
@@ -71,9 +72,14 @@ public static class DataTagMapper
 
 	public static bool HasConverter(Type type) => TryGetConverter(type, out _);
 
-	internal static bool TryGetConverter(Type type, out IDataTagConverter converter)
+	internal static bool TryGetConverter(Type type, [NotNullWhen(true)] out IDataTagConverter? converter)
 	{
-		if (_globalConverters.TryGetValue(type, out converter!)) return true;
+		converter = null;
+		if (_globalConverters.TryGetValue(type, out var found))
+		{
+			converter = found;
+			return true;
+		}
 
 		var attr = type.GetCustomAttribute<DataTagConverterAttribute>();
 		if (attr is not null)

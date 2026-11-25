@@ -33,7 +33,6 @@ public class VanillaMod : IServerMod
 	private void RegisterPackets(ServerRegistry registry)
 	{
 		registry.UnauthenticatedPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler());
-		registry.PacketHandlers.Register(new C2S_CustomModPacketHandler());
 		registry.PacketHandlers.Register(new C2S_DEBUG_WarpRequestPacketHandler());
 		registry.PacketHandlers.Register(new C2S_DEBUG_EnterBattlePacketHandler(this));
 	}

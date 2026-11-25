@@ -6,7 +6,7 @@ using CardWars.Core.Logging;
 namespace CardWars.BattleEngine.Vanilla.Block;
 
 [DataTagType()]
-public record class RemoveEntityBlock( // TODO: Create the individual entity craetion instead?
+public record class RemoveEntityBlock(
 	[property: DataTag] EntityId EntityId
 ) : IBlock;
 

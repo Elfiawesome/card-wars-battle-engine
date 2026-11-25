@@ -20,7 +20,7 @@ public class WorldInstance : ServerInstance
 	[DataTag] public CompoundTag Data { get; set; } = new(); // session related data
 	public CompoundTag TemplateData { get; set; } = new(); // For reference only. We load the content/server/.../worlds/<file> here
 
-	public override void HandlePacket(PacketContextServer context, IPacket packet)
+	public override bool HandlePacket(PacketContextServer context, IPacket packet)
 	{
 		switch (packet)
 		{
@@ -28,8 +28,10 @@ public class WorldInstance : ServerInstance
 				var comp = context.PlayerSession.GetSetComponent<WorldPlayerDataComponent>(InstanceProviderId);
 				comp.AxisX = moveInputPacket.AxisX;
 				comp.AxisY = moveInputPacket.AxisY;
-				break;
+				return true;
 		}
+
+		return false;
 	}
 
 	public override void Tick(float deltaTime)

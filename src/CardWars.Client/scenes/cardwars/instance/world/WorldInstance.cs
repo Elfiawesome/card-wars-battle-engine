@@ -12,7 +12,7 @@ namespace CardWars.Client.scenes.cardwars.instance.world;
 public partial class WorldInstance : ClientInstance
 {
 	private readonly List<ResourceId> _warpOtions = [];
-	public override void OnPacket(IPacket packet, PacketContextClient context)
+	public override bool OnPacket(IPacket packet, PacketContextClient context)
 	{
 		switch (packet)
 		{
@@ -22,8 +22,10 @@ public partial class WorldInstance : ClientInstance
 
 				_warpOtions.Clear();
 				_warpOtions.AddRange(worldInstanceSnapshot.WorldView.WarpOptions);
-				break;
+				return true;
 		}
+
+		return false;
 	}
 
 	public override void _Input(InputEvent @event)

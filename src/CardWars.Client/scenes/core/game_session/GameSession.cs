@@ -129,6 +129,6 @@ public partial class GameSession : Node
 		=> typeof(GameSession).Assembly
 			.GetTypes()
 			.Where(type => typeof(TMod).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
-			.Select(type => Activator.CreateInstance(type) as TMod)
+			.Select(type => Activator.CreateInstance(type))
 			.OfType<TMod>();
 }

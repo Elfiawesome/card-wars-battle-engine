@@ -49,7 +49,7 @@ public sealed record AttackDefinition(
 public sealed record AttackProfile
 {
 	public AttackDefinition Definition;
-	public bool IsSpAtk; // TODO: Wtf is this for???
+	public bool IsSpAtk; // Wether the AttackProfile is created from an spAtk for tagging
 
 	public AttackProfile(bool isSpAtk, AttackDefinition? definition = null)
 	{

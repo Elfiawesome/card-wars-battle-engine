@@ -60,8 +60,7 @@ public partial class BattleInstance : ClientInstance
 			}
 			if (inputEventKey.Keycode == Key.Q && inputEventKey.Pressed)
 			{
-				var decks = State.Where(e => e is Deck);
-				var myDeck = decks.First(d => ((Deck)d).OwnerPlayerId == MyPlayerId);
+				var myDeck = State.OfType<Deck>().First(deck => deck.OwnerPlayerId == MyPlayerId);
 				SendInput(new DrawCardRequestInput(myDeck.Id, MyPlayerId));
 			}
 		}
@@ -99,21 +98,23 @@ public partial class BattleInstance : ClientInstance
 		return true;
 	}
 
-	public override void OnPacket(IPacket packet, PacketContextClient context)
+	public override bool OnPacket(IPacket packet, PacketContextClient context)
 	{
 		switch (packet)
 		{
 			case S2C_BattleBlockBatch battleBlockBatch:
 				ProcessBlockBatch(battleBlockBatch.Batch);
-				break;
+				return true;
 			case S2C_BattleSyncSnapshot battleSyncSnapshot:
 				// USe packet here since snapshot is not really a atomic change but a snapshot. The team switching
 				// we can ignore first since even if switch team we can assume the next cards on enemy will be covered
 				State.FromSnapshot(battleSyncSnapshot.GameStateSnapshot);
 				SyncState();
 				ReleasePendingNodes();
-				break;
+				return true;
 		}
+
+		return false;
 	}
 
 	public void ProcessBlockBatch(BlockBatch batch)

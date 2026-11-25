@@ -18,34 +18,6 @@ public class BattleInstance : ServerInstance
 
 	public BattleEngine.BattleEngine? Engine { get; set; }
 
-	public override void Ready()
-	{
-		base.Ready();
-		// if (Engine is not null) Engine.State.Layout = new(ResourceId.Vanilla("line"), new());
-		SetupTestBattle();
-	}
-
-	private void SetupTestBattle()
-	{
-		// void AddTestPlayer(int team) => Engine?.HandleInput(EntityId.None, new PlayerJoinedRequestInput(new EntityId(Guid.NewGuid()), team));
-		// 1v1
-		// AddTestPlayer(2);
-
-		// 2v2
-		// AddTestPlayer(1);
-		// AddTestPlayer(2); AddTestPlayer(2);
-
-		// 3v2v1
-		// AddTestPlayer(2); AddTestPlayer(2);
-		// AddTestPlayer(2); AddTestPlayer(2); AddTestPlayer(3);
-
-		// FFA
-		// AddTestPlayer(2); AddTestPlayer(3); AddTestPlayer(4); AddTestPlayer(5);
-
-		// Absurd Testing
-		// for (var i = 0; i < 6; i++) { AddTestPlayer(2); }
-	}
-
 	public override void AddPlayer(PlayerSession player)
 	{
 		base.AddPlayer(player);
@@ -65,15 +37,17 @@ public class BattleInstance : ServerInstance
 		// TODO: player leave battle input / end battle when empty.
 	}
 
-	public override void HandlePacket(PacketContextServer context, IPacket packet)
+	public override bool HandlePacket(PacketContextServer context, IPacket packet)
 	{
 		switch (packet)
 		{
 			case C2S_BattleInput battleInput:
 				var entityId = new EntityId(context.PlayerSession.PlayerId);
 				Engine?.HandleInput(entityId, battleInput.Input);
-				break;
+				return true;
 		}
+
+		return false;
 	}
 
 	public override void Tick(float deltaTime) { }

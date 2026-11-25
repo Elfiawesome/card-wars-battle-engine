@@ -667,10 +667,10 @@ public partial class MoreRichTextLabel : Control
 	private readonly List<RichTextLabel> _placedViews = new();
 	private readonly Dictionary<DocText, SplitTextViews> _splitViews = new();
 
-	private sealed class SplitTextViews
+	private sealed class SplitTextViews(RichTextLabel head, RichTextLabel tail)
 	{
-		public RichTextLabel Head = null!;
-		public RichTextLabel Tail = null!;
+		public RichTextLabel Head { get; } = head;
+		public RichTextLabel Tail { get; } = tail;
 	}
 	private StyleBox? _defaultPanelStyle;
 	private bool _selectionEnabled;
@@ -963,11 +963,7 @@ public partial class MoreRichTextLabel : Control
 			return split;
 		}
 
-		split = new SplitTextViews
-		{
-			Head = CreateAuxiliaryLeaf(),
-			Tail = CreateAuxiliaryLeaf(),
-		};
+		split = new SplitTextViews(CreateAuxiliaryLeaf(), CreateAuxiliaryLeaf());
 
 		_splitViews[text] = split;
 		return split;

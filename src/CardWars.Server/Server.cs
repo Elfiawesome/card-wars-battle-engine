@@ -299,7 +299,7 @@ public class Server
 			while (conn.TryReceive(out var packet))
 			{
 				if (packet is null) continue;
-				HandleLocalPacket(playerSession, packet);
+				if (HandleLocalPacket(playerSession, packet)) continue;
 				HandleGlobalPacket(playerSession, packet);
 			}
 		}
@@ -321,8 +321,8 @@ public class Server
 			new PacketUnauthenticatedContextServer() { Server = this, Connection = connection },
 			packet);
 
-	public void HandleLocalPacket(PlayerSession playerSession, IPacket packet)
-		=> playerSession.CurrentInstance?.HandlePacket(new PacketContextServer() { Server = this, PlayerSession = playerSession }, packet);
+	public bool HandleLocalPacket(PlayerSession playerSession, IPacket packet)
+		=> playerSession.CurrentInstance?.HandlePacket(new PacketContextServer() { Server = this, PlayerSession = playerSession }, packet) ?? false;
 
 	public void HandleGlobalPacket(PlayerSession playerSession, IPacket packet)
 		=> Registry.PacketHandlers.Execute(

@@ -44,16 +44,3 @@ public class S2C_LeaveInstancePacketHandler : IPacketHandlerClient<S2C_LeaveInst
 	}
 }
 
-public class S2C_BattleBlockBatchHandler : IPacketHandlerClient<S2C_BattleBlockBatch>
-{
-	public void Handle(PacketContextClient context, S2C_BattleBlockBatch request)
-	{
-		// NO LONGER USED. HANDLED IN INSTANCE
-	}
-}
-
-// Custom Handler
-public class S2C_CustomModPacketHandler : IPacketHandlerClient<S2C_CustomModPacket>
-{
-	public void Handle(PacketContextClient context, S2C_CustomModPacket request) { /* TODO */ }
-}
