@@ -5,7 +5,6 @@ using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.BattleEngine.Vanilla.Rules;
-using CardWars.BattleEngine.Vanilla.Targeting;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
@@ -171,6 +170,18 @@ public class VanillaMod : IBattleEngineMod
 			if (rules is null) continue;
 
 			definitions.RuleDefinitions.Register(content.Id, rules);
+			if (content.Id == GameRulesDefinition.DefaultId)
+			{
+				try
+				{
+					definitions.DefaultUnitTargetFilter = DataTagMapper.FromTag<GameRulesDefinition>(rules).UnitTargetFilter;
+				}
+				catch (Exception ex)
+				{
+					Log.Warn($"Could not parse default unit target filter from [{content.Id}]: {ex.Message}");
+				}
+			}
+
 			Log.Info($"Registered Game Rules: {content.Id}");
 		}
 	}
@@ -216,9 +227,9 @@ public class VanillaMod : IBattleEngineMod
 					unitDataTag.Set("card_type", "unit");
 					// Set unit card's intrinsic behaviour
 					unitDataTag.Set("intrinsic_behaviours", new ListTag().Add(new CompoundTag().Set("resource", "cardwars:summon_unit_card_to_unit_slot_behaviour")));
-					// Set unit card's default unit targetting
-					if (!unitDataTag.Has("target_filter"))
-						unitDataTag.Set("target_filter", DataTagMapper.ToTag(UnitTargetFilter.Create()));
+					// Set unit card's default unit targeting
+					if (!unitDataTag.Has("target_filter") && definitions.DefaultUnitTargetFilter is { } targetFilter)
+						unitDataTag.Set("target_filter", DataTagMapper.ToTag(targetFilter));
 
 					// Set unit card's abilities
 					// var abilities = unitDataTag.GetList("abilities");

@@ -1,14 +1,15 @@
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
+using CardWars.BattleEngine.Vanilla.Targeting;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 
-namespace CardWars.BattleEngine.Vanilla.Targeting;
+namespace CardWars.Tests.Support;
 
-public static class UnitTargetFilter
+internal static class TestTargetFilters
 {
-	public static IExpression Create()
+	public static IExpression CreateUnitTargetFilter()
 	{
 		var candidate = new VariableExpression(TargetBindings.Candidate);
 		var card = new VariableExpression(TargetBindings.Card);

@@ -18,6 +18,7 @@ public sealed class GameRulesDefinition
 	[DataTag] public IExpression? WinCondition { get; set; }
 	[DataTag] public List<UnitSlotPos> UnitSlots { get; set; } = [];
 	[DataTag] public ResourceId IntroductionAnimation { get; set; } = ResourceId.Empty;
+	[DataTag] public IExpression? UnitTargetFilter { get; set; }
 
 	public int GetPtForRound(int roundNumber)
 	{

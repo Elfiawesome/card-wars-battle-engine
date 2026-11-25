@@ -9,6 +9,7 @@
 		{ "x": 0, "y": -1 }
 	],
 	"introduction_animation": "cardwars:battle/animation/player_introduction_animation",
+	"unit_target_filter": {"_type":"cardwars:script/expression/and","left":{"_type":"cardwars:script/expression/and","left":{"_type":"cardwars:script/expression/is_entity_type","value":{"_type":"cardwars:script/expression/variable","name":"cardwars:candidate"},"entity_type":"cardwars:battle/entity/unit_slot"},"right":{"_type":"cardwars:script/expression/equals","left":{"_type":"cardwars:script/expression/member","target":{"_type":"cardwars:script/expression/variable","name":"cardwars:candidate"},"member":"holding_card_id"},"right":{"_type":"cardwars:script/expression/literal","value":null}}},"right":{"_type":"cardwars:script/expression/equals","left":{"_type":"cardwars:script/expression/member","target":{"_type":"cardwars:script/expression/variable","name":"cardwars:candidate"},"member":"owner_battlefield_id"},"right":{"_type":"cardwars:script/expression/index","target":{"_type":"cardwars:script/expression/member","target":{"_type":"cardwars:script/expression/index","target":{"_type":"cardwars:script/expression/variable","name":"cardwars:state"},"index":{"_type":"cardwars:script/expression/member","target":{"_type":"cardwars:script/expression/variable","name":"cardwars:card"},"member":"owner_player_id"}},"member":"battlefield_ids"},"index":{"_type":"cardwars:script/expression/literal","value":0}}}},
 	"win_condition": {
 		"_type": "cardwars:script/expression/and",
 		"left": {

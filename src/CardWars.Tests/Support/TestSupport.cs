@@ -6,6 +6,7 @@ using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.BattleEngine.Vanilla.Rules;
+using CardWars.BattleEngine.Vanilla.Targeting;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
@@ -19,6 +20,7 @@ internal static class TestSupport
 		var registry = new BattleEngineRegistry();
 		new VanillaMod().OnLoad(registry, []);
 		var definitions = Definitions(registry);
+		definitions.DefaultUnitTargetFilter = TestTargetFilters.CreateUnitTargetFilter();
 		definitions.RuleDefinitions.Register(GameRulesDefinition.DefaultId, DataTagMapper.ToTag(new GameRulesDefinition
 		{
 			PtSchedule = [5, 6, 8, 11, 15, 20, 26, 33, 41, 50],

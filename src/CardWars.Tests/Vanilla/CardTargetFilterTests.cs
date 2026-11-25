@@ -25,7 +25,7 @@ public sealed class CardTargetFilterTests
 		var state = new GameState();
 		var player = AddPlayer(state, out _, out var firstSlot, out var secondSlot);
 		AddPlayer(state, out _, out var opponentSlot, out _);
-		var card = AddFilteredCard(state, player, UnitTargetFilter.Create());
+		var card = AddFilteredCard(state, player, TestTargetFilters.CreateUnitTargetFilter());
 
 		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven);
 		var targets = evaluator.ResolveTargets(state, card, player.Id);
@@ -108,7 +108,7 @@ public sealed class CardTargetFilterTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var player = AddPlayer(state, out _, out _, out _);
-		var card = AddFilteredCard(state, player, UnitTargetFilter.Create());
+		var card = AddFilteredCard(state, player, TestTargetFilters.CreateUnitTargetFilter());
 
 		var evaluator = new CardTargetFilterEvaluator(registry.DataDriven);
 
@@ -122,6 +122,7 @@ public sealed class CardTargetFilterTests
 		provider.AddFile("cards/units/test_unit.json", """{"name":"Test Unit","hp":4,"atk":2}""");
 
 		var registry = new BattleEngineRegistry();
+		registry.GetOrCreateExtension<CardWarsDefinitions>().DefaultUnitTargetFilter = TestTargetFilters.CreateUnitTargetFilter();
 		var content = new ModContentResult
 		{
 			Id = ResourceId.Vanilla("cards/units/test_unit"),
