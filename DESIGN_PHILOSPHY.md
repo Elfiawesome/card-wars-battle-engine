@@ -41,3 +41,6 @@ The entire project is meant to be simple in nature. For example, there shouldn't
 To keep everything modular and no violations between server, client and modding capabailiteis. We keep each project such as server core, server vanilla etc. So that we don't reference or use 
 
 That means, all the client needs to connect to the server is just the client dll (+common dll). Similarly, for the server, if its a only server system, only server dll is needed (+common dlls). Unless we are using integrated client-server, which requires both.
+
+## Concistency, Consistency, Consistency!
+When using a certian design style choice, we need to question 1. is this a standard and optimal approach? 2. Is this approach style we used previously in other parts of the code. If we encounter whereby 1 & 2 clashes, we need to find out why we use differing approaches. Then we standardize the format to use that styling/approach.
