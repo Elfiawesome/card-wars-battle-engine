@@ -30,6 +30,11 @@ public static class SharedIds
 		public static readonly ResourceId Deck = ResourceId.Vanilla("battle/entity/deck");
 	}
 
+	public static class PlayerData
+	{
+		public static readonly ResourceId Battle = ResourceId.Vanilla("player_data/battle");
+	}
+
 	public static class Animations
 	{
 		public static readonly ResourceId PlayerIntroduction = ResourceId.Vanilla("battle/animation/player_introduction_animation");

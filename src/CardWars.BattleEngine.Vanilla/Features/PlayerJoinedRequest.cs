@@ -5,13 +5,15 @@ using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Logging;
+using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
 [DataTagType()]
 public record struct PlayerJoinedRequestInput(
 	[property: DataTag] EntityId Id,
-	[property: DataTag] int RequestedTeam = 1
+	[property: DataTag] int RequestedTeam = 1,
+	[property: DataTag] ResourceId LoadoutId = default
 ) : IInput;
 
 public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequestInput>
@@ -35,6 +37,10 @@ public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequest
 		batch.Blocks.Add(new UpdateTurnStateBlock(turnState));
 		context.Transaction.ApplyBlockBatch(batch);
 
-		context.Transaction.QueueEvent(new PlayerJoinedEvent() { PlayerId = request.Id });
+		context.Transaction.QueueEvent(new PlayerJoinedEvent()
+		{
+			PlayerId = request.Id,
+			LoadoutId = request.LoadoutId
+		});
 	}
 }

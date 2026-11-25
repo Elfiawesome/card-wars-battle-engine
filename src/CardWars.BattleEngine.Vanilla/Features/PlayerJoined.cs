@@ -3,12 +3,12 @@ using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.BattleEngine.Vanilla.Loadouts;
 using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
-
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
-using CardWars.Vanilla.Shared;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
@@ -16,32 +16,44 @@ namespace CardWars.BattleEngine.Vanilla.Features;
 public class PlayerJoinedEvent() : IEvent
 {
 	[DataTag] public EntityId PlayerId { get; set; }
+	[DataTag] public ResourceId LoadoutId { get; set; }
 };
 
 public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 {
-	// TODO: Remove starter deck with player's deck itself. Using this as a test first
-	private static readonly ResourceId[] StarterDeck =
-	[
-		ResourceId.Vanilla("cards/units/plantvszombies/cob_cannon"),
-		ResourceId.Vanilla("cards/units/redalert3/apocalypse_tank"),
-		ResourceId.Vanilla("cards/units/redalert3/assault_destroyer"),
-		ResourceId.Vanilla("cards/units/southpark/fastpass"),
-		ResourceId.Vanilla("cards/units/madnesscombat/auditor"),
-	];
-
-	private static readonly ResourceId[] Heroes =
-	[
-		ResourceId.Vanilla("cards/heroes/captain"),
-	];
-
 	public void Handle(Transaction context, PlayerJoinedEvent request)
 	{
 		// Make sure we don't re-create a player with the same id
 		if (context.State.Require<Player>(request.PlayerId) is not { } player) return;
 
 		var ruleId = context.State.RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.RuleId;
-		var rules = GameRulesDefinition.Get(context.Registry, ruleId) ?? new GameRulesDefinition();
+		var rules = GameRulesDefinition.Get(context.Registry, ruleId);
+		if (rules is null)
+		{
+			Log.Error($"Missing game rules [{ruleId}]");
+			return;
+		}
+
+		if (rules.PtSchedule.Count == 0 || rules.PtCap <= 0)
+		{
+			Log.Error($"Game rules [{ruleId}] are missing a valid Pt schedule or cap");
+			return;
+		}
+
+		var definitions = context.Registry.GetExtension<CardWarsDefinitions>();
+		if (definitions is null)
+		{
+			Log.Error("Card Wars definitions are not registered");
+			return;
+		}
+
+		var loadout = PlayerLoadout.Get(definitions, request.LoadoutId);
+		if (loadout is null)
+		{
+			Log.Error($"Missing player loadout [{request.LoadoutId}]");
+			return;
+		}
+
 		var batch = new BlockBatch([]);
 		if (context.State.RuleId.IsEmpty)
 			batch.Blocks.Add(new SetGameRuleBlock(ruleId));
@@ -52,12 +64,10 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		batch.Blocks.Add(new InstantiateDeckBlock(deckId));
 		batch.Blocks.Add(new AttachDeckToPlayerBlock(request.PlayerId, deckId));
 
-		var definitions = context.Registry.GetExtension<CardWarsDefinitions>();
-
 		// Populate deck with card
-		foreach (var defId in StarterDeck)
+		foreach (var defId in loadout.Deck)
 		{
-			var def = definitions?.CardDefinitions.Get(defId)?.Clone();
+			var def = definitions.CardDefinitions.Get(defId)?.Clone();
 			var cardId = EntityId.New();
 
 			// Add other data in a card that may not exist
@@ -100,17 +110,13 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 			b.Blocks.Add(new AttachUnitSlotToBattlefieldBlock(bid, usid));
 			unitLists.Add(new GuidTag(usid.Value));
 		};
-		// Create a 4 unit slot (3 front row, 1 back unit)
-		for (int i = 0; i < 3; i++)
-		{
-			addUnitSlot(batch, battlefieldId, new(-1 + i, 0));
-		}
-		addUnitSlot(batch, battlefieldId, new(0, -1));
+		foreach (var position in loadout.UnitSlots)
+			addUnitSlot(batch, battlefieldId, position);
 
 		// Create Heroes
-		foreach (var heroDefinitionId in Heroes)
+		foreach (var heroDefinitionId in loadout.Heroes)
 		{
-			var heroDefinition = definitions?.CardDefinitions.Get(heroDefinitionId)?.Clone();
+			var heroDefinition = definitions.CardDefinitions.Get(heroDefinitionId)?.Clone();
 			if (heroDefinition is null) continue;
 
 			if (!heroDefinition.Has("hrt")) heroDefinition.Set("hrt", 0);
@@ -121,9 +127,8 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 			batch.Blocks.Add(new AttachHeroCardToBattlefieldBlock(battlefieldId, heroId));
 		}
 
-		// REMOVE LTR!!!
 		batch.AnimationArgs.Set("unit_slots", unitLists);
-		batch.AnimationId = SharedIds.Animations.PlayerIntroduction;
+		batch.AnimationId = loadout.IntroductionAnimation;
 		context.ApplyBlockBatch(batch);
 	}
 }

@@ -6,6 +6,7 @@ using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Server.Packet;
 using CardWars.Server.Session;
+using CardWars.Vanilla.Shared;
 using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Server.Vanilla.Session;
@@ -28,7 +29,8 @@ public class BattleInstance : ServerInstance
 
 		// Bind the battle player identity to the session identity so they map 1:1.
 		var entityId = new EntityId(player.PlayerId);
-		Engine?.HandleInput(EntityId.None, new PlayerJoinedRequestInput(entityId, Players.Count % 2)); // % 2 to alternate users team
+		var playerData = player.GetSetComponent<BattlePlayerDataComponent>(SharedIds.PlayerData.Battle);
+		Engine?.HandleInput(EntityId.None, new PlayerJoinedRequestInput(entityId, Players.Count % 2, playerData.LoadoutId));
 	}
 
 	public override void RemovePlayer(PlayerSession player)
