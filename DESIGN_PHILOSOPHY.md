@@ -7,7 +7,7 @@ Card Wars is a:
 
 The game follows the player to explore different areas/locations just like a normal rpg, which we then turn into a combat turn based card game which is extensively customizable to fit the game's MMORPG story need. It has mmorpg elements of story, quests, game modes and events like roguelikes.
 
-# Design Philosphy
+# Design Philosophy
 ## No Global, Singleton or Static
 We wanted to keep the project clean and uncluttered. Almost to the point that in the same instance, we could run 2 game sessions at once and it will not interfere with each other.
 
