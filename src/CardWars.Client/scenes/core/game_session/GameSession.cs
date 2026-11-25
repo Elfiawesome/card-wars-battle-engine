@@ -41,7 +41,6 @@ public partial class GameSession : Node
 	{
 		// Set username from cmd line args
 		var args = OS.GetCmdlineArgs();
-		Log.Info(args);
 		ConnectingUsername = args.Length > 2 ? args[2] : "Elfiawesome";
 		TargetIpAddress = args.Length > 3 ? args[3] : TargetIpAddress;
 		TargetPort = args.Length > 4 ? args[4].ToInt() : TargetPort;
