@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using CardWars.BattleEngine;
 using CardWars.Core.Logging;
 using CardWars.Server.Listener;
 using CardWars.Core.Network.Transport;
@@ -18,7 +17,6 @@ public class Server
 	private static readonly TimeSpan _unauthenticatedTimeout = TimeSpan.FromSeconds(30);
 
 	public ServerRegistry Registry { get; } = new();
-	public BattleEngineRegistry BattleEngineRegistry { get; }
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
 
 	public StorageManager Storage { get; }
@@ -46,10 +44,9 @@ public class Server
 	// private double _intervalSaveAccumulator = 0;
 	private CancellationTokenSource? _cts;
 
-	public Server(StorageManager storage, BattleEngineRegistry battleEngineRegistry, string sessionName = "default")
+	public Server(StorageManager storage, string sessionName = "default")
 	{
 		Storage = storage;
-		BattleEngineRegistry = battleEngineRegistry;
 		Session = storage.OpenSession(sessionName);
 	}
 

@@ -84,7 +84,8 @@ public partial class GameSession : Node
 	{
 		if (Storage is null || Client is null) { return; }
 
-		IntegratedServer = new Server.Server(Storage, battleRegistry, "session_1");
+		IntegratedServer = new Server.Server(Storage, "session_1");
+		IntegratedServer.Registry.RegisterExtension(battleRegistry);
 		foreach (var mod in modLoader.LoadModEntry<IServerMod>())
 			mod.OnLoad(IntegratedServer, content.ServerData);
 

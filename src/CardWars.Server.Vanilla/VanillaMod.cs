@@ -1,3 +1,4 @@
+using CardWars.BattleEngine;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Transport;
@@ -22,8 +23,11 @@ public class VanillaMod : IServerMod
 		RegisterEvents(server, worldRegistry);
 		LoadWorldDefinitions(worldRegistry, modContents);
 
+		var battleEngineRegistry = server.Registry.GetExtension<BattleEngineRegistry>()
+			?? throw new InvalidOperationException("Battle engine registry extension is required.");
+
 		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.World, new WorldInstanceProvider(worldRegistry, server.Session, SharedIds.Instances.World));
-		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.Battle, new BattleInstanceProvider(server.Session, server.BattleEngineRegistry, SharedIds.Instances.Battle));
+		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.Battle, new BattleInstanceProvider(server.Session, battleEngineRegistry, SharedIds.Instances.Battle));
 	}
 
 	private void RegisterPackets(ServerRegistry registry)

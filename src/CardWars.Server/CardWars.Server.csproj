@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CardWars.Core\CardWars.Core.csproj" />
-    <ProjectReference Include="..\CardWars.BattleEngine\CardWars.BattleEngine.csproj" />
+    <ProjectReference Include="..\CardWars.ModLoader\CardWars.ModLoader.csproj" />
   </ItemGroup>
 
 </Project>
