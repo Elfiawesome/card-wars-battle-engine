@@ -2,11 +2,13 @@ using CardWars.Core.Data.Mapping;
 using CardWars.Core.Logging;
 using CardWars.Server.Packet;
 using CardWars.Server.Session;
+using CardWars.Server.Vanilla.Session;
+using CardWars.Vanilla.Shared;
 using CardWars.Vanilla.Shared.Packet;
 
 namespace CardWars.Server.Vanilla.Packet;
 
-public class C2S_PlayerJoinedRequestResponsePacketHandler() : IUnauthenticatedPacketHandlerServer<C2S_PlayerJoinedRequestResponsePacket>
+public class C2S_PlayerJoinedRequestResponsePacketHandler(PlayerProfileRegistry profileRegistry) : IUnauthenticatedPacketHandlerServer<C2S_PlayerJoinedRequestResponsePacket>
 {
 	public void Handle(PacketUnauthenticatedContextServer context, C2S_PlayerJoinedRequestResponsePacket request)
 	{
@@ -34,9 +36,30 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler() : IUnauthenticatedPa
 
 		playerSession.Username = request.Username;
 
-		// Send packet first before any links to adding/removing player is ran...
-		playerSession.Connection.Send(new S2C_ConnectionConfirmedPacket() { Message = $"Welcome, {playerSession.Username}!" });
-		
+		// Get the server's profile or use client's profile
+		var profileData = playerSession.GetSetComponent<ProfilePlayerDataComponent>(SharedIds.PlayerData.Profile);
+		if (profileRegistry.Authority == ProfileAuthority.Client)
+		{
+			if (request.Profile is { } clientProfile)
+			{
+				profileData.Profile = clientProfile.Copy();
+				Log.Info($"Accepted client profile for [{playerSession.Username}]");
+			}
+			else
+			{
+				Log.Warn($"Client profile missing for [{playerSession.Username}], using server profile");
+			}
+		}
+
+		if (profileData.Profile is null && profileRegistry.Starter is { } starter)
+			profileData.Profile = starter.Copy();
+
+		playerSession.Connection.Send(new S2C_ConnectionConfirmedPacket()
+		{
+			Message = $"Welcome, {playerSession.Username}!",
+			Profile = profileData.Profile?.Copy()
+		});
+
 		context.Server.RemoveUnauthenticatedConnection(context.Connection);
 		context.Server.AddPlayer(playerSession);
 

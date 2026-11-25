@@ -4,7 +4,7 @@ using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.BattleEngine.Vanilla.Loadouts;
+using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
@@ -22,19 +22,7 @@ internal static class TestSupport
 		definitions.RuleDefinitions.Register(GameRulesDefinition.DefaultId, DataTagMapper.ToTag(new GameRulesDefinition
 		{
 			PtSchedule = [5, 6, 8, 11, 15, 20, 26, 33, 41, 50],
-			PtCap = 50
-		}));
-		definitions.LoadoutDefinitions.Register(PlayerLoadout.DefaultId, DataTagMapper.ToTag(new PlayerLoadout
-		{
-			Deck =
-			[
-				TestCards.CobCannon,
-				TestCards.ApocalypseTank,
-				TestCards.AssaultDestroyer,
-				TestCards.Fastpass,
-				TestCards.Auditor
-			],
-			Heroes = [TestCards.CaptainHero],
+			PtCap = 50,
 			UnitSlots =
 			[
 				new UnitSlotPos(-1, 0),
@@ -50,6 +38,19 @@ internal static class TestSupport
 	public static CardWarsDefinitions Definitions(BattleEngineRegistry registry)
 		=> registry.GetExtension<CardWarsDefinitions>()
 			?? throw new InvalidOperationException("CardWars definitions are not registered.");
+
+	public static PlayerBattleSetup DefaultBattleSetup() => new()
+	{
+		Deck =
+		[
+			TestCards.CobCannon,
+			TestCards.ApocalypseTank,
+			TestCards.AssaultDestroyer,
+			TestCards.Fastpass,
+			TestCards.Auditor
+		],
+		Heroes = [TestCards.CaptainHero]
+	};
 
 	public static BehaviourContext CreateBehaviourContext(BattleEngineRegistry registry, GameState state, EntityId owner)
 	{

@@ -1,6 +1,6 @@
 {
-	"_type": "cardwars:battle/loadout",
-	"deck": [
+	"_type": "cardwars:player/profile",
+	"current_deck": [
 		"cardwars:cards/units/plantvszombies/cob_cannon",
 		"cardwars:cards/units/redalert3/apocalypse_tank",
 		"cardwars:cards/units/redalert3/assault_destroyer",
@@ -9,12 +9,5 @@
 	],
 	"heroes": [
 		"cardwars:cards/heroes/captain"
-	],
-	"unit_slots": [
-		{ "x": -1, "y": 0 },
-		{ "x": 0, "y": 0 },
-		{ "x": 1, "y": 0 },
-		{ "x": 0, "y": -1 }
-	],
-	"introduction_animation": "cardwars:battle/animation/player_introduction_animation"
+	]
 }

@@ -32,7 +32,7 @@ public static class SharedIds
 
 	public static class PlayerData
 	{
-		public static readonly ResourceId Battle = ResourceId.Vanilla("player_data/battle");
+		public static readonly ResourceId Profile = ResourceId.Vanilla("player_data/profile");
 	}
 
 	public static class Animations

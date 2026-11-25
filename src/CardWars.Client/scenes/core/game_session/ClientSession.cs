@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.content;
 using CardWars.Client.scripts.core.packet;
+using CardWars.Client.scripts.core.profile;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.ModLoader;
+using CardWars.Vanilla.Shared;
 using Godot;
 
 namespace CardWars.Client.scenes.core.game_session;
 
-public sealed class ClientSession(Node root, string connectingUsername, ClientRegistry registry)
+public sealed class ClientSession(Node root, string connectingUsername, ClientRegistry registry, ClientProfileStore profiles)
 {
 	public ClientRegistry Registry { get; } = registry;
+	public ClientProfileStore Profiles { get; } = profiles;
 	public string ConnectingUsername { get; } = connectingUsername;
+	public PlayerProfile? ActiveProfile { get; private set; }
 
 	public IConnection? Connection { get; private set; }
 	public ClientInstance? Instance { get; private set; }
@@ -67,6 +71,8 @@ public sealed class ClientSession(Node root, string connectingUsername, ClientRe
 	}
 
 	public void SendPacket(IPacket packet) => Connection?.Send(packet);
+
+	public void SetActiveProfile(PlayerProfile? profile) => ActiveProfile = profile;
 
 	public void Disconnect() => Connection?.Disconnect();
 

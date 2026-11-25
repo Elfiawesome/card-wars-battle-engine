@@ -9,11 +9,17 @@ using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 
+public sealed class PlayerBattleSetup
+{
+	[DataTag] public List<ResourceId> Deck { get; set; } = [];
+	[DataTag] public List<ResourceId> Heroes { get; set; } = [];
+}
+
 [DataTagType()]
 public record struct PlayerJoinedRequestInput(
 	[property: DataTag] EntityId Id,
 	[property: DataTag] int RequestedTeam = 1,
-	[property: DataTag] ResourceId LoadoutId = default
+	[property: DataTag] PlayerBattleSetup? Setup = null
 ) : IInput;
 
 public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequestInput>
@@ -40,7 +46,7 @@ public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequest
 		context.Transaction.QueueEvent(new PlayerJoinedEvent()
 		{
 			PlayerId = request.Id,
-			LoadoutId = request.LoadoutId
+			Setup = request.Setup
 		});
 	}
 }

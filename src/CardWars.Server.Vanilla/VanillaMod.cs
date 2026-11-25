@@ -18,21 +18,26 @@ public class VanillaMod : IServerMod
 
 	public void OnLoad(Server server, IReadOnlyList<ModContentResult> modContents)
 	{
+		// Local registries (relative to this mod only)
 		var worldRegistry = new WorldRegistry();
-		RegisterPackets(server.Registry);
-		RegisterEvents(server, worldRegistry);
-		LoadWorldDefinitions(worldRegistry, modContents);
+		var profileRegistry = new PlayerProfileRegistry();
+		RegisterPackets(server.Registry, profileRegistry);
+		RegisterEvents(server, worldRegistry, profileRegistry);
+		LoadWorldDefinitions(worldRegistry, profileRegistry, modContents);
+		LoadPlayerProfiles(profileRegistry, modContents); // Get the default starter profile and register it in profileRegistry
 
+		// Get extension registries (this ones arent local :0)
 		var battleEngineRegistry = server.Registry.GetExtension<BattleEngineRegistry>()
 			?? throw new InvalidOperationException("Battle engine registry extension is required.");
 
+		// Register instances
 		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.World, new WorldInstanceProvider(worldRegistry, server.Session, SharedIds.Instances.World));
 		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.Battle, new BattleInstanceProvider(server.Session, battleEngineRegistry, SharedIds.Instances.Battle));
 	}
 
-	private void RegisterPackets(ServerRegistry registry)
+	private void RegisterPackets(ServerRegistry registry, PlayerProfileRegistry profileRegistry)
 	{
-		registry.UnauthenticatedPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler());
+		registry.UnauthenticatedPacketHandlers.Register(new C2S_PlayerJoinedRequestResponsePacketHandler(profileRegistry));
 		registry.PacketHandlers.Register(new C2S_DEBUG_WarpRequestPacketHandler());
 		registry.PacketHandlers.Register(new C2S_DEBUG_EnterBattlePacketHandler(this));
 	}
@@ -49,10 +54,10 @@ public class VanillaMod : IServerMod
 		return _currentBattleInstanceId.Value;
 	}
 
-	private void RegisterEvents(Server server, WorldRegistry worldRegistry)
+	private void RegisterEvents(Server server, WorldRegistry worldRegistry, PlayerProfileRegistry profileRegistry)
 	{
 		server.OnUnauthenticatedConnectionReceived += OnUnauthenticatedConnectionReceived;
-		server.OnAddPlayer += player => OnPlayerJoined(server, worldRegistry, player);
+		server.OnAddPlayer += player => OnPlayerJoined(server, worldRegistry, profileRegistry, player);
 		server.OnRemovePlayer += player => OnPlayerLeft(server, player);
 		server.OnPlayerPreEnterInstance += OnPlayerPreEnterInstance;
 		server.OnPlayerPostEnterInstance += OnPlayerPostEnterInstance;
@@ -64,8 +69,13 @@ public class VanillaMod : IServerMod
 		connection.Send(new S2C_PlayerJoinedRequestPacket() { ServerGreetingMessage = "Hello! This is the server :)" });
 	}
 
-	private void OnPlayerJoined(Server server, WorldRegistry worldRegistry, PlayerSession player)
+	private void OnPlayerJoined(Server server, WorldRegistry worldRegistry, PlayerProfileRegistry profileRegistry, PlayerSession player)
 	{
+		// Get Player Profile and/or Set default profile
+		var profileData = player.GetSetComponent<ProfilePlayerDataComponent>(SharedIds.PlayerData.Profile);
+		if (profileData.Profile is null && profileRegistry.Starter is { } starter)
+			profileData.Profile = starter.Copy();
+
 		// Rejoin the instance the player last left (world or battle) if known.
 		var providerId = player.CurrentInstanceProvider;
 		var saveName = player.CurrentInstanceSaveName;
@@ -128,7 +138,19 @@ public class VanillaMod : IServerMod
 		}
 	}
 
-	private void LoadWorldDefinitions(WorldRegistry worldRegistry, IReadOnlyList<ModContentResult> modContents)
+	private void LoadPlayerProfiles(PlayerProfileRegistry profileRegistry, IReadOnlyList<ModContentResult> modContents)
+	{
+		foreach (var content in modContents)
+		{
+			if (content.Category is not ["profiles"]) continue;
+
+			var profile = content.ReadAsObject<PlayerProfile>();
+			profileRegistry.Starter = profile;
+			Log.Info($"Registered starter profile: {content.Id}");
+		}
+	}
+
+	private void LoadWorldDefinitions(WorldRegistry worldRegistry, PlayerProfileRegistry profileRegistry, IReadOnlyList<ModContentResult> modContents)
 	{
 		foreach (var content in modContents)
 		{
@@ -148,6 +170,12 @@ public class VanillaMod : IServerMod
 
 						worldRegistry.DefaultWorld = ResourceId.Parse(configDataTag.GetString("default_world"));
 						Log.Info("Registered default_world as: " + worldRegistry.DefaultWorld);
+
+						var authority = configDataTag.GetString("profile_authority", "server");
+						profileRegistry.Authority = authority.Equals("client", StringComparison.OrdinalIgnoreCase)
+							? ProfileAuthority.Client
+							: ProfileAuthority.Server;
+						Log.Info($"Profile authority: {profileRegistry.Authority}");
 					}
 					break;
 			}

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using CardWars.BattleEngine;
 using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Client.scripts.core;
+using CardWars.Client.scripts.core.profile;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;
@@ -41,13 +42,15 @@ public partial class GameSession : Node
 		var projectRoot = provider.GetFullPath(provider.Combine(provider.Combine(clientDir, ".."), ".."));
 		var gamedataPath = provider.Combine(projectRoot, "gamedata");
 		Storage = new StorageManager(gamedataPath, provider);
+		var profileRoot = new StoragePath(provider.Combine(gamedataPath, ".userdata"), provider); // We use this temp folder first but we can use ProjectSettings.GlobalizePath("user://profiles") later
+		var profileStore = new ClientProfileStore(profileRoot);
 
 		// Start!
 		Log.Info($"Game Session started with username: {ConnectingUsername}");
-		StartSession();
+		StartSession(profileStore);
 	}
 
-	private void StartSession()
+	private void StartSession(ClientProfileStore profileStore)
 	{
 		if (Storage is null) { return; }
 
@@ -66,7 +69,7 @@ public partial class GameSession : Node
 		var clientRegistry = new ClientRegistry();
 		clientRegistry.RegisterExtension(new BattleClientRuntime(battleRegistry));
 
-		Client = new ClientSession(this, ConnectingUsername, clientRegistry);
+		Client = new ClientSession(this, ConnectingUsername, clientRegistry, profileStore);
 		Client.OnDebugStatus = SetDebugStatus;
 		Client.OnDebugWorld = SetDebugWorld;
 		Client.OnDebugPlayers = SetDebugPlayers;

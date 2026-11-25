@@ -152,7 +152,7 @@ public sealed class BattleWinConditionTests
 	{
 		var battle = BattleTestHarness.Create();
 		var player3Id = EntityId.New();
-		battle.Engine.HandleInput(EntityId.None, new PlayerJoinedRequestInput(player3Id, 1));
+		battle.Engine.HandleInput(EntityId.None, new PlayerJoinedRequestInput(player3Id, 1, TestSupport.DefaultBattleSetup()));
 		battle.HeroOf(battle.Player1Id).Data.Set("hrt", 0);
 
 		battle.EndTurn(battle.Player1Id);

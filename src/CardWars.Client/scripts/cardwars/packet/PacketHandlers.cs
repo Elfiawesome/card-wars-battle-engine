@@ -11,7 +11,8 @@ public class S2C_PlayerJoinedRequestPacketHandler() : IPacketHandlerClient<S2C_P
 	{
 		context.Connection.Send(new C2S_PlayerJoinedRequestResponsePacket()
 		{
-			Username = context.Session.ConnectingUsername
+			Username = context.Session.ConnectingUsername,
+			Profile = context.Session.Profiles.Load(context.Session.ConnectingUsername)
 		});
 
 		context.Session.SetDebugStatus("Sent player info, waiting for confirmation...");
@@ -22,6 +23,10 @@ public class S2C_ConnectionConfirmedPacketHandler : IPacketHandlerClient<S2C_Con
 {
 	public void Handle(PacketContextClient context, S2C_ConnectionConfirmedPacket request)
 	{
+		context.Session.SetActiveProfile(request.Profile);
+		if (request.Profile is { } profile)
+			context.Session.Profiles.Save(context.Session.ConnectingUsername, profile);
+
 		context.Session.SetDebugStatus($"Connected! {request.Message}");
 	}
 }

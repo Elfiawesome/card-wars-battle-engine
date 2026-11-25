@@ -108,9 +108,6 @@ public class VanillaMod : IBattleEngineMod
 		// --- Register Ability Types ---
 		RegisterAbilityTypes(definitions, modContents);
 
-		// --- Register Loadouts ---
-		RegisterLoadouts(definitions, modContents);
-
 		// --- Card Definitions ---
 		RegisterCardDefinitions(definitions, modContents);
 	}
@@ -203,20 +200,6 @@ public class VanillaMod : IBattleEngineMod
 				definitions.AbilityTypeDefinitions.Register(content.Id, abilityType);
 				Log.Info($"Registered Ability Type: {content.Id}");
 			}
-		}
-	}
-
-	private static void RegisterLoadouts(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents)
-	{
-		foreach (var content in modContents)
-		{
-			if (content.Category.Length != 1 || content.Category[0] != "loadouts") continue;
-
-			var loadout = content.ReadAs<CompoundTag>();
-			if (loadout is null) continue;
-
-			definitions.LoadoutDefinitions.Register(content.Id, loadout);
-			Log.Info($"Registered Loadout: {content.Id}");
 		}
 	}
 

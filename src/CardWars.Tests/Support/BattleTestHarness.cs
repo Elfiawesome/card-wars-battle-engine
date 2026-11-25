@@ -35,8 +35,8 @@ internal sealed class BattleTestHarness
 		var player1Id = EntityId.New();
 		var player2Id = EntityId.New();
 
-		engine.HandleInput(EntityId.None, new PlayerJoinedRequestInput(player1Id, 1));
-		engine.HandleInput(EntityId.None, new PlayerJoinedRequestInput(player2Id, 2));
+		engine.HandleInput(EntityId.None, new PlayerJoinedRequestInput(player1Id, 1, TestSupport.DefaultBattleSetup()));
+		engine.HandleInput(EntityId.None, new PlayerJoinedRequestInput(player2Id, 2, TestSupport.DefaultBattleSetup()));
 
 		return new BattleTestHarness(engine, player1Id, player2Id);
 	}

@@ -20,12 +20,14 @@ public class C2S_PlayerJoinedRequestResponsePacket : IPacket
 {
 	[DataTag] public string ClientGreetingMessage { get; set; } = "Hello"; // Debug Testing
 	[DataTag] public required string Username { get; set; }
+	[DataTag] public PlayerProfile? Profile { get; set; }
 }
 
 [DataTagType()]
 public class S2C_ConnectionConfirmedPacket : IPacket
 {
 	[DataTag] public string Message { get; set; } = "Welcome!";
+	[DataTag] public PlayerProfile? Profile { get; set; }
 }
 
 [DataTagType()]

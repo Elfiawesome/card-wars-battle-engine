@@ -3,7 +3,6 @@ using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.BattleEngine.Vanilla.Loadouts;
 using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
@@ -16,7 +15,7 @@ namespace CardWars.BattleEngine.Vanilla.Features;
 public class PlayerJoinedEvent() : IEvent
 {
 	[DataTag] public EntityId PlayerId { get; set; }
-	[DataTag] public ResourceId LoadoutId { get; set; }
+	[DataTag] public PlayerBattleSetup? Setup { get; set; }
 };
 
 public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
@@ -26,33 +25,16 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		// Make sure we don't re-create a player with the same id
 		if (context.State.Require<Player>(request.PlayerId) is not { } player) return;
 
+		// Get rules to set the default points
 		var ruleId = context.State.RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.RuleId;
 		var rules = GameRulesDefinition.Get(context.Registry, ruleId);
-		if (rules is null)
-		{
-			Log.Error($"Missing game rules [{ruleId}]");
-			return;
-		}
+		if (rules is null) { Log.Error($"Missing game rules [{ruleId}]"); return; }
+		if (rules.PtSchedule.Count == 0 || rules.PtCap <= 0) { Log.Error($"Game rules [{ruleId}] are missing a valid Pt schedule or cap"); return; }
 
-		if (rules.PtSchedule.Count == 0 || rules.PtCap <= 0)
-		{
-			Log.Error($"Game rules [{ruleId}] are missing a valid Pt schedule or cap");
-			return;
-		}
-
+		// get Definitiosn for loading cards into players
 		var definitions = context.Registry.GetExtension<CardWarsDefinitions>();
-		if (definitions is null)
-		{
-			Log.Error("Card Wars definitions are not registered");
-			return;
-		}
-
-		var loadout = PlayerLoadout.Get(definitions, request.LoadoutId);
-		if (loadout is null)
-		{
-			Log.Error($"Missing player loadout [{request.LoadoutId}]");
-			return;
-		}
+		if (definitions is null) { Log.Error("Card Wars definitions are not registered"); return; }
+		if (request.Setup is not { } setup) { Log.Error($"Missing battle setup for player [{request.PlayerId}]"); return; }
 
 		var batch = new BlockBatch([]);
 		if (context.State.RuleId.IsEmpty)
@@ -65,7 +47,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		batch.Blocks.Add(new AttachDeckToPlayerBlock(request.PlayerId, deckId));
 
 		// Populate deck with card
-		foreach (var defId in loadout.Deck)
+		foreach (var defId in setup.Deck)
 		{
 			var def = definitions.CardDefinitions.Get(defId)?.Clone();
 			var cardId = EntityId.New();
@@ -110,11 +92,11 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 			b.Blocks.Add(new AttachUnitSlotToBattlefieldBlock(bid, usid));
 			unitLists.Add(new GuidTag(usid.Value));
 		};
-		foreach (var position in loadout.UnitSlots)
+		foreach (var position in rules.UnitSlots)
 			addUnitSlot(batch, battlefieldId, position);
 
 		// Create Heroes
-		foreach (var heroDefinitionId in loadout.Heroes)
+		foreach (var heroDefinitionId in setup.Heroes)
 		{
 			var heroDefinition = definitions.CardDefinitions.Get(heroDefinitionId)?.Clone();
 			if (heroDefinition is null) continue;
@@ -128,7 +110,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		}
 
 		batch.AnimationArgs.Set("unit_slots", unitLists);
-		batch.AnimationId = loadout.IntroductionAnimation;
+		batch.AnimationId = rules.IntroductionAnimation;
 		context.ApplyBlockBatch(batch);
 	}
 }

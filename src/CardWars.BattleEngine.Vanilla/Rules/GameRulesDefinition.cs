@@ -1,4 +1,5 @@
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
+using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
@@ -15,6 +16,8 @@ public sealed class GameRulesDefinition
 	[DataTag] public List<int> PtSchedule { get; set; } = [];
 	[DataTag] public int PtCap { get; set; }
 	[DataTag] public IExpression? WinCondition { get; set; }
+	[DataTag] public List<UnitSlotPos> UnitSlots { get; set; } = [];
+	[DataTag] public ResourceId IntroductionAnimation { get; set; } = ResourceId.Empty;
 
 	public int GetPtForRound(int roundNumber)
 	{
