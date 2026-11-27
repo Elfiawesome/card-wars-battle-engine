@@ -11,5 +11,5 @@ public abstract class ExtensibleRegistry
 		=> _extensible.Get<T>();
 
 	public T GetOrCreateExtension<T>() where T : class, new()
-		=> _extensible.GetOrCreateExtension<T>();
+		=> _extensible.GetOrCreate<T>();
 }

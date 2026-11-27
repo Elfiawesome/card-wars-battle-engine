@@ -11,7 +11,7 @@ public class EndTurnRequestInputHandler : IInputHandler<EndTurnRequestInput>
 {
 	public void Handle(InputContext context, EndTurnRequestInput request)
 	{
-		var turn = context.Transaction.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn;
+		var turn = context.Transaction.State.Ext.GetOrCreate<CardWarsBattleState>().Turn;
 		context.Transaction.QueueEvent(new TurnEndedEvent()
 		{
 			PlayerId = context.PlayerId,

@@ -53,7 +53,7 @@ public abstract class BattlefieldLayout : IBattleLayoutHandler
 		if (cards[0].GetHighlightBounds() is not { } bounds) return;
 
 		var width = bounds.Size.X;
-		var gap = battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Layout.LayoutConfig.GetFloat("hero_gap", 0.3f);
+		var gap = battle.State.Ext.GetOrCreate<CardWarsBattleState>().Layout.LayoutConfig.GetFloat("hero_gap", 0.3f);
 		var spacing = width + gap;
 		var z = node.BoundsCenter.Z + node.Depth * 0.5f + gap;
 

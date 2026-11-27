@@ -19,7 +19,7 @@ public sealed class ScriptBehaviourTests
 	{
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
-		state.Ext.GetOrCreateExtension<CardWarsBattleState>();
+		state.Ext.GetOrCreate<CardWarsBattleState>();
 		var owner = TestSupport.AddEntity(state);
 		var context = TestSupport.CreateBehaviourContext(registry, state, owner.Id);
 
@@ -64,7 +64,7 @@ public sealed class ScriptBehaviourTests
 	{
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
-		state.Ext.GetOrCreateExtension<CardWarsBattleState>();
+		state.Ext.GetOrCreate<CardWarsBattleState>();
 		var owner = TestSupport.AddEntity(state);
 		var context = TestSupport.CreateBehaviourContext(registry, state, owner.Id);
 
@@ -110,7 +110,7 @@ public sealed class ScriptBehaviourTests
 	{
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
-		state.Ext.GetOrCreateExtension<CardWarsBattleState>();
+		state.Ext.GetOrCreate<CardWarsBattleState>();
 		var owner = TestSupport.AddEntity(state);
 		var context = TestSupport.CreateBehaviourContext(registry, state, owner.Id);
 
@@ -145,7 +145,7 @@ public sealed class ScriptBehaviourTests
 	{
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
-		state.Ext.GetOrCreateExtension<CardWarsBattleState>();
+		state.Ext.GetOrCreate<CardWarsBattleState>();
 		var owner = TestSupport.AddEntity(state);
 		var context = TestSupport.CreateBehaviourContext(registry, state, owner.Id);
 		var flag = ResourceId.Vanilla("flag");
@@ -187,7 +187,7 @@ public sealed class ScriptBehaviourTests
 	{
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
-		state.Ext.GetOrCreateExtension<CardWarsBattleState>();
+		state.Ext.GetOrCreate<CardWarsBattleState>();
 		var owner = TestSupport.AddEntity(state);
 		var context = TestSupport.CreateBehaviourContext(registry, state, owner.Id);
 
@@ -212,7 +212,7 @@ public sealed class ScriptBehaviourTests
 		var blockHandler = new TestBlockHandler();
 		registry.BlockHandlers.Register(blockHandler);
 		var state = new GameState();
-		state.Ext.GetOrCreateExtension<CardWarsBattleState>();
+		state.Ext.GetOrCreate<CardWarsBattleState>();
 		var owner = TestSupport.AddEntity(state);
 		var context = TestSupport.CreateBehaviourContext(registry, state, owner.Id);
 

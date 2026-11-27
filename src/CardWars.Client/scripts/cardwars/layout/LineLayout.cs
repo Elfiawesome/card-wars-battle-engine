@@ -15,7 +15,7 @@ public sealed class LineLayout : BattlefieldLayout
 	public override void Compute(BattleInstance battle)
 	{
 		var state = battle.State;
-		var config = state.Ext.GetOrCreateExtension<CardWarsBattleState>().Layout.LayoutConfig;
+		var config = state.Ext.GetOrCreate<CardWarsBattleState>().Layout.LayoutConfig;
 		var gap = config.GetFloat("gap", DefaultGap);
 
 		var teams = state.OfType<Player>()

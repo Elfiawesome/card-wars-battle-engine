@@ -14,6 +14,6 @@ public class SetGameOutcomeBlockHandler : IBlockHandler<SetGameOutcomeBlock>
 {
 	public void Handle(GameState context, SetGameOutcomeBlock request)
 	{
-		context.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome = request.Outcome;
+		context.Ext.GetOrCreate<CardWarsBattleState>().Outcome = request.Outcome;
 	}
 }

@@ -19,7 +19,7 @@ public class WinConditionCheckEventHandler : IEventHandler<WinConditionCheckEven
 	public void Handle(Transaction context, WinConditionCheckEvent request)
 	{
 		var state = context.State;
-		var rules = GameRulesDefinition.Get(context.Registry, state.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId) ?? new GameRulesDefinition();
+		var rules = GameRulesDefinition.Get(context.Registry, state.Ext.GetOrCreate<CardWarsBattleState>().RuleId) ?? new GameRulesDefinition();
 		var result = new WinConditionEvaluator(context.Registry).Evaluate(state, rules);
 		if (!result.IsGameOver) return;
 

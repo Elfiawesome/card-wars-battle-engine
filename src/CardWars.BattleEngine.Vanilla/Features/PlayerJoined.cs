@@ -25,7 +25,7 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		if (context.State.Require<Player>(request.PlayerId) is not { } player) return;
 
 		// Get rules to set the default points
-		var ruleId = context.State.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId;
+		var ruleId = context.State.Ext.GetOrCreate<CardWarsBattleState>().RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.Ext.GetOrCreate<CardWarsBattleState>().RuleId;
 		var rules = GameRulesDefinition.Get(context.Registry, ruleId);
 		if (rules is null) { context.Logger.Error($"Missing game rules [{ruleId}]"); return; }
 		if (rules.PtSchedule.Count == 0 || rules.PtCap <= 0) { context.Logger.Error($"Game rules [{ruleId}] are missing a valid Pt schedule or cap"); return; }
@@ -36,9 +36,9 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		if (request.Setup is not { } setup) { context.Logger.Error($"Missing battle setup for player [{request.PlayerId}]"); return; }
 
 		var batch = new BlockBatch([]);
-		if (context.State.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId.IsEmpty)
+		if (context.State.Ext.GetOrCreate<CardWarsBattleState>().RuleId.IsEmpty)
 			batch.Blocks.Add(new SetGameRuleBlock(ruleId));
-		batch.Blocks.Add(new ModifyPlayerPtBlock(request.PlayerId, rules.GetPtForRound(context.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.RoundNumber)));
+		batch.Blocks.Add(new ModifyPlayerPtBlock(request.PlayerId, rules.GetPtForRound(context.State.Ext.GetOrCreate<CardWarsBattleState>().Turn.RoundNumber)));
 
 		// Create new deck
 		var deckId = EntityId.New();

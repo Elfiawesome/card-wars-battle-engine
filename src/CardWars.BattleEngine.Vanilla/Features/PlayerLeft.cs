@@ -31,7 +31,7 @@ public class PlayerLeftRequestInputHandler : IInputHandler<PlayerLeftRequestInpu
 		});
 		context.Transaction.QueueEvent(new WinConditionCheckEvent
 		{
-			TurnState = state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.Clone()
+			TurnState = state.Ext.GetOrCreate<CardWarsBattleState>().Turn.Clone()
 		});
 	}
 }

@@ -14,10 +14,10 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry)
 	// --- Playing Cards ---
 	// If a player can do inputs
 	public bool CanAct(GameState state, EntityId playerId)
-		=> state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.AllowedPlayerInputs.Contains(playerId);
+		=> state.Ext.GetOrCreate<CardWarsBattleState>().Turn.AllowedPlayerInputs.Contains(playerId);
 
 	public bool CanAct(GameState state, EntityId playerId, TurnPhase phase)
-			=> CanAct(state, playerId) && phase == state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.Phase;
+			=> CanAct(state, playerId) && phase == state.Ext.GetOrCreate<CardWarsBattleState>().Turn.Phase;
 
 	// If a player can play THIS card
 	public bool CanStartPlayCard(GameState state, EntityId playerId, GenericCard card, out string? reason)
@@ -63,7 +63,7 @@ public sealed class BattleActionValidator(BattleEngineRegistry registry)
 		// 1) Not allowed in inputs
 		if (!CanAct(state, playerId)) { reason = $"player [{playerId}] is not allowed to act"; return false; }
 		// 2) Only allowed in attacking phase
-		if (state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.Phase != TurnPhase.Attacking) { reason = "the current phase is not Attacking"; return false; }
+		if (state.Ext.GetOrCreate<CardWarsBattleState>().Turn.Phase != TurnPhase.Attacking) { reason = "the current phase is not Attacking"; return false; }
 		// 3) Attacher not owned by player
 		if (state.GetParent<Player>(attacker)?.Id != playerId) { reason = $"attacker [{attacker.Id}] is not owned by player [{playerId}]"; return false; }
 		// 4) Not enough pt

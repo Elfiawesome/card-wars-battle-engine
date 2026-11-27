@@ -16,7 +16,7 @@ public class Extensible<T>
 	public TT? Get<TT>() where TT : T
 		=> _extensions.TryGetValue(typeof(TT), out var extension) && extension is TT typed ? typed : default;
 
-	public TT GetOrCreateExtension<TT>() where TT : T, new()
+	public TT GetOrCreate<TT>() where TT : T, new()
 	{
 		if (Get<TT>() is { } existing) return existing;
 

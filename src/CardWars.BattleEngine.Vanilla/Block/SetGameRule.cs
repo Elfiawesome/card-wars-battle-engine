@@ -15,6 +15,6 @@ public class SetGameRuleBlockHandler : IBlockHandler<SetGameRuleBlock>
 {
 	public void Handle(GameState context, SetGameRuleBlock request)
 	{
-		context.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId = request.RuleId;
+		context.Ext.GetOrCreate<CardWarsBattleState>().RuleId = request.RuleId;
 	}
 }

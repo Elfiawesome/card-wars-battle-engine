@@ -20,7 +20,7 @@ public sealed class DefaultLayout : BattlefieldLayout
 	public override void Compute(BattleInstance battle)
 	{
 		var state = battle.State;
-		var config = state.Ext.GetOrCreateExtension<CardWarsBattleState>().Layout.LayoutConfig;
+		var config = state.Ext.GetOrCreate<CardWarsBattleState>().Layout.LayoutConfig;
 		var gap = config.GetFloat("gap", DefaultGap);
 		var teamGap = config.GetFloat("team_gap", gap * 2f);
 		var curvature = Mathf.Clamp(config.GetFloat("curvature", DefaultCurvature), 0f, 1f);

@@ -17,6 +17,6 @@ public sealed class BattleLeaveTests
 
 		Assert.True(battle.Player1.IsDefeated);
 		Assert.False(battle.Player2.IsDefeated);
-		Assert.True(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver);
+		Assert.True(battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsGameOver);
 	}
 }

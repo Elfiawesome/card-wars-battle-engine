@@ -14,6 +14,6 @@ public class UpdateTurnStateBlockHandler : IBlockHandler<UpdateTurnStateBlock>
 {
 	public void Handle(GameState context, UpdateTurnStateBlock request)
 	{
-		context.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn = request.NewState is { } state ? state.Clone() : new();
+		context.Ext.GetOrCreate<CardWarsBattleState>().Turn = request.NewState is { } state ? state.Clone() : new();
 	}
 }

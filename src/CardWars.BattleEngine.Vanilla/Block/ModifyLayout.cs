@@ -14,6 +14,6 @@ public class ModifyLayoutBlockHandler : IBlockHandler<ModifyLayoutBlock>
 {
 	public void Handle(GameState context, ModifyLayoutBlock request)
 	{
-		context.Ext.GetOrCreateExtension<CardWarsBattleState>().Layout = request.Layout.Copy();
+		context.Ext.GetOrCreate<CardWarsBattleState>().Layout = request.Layout.Copy();
 	}
 }

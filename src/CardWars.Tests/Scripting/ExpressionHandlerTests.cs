@@ -34,7 +34,7 @@ public sealed class ExpressionHandlerTests
 		var state = new GameState();
 		var entity = TestSupport.AddEntity(state, hp: 17);
 		entity.Data.Set("mp", 4);
-		state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn = new TurnState([], [], 0, 3, TurnPhase.Attacking);
+		state.Ext.GetOrCreate<CardWarsBattleState>().Turn = new TurnState([], [], 0, 3, TurnPhase.Attacking);
 
 		var runtime = TestSupport.CreateRuntime(registry, state, entity.Id);
 		runtime.DeclareVariable(ScriptBindings.Owner, new ObjectRefTag(entity));

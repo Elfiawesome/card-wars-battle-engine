@@ -45,8 +45,8 @@ public class TurnEndedEventHandler : IEventHandler<TurnEndedEvent>
 	public void Handle(Transaction context, TurnEndedEvent request)
 	{
 		var state = context.State;
-		var endedPhase = state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.Phase;
-		var newTurnState = state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.Clone();
+		var endedPhase = state.Ext.GetOrCreate<CardWarsBattleState>().Turn.Phase;
+		var newTurnState = state.Ext.GetOrCreate<CardWarsBattleState>().Turn.Clone();
 		newTurnState.TurnIndex += 1;
 
 		var phaseChanged = false;
@@ -212,7 +212,7 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 
 		context.QueueEvent(new EndTurnEvent() { TurnState = nextTurnState, PhaseChanged = true });
 
-		var ruleId = context.State.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId;
+		var ruleId = context.State.Ext.GetOrCreate<CardWarsBattleState>().RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.Ext.GetOrCreate<CardWarsBattleState>().RuleId;
 		var rules = GameRulesDefinition.Get(context.Registry, ruleId) ?? new GameRulesDefinition();
 		var targetPt = rules.GetPtForRound(nextTurnState.RoundNumber);
 		foreach (var player in context.State.OfType<Player>())

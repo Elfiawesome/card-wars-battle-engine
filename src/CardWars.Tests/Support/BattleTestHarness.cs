@@ -113,8 +113,8 @@ internal sealed class BattleTestHarness
 
 	private IDisposable AllowInput(EntityId playerId)
 	{
-		var added = State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.AllowedPlayerInputs.Add(playerId);
-		return new InputAllowance(State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.AllowedPlayerInputs, playerId, added);
+		var added = State.Ext.GetOrCreate<CardWarsBattleState>().Turn.AllowedPlayerInputs.Add(playerId);
+		return new InputAllowance(State.Ext.GetOrCreate<CardWarsBattleState>().Turn.AllowedPlayerInputs, playerId, added);
 	}
 
 	private sealed class InputAllowance(HashSet<EntityId> allowedPlayers, EntityId playerId, bool added) : IDisposable

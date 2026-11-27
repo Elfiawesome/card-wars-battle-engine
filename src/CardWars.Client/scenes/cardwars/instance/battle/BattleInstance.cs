@@ -148,7 +148,7 @@ public partial class BattleInstance : ClientInstance
 
 		// Handle Layout
 		var defaultId = BattleView.DefaultLayoutId;
-		var layoutHandler = BattleView.LayoutHandler.Get(State.Ext.GetOrCreateExtension<CardWarsBattleState>().Layout.Layout) ?? BattleView.LayoutHandler.Get(defaultId);
+		var layoutHandler = BattleView.LayoutHandler.Get(State.Ext.GetOrCreate<CardWarsBattleState>().Layout.Layout) ?? BattleView.LayoutHandler.Get(defaultId);
 		layoutHandler?.Compute(this);
 
 		// Set Camera
@@ -165,19 +165,19 @@ public partial class BattleInstance : ClientInstance
 		// TODO: Temporary...
 		var overlayNode = GetNode<Control>("UI/Overlay");
 		var resultLabel = GetNode<Label>("UI/Overlay/MarginContainer/Panel/ResultLabel");
-		if (overlayNode is not null) overlayNode.Visible = State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver;
+		if (overlayNode is not null) overlayNode.Visible = State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsGameOver;
 		if (resultLabel is null) return;
 
-		resultLabel.Text = State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver
-			? State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsDraw
+		resultLabel.Text = State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsGameOver
+			? State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsDraw
 				? "Draw"
-				: State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.WinningTeam is { } team ? $"Team {team} Wins!" : "Game Over"
+				: State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.WinningTeam is { } team ? $"Team {team} Wins!" : "Game Over"
 			: "";
 	}
 
 	private void UpdateCamera()
 	{
-		var turn = State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn;
+		var turn = State.Ext.GetOrCreate<CardWarsBattleState>().Turn;
 		if (turn.TurnOrder.Count == 0 || turn.TurnIndex >= turn.TurnOrder.Count) return;
 		if (_oldTurnState is { } old && turn.Equals(old)) return;
 

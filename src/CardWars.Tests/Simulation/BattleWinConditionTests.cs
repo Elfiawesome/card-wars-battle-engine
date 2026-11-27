@@ -35,9 +35,9 @@ public sealed class BattleWinConditionTests
 		Assert.Null(battle.State.Get<GenericCard>(hero.Id));
 		Assert.Empty(battle.Player1.BattlefieldIds);
 		Assert.Empty(battle.GraveyardOf(battle.Player1Id));
-		Assert.True(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver);
-		Assert.False(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsDraw);
-		Assert.Equal(2, battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.WinningTeam);
+		Assert.True(battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsGameOver);
+		Assert.False(battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsDraw);
+		Assert.Equal(2, battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.WinningTeam);
 	}
 
 	[Fact]
@@ -58,8 +58,8 @@ public sealed class BattleWinConditionTests
 		Assert.Null(battle.State.Get<UnitSlot>(slot.Id));
 		Assert.Null(battle.State.Get<Battlefield>(battlefieldId));
 		Assert.Empty(battle.Player1.BattlefieldIds);
-		Assert.True(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver);
-		Assert.Equal(2, battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.WinningTeam);
+		Assert.True(battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsGameOver);
+		Assert.Equal(2, battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.WinningTeam);
 	}
 
 	[Fact]
@@ -90,7 +90,7 @@ public sealed class BattleWinConditionTests
 		battle.EndTurn(battle.Player2Id);
 
 		Assert.True(battle.Player2.IsDefeated);
-		Assert.Equal(1, battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.WinningTeam);
+		Assert.Equal(1, battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.WinningTeam);
 	}
 
 	[Fact]
@@ -108,7 +108,7 @@ public sealed class BattleWinConditionTests
 		battle.EndTurn(battle.Player2Id);
 
 		Assert.True(battle.Player2.IsDefeated);
-		Assert.Equal(1, battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.WinningTeam);
+		Assert.Equal(1, battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.WinningTeam);
 	}
 
 	[Fact]
@@ -128,7 +128,7 @@ public sealed class BattleWinConditionTests
 		battle.EndTurn(battle.Player2Id);
 
 		Assert.True(battle.Player2.IsDefeated);
-		Assert.Equal(1, battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.WinningTeam);
+		Assert.Equal(1, battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.WinningTeam);
 	}
 
 	[Fact]
@@ -142,9 +142,9 @@ public sealed class BattleWinConditionTests
 		battle.EndTurn(battle.Player1Id);
 		battle.EndTurn(battle.Player2Id);
 
-		Assert.True(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver);
-		Assert.True(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsDraw);
-		Assert.Null(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.WinningTeam);
+		Assert.True(battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsGameOver);
+		Assert.True(battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsDraw);
+		Assert.Null(battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.WinningTeam);
 	}
 
 	[Fact]
@@ -163,9 +163,9 @@ public sealed class BattleWinConditionTests
 		battle.EndTurn(player3Id);
 
 		Assert.True(battle.Player1.IsDefeated);
-		Assert.False(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver);
-		Assert.DoesNotContain(battle.Player1Id, battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.TurnOrder);
-		Assert.Contains(player3Id, battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.TurnOrder);
+		Assert.False(battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsGameOver);
+		Assert.DoesNotContain(battle.Player1Id, battle.State.Ext.GetOrCreate<CardWarsBattleState>().Turn.TurnOrder);
+		Assert.Contains(player3Id, battle.State.Ext.GetOrCreate<CardWarsBattleState>().Turn.TurnOrder);
 	}
 
 	[Fact]
@@ -183,15 +183,15 @@ public sealed class BattleWinConditionTests
 		};
 
 		TestSupport.Definitions(battle.Engine.Registry).RuleDefinitions.Register(ruleId, TestBootstrap.DataTags.ToTag(rule));
-		battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId = ruleId;
+		battle.State.Ext.GetOrCreate<CardWarsBattleState>().RuleId = ruleId;
 
 		battle.AdvanceToAttackingPhase();
 		battle.EndTurn(battle.Player1Id);
 		battle.EndTurn(battle.Player2Id);
 
-		Assert.True(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver);
-		Assert.False(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsDraw);
-		Assert.Equal(2, battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.WinningTeam);
+		Assert.True(battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsGameOver);
+		Assert.False(battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsDraw);
+		Assert.Equal(2, battle.State.Ext.GetOrCreate<CardWarsBattleState>().Outcome.WinningTeam);
 	}
 
 	[Fact]
@@ -206,10 +206,10 @@ public sealed class BattleWinConditionTests
 
 		Assert.Equal(6, battle.Player2.Pt);
 
-		var turn = battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.Clone();
+		var turn = battle.State.Ext.GetOrCreate<CardWarsBattleState>().Turn.Clone();
 		battle.EndTurn(battle.Player2Id);
 
-		Assert.True(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.Equals(turn));
+		Assert.True(battle.State.Ext.GetOrCreate<CardWarsBattleState>().Turn.Equals(turn));
 	}
 
 	public sealed class AlwaysLoseCondition : IEntityCondition
