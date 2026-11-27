@@ -19,7 +19,6 @@ public class Server
 	public ServerRegistry Registry { get; } = new();
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
 
-	public StorageManager Storage { get; }
 	public SessionStorage Session { get; }
 
 	public Action<IConnection>? OnUnauthenticatedConnectionReceived { get; set; }
@@ -44,10 +43,9 @@ public class Server
 	// private double _intervalSaveAccumulator = 0;
 	private CancellationTokenSource? _cts;
 
-	public Server(StorageManager storage, string sessionName = "default")
+	public Server(SessionStorage session)
 	{
-		Storage = storage;
-		Session = storage.OpenSession(sessionName);
+		Session = session;
 	}
 
 	public void Start(params IListener[] listeners)

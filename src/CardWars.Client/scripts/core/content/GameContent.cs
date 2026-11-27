@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using CardWars.ModLoader;
 
-namespace CardWars.Client.scenes.core.game_session;
+namespace CardWars.Client.scripts.core.content;
 
 // A object to contain all specifications on how the mod results is designed to be. 
 // Mod Results are agnostic to what a server/client/battle are
@@ -14,13 +14,13 @@ public sealed class GameContent
 	public required IReadOnlyList<ModContentResult> BattleData { get; init; }
 	public required IReadOnlyList<ModContentResult> BattleAssets { get; init; }
 
-	public static GameContent Load(ModLoader.ModLoader modLoader)
+	public static GameContent Load(ModRepository modRepository)
 	{
 		// Get server content
-		var server = modLoader.GetContent("server");
+		var server = modRepository.GetContent("server");
 
 		// Get cleint content
-		var client = modLoader.GetContent("client");
+		var client = modRepository.GetContent("client");
 		var clientData = new List<ModContentResult>();
 		var clientPacks = new List<ModContentResult>();
 		foreach (var file in client.Data)
@@ -33,7 +33,7 @@ public sealed class GameContent
 		}
 
 		// Get battle content
-		var battle = modLoader.GetContent("battle", "assets");
+		var battle = modRepository.GetContent("battle", "assets");
 
 		return new GameContent
 		{

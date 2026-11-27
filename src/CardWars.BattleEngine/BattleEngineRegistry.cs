@@ -9,9 +9,9 @@ namespace CardWars.BattleEngine;
 
 public class BattleEngineRegistry : ExtensibleRegistry
 {
-	public HandlerRegistry<InputContext> InputHandlers = new();
-	public HandlerRegistry<GameState> BlockHandlers = new();
-	public HandlerRegistry<Transaction> EventHandlers = new();
+	public HandlerRegistry<InputContext> InputHandlers { get; } = new();
+	public HandlerRegistry<GameState> BlockHandlers { get; } = new();
+	public HandlerRegistry<Transaction> EventHandlers { get; } = new();
 	public DataDrivenRegistry DataDriven { get; } = new();
 	public RegistryFactory<ResourceId, IBehaviour> Behaviours { get; } = new();
 	public RegistryFactory<ResourceId, EntityId, IEntity> Entities { get; } = new();

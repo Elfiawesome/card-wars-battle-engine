@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using CardWars.Client.scenes.core.game_session;
+using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.content;
 using CardWars.Client.scripts.core.packet;
@@ -7,17 +9,41 @@ using CardWars.Client.scripts.core.profile;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
-using CardWars.ModLoader;
 using CardWars.Vanilla.Shared;
 using Godot;
 
-namespace CardWars.Client.scenes.core.game_session;
+namespace CardWars.Client.scripts.core.application;
 
-public sealed class ClientSession(Node root, string connectingUsername, ClientRegistry registry, ClientProfileStore profiles)
+public sealed class ClientRuntime
 {
-	public ClientRegistry Registry { get; } = registry;
-	public ClientProfileStore Profiles { get; } = profiles;
-	public string ConnectingUsername { get; } = connectingUsername;
+	private readonly Node _root;
+	private readonly IReadOnlyList<IClientMod> _mods;
+	private readonly IConnection _connection;
+	private bool _started;
+
+	public ClientRuntime(
+		Node root,
+		SessionContext context,
+		string connectingUsername,
+		ClientProfileStore profiles,
+		IReadOnlyList<IClientMod> mods,
+		IConnection connection)
+	{
+		_root = root;
+		_mods = mods;
+		_connection = connection;
+		Context = context;
+		ConnectingUsername = connectingUsername;
+		Profiles = profiles;
+
+		Registry = new ClientRegistry();
+		Registry.RegisterExtension(new BattleClientRuntime(Context.BattleRegistry));
+	}
+
+	public SessionContext Context { get; }
+	public ClientRegistry Registry { get; }
+	public ClientProfileStore Profiles { get; }
+	public string ConnectingUsername { get; }
 	public PlayerProfile? ActiveProfile { get; private set; }
 
 	public IConnection? Connection { get; private set; }
@@ -27,22 +53,24 @@ public sealed class ClientSession(Node root, string connectingUsername, ClientRe
 	public Action<string>? OnDebugWorld { get; set; }
 	public Action<string>? OnDebugPlayers { get; set; }
 
-	public void LoadContent(
-		IEnumerable<IClientMod> mods,
-		IReadOnlyList<ModContentResult> clientPacks,
-		IReadOnlyList<ModContentResult> clientData,
-		IReadOnlyList<ModContentResult> rawAssets)
+	public void Start()
 	{
+		if (_started)
+			throw new InvalidOperationException("Client runtime has already started.");
+
+		// Load all contents
 		var contentLoader = new ClientContentLoader(Registry.Resources);
-		contentLoader.MountPacks(clientPacks);
+		contentLoader.MountPacks(Context.Content.ClientPacks);
 		contentLoader.RegisterMountedAssets();
-		contentLoader.LoadRawAssets(rawAssets);
+		contentLoader.LoadRawAssets(Context.Content.BattleAssets);
 
-		foreach (var mod in mods)
-			mod.OnLoad(Registry, clientData);
+		// Load all mods
+		foreach (var mod in _mods)
+			mod.OnLoad(Registry, Context.Content.ClientData);
+
+		Connection = _connection;
+		_started = true;
 	}
-
-	public void Connect(IConnection connection) => Connection = connection;
 
 	public void Process()
 	{
@@ -58,29 +86,32 @@ public sealed class ClientSession(Node root, string connectingUsername, ClientRe
 	public void SwitchInstance(ClientInstance newInstance, Guid? playerId)
 	{
 		if (Instance is { } oldInstance)
-		{
-			root.RemoveChild(oldInstance);
-			oldInstance.onPacketSent -= SendPacket;
-		}
+			_root.RemoveChild(oldInstance);
 
 		Instance = newInstance;
-		Instance.onPacketSent += SendPacket;
-		Instance.Registry = new ClientInstanceRegistry(Registry);
-		Instance.MyPlayerId = playerId ?? Guid.Empty;
-		root.AddChild(Instance);
+		newInstance.Initialize(new ClientInstanceContext(
+			new ClientInstanceRegistry(Registry),
+			playerId ?? Guid.Empty,
+			SendPacket));
+		_root.AddChild(newInstance);
 	}
 
 	public void SendPacket(IPacket packet) => Connection?.Send(packet);
 
 	public void SetActiveProfile(PlayerProfile? profile) => ActiveProfile = profile;
 
-	public void Disconnect() => Connection?.Disconnect();
-
 	public void SetDebugStatus(string value) => OnDebugStatus?.Invoke(value);
 
 	public void SetDebugWorld(string value) => OnDebugWorld?.Invoke(value);
 
 	public void SetDebugPlayers(string value) => OnDebugPlayers?.Invoke(value);
+
+	public void Stop()
+	{
+		Connection?.Disconnect();
+		Connection = null;
+		_started = false;
+	}
 
 	private void HandleIncomingPacket(IPacket packet)
 	{

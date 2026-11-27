@@ -6,9 +6,9 @@ namespace CardWars.Client.scripts.core;
 
 public class ClientRegistry : ExtensibleRegistry
 {
-	public HandlerRegistry<PacketContextClient> PacketHandlers = new();
-	public SceneRegistry<ResourceId> Instances = new();
-	public SceneRegistry<ResourceId> UserInterface = new();
-	public SceneRegistry<ResourceId> GameObjects = new();
-	public ResourceRegistry<ResourceId> Resources = new();
+	public HandlerRegistry<PacketContextClient> PacketHandlers { get; } = new();
+	public SceneRegistry<ResourceId> Instances { get; } = new();
+	public SceneRegistry<ResourceId> UserInterface { get; } = new();
+	public SceneRegistry<ResourceId> GameObjects { get; } = new();
+	public ResourceRegistry<ResourceId> Resources { get; } = new();
 }

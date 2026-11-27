@@ -11,11 +11,11 @@ public class S2C_PlayerJoinedRequestPacketHandler() : IPacketHandlerClient<S2C_P
 	{
 		context.Connection.Send(new C2S_PlayerJoinedRequestResponsePacket()
 		{
-			Username = context.Session.ConnectingUsername,
-			Profile = context.Session.Profiles.Load(context.Session.ConnectingUsername)
+			Username = context.Runtime.ConnectingUsername,
+			Profile = context.Runtime.Profiles.Load(context.Runtime.ConnectingUsername)
 		});
 
-		context.Session.SetDebugStatus("Sent player info, waiting for confirmation...");
+		context.Runtime.SetDebugStatus("Sent player info, waiting for confirmation...");
 	}
 }
 
@@ -23,11 +23,11 @@ public class S2C_ConnectionConfirmedPacketHandler : IPacketHandlerClient<S2C_Con
 {
 	public void Handle(PacketContextClient context, S2C_ConnectionConfirmedPacket request)
 	{
-		context.Session.SetActiveProfile(request.Profile);
+		context.Runtime.SetActiveProfile(request.Profile);
 		if (request.Profile is { } profile)
-			context.Session.Profiles.Save(context.Session.ConnectingUsername, profile);
+			context.Runtime.Profiles.Save(context.Runtime.ConnectingUsername, profile);
 
-		context.Session.SetDebugStatus($"Connected! {request.Message}");
+		context.Runtime.SetDebugStatus($"Connected! {request.Message}");
 	}
 }
 
@@ -35,9 +35,9 @@ public class S2C_EnterInstancePacketHandler : IPacketHandlerClient<S2C_EnterInst
 {
 	public void Handle(PacketContextClient context, S2C_EnterInstancePacket request)
 	{
-		var instance = context.Session.Registry.Instances.Instantiate<ClientInstance>(request.ProviderId);
+		var instance = context.Runtime.Registry.Instances.Instantiate<ClientInstance>(request.ProviderId);
 		if (instance is null) { return; }
-		context.Session.SwitchInstance(instance, request.PlayerId);
+		context.Runtime.SwitchInstance(instance, request.PlayerId);
 	}
 }
 
@@ -45,7 +45,7 @@ public class S2C_LeaveInstancePacketHandler : IPacketHandlerClient<S2C_LeaveInst
 {
 	public void Handle(PacketContextClient context, S2C_LeaveInstancePacket request)
 	{
-		context.Session.SetDebugStatus($"Left instance {request.PlayerId}");
+		context.Runtime.SetDebugStatus($"Left instance {request.PlayerId}");
 	}
 }
 

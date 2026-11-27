@@ -21,15 +21,15 @@ public class LoadedMod
 }
 
 
-public class ModLoader
+public class ModRepository
 {
 	private readonly IEnumerable<StoragePath> _modDirs;
 	private readonly Dictionary<string, LoadedMod> _mods = [];
 	private readonly List<string> _loadOrder = [];
 	private readonly Dictionary<(string ContentRoot, string? AssetRoot), ModContentFiles> _content = [];
 
-	public ModLoader(StoragePath modDir) { _modDirs = [modDir]; }
-	public ModLoader(IEnumerable<StoragePath> modDirs)
+	public ModRepository(StoragePath modDir) { _modDirs = [modDir]; }
+	public ModRepository(IEnumerable<StoragePath> modDirs)
 	{
 		_modDirs = modDirs;
 	}
@@ -103,7 +103,7 @@ public class ModLoader
 
 	public void LoadAssemblies()
 	{
-		var loadContext = AssemblyLoadContext.GetLoadContext(typeof(ModLoader).Assembly) ?? AssemblyLoadContext.Default;
+		var loadContext = AssemblyLoadContext.GetLoadContext(typeof(ModRepository).Assembly) ?? AssemblyLoadContext.Default;
 
 		var dllPathsBySimpleName = new Dictionary<string, StoragePath>(StringComparer.OrdinalIgnoreCase);
 		foreach (var modId in _loadOrder)

@@ -17,8 +17,8 @@ public partial class WorldInstance : ClientInstance
 		switch (packet)
 		{
 			case S2C_WorldInstanceSnapshot worldInstanceSnapshot:
-				context.Session.SetDebugWorld(worldInstanceSnapshot.WorldView.WorldId.ToString());
-				context.Session.SetDebugPlayers(string.Join("\n", worldInstanceSnapshot.WorldView.Players.Select(p => $"{p.Username} ({p.X:0.0}, {p.Y:0.0})")));
+				context.Runtime.SetDebugWorld(worldInstanceSnapshot.WorldView.WorldId.ToString());
+				context.Runtime.SetDebugPlayers(string.Join("\n", worldInstanceSnapshot.WorldView.Players.Select(p => $"{p.Username} ({p.X:0.0}, {p.Y:0.0})")));
 
 				_warpOtions.Clear();
 				_warpOtions.AddRange(worldInstanceSnapshot.WorldView.WarpOptions);

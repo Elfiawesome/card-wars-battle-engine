@@ -1,12 +1,12 @@
 using System;
-using CardWars.Client.scenes.core.game_session;
+using CardWars.Client.scripts.core.application;
 using CardWars.Core.Network.Transport;
 
 namespace CardWars.Client.scripts.core.packet;
 
 public record struct PacketContextClient(
-	ClientSession Session
+	ClientRuntime Runtime
 )
 {
-	public readonly IConnection Connection => Session.Connection ?? throw new InvalidOperationException("Client is not connected.");
+	public readonly IConnection Connection => Runtime.Connection ?? throw new InvalidOperationException("Client is not connected.");
 };
