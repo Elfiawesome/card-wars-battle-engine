@@ -4,6 +4,7 @@
 
 # Game data (deployed mods, saves, settings)
 /gamedata/saves
+/gamedata/.userdata
 
 # Exclude build mods in vanilla folder
 **.dll
