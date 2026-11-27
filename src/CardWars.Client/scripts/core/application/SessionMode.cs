@@ -1,4 +1,4 @@
-namespace CardWars.Client.Runtime.Application;
+namespace CardWars.Client.scripts.core.application;
 
 public enum SessionMode
 {

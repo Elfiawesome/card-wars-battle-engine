@@ -4,8 +4,7 @@ using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Client.scripts.core.content;
 using CardWars.Client.scripts.core.packet;
-using CardWars.Client.Runtime.Application;
-using CardWars.Client.Runtime.Profile;
+using CardWars.Client.scripts.core.profile;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Vanilla.Shared;
@@ -13,7 +12,7 @@ using Godot;
 
 namespace CardWars.Client.scripts.core.application;
 
-public sealed class ClientRuntime : IClientRuntime
+public sealed class ClientRuntime
 {
 	private readonly Node _root;
 	private readonly IReadOnlyList<IClientMod> _mods;

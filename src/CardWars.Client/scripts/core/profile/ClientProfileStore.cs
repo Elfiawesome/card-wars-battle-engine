@@ -6,7 +6,7 @@ using CardWars.Core.Logging;
 using CardWars.Core.Storage;
 using CardWars.Vanilla.Shared;
 
-namespace CardWars.Client.Runtime.Profile;
+namespace CardWars.Client.scripts.core.profile;
 
 public sealed class ClientProfileStore
 {

@@ -1,11 +1,11 @@
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.registry;
-using CardWars.Client.Runtime.Content;
+using CardWars.Client.scripts.core.content;
 using CardWars.Core.Data;
 using CardWars.Core.Logging;
 using CardWars.Core.Storage;
 
-namespace CardWars.Client.Runtime.Application;
+namespace CardWars.Client.scripts.core.application;
 
 public sealed class SessionContext(
 	DataTagContext dataTags,

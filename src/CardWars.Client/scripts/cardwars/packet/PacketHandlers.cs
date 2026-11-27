@@ -2,7 +2,7 @@ using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Vanilla.Shared.Packet;
 
-namespace CardWars.Client.Vanilla;
+namespace CardWars.Client.scripts.cardwars.packet;
 
 public class S2C_PlayerJoinedRequestPacketHandler() : IPacketHandlerClient<S2C_PlayerJoinedRequestPacket>
 {

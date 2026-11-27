@@ -1,23 +1,26 @@
+using Logger = CardWars.Core.Logging.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.registry;
-using CardWars.Client.Runtime.Content;
+using CardWars.Client.scripts.core.content;
+using CardWars.Client.scripts.core.profile;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;
 using CardWars.Server;
 using CardWars.Server.Listener;
+using Godot;
 
-namespace CardWars.Client.Runtime.Application;
+namespace CardWars.Client.scripts.core.application;
 
 public sealed class SessionRuntime
 {
 	private readonly GameApplication _app;
-	private readonly IClientRuntimeFactory _clientFactory;
+	private readonly Node _root;
 	private readonly string _username;
 	private readonly string _sessionName;
 	private readonly string _targetIpAddress;
@@ -32,7 +35,7 @@ public sealed class SessionRuntime
 
 	public SessionRuntime(
 		GameApplication app,
-		IClientRuntimeFactory clientFactory,
+		Node root,
 		string username,
 		SessionMode mode,
 		string sessionName,
@@ -40,7 +43,7 @@ public sealed class SessionRuntime
 		int targetPort)
 	{
 		_app = app;
-		_clientFactory = clientFactory;
+		_root = root;
 		_username = username;
 		_sessionName = sessionName;
 		Mode = mode;
@@ -50,7 +53,7 @@ public sealed class SessionRuntime
 
 	public SessionMode Mode { get; }
 	public SessionContext Context => _context ?? throw new InvalidOperationException("Session has not started.");
-	public IClientRuntime? Client { get; private set; }
+	public ClientRuntime? Client { get; private set; }
 	public ServerRuntime? Server { get; private set; }
 
 	public Action<string>? OnDebugStatus { get; set; }
@@ -99,10 +102,27 @@ public sealed class SessionRuntime
 				Context.Logger);
 		}
 
-		Client = _clientFactory.Create(Context, _username, connection);
-		Client.OnDebugStatus = value => OnDebugStatus?.Invoke(value);
-		Client.OnDebugWorld = value => OnDebugWorld?.Invoke(value);
-		Client.OnDebugPlayers = value => OnDebugPlayers?.Invoke(value);
+		var clientMods = _app.CreateModEntries<IClientMod>()
+			.Concat(_app.Mods.LoadModEntry<IClientMod>())
+			.ToList();
+
+		var profileRoot = new StoragePath(
+			_app.Provider.Combine(_app.GamedataPath, ".userdata"),
+			_app.Provider);
+		var profiles = new ClientProfileStore(profileRoot, Context.DataTags, Context.Logger);
+
+		Client = new ClientRuntime(
+			_root,
+			Context,
+			_username,
+			profiles,
+			clientMods,
+			connection)
+		{
+			OnDebugStatus = value => OnDebugStatus?.Invoke(value),
+			OnDebugWorld = value => OnDebugWorld?.Invoke(value),
+			OnDebugPlayers = value => OnDebugPlayers?.Invoke(value)
+		};
 		Client.Start();
 	}
 

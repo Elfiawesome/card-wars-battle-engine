@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using CardWars.ModLoader;
 
-namespace CardWars.Client.Runtime.Content;
+namespace CardWars.Client.scripts.core.content;
 
 // A object to contain all specifications on how the mod results is designed to be. 
 // Mod Results are agnostic to what a server/client/battle are

@@ -1,5 +1,4 @@
 using CardWars.Client.scripts.core.application;
-using CardWars.Client.Runtime.Application;
 using CardWars.Client.scenes.core.global;
 using CardWars.Core.Storage;
 using CardWars.Vanilla.Shared;
@@ -42,9 +41,8 @@ public partial class GameSession : Node
 			: SessionMode.Client;
 
 		// Set up session!!!
-		var clientFactory = new ClientRuntimeFactory(this, app);
 		Session = app.CreateSession(
-			clientFactory,
+			this,
 			ConnectingUsername,
 			mode,
 			"session_1",

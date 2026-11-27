@@ -1,9 +1,14 @@
+using Logger = CardWars.Core.Logging.Logger;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using CardWars.Core.Data;
 using CardWars.Core.Logging;
 using CardWars.Core.Storage;
 using CardWars.ModLoader;
+using Godot;
 
-namespace CardWars.Client.Runtime.Application;
+namespace CardWars.Client.scripts.core.application;
 
 public sealed class GameApplication
 {
@@ -26,11 +31,19 @@ public sealed class GameApplication
 	}
 
 	public SessionRuntime CreateSession(
-		IClientRuntimeFactory clientFactory,
+		Node root,
 		string username,
 		SessionMode mode,
 		string sessionName,
 		string targetIpAddress,
 		int targetPort)
-		=> new(this, clientFactory, username, mode, sessionName, targetIpAddress, targetPort);
+		=> new(this, root, username, mode, sessionName, targetIpAddress, targetPort);
+
+	public IEnumerable<TMod> CreateModEntries<TMod>()
+		where TMod : class, IModEntry
+		=> typeof(GameApplication).Assembly
+			.GetTypes()
+			.Where(type => typeof(TMod).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+			.Select(type => Activator.CreateInstance(type))
+			.OfType<TMod>();
 }

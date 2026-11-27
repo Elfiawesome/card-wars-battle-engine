@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using CardWars.Client.scripts.cardwars.animation;
 using CardWars.Client.scripts.cardwars.entity_view;
 using CardWars.Client.scripts.cardwars.layout;
+using CardWars.Client.scripts.cardwars.packet;
 using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Client.scripts.core;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
 using CardWars.Vanilla.Shared;
 
-namespace CardWars.Client.Vanilla;
+namespace CardWars.Client.scripts.cardwars;
 
 public class VanillaMod : IClientMod
 {

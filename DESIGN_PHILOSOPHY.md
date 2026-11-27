@@ -53,3 +53,4 @@ A list of patterns we use and NOT use
 - Put plain C# library, model, orchestration, and domain scripts under `scripts/`.
 - Exception: a plain C# helper may stay beside the specific Godot script it is tightly coupled to.
 - Avoid using string/number literals (aka magic numbers/strings) and store them in a single point. For example like what we did with SharedIds/CardWarsIds
+- Keep `CardWars.Client` as one Godot project. Client mods are DLL + PCK runtime contracts, not extra solution projects.
