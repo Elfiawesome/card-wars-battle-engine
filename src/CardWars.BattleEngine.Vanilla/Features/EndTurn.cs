@@ -4,6 +4,7 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Rules;
+using CardWars.BattleEngine.Vanilla.State;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 using CardWars.Vanilla.Shared;
@@ -44,8 +45,8 @@ public class TurnEndedEventHandler : IEventHandler<TurnEndedEvent>
 	public void Handle(Transaction context, TurnEndedEvent request)
 	{
 		var state = context.State;
-		var endedPhase = state.Turn.Phase;
-		var newTurnState = state.Turn.Clone();
+		var endedPhase = state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.Phase;
+		var newTurnState = state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.Clone();
 		newTurnState.TurnIndex += 1;
 
 		var phaseChanged = false;
@@ -211,7 +212,7 @@ public class RoundEndedEventHandler : IEventHandler<RoundEndedEvent>
 
 		context.QueueEvent(new EndTurnEvent() { TurnState = nextTurnState, PhaseChanged = true });
 
-		var ruleId = context.State.RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.RuleId;
+		var ruleId = context.State.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId;
 		var rules = GameRulesDefinition.Get(context.Registry, ruleId) ?? new GameRulesDefinition();
 		var targetPt = rules.GetPtForRound(nextTurnState.RoundNumber);
 		foreach (var player in context.State.OfType<Player>())

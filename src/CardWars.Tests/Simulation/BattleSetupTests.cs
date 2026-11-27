@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Tests.Support;
 using Xunit;
+using CardWars.BattleEngine.Vanilla.State;
 
 namespace CardWars.Tests.Simulation;
 
@@ -96,7 +97,7 @@ public sealed class BattleSetupTests
 	public void TurnFlow_AdvancesPlayersAndTogglesPhase()
 	{
 		var battle = BattleTestHarness.Create();
-		var turn = battle.State.Turn;
+		var turn = battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn;
 
 		Assert.Equal(TurnPhase.Setup, turn.Phase);
 		Assert.Equal(1, turn.RoundNumber);
@@ -104,12 +105,12 @@ public sealed class BattleSetupTests
 		Assert.Contains(battle.Player1Id, turn.AllowedPlayerInputs);
 
 		battle.EndTurn(battle.Player1Id);
-		turn = battle.State.Turn;
+		turn = battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn;
 		Assert.Equal(1, turn.TurnIndex);
 		Assert.Contains(battle.Player2Id, turn.AllowedPlayerInputs);
 
 		battle.EndTurn(battle.Player2Id);
-		turn = battle.State.Turn;
+		turn = battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn;
 		Assert.Equal(0, turn.TurnIndex);
 		Assert.Equal(1, turn.TurnNumber);
 		Assert.Equal(1, turn.RoundNumber);
@@ -117,12 +118,12 @@ public sealed class BattleSetupTests
 		Assert.Contains(battle.Player1Id, turn.AllowedPlayerInputs);
 
 		battle.EndTurn(battle.Player1Id);
-		turn = battle.State.Turn;
+		turn = battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn;
 		Assert.Equal(1, turn.TurnIndex);
 		Assert.Contains(battle.Player2Id, turn.AllowedPlayerInputs);
 
 		battle.EndTurn(battle.Player2Id);
-		turn = battle.State.Turn;
+		turn = battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn;
 		Assert.Equal(0, turn.TurnIndex);
 		Assert.Equal(2, turn.TurnNumber);
 		Assert.Equal(2, turn.RoundNumber);

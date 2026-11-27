@@ -17,7 +17,7 @@ public sealed class BattlePersistenceTests
 		{
 			InstanceId = Guid.NewGuid(),
 			InstanceProviderId = ResourceId.Vanilla("battles/test"),
-			Snapshot = battle.State.ToSnapshot()
+			Snapshot = battle.State.ToSnapshot(TestBootstrap.DataTags)
 		};
 
 		var tag = TestBootstrap.DataTags.ToTag(instance, includeType: false);

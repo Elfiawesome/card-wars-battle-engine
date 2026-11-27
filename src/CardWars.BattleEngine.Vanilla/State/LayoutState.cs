@@ -2,7 +2,7 @@ using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 
-namespace CardWars.BattleEngine.State;
+namespace CardWars.BattleEngine.Vanilla.State;
 
 public record struct LayoutState(
 	[property: DataTag] ResourceId Layout,

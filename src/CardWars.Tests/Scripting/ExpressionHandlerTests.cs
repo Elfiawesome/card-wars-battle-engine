@@ -6,6 +6,7 @@ using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 using CardWars.Tests.Support;
 using Xunit;
+using CardWars.BattleEngine.Vanilla.State;
 
 namespace CardWars.Tests.Scripting;
 
@@ -33,7 +34,7 @@ public sealed class ExpressionHandlerTests
 		var state = new GameState();
 		var entity = TestSupport.AddEntity(state, hp: 17);
 		entity.Data.Set("mp", 4);
-		state.Turn = new TurnState([], [], 0, 3, TurnPhase.Attacking);
+		state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn = new TurnState([], [], 0, 3, TurnPhase.Attacking);
 
 		var runtime = TestSupport.CreateRuntime(registry, state, entity.Id);
 		runtime.DeclareVariable(ScriptBindings.Owner, new ObjectRefTag(entity));

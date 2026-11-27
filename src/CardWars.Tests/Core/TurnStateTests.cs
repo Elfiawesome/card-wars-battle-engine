@@ -1,7 +1,8 @@
-using CardWars.Tests.Support;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.Vanilla.State;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
+using CardWars.Tests.Support;
 using Xunit;
 
 namespace CardWars.Tests.Core;
@@ -39,28 +40,30 @@ public sealed class TurnStateTests
 	{
 		var state = new GameState();
 		var player = EntityId.New();
-		state.Turn.TurnOrder.Add(player);
-		state.Turn.AllowedPlayerInputs.Add(player);
+		state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.TurnOrder.Add(player);
+		state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.AllowedPlayerInputs.Add(player);
 
-		var snapshot = state.ToSnapshot();
-		snapshot.Turn.TurnOrder.Clear();
-		snapshot.Turn.AllowedPlayerInputs.Clear();
+		var snapshot = state.ToSnapshot(TestBootstrap.DataTags);
+		var restored = new GameState();
+		restored.FromSnapshot(snapshot, TestBootstrap.DataTags);
+		restored.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.TurnOrder.Clear();
+		restored.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.AllowedPlayerInputs.Clear();
 
-		Assert.Single(state.Turn.TurnOrder);
-		Assert.Single(state.Turn.AllowedPlayerInputs);
+		Assert.Single(state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.TurnOrder);
+		Assert.Single(state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.AllowedPlayerInputs);
 	}
 
 	[Fact]
 	public void Clear_ResetsTurnState()
 	{
 		var state = new GameState();
-		state.Turn.TurnOrder.Add(EntityId.New());
-		state.Turn.AllowedPlayerInputs.Add(EntityId.New());
+		state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.TurnOrder.Add(EntityId.New());
+		state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.AllowedPlayerInputs.Add(EntityId.New());
 
 		state.Clear();
 
-		Assert.Empty(state.Turn.TurnOrder);
-		Assert.Empty(state.Turn.AllowedPlayerInputs);
+		Assert.Empty(state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.TurnOrder);
+		Assert.Empty(state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.AllowedPlayerInputs);
 	}
 
 	[Fact]
@@ -85,20 +88,20 @@ public sealed class TurnStateTests
 	[Fact]
 	public void Snapshot_PreservesOutcomeAndRuleId()
 	{
-		var state = new GameState
-		{
-			RuleId = ResourceId.Vanilla("rules/custom"),
-			Outcome = GameOutcome.Win(2)
-		};
-		state.Turn.RoundNumber = 4;
+		var state = new GameState();
+		state.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId = ResourceId.Vanilla("rules/custom");
+		state.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome = GameOutcome.Win(2);
+		state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.RoundNumber = 4;
 
-		var tag = TestBootstrap.DataTags.ToTag(state.ToSnapshot());
-		var restored = TestBootstrap.DataTags.FromTag<GameStateSnapshot>(tag);
+		var tag = TestBootstrap.DataTags.ToTag(state.ToSnapshot(TestBootstrap.DataTags));
+		var snapshot = TestBootstrap.DataTags.FromTag<GameStateSnapshot>(tag);
+		var restored = new GameState();
+		restored.FromSnapshot(snapshot, TestBootstrap.DataTags);
 
-		Assert.Equal(state.RuleId, restored.RuleId);
-		Assert.True(restored.Outcome.IsGameOver);
-		Assert.Equal(2, restored.Outcome.WinningTeam);
-		Assert.False(restored.Outcome.IsDraw);
-		Assert.Equal(4, restored.Turn.RoundNumber);
+		Assert.Equal(state.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId, restored.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId);
+		Assert.True(restored.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver);
+		Assert.Equal(2, restored.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.WinningTeam);
+		Assert.False(restored.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsDraw);
+		Assert.Equal(4, restored.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.RoundNumber);
 	}
 }

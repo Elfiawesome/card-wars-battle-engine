@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
+using CardWars.BattleEngine.Vanilla.State;
 
 namespace CardWars.Tests.Support;
 
@@ -112,8 +113,8 @@ internal sealed class BattleTestHarness
 
 	private IDisposable AllowInput(EntityId playerId)
 	{
-		var added = State.Turn.AllowedPlayerInputs.Add(playerId);
-		return new InputAllowance(State.Turn.AllowedPlayerInputs, playerId, added);
+		var added = State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.AllowedPlayerInputs.Add(playerId);
+		return new InputAllowance(State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.AllowedPlayerInputs, playerId, added);
 	}
 
 	private sealed class InputAllowance(HashSet<EntityId> allowedPlayers, EntityId playerId, bool added) : IDisposable

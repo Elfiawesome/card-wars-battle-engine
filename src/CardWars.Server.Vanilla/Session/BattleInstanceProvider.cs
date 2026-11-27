@@ -47,7 +47,7 @@ public class BattleInstanceProvider(
 			return null;
 		}
 
-		serverInstance.Snapshot = serverInstance.Engine?.State.ToSnapshot();
+		serverInstance.Snapshot = serverInstance.Engine?.State.ToSnapshot(serverInstance.Engine.Registry.DataTags);
 		session.SaveInstance(saveId, session.DataTags.ToTag(serverInstance, false));
 		return saveId;
 	}

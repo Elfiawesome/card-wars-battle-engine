@@ -13,6 +13,7 @@ public class BattleEngine
 	{
 		Registry = registry;
 		State = new GameState();
+		Registry.InitializeState?.Invoke(State);
 		_onBlockBatchEvent = onBlockBatchEvent;
 	}
 

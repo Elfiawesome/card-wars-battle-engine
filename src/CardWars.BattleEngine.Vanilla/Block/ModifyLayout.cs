@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.Vanilla.State;
 using CardWars.Core.Data.Attributes;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
@@ -13,6 +14,6 @@ public class ModifyLayoutBlockHandler : IBlockHandler<ModifyLayoutBlock>
 {
 	public void Handle(GameState context, ModifyLayoutBlock request)
 	{
-		context.Layout = request.Layout.Copy();
+		context.Ext.GetOrCreateExtension<CardWarsBattleState>().Layout = request.Layout.Copy();
 	}
 }

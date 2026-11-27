@@ -2,6 +2,7 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Tests.Support;
 using Xunit;
+using CardWars.BattleEngine.Vanilla.State;
 
 namespace CardWars.Tests.Vanilla;
 
@@ -16,6 +17,6 @@ public sealed class BattleLeaveTests
 
 		Assert.True(battle.Player1.IsDefeated);
 		Assert.False(battle.Player2.IsDefeated);
-		Assert.True(battle.State.IsGameOver);
+		Assert.True(battle.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver);
 	}
 }

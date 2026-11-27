@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.BattleEngine.Vanilla.State;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Registry;
 
@@ -30,7 +31,7 @@ public class PlayerJoinedRequestInputHandler : IInputHandler<PlayerJoinedRequest
 		batch.Blocks.Add(new InstantiatePlayerBlock(request.Id));
 		batch.Blocks.Add(new ModifyPlayerTeamBlock(request.Id, request.RequestedTeam));
 
-		var turnState = context.Transaction.State.Turn.Clone();
+		var turnState = context.Transaction.State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.Clone();
 		turnState.TurnOrder.Add(request.Id);
 
 		if (!context.Transaction.State.All.Any((t) => t is Player))

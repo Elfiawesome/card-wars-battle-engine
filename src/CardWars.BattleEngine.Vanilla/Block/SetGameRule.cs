@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.Vanilla.State;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Registry;
 
@@ -14,6 +15,6 @@ public class SetGameRuleBlockHandler : IBlockHandler<SetGameRuleBlock>
 {
 	public void Handle(GameState context, SetGameRuleBlock request)
 	{
-		context.RuleId = request.RuleId;
+		context.Ext.GetOrCreateExtension<CardWarsBattleState>().RuleId = request.RuleId;
 	}
 }

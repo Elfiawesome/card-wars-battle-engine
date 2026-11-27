@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.Vanilla.State;
 using CardWars.Core.Data.Attributes;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
@@ -13,6 +14,6 @@ public class UpdateTurnStateBlockHandler : IBlockHandler<UpdateTurnStateBlock>
 {
 	public void Handle(GameState context, UpdateTurnStateBlock request)
 	{
-		context.Turn = request.NewState is { } state ? state.Clone() : new();
+		context.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn = request.NewState is { } state ? state.Clone() : new();
 	}
 }

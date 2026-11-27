@@ -8,6 +8,7 @@ using CardWars.Client.scenes.cardwars.instance.battle.entities;
 using CardWars.Client.scenes.cardwars.ui.battle;
 using CardWars.Vanilla.Shared;
 using Godot;
+using CardWars.BattleEngine.Vanilla.State;
 
 namespace CardWars.Client.scenes.cardwars.instance.battle;
 

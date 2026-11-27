@@ -19,6 +19,9 @@ public class BattleEngineRegistry : ExtensibleRegistry
 	}
 
 	public DataTagContext DataTags { get; }
+	public Func<GameState, bool>? IsGameOver { get; set; }
+	public Func<GameState, EntityId, bool>? CanProcessInput { get; set; }
+	public Action<GameState>? InitializeState { get; set; }
 	public Logger Logger { get; }
 	public HandlerRegistry<InputContext> InputHandlers { get; } = new();
 	public HandlerRegistry<GameState> BlockHandlers { get; } = new();

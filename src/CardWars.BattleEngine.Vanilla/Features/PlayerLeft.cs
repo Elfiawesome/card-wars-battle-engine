@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
+using CardWars.BattleEngine.Vanilla.State;
 using CardWars.Core.Data.Attributes;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
@@ -30,7 +31,7 @@ public class PlayerLeftRequestInputHandler : IInputHandler<PlayerLeftRequestInpu
 		});
 		context.Transaction.QueueEvent(new WinConditionCheckEvent
 		{
-			TurnState = state.Turn.Clone()
+			TurnState = state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.Clone()
 		});
 	}
 }

@@ -1,6 +1,6 @@
 using CardWars.Core.Data.Attributes;
 
-namespace CardWars.BattleEngine.State;
+namespace CardWars.BattleEngine.Vanilla.State;
 
 public enum GameOutcomeKind
 {

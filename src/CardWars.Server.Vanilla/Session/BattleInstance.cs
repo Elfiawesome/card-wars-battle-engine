@@ -30,7 +30,7 @@ public class BattleInstance : ServerInstance
 		Engine = engine;
 
 		if (Snapshot is { } snapshot)
-			Engine.State.FromSnapshot(snapshot);
+			Engine.State.FromSnapshot(snapshot, Engine.Registry.DataTags);
 	}
 
 	public override bool CanAddPlayer(PlayerSession player, out string? reason)
@@ -49,7 +49,7 @@ public class BattleInstance : ServerInstance
 
 		if (Engine is null) return;
 
-		player.Connection.Send(new S2C_BattleSyncSnapshot() { GameStateSnapshot = Engine.State.ToSnapshot() });
+		player.Connection.Send(new S2C_BattleSyncSnapshot() { GameStateSnapshot = Engine.State.ToSnapshot(Engine.Registry.DataTags) });
 
 		var entityId = new EntityId(player.PlayerId);
 		if (Engine.State.Get<Player>(entityId) is not null) return;

@@ -11,6 +11,8 @@ public class GameState : IDataTagAccessible
 {
 	private readonly Dictionary<EntityId, IEntity> _entities = [];
 
+	public Extensible<object> Ext { get; } = new();
+
 	// --- CRUD ---
 
 	public void Add(IEntity entity) => _entities[entity.Id] = entity;
@@ -22,7 +24,6 @@ public class GameState : IDataTagAccessible
 
 	public T? Get<T>(EntityId? id) where T : class, IEntity
 		=> Get(id) is T typed ? typed : null;
-
 
 	public T? GetParent<T>(EntityId? entityId) where T : class, IEntity
 		=> GetParent<T>(Get(entityId));
@@ -54,23 +55,6 @@ public class GameState : IDataTagAccessible
 	public IEnumerable<IEntity> Where(Func<IEntity, bool> predicate)
 		=> _entities.Values.Where(predicate);
 
-	[DataTag]
-	public TurnState Turn { get; set; } = new();
-
-	[DataTag]
-	public LayoutState Layout { get; set; } = new()
-	{
-		Layout = ResourceId.Empty,
-		LayoutConfig = new CompoundTag()
-	};
-
-	[DataTag] public ResourceId RuleId { get; set; } = ResourceId.Empty;
-	[DataTag] public GameOutcome Outcome { get; set; } = GameOutcome.Continue;
-
-	public bool IsGameOver => Outcome.IsGameOver;
-	public int? WinningTeam => Outcome.WinningTeam;
-	public bool IsDraw => Outcome.IsDraw;
-
 	[DataTag] public IReadOnlyDictionary<EntityId, IEntity> Entities => _entities;
 
 	// For modding?
@@ -78,11 +62,20 @@ public class GameState : IDataTagAccessible
 
 	public bool TryGetMember(string member, out DataTag? value)
 	{
+		foreach (var extension in Ext.Values.OfType<IDataTagAccessible>())
+			if (extension.TryGetMember(member, out value)) return true;
+
 		value = null;
 		return false;
 	}
 
-	public bool TrySetMember(string member, DataTag value) => false;
+	public bool TrySetMember(string member, DataTag value)
+	{
+		foreach (var extension in Ext.Values.OfType<IDataTagAccessible>())
+			if (extension.TrySetMember(member, value)) return true;
+
+		return false;
+	}
 
 	public bool TryGetIndex(DataTag index, out DataTag? value)
 	{
@@ -112,46 +105,39 @@ public class GameState : IDataTagAccessible
 	public void Clear()
 	{
 		_entities.Clear();
+		Ext.Clear();
 		GlobalScope.Clear();
-		Turn = new();
-		Layout = default;
-		RuleId = ResourceId.Empty;
-		Outcome = GameOutcome.Continue;
 	}
 
-	public GameStateSnapshot ToSnapshot()
+	public GameStateSnapshot ToSnapshot(DataTagContext dataTags)
 	{
-		var snapshot = new GameStateSnapshot
+		var extensions = new List<CompoundTag>();
+		foreach (var extension in Ext.Values)
+			extensions.Add(dataTags.ToTag(extension, includeType: true));
+
+		return new GameStateSnapshot
 		{
 			Entities = [.. Entities.Select(s => s.Value)],
-			Turn = Turn.Clone(),
-			Layout = Layout,
-			RuleId = RuleId,
-			Outcome = Outcome,
+			Extensions = extensions
 		};
-		return snapshot;
 	}
 
-	public void FromSnapshot(GameStateSnapshot snapshot)
+	public void FromSnapshot(GameStateSnapshot snapshot, DataTagContext dataTags)
 	{
 		Clear();
 		foreach (var e in snapshot.Entities)
-		{
 			_entities.Add(e.Id, e);
+
+		foreach (var extensionTag in snapshot.Extensions)
+		{
+			if (dataTags.FromTag(extensionTag, typeof(object)) is { } extension)
+				Ext.Register(extension.GetType(), extension);
 		}
-		Turn = snapshot.Turn is { } turn ? turn.Clone() : new();
-		Layout = snapshot.Layout.Copy();
-		RuleId = snapshot.RuleId;
-		Outcome = snapshot.Outcome;
 	}
 }
-
 
 public class GameStateSnapshot
 {
 	[DataTag] public List<IEntity> Entities { get; set; } = [];
-	[DataTag] public LayoutState Layout { get; set; } = default;
-	[DataTag] public TurnState Turn { get; set; } = new();
-	[DataTag] public ResourceId RuleId { get; set; } = ResourceId.Empty;
-	[DataTag] public GameOutcome Outcome { get; set; } = GameOutcome.Continue;
+	[DataTag] public List<CompoundTag> Extensions { get; set; } = [];
 }

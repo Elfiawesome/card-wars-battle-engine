@@ -2,20 +2,14 @@ namespace CardWars.Core.Registry;
 
 public abstract class ExtensibleRegistry
 {
-	private readonly Dictionary<Type, object> _extensions = [];
+	private readonly Extensible<object> _extensible = new();
 
 	public void RegisterExtension<T>(T extension) where T : class
-		=> _extensions[typeof(T)] = extension;
+		=> _extensible.Register(extension);
 
 	public T? GetExtension<T>() where T : class
-		=> _extensions.TryGetValue(typeof(T), out var extension) && extension is T typed ? typed : null;
+		=> _extensible.Get<T>();
 
 	public T GetOrCreateExtension<T>() where T : class, new()
-	{
-		if (GetExtension<T>() is { } existing) return existing;
-
-		var created = new T();
-		RegisterExtension(created);
-		return created;
-	}
+		=> _extensible.GetOrCreateExtension<T>();
 }

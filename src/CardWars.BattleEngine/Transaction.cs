@@ -36,7 +36,7 @@ public class Transaction
 	// Public APIs entries
 	public void ProcessInput(EntityId playerId, IInput input)
 	{
-		if (State.IsGameOver)
+		if (Registry.IsGameOver?.Invoke(State) == true)
 		{
 			Logger.Warn("Input received after the game ended");
 			return;
@@ -48,13 +48,13 @@ public class Transaction
 		// Handle input if no behaviours used the input
 		if (!inputConsumed)
 		{
-			if ((playerId == EntityId.None) || State.Turn.AllowedPlayerInputs.Contains(playerId))
+			if ((playerId == EntityId.None) || Registry.CanProcessInput?.Invoke(State, playerId) != false)
 			{
 				Registry.InputHandlers.Execute(new InputContext(this, playerId), input);
 			}
 			else
 			{
-				Logger.Error($"Input received cannot be processed because the attached Player Id [{playerId}] is not allowed to be processed. Could be because AllowedPlayerInputs does not contain it.");
+				Logger.Error($"Input received cannot be processed because player [{playerId}] is not allowed by the current input policy.");
 			}
 		}
 

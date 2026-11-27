@@ -7,6 +7,7 @@ using CardWars.Client.scenes.cardwars.instance.battle;
 using CardWars.Client.scenes.cardwars.instance.battle.entities;
 using CardWars.Core.Data.Tags;
 using Godot;
+using CardWars.BattleEngine.Vanilla.State;
 
 namespace CardWars.Client.scripts.cardwars.layout;
 
@@ -19,7 +20,7 @@ public sealed class DefaultLayout : BattlefieldLayout
 	public override void Compute(BattleInstance battle)
 	{
 		var state = battle.State;
-		var config = state.Layout.LayoutConfig;
+		var config = state.Ext.GetOrCreateExtension<CardWarsBattleState>().Layout.LayoutConfig;
 		var gap = config.GetFloat("gap", DefaultGap);
 		var teamGap = config.GetFloat("team_gap", gap * 2f);
 		var curvature = Mathf.Clamp(config.GetFloat("curvature", DefaultCurvature), 0f, 1f);

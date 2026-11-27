@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
+using CardWars.BattleEngine.Vanilla.State;
 using CardWars.Core.Data.Attributes;
 
 namespace CardWars.BattleEngine.Vanilla.Block;
@@ -13,6 +14,6 @@ public class SetGameOutcomeBlockHandler : IBlockHandler<SetGameOutcomeBlock>
 {
 	public void Handle(GameState context, SetGameOutcomeBlock request)
 	{
-		context.Outcome = request.Outcome;
+		context.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome = request.Outcome;
 	}
 }

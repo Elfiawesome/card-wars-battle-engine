@@ -4,6 +4,7 @@ using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.BattleEngine.Vanilla.Rules;
+using CardWars.BattleEngine.Vanilla.State;
 using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
@@ -20,6 +21,9 @@ public class VanillaMod : IBattleEngineMod
 	public void OnLoad(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
 	{
 		var definitions = registry.GetOrCreateExtension<CardWarsDefinitions>();
+		registry.InitializeState = state => state.Ext.GetOrCreateExtension<CardWarsBattleState>();
+		registry.IsGameOver = state => state.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver;
+		registry.CanProcessInput = (state, playerId) => state.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn.AllowedPlayerInputs.Contains(playerId);
 
 		// --- Input Handlers ---
 		registry.InputHandlers.Register(new PlayerJoinedRequestInputHandler());

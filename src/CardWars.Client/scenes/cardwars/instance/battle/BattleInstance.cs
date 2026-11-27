@@ -17,6 +17,7 @@ using CardWars.Core.Registry;
 using CardWars.Vanilla.Shared;
 using CardWars.Vanilla.Shared.Packet;
 using Godot;
+using CardWars.BattleEngine.Vanilla.State;
 
 namespace CardWars.Client.scenes.cardwars.instance.battle;
 
@@ -108,7 +109,8 @@ public partial class BattleInstance : ClientInstance
 			case S2C_BattleSyncSnapshot battleSyncSnapshot:
 				// USe packet here since snapshot is not really a atomic change but a snapshot. The team switching
 				// we can ignore first since even if switch team we can assume the next cards on enemy will be covered
-				State.FromSnapshot(battleSyncSnapshot.GameStateSnapshot);
+				if (BattleRuntime is not { } battleRuntime) return true;
+				State.FromSnapshot(battleSyncSnapshot.GameStateSnapshot, battleRuntime.Engine.DataTags);
 				SyncState();
 				ReleasePendingNodes();
 				return true;
@@ -146,7 +148,7 @@ public partial class BattleInstance : ClientInstance
 
 		// Handle Layout
 		var defaultId = BattleView.DefaultLayoutId;
-		var layoutHandler = BattleView.LayoutHandler.Get(State.Layout.Layout) ?? BattleView.LayoutHandler.Get(defaultId);
+		var layoutHandler = BattleView.LayoutHandler.Get(State.Ext.GetOrCreateExtension<CardWarsBattleState>().Layout.Layout) ?? BattleView.LayoutHandler.Get(defaultId);
 		layoutHandler?.Compute(this);
 
 		// Set Camera
@@ -163,19 +165,19 @@ public partial class BattleInstance : ClientInstance
 		// TODO: Temporary...
 		var overlayNode = GetNode<Control>("UI/Overlay");
 		var resultLabel = GetNode<Label>("UI/Overlay/MarginContainer/Panel/ResultLabel");
-		if (overlayNode is not null) overlayNode.Visible = State.IsGameOver;
+		if (overlayNode is not null) overlayNode.Visible = State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver;
 		if (resultLabel is null) return;
 
-		resultLabel.Text = State.IsGameOver
-			? State.IsDraw
+		resultLabel.Text = State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsGameOver
+			? State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.IsDraw
 				? "Draw"
-				: State.WinningTeam is { } team ? $"Team {team} Wins!" : "Game Over"
+				: State.Ext.GetOrCreateExtension<CardWarsBattleState>().Outcome.WinningTeam is { } team ? $"Team {team} Wins!" : "Game Over"
 			: "";
 	}
 
 	private void UpdateCamera()
 	{
-		var turn = State.Turn;
+		var turn = State.Ext.GetOrCreateExtension<CardWarsBattleState>().Turn;
 		if (turn.TurnOrder.Count == 0 || turn.TurnIndex >= turn.TurnOrder.Count) return;
 		if (_oldTurnState is { } old && turn.Equals(old)) return;
 
