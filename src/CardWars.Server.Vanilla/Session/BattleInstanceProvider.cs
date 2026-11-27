@@ -1,4 +1,6 @@
+using System;
 using CardWars.BattleEngine;
+using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 using CardWars.Core.Storage;
 using CardWars.Server.Session;
@@ -12,11 +14,23 @@ public class BattleInstanceProvider(
 {
 	public override BattleInstance Create(string saveId)
 	{
-		var instance = new BattleInstance
+		BattleInstance instance;
+
+		if (session.LoadInstance(saveId) is CompoundTag saveTag)
 		{
-			InstanceId = Guid.Parse(saveId),
-			InstanceProviderId = providerId,
-		};
+			instance = session.DataTags.FromTag<BattleInstance>(saveTag);
+			instance.InstanceId = Guid.Parse(saveId);
+			instance.InstanceProviderId = providerId;
+		}
+		else
+		{
+			instance = new BattleInstance
+			{
+				InstanceId = Guid.Parse(saveId),
+				InstanceProviderId = providerId,
+			};
+		}
+
 		instance.InitializeEngine(new BattleEngine.BattleEngine(
 			battleEngineRegistry,
 			instance.BroadcastBatch));
@@ -27,7 +41,13 @@ public class BattleInstanceProvider(
 	{
 		var saveId = serverInstance.InstanceId.ToString();
 
-		// TODO: serialize battle state (GameState) — for now persist identity only.
+		if (serverInstance.Players.Count == 0)
+		{
+			session.InstancesDir.Combine(saveId).WithExtension("json").Delete();
+			return null;
+		}
+
+		serverInstance.Snapshot = serverInstance.Engine?.State.ToSnapshot();
 		session.SaveInstance(saveId, session.DataTags.ToTag(serverInstance, false));
 		return saveId;
 	}

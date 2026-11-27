@@ -186,12 +186,15 @@ public class Server
 
 	public void LeaveInstance(PlayerSession player)
 	{
-		player.CurrentInstance?.RemovePlayer(player);
-		if (player.CurrentInstance is not null)
-		{
-			OnPlayerLeaveInstance?.Invoke(this, player.CurrentInstance, player);
-		}
+		var instance = player.CurrentInstance;
+		if (instance is null) return;
+
+		instance.RemovePlayer(player);
+		OnPlayerLeaveInstance?.Invoke(this, instance, player);
 		player.CurrentInstance = null;
+
+		if (instance.Players.Count == 0 && instance.RemoveWhenEmpty)
+			RemoveInstance(instance.InstanceId);
 	}
 	public void SaveInstances()
 	{

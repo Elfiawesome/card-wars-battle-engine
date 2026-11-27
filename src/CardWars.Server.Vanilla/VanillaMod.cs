@@ -49,7 +49,7 @@ public class VanillaMod : IServerMod
 		if (_currentBattleInstanceId is { } existing)
 			return existing;
 
-		// Battles are not persisted yet; generate a fresh id each session.
+		// Debug battle entry creates a fresh battle per server process.
 		var battleId = Guid.NewGuid().ToString();
 		_currentBattleInstanceId = server.CreateInstance(SharedIds.Instances.Battle, battleId).InstanceId;
 		return _currentBattleInstanceId.Value;

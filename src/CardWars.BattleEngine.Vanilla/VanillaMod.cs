@@ -23,6 +23,7 @@ public class VanillaMod : IBattleEngineMod
 
 		// --- Input Handlers ---
 		registry.InputHandlers.Register(new PlayerJoinedRequestInputHandler());
+		registry.InputHandlers.Register(new PlayerLeftRequestInputHandler());
 		registry.InputHandlers.Register(new EndTurnRequestInputHandler());
 		registry.InputHandlers.Register(new DrawCardRequestInputHandler());
 		registry.InputHandlers.Register(new UseCardRequestInputHandler());

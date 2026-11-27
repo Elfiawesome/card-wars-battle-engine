@@ -10,6 +10,7 @@ public interface IServerInstance
 	ResourceId InstanceProviderId { get; }
 
 	IReadOnlyCollection<PlayerSession> Players { get; }
+	bool RemoveWhenEmpty { get; }
 
 	void Ready();
 	bool CanAddPlayer(PlayerSession player, out string? reason);
@@ -28,6 +29,7 @@ public abstract class ServerInstance : IServerInstance
 	public abstract ResourceId InstanceProviderId { get; set; }
 
 	public IReadOnlyCollection<PlayerSession> Players => _players;
+	public virtual bool RemoveWhenEmpty => false;
 
 	public virtual void Ready() { }
 
