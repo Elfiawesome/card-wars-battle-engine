@@ -4,6 +4,7 @@ using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
+using System;
 using CardWars.Vanilla.Shared.View;
 
 namespace CardWars.Vanilla.Shared.Packet;
@@ -35,6 +36,14 @@ public class S2C_EnterInstancePacket : IPacket
 {
 	[DataTag] public required Guid PlayerId { get; set; }
 	[DataTag] public required ResourceId ProviderId { get; set; }
+}
+
+[DataTagType()]
+public class S2C_EnterInstanceRejectedPacket : IPacket
+{
+	[DataTag] public required Guid PlayerId { get; set; }
+	[DataTag] public required ResourceId ProviderId { get; set; }
+	[DataTag] public string Reason { get; set; } = "Cannot enter instance.";
 }
 
 [DataTagType()]

@@ -41,6 +41,14 @@ public class S2C_EnterInstancePacketHandler : IPacketHandlerClient<S2C_EnterInst
 	}
 }
 
+public class S2C_EnterInstanceRejectedPacketHandler : IPacketHandlerClient<S2C_EnterInstanceRejectedPacket>
+{
+	public void Handle(PacketContextClient context, S2C_EnterInstanceRejectedPacket request)
+	{
+		context.Runtime.SetDebugStatus($"Cannot enter {request.ProviderId}: {request.Reason}");
+	}
+}
+
 public class S2C_LeaveInstancePacketHandler : IPacketHandlerClient<S2C_LeaveInstancePacket>
 {
 	public void Handle(PacketContextClient context, S2C_LeaveInstancePacket request)

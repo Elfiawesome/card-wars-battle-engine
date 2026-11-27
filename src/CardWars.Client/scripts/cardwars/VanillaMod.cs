@@ -23,6 +23,7 @@ public class VanillaMod : IClientMod
 		registry.PacketHandlers.Register(new S2C_PlayerJoinedRequestPacketHandler());
 		registry.PacketHandlers.Register(new S2C_ConnectionConfirmedPacketHandler());
 		registry.PacketHandlers.Register(new S2C_EnterInstancePacketHandler());
+		registry.PacketHandlers.Register(new S2C_EnterInstanceRejectedPacketHandler());
 		registry.PacketHandlers.Register(new S2C_LeaveInstancePacketHandler());
 
 		// Instances

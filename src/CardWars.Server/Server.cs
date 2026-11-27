@@ -31,6 +31,7 @@ public class Server
 	public Action<Server, IServerInstance, PlayerSession>? OnPlayerPreEnterInstance { get; set; }
 	public Action<Server, IServerInstance, PlayerSession>? OnPlayerPostEnterInstance { get; set; }
 	public Action<Server, IServerInstance, PlayerSession>? OnPlayerLeaveInstance { get; set; }
+	public Action<Server, IServerInstance, PlayerSession, string>? OnPlayerEnterInstanceRejected { get; set; }
 
 
 	// public Action<IServerInstance>? OnIntervalSave { get; set; }
@@ -158,16 +159,29 @@ public class Server
 
 	public void EnterInstance(PlayerSession player, Guid instanceId)
 	{
+		IServerInstance? target;
+		lock (_sync)
+		{
+			_instances.TryGetValue(instanceId, out target);
+		}
+
+		if (target is null) return;
+
+		if (!target.CanAddPlayer(player, out var reason))
+		{
+			OnPlayerEnterInstanceRejected?.Invoke(this, target, player, reason ?? "Cannot enter instance.");
+			return;
+		}
+
 		LeaveInstance(player);
 		lock (_sync)
 		{
-			if (_instances.TryGetValue(instanceId, out var instance))
-			{
-				OnPlayerPreEnterInstance?.Invoke(this, instance, player);
-				instance.AddPlayer(player);
-				player.CurrentInstance = instance;
-				OnPlayerPostEnterInstance?.Invoke(this, instance, player);
-			}
+			if (!_instances.TryGetValue(instanceId, out var instance)) return;
+
+			OnPlayerPreEnterInstance?.Invoke(this, instance, player);
+			instance.AddPlayer(player);
+			player.CurrentInstance = instance;
+			OnPlayerPostEnterInstance?.Invoke(this, instance, player);
 		}
 	}
 

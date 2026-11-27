@@ -19,13 +19,6 @@ public class BattleInstance : ServerInstance
 	[DataTag] public override Guid InstanceId { get; set; }
 	[DataTag] public override ResourceId InstanceProviderId { get; set; }
 
-	// TODO: Replace this temporary battle setup with proper battle-entry rejection/profile validation once deck selection exists.
-	private static readonly PlayerBattleSetup TemporaryBattleSetup = new()
-	{
-		Deck = [ResourceId.Vanilla("cards/units/plantvszombies/cob_cannon")],
-		Heroes = [ResourceId.Vanilla("cards/heroes/captain")]
-	};
-
 	public BattleEngine.BattleEngine? Engine { get; private set; }
 
 	public void InitializeEngine(BattleEngine.BattleEngine engine)
@@ -35,23 +28,16 @@ public class BattleInstance : ServerInstance
 		Engine = engine;
 	}
 
+	public override bool CanAddPlayer(PlayerSession player, out string? reason)
+		=> CreateBattleSetup(player, out reason) is not null;
+
 	public override void AddPlayer(PlayerSession player)
 	{
-		var profile = player.GetSetComponent<ProfilePlayerDataComponent>(SharedIds.PlayerData.Profile).Profile;
-		PlayerBattleSetup setup;
-
-		if (profile is null)
+		var setup = CreateBattleSetup(player, out var reason);
+		if (setup is null)
 		{
-			Engine?.Registry.Logger.Warn($"Player [{player.PlayerId}] has no usable profile; using temporary battle setup");
-			setup = TemporaryBattleSetup;
-		}
-		else
-		{
-			setup = new PlayerBattleSetup
-			{
-				Deck = [.. profile.CurrentDeck],
-				Heroes = [.. profile.Heroes]
-			};
+			Engine?.Registry.Logger.Error($"Cannot add player [{player.PlayerId}] to battle: {reason}");
+			return;
 		}
 
 		base.AddPlayer(player);
@@ -63,6 +49,35 @@ public class BattleInstance : ServerInstance
 		// Bind the battle player identity to the session identity so they map 1:1.
 		var entityId = new EntityId(player.PlayerId);
 		Engine.HandleInput(EntityId.None, new PlayerJoinedRequestInput(entityId, Players.Count % 2, setup));
+	}
+
+	private static PlayerBattleSetup? CreateBattleSetup(PlayerSession player, out string? reason)
+	{
+		var profile = player.GetSetComponent<ProfilePlayerDataComponent>(SharedIds.PlayerData.Profile).Profile;
+		if (profile is null)
+		{
+			reason = "player has no profile";
+			return null;
+		}
+
+		if (profile.CurrentDeck.Count == 0)
+		{
+			reason = "player profile has no deck";
+			return null;
+		}
+
+		if (profile.Heroes.Count == 0)
+		{
+			reason = "player profile has no heroes";
+			return null;
+		}
+
+		reason = null;
+		return new PlayerBattleSetup
+		{
+			Deck = [.. profile.CurrentDeck],
+			Heroes = [.. profile.Heroes]
+		};
 	}
 
 	public override void RemovePlayer(PlayerSession player)

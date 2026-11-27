@@ -63,6 +63,7 @@ public class VanillaMod : IServerMod
 		server.OnPlayerPreEnterInstance += OnPlayerPreEnterInstance;
 		server.OnPlayerPostEnterInstance += OnPlayerPostEnterInstance;
 		server.OnPlayerLeaveInstance += OnPlayerLeaveInstance;
+		server.OnPlayerEnterInstanceRejected += OnPlayerEnterInstanceRejected;
 	}
 
 	private void OnUnauthenticatedConnectionReceived(IConnection connection)
@@ -98,6 +99,16 @@ public class VanillaMod : IServerMod
 	private void OnPlayerLeft(Server server, PlayerSession player)
 	{
 		// Core teardown (leaving instance + saving player) is handled by Server.RemovePlayer.
+	}
+
+	private void OnPlayerEnterInstanceRejected(Server server, IServerInstance instance, PlayerSession player, string reason)
+	{
+		player.Connection.Send(new S2C_EnterInstanceRejectedPacket
+		{
+			PlayerId = player.PlayerId,
+			ProviderId = instance.InstanceProviderId,
+			Reason = reason
+		});
 	}
 
 	private void OnPlayerPreEnterInstance(Server server, IServerInstance instance, PlayerSession player)

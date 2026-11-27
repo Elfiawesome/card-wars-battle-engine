@@ -12,6 +12,7 @@ public interface IServerInstance
 	IReadOnlyCollection<PlayerSession> Players { get; }
 
 	void Ready();
+	bool CanAddPlayer(PlayerSession player, out string? reason);
 	void AddPlayer(PlayerSession player);
 	void RemovePlayer(PlayerSession player);
 
@@ -29,6 +30,12 @@ public abstract class ServerInstance : IServerInstance
 	public IReadOnlyCollection<PlayerSession> Players => _players;
 
 	public virtual void Ready() { }
+
+	public virtual bool CanAddPlayer(PlayerSession player, out string? reason)
+	{
+		reason = null;
+		return true;
+	}
 
 	public virtual void AddPlayer(PlayerSession player)
 	{
