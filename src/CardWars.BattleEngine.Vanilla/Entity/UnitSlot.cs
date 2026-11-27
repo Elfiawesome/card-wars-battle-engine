@@ -1,7 +1,7 @@
-using CardWars.BattleEngine.Rules;
 using CardWars.Core.Data;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
+using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Entity;
 

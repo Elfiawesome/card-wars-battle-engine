@@ -1,5 +1,5 @@
-using CardWars.BattleEngine.Rules;
 using CardWars.Core.Data;
+using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.State;
 

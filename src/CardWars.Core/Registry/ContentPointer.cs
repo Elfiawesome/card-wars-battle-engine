@@ -1,8 +1,7 @@
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Registry;
 
-namespace CardWars.BattleEngine.Rules;
+namespace CardWars.Core.Registry;
 
 public readonly record struct ContentPointer(
 	// Points to a Hard-Coded resource registered in registry
