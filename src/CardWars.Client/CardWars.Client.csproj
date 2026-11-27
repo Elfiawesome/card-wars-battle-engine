@@ -13,5 +13,6 @@
     <!-- Temporary -->
     <ProjectReference Include="..\CardWars.Vanilla.Shared\CardWars.Vanilla.Shared.csproj" />
     <ProjectReference Include="..\CardWars.BattleEngine.Vanilla\CardWars.BattleEngine.Vanilla.csproj" />
+    <ProjectReference Include="..\CardWars.Client.Runtime\CardWars.Client.Runtime.csproj" />
   </ItemGroup>
 </Project>

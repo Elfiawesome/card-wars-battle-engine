@@ -4,7 +4,7 @@ using CardWars.Server;
 using CardWars.Server.Listener;
 using ServerCore = CardWars.Server.Server; // damn didnt know we can do this lol
 
-namespace CardWars.Client.scripts.core.application;
+namespace CardWars.Client.Runtime.Application;
 
 public sealed class ServerRuntime
 {

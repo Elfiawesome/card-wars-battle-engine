@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CardWars.Core.Data;
+using CardWars.Client.Runtime.Application;
 using CardWars.Core.Logging;
 using CardWars.Core.Storage;
 using CardWars.ModLoader;
