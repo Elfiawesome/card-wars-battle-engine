@@ -1,5 +1,6 @@
 using System;
 using CardWars.BattleEngine;
+using CardWars.BattleEngine.registry;
 using CardWars.Core.Registry;
 using CardWars.Server.Vanilla.Session;
 using CardWars.Tests.Support;

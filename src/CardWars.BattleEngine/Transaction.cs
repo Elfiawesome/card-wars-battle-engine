@@ -3,6 +3,7 @@ using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
+using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
@@ -36,7 +37,7 @@ public class Transaction
 	// Public APIs entries
 	public void ProcessInput(EntityId playerId, IInput input)
 	{
-		if (Registry.IsGameOver?.Invoke(State) == true)
+		if (Registry.GameOverPolicy?.IsGameOver(State) == true)
 		{
 			Logger.Warn("Input received after the game ended");
 			return;
@@ -48,7 +49,7 @@ public class Transaction
 		// Handle input if no behaviours used the input
 		if (!inputConsumed)
 		{
-			if ((playerId == EntityId.None) || Registry.CanProcessInput?.Invoke(State, playerId) != false)
+			if ((playerId == EntityId.None) || Registry.InputPolicy?.CanProcessInput(State, playerId) != false)
 			{
 				Registry.InputHandlers.Execute(new InputContext(this, playerId), input);
 			}
@@ -137,7 +138,8 @@ public class Transaction
 	private void QueueBehavioursForEvent(IEvent evnt)
 	{
 		var eventType = evnt.GetType();
-		var pointers = State.GetAllBehaviourPointers(Registry.DataTags);
+		var providers = Registry.EntityBehaviourProviders;
+		var pointers = State.GetAllBehaviourPointers(providers);
 
 		var executions = new List<(
 			int entityPriority,

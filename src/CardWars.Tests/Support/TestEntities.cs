@@ -19,7 +19,6 @@ public sealed class TestEntity : IEntity
 	public List<ContentPointer> Behaviours { get; set; } = [];
 
 	public int BehaviourPriority => 0;
-	public List<ContentPointer> GetBehaviours(DataTagContext dataTags) => Behaviours;
 }
 
 [DataTagType("test/event")]

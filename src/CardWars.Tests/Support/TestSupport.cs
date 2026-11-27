@@ -1,6 +1,7 @@
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
+using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Entity;
@@ -17,6 +18,7 @@ internal static class TestSupport
 	{
 		var registry = new BattleEngineRegistry(TestBootstrap.DataTags, TestBootstrap.Logger);
 		new VanillaMod().OnLoad(registry, []);
+		registry.EntityBehaviourProviders.Register(typeof(TestEntity), new TestBehaviourProvider());
 		var definitions = Definitions(registry);
 		definitions.DefaultUnitTargetFilter = TestTargetFilters.CreateUnitTargetFilter();
 		definitions.RuleDefinitions.Register(GameRulesDefinition.DefaultId, TestBootstrap.DataTags.ToTag(new GameRulesDefinition
@@ -76,4 +78,11 @@ internal static class TestSupport
 		state.Add(entity);
 		return entity;
 	}
+}
+
+
+internal sealed class TestBehaviourProvider : IEntityBehaviourProvider
+{
+	public IReadOnlyList<ContentPointer> GetBehaviours(IEntity entity)
+		=> entity is TestEntity testEntity ? testEntity.Behaviours : [];
 }

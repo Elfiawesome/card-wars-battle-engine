@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
+using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Logging;
 

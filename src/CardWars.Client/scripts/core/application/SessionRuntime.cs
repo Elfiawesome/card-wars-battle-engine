@@ -12,16 +12,16 @@ using CardWars.Core.Storage;
 using CardWars.Server;
 using CardWars.Server.Listener;
 using Godot;
+using CardWars.BattleEngine.registry;
 
 namespace CardWars.Client.scripts.core.application;
 
 public sealed class SessionRuntime
 {
-	private const string DefaultSessionName = "session_1";
-
 	private readonly GameApplication _app;
 	private readonly Node _root;
 	private readonly string _username;
+	private readonly string _sessionName;
 	private readonly string _targetIpAddress;
 	private readonly int _targetPort;
 
@@ -37,12 +37,14 @@ public sealed class SessionRuntime
 		Node root,
 		string username,
 		SessionMode mode,
+		string sessionName,
 		string targetIpAddress,
 		int targetPort)
 	{
 		_app = app;
 		_root = root;
 		_username = username;
+		_sessionName = sessionName;
 		Mode = mode;
 		_targetIpAddress = targetIpAddress;
 		_targetPort = targetPort;
@@ -78,7 +80,7 @@ public sealed class SessionRuntime
 
 		// Server storage
 		if (HasServer)
-			_storage = _app.Storage.OpenSession(DefaultSessionName);
+			_storage = _app.Storage.OpenSession(_sessionName);
 		_context = new SessionContext(_app.DataTags, _logger, _storage, _content, _battleRegistry);
 
 		if (HasServer) StartServer();
@@ -155,6 +157,5 @@ public sealed class SessionRuntime
 	{
 		Client?.Stop();
 		Server?.Stop();
-		_app.Storage.CloseSession();
 	}
 }

@@ -72,7 +72,7 @@ internal sealed class TagSerializer(DataTagMapper mapper)
 		}
 
 		if (actualType.IsEnum)
-			return new StringTag(value.ToString()!);
+			return new StringTag(value.ToString() ?? string.Empty);
 
 		if (value is IEnumerable list)
 			return SerializeList(list, actualType);
@@ -132,7 +132,7 @@ internal sealed class TagSerializer(DataTagMapper mapper)
 
 		var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 		if (props.Length == 1 && props[0].PropertyType == typeof(Guid))
-			return new GuidTag((Guid)props[0].GetValue(value)!);
+			return new GuidTag(props[0].GetValue(value) is Guid guid ? guid : Guid.Empty);
 
 		if (type.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, [typeof(string)]) is not null)
 			return new StringTag(value.ToString() ?? string.Empty);

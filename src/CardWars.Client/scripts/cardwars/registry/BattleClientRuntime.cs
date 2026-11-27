@@ -1,4 +1,4 @@
-using CardWars.BattleEngine;
+using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.Vanilla;
 
 namespace CardWars.Client.scripts.cardwars.registry;

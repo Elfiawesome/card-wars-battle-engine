@@ -22,5 +22,4 @@ public class Player(EntityId id) : IEntity
 	[DataTag] public List<EntityId> GraveyardCardIds { get; } = [];
 
 	public int BehaviourPriority => 0;
-	public List<ContentPointer> GetBehaviours(DataTagContext dataTags) => [];
 }

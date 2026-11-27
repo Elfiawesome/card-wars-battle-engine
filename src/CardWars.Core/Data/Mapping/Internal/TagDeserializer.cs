@@ -160,7 +160,7 @@ internal sealed class TagDeserializer(DataTagMapper mapper)
 		}
 		else
 		{
-			instance = meta.Constructor?.Invoke(null) ?? Activator.CreateInstance(concreteType)!;
+			instance = meta.Constructor?.Invoke(null) ?? Activator.CreateInstance(concreteType) ?? throw new InvalidOperationException($"Could not create [{concreteType.Name}].");
 		}
 
 		foreach (var prop in meta.Properties)
@@ -204,7 +204,7 @@ internal sealed class TagDeserializer(DataTagMapper mapper)
 			? typeof(Dictionary<,>).MakeGenericType(keyType, valType)
 			: targetType;
 
-		var dict = (IDictionary)Activator.CreateInstance(concreteDictType)!;
+		if (Activator.CreateInstance(concreteDictType) is not IDictionary dict) throw new InvalidOperationException($"Could not create dictionary [{concreteDictType.Name}].");
 
 		if (tag is CompoundTag compound)
 		{
@@ -249,7 +249,7 @@ internal sealed class TagDeserializer(DataTagMapper mapper)
 		if (genericDef == typeof(List<>) || genericDef == typeof(IList<>) || genericDef == typeof(IReadOnlyList<>) || genericDef == typeof(IEnumerable<>))
 		{
 			var listType = typeof(List<>).MakeGenericType(elemType);
-			var list = (IList)Activator.CreateInstance(listType, listTag.Count)!;
+			if (Activator.CreateInstance(listType, listTag.Count) is not IList list) throw new InvalidOperationException($"Could not create list [{listType.Name}].");
 			foreach (var item in listTag.Items)
 			{
 				list.Add(Deserialize(item, elemType));
@@ -260,7 +260,7 @@ internal sealed class TagDeserializer(DataTagMapper mapper)
 		if (genericDef == typeof(HashSet<>) || genericDef == typeof(ISet<>))
 		{
 			var setType = typeof(HashSet<>).MakeGenericType(elemType);
-			var set = Activator.CreateInstance(setType)!;
+			var set = Activator.CreateInstance(setType) ?? throw new InvalidOperationException($"Could not create set [{setType.Name}].");
 			var addMethod = setType.GetMethod("Add");
 			foreach (var item in listTag.Items)
 			{

@@ -26,7 +26,7 @@ public sealed class GameApplication
 		Logger = new Logger(logSink);
 		DataTags = new DataTagContext();
 		Storage = new StorageManager(GamedataPath, provider, DataTags, Logger);
-		Mods = new ModRepository(Storage.AllModDirectories, DataTags, Logger);
+		Mods = new ModRepository(Storage.GlobalModDirectories, DataTags, Logger);
 		Mods.Setup();
 	}
 
@@ -34,9 +34,10 @@ public sealed class GameApplication
 		Node root,
 		string username,
 		SessionMode mode,
+		string sessionName,
 		string targetIpAddress,
 		int targetPort)
-		=> new(this, root, username, mode, targetIpAddress, targetPort);
+		=> new(this, root, username, mode, sessionName, targetIpAddress, targetPort);
 
 	public IEnumerable<TMod> CreateModEntries<TMod>()
 		where TMod : class, IModEntry

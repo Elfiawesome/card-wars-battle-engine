@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.registry;
 using CardWars.ModLoader;
 
 namespace CardWars.BattleEngine;

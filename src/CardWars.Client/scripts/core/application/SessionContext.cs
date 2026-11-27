@@ -1,4 +1,4 @@
-using CardWars.BattleEngine;
+using CardWars.BattleEngine.registry;
 using CardWars.Client.scripts.core.content;
 using CardWars.Core.Data;
 using CardWars.Core.Logging;

@@ -1,3 +1,4 @@
+using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;

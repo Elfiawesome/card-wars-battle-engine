@@ -53,7 +53,7 @@ public class GenericCard(EntityId id) : IEntity, IParentableEntity
 	public static int AtkToHrt(int hpDamage)
 		=> hpDamage > 0 ? (int)Math.Ceiling(hpDamage / 10.0) : 0;
 
-	public List<ContentPointer> GetBehaviours(DataTagContext dataTags)
+	internal IReadOnlyList<ContentPointer> GetBehaviourPointers(DataTagContext dataTags)
 	{
 		var result = new List<ContentPointer>();
 

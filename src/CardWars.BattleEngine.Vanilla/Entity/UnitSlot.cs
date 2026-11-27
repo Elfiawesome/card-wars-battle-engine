@@ -15,7 +15,6 @@ public class UnitSlot(EntityId id) : IEntity, IParentableEntity
 	public EntityId? ParentId => OwnerBattlefieldId;
 
 	public int BehaviourPriority => 0;
-	public List<ContentPointer> GetBehaviours(DataTagContext dataTags) => [];
 }
 
 public record struct UnitSlotPos(

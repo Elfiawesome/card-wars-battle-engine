@@ -1,5 +1,6 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Input;
+using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.State;
 
 namespace CardWars.BattleEngine;
@@ -13,7 +14,7 @@ public class BattleEngine
 	{
 		Registry = registry;
 		State = new GameState();
-		Registry.InitializeState?.Invoke(State);
+		Registry.StateInitializer?.Initialize(State);
 		_onBlockBatchEvent = onBlockBatchEvent;
 	}
 

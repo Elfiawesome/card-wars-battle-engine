@@ -1,4 +1,5 @@
 using CardWars.BattleEngine;
+using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Core.Registry;

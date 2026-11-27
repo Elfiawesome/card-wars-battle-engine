@@ -12,8 +12,6 @@ public class StorageManager
 	public DataTagContext DataTags { get; }
 	public Logger Logger { get; }
 
-	public SessionStorage? CurrentSession { get; private set; }
-
 	internal IFileProvider Provider { get; }
 
 	public StorageManager(string dataRoot, IFileProvider provider, DataTagContext dataTags, Logger logger)
@@ -38,29 +36,15 @@ public class StorageManager
 
 	public SessionStorage OpenSession(string sessionName)
 	{
-		if (CurrentSession is not null)
-			CloseSession();
-
 		var sessionRoot = SavesDir.Combine(sessionName);
 		if (!sessionRoot.Exists)
 			sessionRoot.CreateDirectory();
 
-		CurrentSession = new SessionStorage(this, sessionName, sessionRoot, DataTags);
-		CurrentSession.EnsureDirectories();
+		var session = new SessionStorage(sessionName, sessionRoot, DataTags);
+		session.EnsureDirectories();
 		Logger.Info($"Storage: Opened session '{sessionName}' at '{sessionRoot.FullPath}'");
-		return CurrentSession;
-	}
-
-	public void CloseSession()
-	{
-		if (CurrentSession is not null)
-		{
-			Logger.Info($"Storage: Closed session '{CurrentSession.SessionName}'");
-			CurrentSession = null;
-		}
+		return session;
 	}
 
 	public StoragePath[] GlobalModDirectories => ModsDir.GetDirectories();
-	public StoragePath[] SessionModDirectories => CurrentSession?.ModsDir.GetDirectories() ?? [];
-	public StoragePath[] AllModDirectories => [.. GlobalModDirectories, .. SessionModDirectories];
 }

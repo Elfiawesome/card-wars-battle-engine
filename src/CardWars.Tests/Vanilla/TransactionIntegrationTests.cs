@@ -1,4 +1,6 @@
+using CardWars.BattleEngine;
 using CardWars.BattleEngine.Behaviour.DataDriven;
+using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
@@ -15,8 +17,9 @@ public sealed class TransactionIntegrationTests
 	[Fact]
 	public void BattleEngine_InstantiatesDataDrivenBehaviourFromPointer()
 	{
-		var engine = new BattleEngine.BattleEngine(new CardWars.BattleEngine.BattleEngineRegistry(TestBootstrap.DataTags, TestBootstrap.Logger));
+		var engine = new BattleEngine.BattleEngine(new BattleEngineRegistry(TestBootstrap.DataTags, TestBootstrap.Logger));
 		new VanillaMod().OnLoad(engine.Registry, []);
+		engine.Registry.EntityBehaviourProviders.Register(typeof(TestEntity), new TestBehaviourProvider());
 		engine.Registry.InputHandlers.Register(new TestEventInputHandler());
 		engine.Registry.EventHandlers.Register(new TestEventHandler());
 

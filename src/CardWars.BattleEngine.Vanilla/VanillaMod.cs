@@ -4,12 +4,14 @@ using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.BattleEngine.Vanilla.Rules;
+using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.State;
 using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using CardWars.ModLoader;
+using CardWars.BattleEngine.registry;
 
 namespace CardWars.BattleEngine.Vanilla;
 
@@ -21,9 +23,10 @@ public class VanillaMod : IBattleEngineMod
 	public void OnLoad(BattleEngineRegistry registry, IReadOnlyList<ModContentResult> modContents)
 	{
 		var definitions = registry.GetOrCreateExtension<CardWarsDefinitions>();
-		registry.InitializeState = state => state.Ext.GetOrCreate<CardWarsBattleState>();
-		registry.IsGameOver = state => state.Ext.GetOrCreate<CardWarsBattleState>().Outcome.IsGameOver;
-		registry.CanProcessInput = (state, playerId) => state.Ext.GetOrCreate<CardWarsBattleState>().Turn.AllowedPlayerInputs.Contains(playerId);
+		registry.StateInitializer = new CardWarsStateInitializer();
+		registry.GameOverPolicy = new CardWarsGameOverPolicy();
+		registry.InputPolicy = new CardWarsInputPolicy();
+		registry.EntityBehaviourProviders.Register(typeof(GenericCard), new CardWarsBehaviourProvider(registry.DataTags));
 
 		// --- Input Handlers ---
 		registry.InputHandlers.Register(new PlayerJoinedRequestInputHandler());

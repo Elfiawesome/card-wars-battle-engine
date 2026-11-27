@@ -15,8 +15,4 @@ public class Battlefield(EntityId id) : IEntity, IParentableEntity
 	public EntityId? ParentId => OwnerPlayerId;
 
 	public int BehaviourPriority => 0;
-
-
-
-	public List<ContentPointer> GetBehaviours(DataTagContext dataTags) => [];
 }

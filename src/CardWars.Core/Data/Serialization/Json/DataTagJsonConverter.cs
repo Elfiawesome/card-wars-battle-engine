@@ -22,7 +22,7 @@ public class DataTagJsonConverter : JsonConverter<DataTag>
 
 	private static DataTag ReadString(ref Utf8JsonReader reader)
 	{
-		var str = reader.GetString()!;
+		var str = reader.GetString() ?? throw new JsonException("Expected a JSON string.");
 		// Attempt to detect GUIDs
 		if (Guid.TryParse(str, out var guid) && str.Contains('-'))
 			return new GuidTag(guid);
@@ -34,7 +34,7 @@ public class DataTagJsonConverter : JsonConverter<DataTag>
 		var tag = new CompoundTag();
 		while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
 		{
-			var key = reader.GetString()!;
+			var key = reader.GetString() ?? throw new JsonException("Expected a JSON property name.");
 			reader.Read();
 			var value = Read(ref reader, typeof(DataTag), options);
 			if (value is not null) tag.Set(key, value);

@@ -1,5 +1,5 @@
 using System;
-using CardWars.BattleEngine;
+using CardWars.BattleEngine.registry;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 using CardWars.Core.Storage;

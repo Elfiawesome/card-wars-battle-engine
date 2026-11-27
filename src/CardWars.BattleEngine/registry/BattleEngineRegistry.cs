@@ -7,7 +7,7 @@ using CardWars.Core.Data;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 
-namespace CardWars.BattleEngine;
+namespace CardWars.BattleEngine.registry;
 
 public class BattleEngineRegistry : ExtensibleRegistry
 {
@@ -19,10 +19,11 @@ public class BattleEngineRegistry : ExtensibleRegistry
 	}
 
 	public DataTagContext DataTags { get; }
-	public Func<GameState, bool>? IsGameOver { get; set; }
-	public Func<GameState, EntityId, bool>? CanProcessInput { get; set; }
-	public Action<GameState>? InitializeState { get; set; }
 	public Logger Logger { get; }
+	public IStateInitializer? StateInitializer { get; set; }
+	public IGameOverPolicy? GameOverPolicy { get; set; }
+	public IInputPolicy? InputPolicy { get; set; }
+	public Registry<Type, IEntityBehaviourProvider> EntityBehaviourProviders { get; } = new();
 	public HandlerRegistry<InputContext> InputHandlers { get; } = new();
 	public HandlerRegistry<GameState> BlockHandlers { get; } = new();
 	public HandlerRegistry<Transaction> EventHandlers { get; } = new();

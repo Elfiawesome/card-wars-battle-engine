@@ -1,5 +1,5 @@
 using CardWars.Client.scripts.core.application;
-using CardWars.Client.scripts.core.global;
+using CardWars.Client.scenes.core.global;
 using CardWars.Core.Storage;
 using Godot;
 
@@ -44,6 +44,7 @@ public partial class GameSession : Node
 			this,
 			ConnectingUsername,
 			mode,
+			"session_1",
 			TargetIpAddress,
 			TargetPort);
 		Session.OnDebugStatus = SetDebugStatus;

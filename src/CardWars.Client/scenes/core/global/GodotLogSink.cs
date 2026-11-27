@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using CardWars.Core.Logging;
 using Godot;
 
-namespace CardWars.Client.scripts.core.global;
+namespace CardWars.Client.scenes.core.global;
 
 public partial class GodotLogSink : Node, ILogSink
 {

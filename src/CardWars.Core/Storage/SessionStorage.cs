@@ -14,11 +14,8 @@ public class SessionStorage
 	public StoragePath UsernamesFile { get; }
 	public DataTagContext DataTags { get; }
 
-	private readonly StorageManager _manager;
-
-	internal SessionStorage(StorageManager manager, string sessionName, StoragePath root, DataTagContext dataTags)
+	internal SessionStorage(string sessionName, StoragePath root, DataTagContext dataTags)
 	{
-		_manager = manager;
 		DataTags = dataTags;
 		SessionName = sessionName;
 
