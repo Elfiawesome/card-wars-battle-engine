@@ -1,5 +1,3 @@
-using CardWars.Core.Logging;
-using CardWars.Core.Network.Packet;
 using CardWars.Server.Packet;
 using CardWars.Server.Vanilla.Session;
 using CardWars.Vanilla.Shared.Packet;

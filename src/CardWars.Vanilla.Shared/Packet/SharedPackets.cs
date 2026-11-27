@@ -4,7 +4,6 @@ using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
-using System;
 using CardWars.Vanilla.Shared.View;
 
 namespace CardWars.Vanilla.Shared.Packet;

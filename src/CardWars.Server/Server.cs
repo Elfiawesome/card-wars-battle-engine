@@ -7,7 +7,6 @@ using CardWars.Server.Session;
 using CardWars.Core.Storage;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
-using CardWars.Core.Data.Mapping;
 
 namespace CardWars.Server;
 

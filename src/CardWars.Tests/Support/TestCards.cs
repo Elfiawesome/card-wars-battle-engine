@@ -1,6 +1,4 @@
 using CardWars.BattleEngine;
-using CardWars.BattleEngine.Vanilla.Targeting;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
 

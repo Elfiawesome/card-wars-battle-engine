@@ -4,7 +4,6 @@ using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Behaviour.DataDriven;

@@ -1,4 +1,3 @@
-using System;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Server.Session;

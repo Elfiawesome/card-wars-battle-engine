@@ -1,8 +1,6 @@
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.State;
-using CardWars.Core.Data.Access;
 using CardWars.Core.Data.Attributes;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Tests.Support;
 using Xunit;

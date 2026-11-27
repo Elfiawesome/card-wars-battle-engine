@@ -1,9 +1,7 @@
-using System;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.Core.Data.Attributes;
-using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Registry;
 using CardWars.Server.Packet;

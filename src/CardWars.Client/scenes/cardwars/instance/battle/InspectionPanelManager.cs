@@ -1,4 +1,3 @@
-using CardWars.BattleEngine;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Client.scenes.core.game_session;

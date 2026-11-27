@@ -2,7 +2,6 @@ using Logger = CardWars.Core.Logging.Logger;
 using System;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
-using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using Godot;
 

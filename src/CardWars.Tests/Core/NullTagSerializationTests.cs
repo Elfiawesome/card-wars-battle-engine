@@ -1,8 +1,6 @@
 using CardWars.Tests.Support;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Features;
-using CardWars.Core.Data.Mapping;
-using CardWars.Core.Data.Serialization.Json;
 using CardWars.Core.Data.Tags;
 using Xunit;
 

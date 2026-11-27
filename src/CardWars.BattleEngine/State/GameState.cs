@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.Core.Data;
 using CardWars.Core.Data.Access;

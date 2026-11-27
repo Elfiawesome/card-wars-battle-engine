@@ -1,5 +1,4 @@
 using CardWars.BattleEngine;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Registry;
 using CardWars.Core.Storage;
 using CardWars.Server.Session;

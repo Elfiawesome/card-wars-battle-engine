@@ -5,7 +5,6 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Attributes;
-using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 

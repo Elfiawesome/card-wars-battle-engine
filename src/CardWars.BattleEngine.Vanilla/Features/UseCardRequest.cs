@@ -4,7 +4,6 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Core.Data.Attributes;
-using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Features;
 

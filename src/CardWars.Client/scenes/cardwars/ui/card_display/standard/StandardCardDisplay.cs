@@ -2,7 +2,6 @@ using System.Linq;
 using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 using Godot;
 

@@ -3,9 +3,7 @@ using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Vanilla.Targeting;
 

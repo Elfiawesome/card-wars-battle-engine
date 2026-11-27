@@ -1,9 +1,7 @@
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Attributes;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.Vanilla.Rules;
