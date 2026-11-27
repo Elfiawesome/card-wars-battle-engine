@@ -5,7 +5,6 @@ using CardWars.Client.scripts.cardwars.layout;
 using CardWars.Client.scripts.cardwars.packet;
 using CardWars.Client.scripts.cardwars.registry;
 using CardWars.Client.scripts.core;
-using CardWars.Core.Registry;
 using CardWars.ModLoader;
 using CardWars.Vanilla.Shared;
 

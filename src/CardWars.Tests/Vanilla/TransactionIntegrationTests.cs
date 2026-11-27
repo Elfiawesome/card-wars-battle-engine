@@ -1,5 +1,4 @@
 using CardWars.Vanilla.Shared;
-using CardWars.BattleEngine;
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.State;

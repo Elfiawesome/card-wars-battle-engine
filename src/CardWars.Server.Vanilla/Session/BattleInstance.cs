@@ -1,4 +1,3 @@
-using System;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Entity;

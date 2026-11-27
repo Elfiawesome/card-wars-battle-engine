@@ -4,7 +4,6 @@ using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Registry;
 using Xunit;
 
 namespace CardWars.Tests.Core;

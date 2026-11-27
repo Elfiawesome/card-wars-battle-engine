@@ -1,9 +1,7 @@
 using CardWars.Vanilla.Shared;
-using CardWars.BattleEngine;
 using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.Vanilla;
 using CardWars.BattleEngine.Vanilla.Rules;
-using CardWars.Core.Registry;
 using CardWars.Core.Storage;
 using CardWars.ModLoader;
 using CardWars.Tests.Support;

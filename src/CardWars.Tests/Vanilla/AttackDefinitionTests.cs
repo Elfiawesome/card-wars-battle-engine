@@ -3,7 +3,6 @@ using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Registry;
 using CardWars.Tests.Support;
 using Xunit;
 

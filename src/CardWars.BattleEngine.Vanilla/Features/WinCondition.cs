@@ -1,6 +1,5 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
-using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.BattleEngine.Vanilla.State;

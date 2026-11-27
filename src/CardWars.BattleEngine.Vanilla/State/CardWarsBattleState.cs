@@ -1,4 +1,3 @@
-using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Access;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;

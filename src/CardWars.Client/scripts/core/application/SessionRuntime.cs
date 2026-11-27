@@ -7,7 +7,6 @@ using CardWars.BattleEngine;
 using CardWars.BattleEngine.registry;
 using CardWars.Client.scripts.core.content;
 using CardWars.Client.scripts.core.profile;
-using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;

@@ -1,5 +1,3 @@
-using CardWars.Core.Registry;
-
 namespace CardWars.BattleEngine.State;
 
 public interface IEntity

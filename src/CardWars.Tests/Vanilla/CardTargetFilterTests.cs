@@ -1,5 +1,4 @@
 using CardWars.Vanilla.Shared;
-using CardWars.BattleEngine;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.registry;
@@ -9,7 +8,6 @@ using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Targeting;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Registry;
 using CardWars.Core.Storage;
 using CardWars.ModLoader;
 using CardWars.Tests.Support;
