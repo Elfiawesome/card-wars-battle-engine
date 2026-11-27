@@ -109,7 +109,7 @@ public class ScriptContext : IDataTagAccessible
 
 	public bool TryGetMember(string member, out DataTag? value)
 	{
-		if (TryGetVariable(ResourceId.Parse(member), out var variable))
+		if (TryGetVariable(DataTags.ParseId(member), out var variable))
 		{
 			value = variable;
 			return true;
@@ -120,7 +120,7 @@ public class ScriptContext : IDataTagAccessible
 	}
 
 	public bool TrySetMember(string member, DataTag value)
-		=> TrySetVariable(ResourceId.Parse(member), value);
+		=> TrySetVariable(DataTags.ParseId(member), value);
 
 	public bool TryGetIndex(DataTag index, out DataTag? value)
 	{
@@ -131,7 +131,7 @@ public class ScriptContext : IDataTagAccessible
 	}
 
 	public bool TrySetIndex(DataTag index, DataTag value)
-		=> index is StringTag key && TrySetVariable(ResourceId.Parse(key.Value), value);
+		=> index is StringTag key && TrySetVariable(DataTags.ParseId(key.Value), value);
 
 	public T? ResolveObject<T>(DataTag? tag) where T : class
 	{

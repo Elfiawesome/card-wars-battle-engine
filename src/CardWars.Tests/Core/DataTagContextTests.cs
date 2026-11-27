@@ -8,8 +8,8 @@ public sealed class DataTagContextTests
 	[Fact]
 	public void Contexts_HaveIndependentTypeRegistries()
 	{
-		var first = new DataTagContext();
-		var second = new DataTagContext();
+		var first = new DataTagContext("test");
+		var second = new DataTagContext("test");
 
 		first.Register<ContextTestType>("test/context_type");
 

@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
@@ -97,7 +98,7 @@ public sealed class BattleWinConditionTests
 	public void HeroLoseCondition_HardCodedResourceCanBeRegistered()
 	{
 		var battle = BattleTestHarness.Create();
-		var conditionId = ResourceId.Vanilla("hero_lose_conditions/always");
+		var conditionId = CardWarsIds.Vanilla("hero_lose_conditions/always");
 		var hero = battle.HeroOf(battle.Player2Id);
 		battle.Engine.Registry.EntityConditions.Register<AlwaysLoseCondition>(conditionId);
 		hero.Data.Set("lose_condition", TestBootstrap.DataTags.ToTag(
@@ -172,7 +173,7 @@ public sealed class BattleWinConditionTests
 	public void CustomWinPredicate_CanOverrideDefaultWinner()
 	{
 		var battle = BattleTestHarness.Create();
-		var ruleId = ResourceId.Vanilla("rules/team_two_wins");
+		var ruleId = CardWarsIds.Vanilla("rules/team_two_wins");
 		var rule = new GameRulesDefinition
 		{
 			PtSchedule = [5, 6],

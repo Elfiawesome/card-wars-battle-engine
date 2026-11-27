@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.Vanilla;
@@ -26,7 +27,7 @@ public sealed class HeroLoseConditionTests
 		var registry = new BattleEngineRegistry(TestBootstrap.DataTags, TestBootstrap.Logger);
 		var content = new ModContentResult
 		{
-			Id = ResourceId.Vanilla("cards/heroes/test_hero"),
+			Id = CardWarsIds.Vanilla("cards/heroes/test_hero"),
 			FilePath = new StoragePath("cards/heroes/test_hero.json", provider),
 			Category = ["cards", "heroes"]
 		};

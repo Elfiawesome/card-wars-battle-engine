@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
@@ -17,7 +18,7 @@ internal static class TestTargetFilters
 
 		var isUnitSlot = new IsEntityTypeExpression(
 			candidate,
-			ResourceId.Vanilla("battle/entity/unit_slot"));
+			CardWarsIds.Vanilla("battle/entity/unit_slot"));
 
 		var isEmpty = new EqualsExpression(
 			new MemberExpression(candidate, "holding_card_id"),

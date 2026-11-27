@@ -6,21 +6,28 @@ using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Mapping.Internal;
 using CardWars.Core.Data.Serialization.Json;
 using CardWars.Core.Data.Tags;
+using CardWars.Core.Registry;
 
 namespace CardWars.Core.Data;
 
 public sealed class DataTagContext
 {
-	private readonly DataTagTypeRegistry _types = new();
+	private readonly DataTagTypeRegistry _types;
 	private readonly TypeMetadataCache _metadata = new();
 	private readonly DataTagMapper _mapper;
 	private readonly DataTagAccess _access;
+	private readonly string _defaultNamespace;
 
-	public DataTagContext()
+	public DataTagContext(string defaultNamespace)
 	{
+		_defaultNamespace = defaultNamespace;
+		_types = new DataTagTypeRegistry(defaultNamespace);
 		_mapper = new DataTagMapper(_types, _metadata);
+		_mapper.RegisterConverter(typeof(ResourceId), new ResourceIdTagConverter(defaultNamespace));
 		_access = new DataTagAccess(_mapper);
 	}
+
+	public ResourceId ParseId(string id) => ResourceId.Parse(id, _defaultNamespace);
 
 	public string TypeDiscriminatorKey
 	{

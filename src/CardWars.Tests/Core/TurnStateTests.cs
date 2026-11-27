@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.State;
 using CardWars.Core.Data.Tags;
@@ -89,7 +90,7 @@ public sealed class TurnStateTests
 	public void Snapshot_PreservesOutcomeAndRuleId()
 	{
 		var state = new GameState();
-		state.Ext.GetOrCreate<CardWarsBattleState>().RuleId = ResourceId.Vanilla("rules/custom");
+		state.Ext.GetOrCreate<CardWarsBattleState>().RuleId = CardWarsIds.Vanilla("rules/custom");
 		state.Ext.GetOrCreate<CardWarsBattleState>().Outcome = GameOutcome.Win(2);
 		state.Ext.GetOrCreate<CardWarsBattleState>().Turn.RoundNumber = 4;
 

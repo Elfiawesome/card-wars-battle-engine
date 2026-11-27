@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.Tests.Support;
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
@@ -16,10 +17,10 @@ public sealed class DefinitionSerializationTests
 		var definition = new BehaviourDefinition(
 			[
 				new EventHook(
-					ResourceId.Vanilla("test/event"),
+					CardWarsIds.Vanilla("test/event"),
 					[
 						new DeclarationInstruction(
-							ResourceId.Vanilla("value"),
+							CardWarsIds.Vanilla("value"),
 							new AddExpression(
 								new LiteralExpression(new IntTag(2)),
 								new MultiplyExpression(
@@ -28,16 +29,16 @@ public sealed class DefinitionSerializationTests
 							IsGlobal: true),
 						new IfInstruction(
 							new LiteralExpression(new BoolTag(true)),
-							[new LogInstruction(new VariableExpression(ResourceId.Vanilla("value")))],
+							[new LogInstruction(new VariableExpression(CardWarsIds.Vanilla("value")))],
 							[]),
 						new ForEachInstruction(
-							ResourceId.Vanilla("item"),
+							CardWarsIds.Vanilla("item"),
 							new ListExpression([new LiteralExpression(new IntTag(1))]),
-							[new SetInstruction(ResourceId.Vanilla("value"), new VariableExpression(ResourceId.Vanilla("item")))])
+							[new SetInstruction(CardWarsIds.Vanilla("value"), new VariableExpression(CardWarsIds.Vanilla("item")))])
 					])
 			],
 			[
-				new InputHook(ResourceId.Vanilla("test/input"), [new WaitInstruction()])
+				new InputHook(CardWarsIds.Vanilla("test/input"), [new WaitInstruction()])
 			])
 		{
 			Priority = 7
@@ -50,7 +51,7 @@ public sealed class DefinitionSerializationTests
 
 		Assert.Equal(7, restored.Priority);
 		var eventHook = Assert.Single(restored.OnEvent ?? []);
-		Assert.Equal(ResourceId.Vanilla("test/event"), eventHook.EventType);
+		Assert.Equal(CardWarsIds.Vanilla("test/event"), eventHook.EventType);
 
 		var instructions = eventHook.Instructions ?? [];
 		Assert.Collection(
@@ -58,7 +59,7 @@ public sealed class DefinitionSerializationTests
 			item =>
 			{
 				var declaration = Assert.IsType<DeclarationInstruction>(item);
-				Assert.Equal(ResourceId.Vanilla("value"), declaration.Name);
+				Assert.Equal(CardWarsIds.Vanilla("value"), declaration.Name);
 				Assert.True(declaration.IsGlobal);
 				Assert.IsType<AddExpression>(declaration.Value);
 			},
@@ -66,7 +67,7 @@ public sealed class DefinitionSerializationTests
 			item => Assert.IsType<ForEachInstruction>(item));
 
 		var inputHook = Assert.Single(restored.OnInput ?? []);
-		Assert.Equal(ResourceId.Vanilla("test/input"), inputHook.InputType);
+		Assert.Equal(CardWarsIds.Vanilla("test/input"), inputHook.InputType);
 		Assert.IsType<WaitInstruction>(Assert.Single(inputHook.Instructions ?? []));
 	}
 

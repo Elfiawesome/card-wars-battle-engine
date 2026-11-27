@@ -54,9 +54,9 @@ public class VanillaMod : IClientMod
 		BattleViewRegistry.EntityViewHandlers.Register(new CardViewHandler());
 
 		// Layout Handler: Sets default positions, no animation
-		BattleViewRegistry.DefaultLayoutId = ResourceId.Vanilla("default");
-		BattleViewRegistry.LayoutHandler.Register(ResourceId.Vanilla("default"), new DefaultLayout());
-		BattleViewRegistry.LayoutHandler.Register(ResourceId.Vanilla("line"), new LineLayout());
+		BattleViewRegistry.DefaultLayoutId = CardWarsIds.Vanilla("default");
+		BattleViewRegistry.LayoutHandler.Register(CardWarsIds.Vanilla("default"), new DefaultLayout());
+		BattleViewRegistry.LayoutHandler.Register(CardWarsIds.Vanilla("line"), new LineLayout());
 
 		// Battle Animation
 		BattleViewRegistry.Animations.Register<PlayerIntroductionAnimation>(SharedIds.Animations.PlayerIntroduction);

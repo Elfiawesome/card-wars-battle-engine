@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.BattleEngine.Vanilla.Features;
@@ -69,7 +70,7 @@ public sealed class BattleHeroTests
 					AttackPatternType.Cell,
 					new UnitSlotPos(0, 0),
 					new AttackDamageSpec(0f, 10))
-			], ResourceId.Vanilla("texture/icon/attacks/origin"), "Origin Bonus", 0, false)))));
+			], CardWarsIds.Vanilla("texture/icon/attacks/origin"), "Origin Bonus", 0, false)))));
 		});
 
 		var attacker = battle.DrawAndPlay(battle.Player1Id, new UnitSlotPos(0, 0));

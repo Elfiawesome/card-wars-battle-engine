@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.State;
@@ -22,8 +23,8 @@ public sealed class ExpressionHandlerTests
 		var literal = runtime.Evaluate(new LiteralExpression(new IntTag(5)));
 		Assert.Equal(5, Assert.IsType<IntTag>(literal).Value);
 
-		runtime.DeclareVariable(ResourceId.Vanilla("x"), new StringTag("hello"));
-		var variable = runtime.Evaluate(new VariableExpression(ResourceId.Vanilla("x")));
+		runtime.DeclareVariable(CardWarsIds.Vanilla("x"), new StringTag("hello"));
+		var variable = runtime.Evaluate(new VariableExpression(CardWarsIds.Vanilla("x")));
 		Assert.Equal("hello", Assert.IsType<StringTag>(variable).Value);
 	}
 
@@ -41,7 +42,7 @@ public sealed class ExpressionHandlerTests
 		runtime.DeclareVariable(ScriptBindings.Self, new ObjectRefTag(entity));
 		runtime.DeclareVariable(ScriptBindings.State, new ObjectRefTag(state));
 		runtime.DeclareVariable(ScriptBindings.Vars, new ObjectRefTag(runtime));
-		runtime.DeclareVariable(ResourceId.Vanilla("custom"), new IntTag(8));
+		runtime.DeclareVariable(CardWarsIds.Vanilla("custom"), new IntTag(8));
 
 		var hp = runtime.Evaluate(new MemberExpression(new VariableExpression(ScriptBindings.Owner), "hp"));
 		Assert.Equal(17, Assert.IsType<IntTag>(hp).Value);
@@ -97,7 +98,7 @@ public sealed class ExpressionHandlerTests
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
 
 		var constructed = runtime.Evaluate(new ConstructExpression(
-			ResourceId.Vanilla("test/block"),
+			CardWarsIds.Vanilla("test/block"),
 			new Dictionary<string, IExpression> { ["value"] = new LiteralExpression(new IntTag(7)) }));
 
 		var block = runtime.ResolveObject<TestBlock>(constructed);
@@ -112,7 +113,7 @@ public sealed class ExpressionHandlerTests
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
 
-		var unknownVariable = runtime.Evaluate(new VariableExpression(ResourceId.Vanilla("missing")));
+		var unknownVariable = runtime.Evaluate(new VariableExpression(CardWarsIds.Vanilla("missing")));
 		Assert.IsType<NullTag>(unknownVariable);
 
 		var unknownMember = runtime.Evaluate(new MemberExpression(

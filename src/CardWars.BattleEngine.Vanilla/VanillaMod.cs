@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.Vanilla.Behaviour;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
@@ -96,8 +97,8 @@ public class VanillaMod : IBattleEngineMod
 		registry.BlockHandlers.Register(new UpdateTurnStateBlockHandler());
 
 		// --- Behaviours ---
-		registry.Behaviours.Register<SummonUnitCardToUnitSlotBehaviour>(ResourceId.Vanilla("summon_unit_card_to_unit_slot_behaviour"));
-		registry.Behaviours.Register<TestAbility>(ResourceId.Vanilla("test_ability"));
+		registry.Behaviours.Register<SummonUnitCardToUnitSlotBehaviour>(CardWarsIds.Vanilla("summon_unit_card_to_unit_slot_behaviour"));
+		registry.Behaviours.Register<TestAbility>(CardWarsIds.Vanilla("test_ability"));
 
 		// --- Hero Lose Conditions ---
 		registry.EntityConditions.Register<HeroHrtLoseCondition>(HeroHrtLoseCondition.Id);

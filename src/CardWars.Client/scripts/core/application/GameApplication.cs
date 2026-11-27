@@ -24,7 +24,7 @@ public sealed class GameApplication
 		Provider = provider;
 		GamedataPath = provider.GetFullPath(gamedataPath);
 		Logger = new Logger(logSink);
-		DataTags = new DataTagContext();
+		DataTags = new DataTagContext("cardwars");
 		Storage = new StorageManager(GamedataPath, provider, DataTags, Logger);
 		Mods = new ModRepository(Storage.GlobalModDirectories, DataTags, Logger);
 		Mods.Setup();

@@ -6,7 +6,7 @@ namespace CardWars.Tests.Support;
 
 internal static class TestBootstrap
 {
-	public static DataTagContext DataTags { get; } = new();
+	public static DataTagContext DataTags { get; } = new("cardwars");
 	public static Logger Logger { get; } = new(new NullLogSink());
 
 	[ModuleInitializer]

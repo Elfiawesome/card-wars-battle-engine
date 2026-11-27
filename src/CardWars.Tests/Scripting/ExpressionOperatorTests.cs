@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Functions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
@@ -133,10 +134,10 @@ public sealed class ExpressionOperatorTests
 	public void CallExpression_InvokesRegisteredFunction()
 	{
 		var runtime = CreateRuntime(out var registry);
-		registry.DataDriven.Functions.Register(ResourceId.Vanilla("test/sum"), new SumFunction());
+		registry.DataDriven.Functions.Register(CardWarsIds.Vanilla("test/sum"), new SumFunction());
 
 		var result = runtime.Evaluate(new CallExpression(
-			ResourceId.Vanilla("test/sum"),
+			CardWarsIds.Vanilla("test/sum"),
 			new Dictionary<string, IExpression>
 			{
 				["left"] = Lit(new IntTag(2)),

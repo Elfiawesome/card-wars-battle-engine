@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.registry;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
@@ -6,12 +7,12 @@ namespace CardWars.Tests.Support;
 
 internal static class TestCards
 {
-	public static readonly ResourceId CobCannon = ResourceId.Vanilla("cards/units/plantvszombies/cob_cannon");
-	public static readonly ResourceId ApocalypseTank = ResourceId.Vanilla("cards/units/redalert3/apocalypse_tank");
-	public static readonly ResourceId AssaultDestroyer = ResourceId.Vanilla("cards/units/redalert3/assault_destroyer");
-	public static readonly ResourceId Fastpass = ResourceId.Vanilla("cards/units/southpark/fastpass");
-	public static readonly ResourceId Auditor = ResourceId.Vanilla("cards/units/madnesscombat/auditor");
-	public static readonly ResourceId CaptainHero = ResourceId.Vanilla("cards/heroes/captain");
+	public static readonly ResourceId CobCannon = CardWarsIds.Vanilla("cards/units/plantvszombies/cob_cannon");
+	public static readonly ResourceId ApocalypseTank = CardWarsIds.Vanilla("cards/units/redalert3/apocalypse_tank");
+	public static readonly ResourceId AssaultDestroyer = CardWarsIds.Vanilla("cards/units/redalert3/assault_destroyer");
+	public static readonly ResourceId Fastpass = CardWarsIds.Vanilla("cards/units/southpark/fastpass");
+	public static readonly ResourceId Auditor = CardWarsIds.Vanilla("cards/units/madnesscombat/auditor");
+	public static readonly ResourceId CaptainHero = CardWarsIds.Vanilla("cards/heroes/captain");
 
 	public static void RegisterStarterDeck(
 		BattleEngineRegistry registry,

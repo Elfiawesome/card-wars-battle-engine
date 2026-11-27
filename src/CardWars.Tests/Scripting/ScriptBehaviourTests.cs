@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
@@ -26,24 +27,24 @@ public sealed class ScriptBehaviourTests
 		var definition = new BehaviourDefinition(
 			[
 				new EventHook(
-					ResourceId.Vanilla("test/event"),
+					CardWarsIds.Vanilla("test/event"),
 					[
 						new DeclarationInstruction(
-							ResourceId.Vanilla("event_value"),
+							CardWarsIds.Vanilla("event_value"),
 							new MemberExpression(new VariableExpression(ScriptBindings.Event), "value"),
 							IsGlobal: true),
 						new DeclarationInstruction(
-							ResourceId.Vanilla("self_hp"),
+							CardWarsIds.Vanilla("self_hp"),
 							new MemberExpression(new VariableExpression(ScriptBindings.Self), "hp"),
 							IsGlobal: true),
 						new DeclarationInstruction(
-							ResourceId.Vanilla("turn_number"),
+							CardWarsIds.Vanilla("turn_number"),
 							new MemberExpression(
 								new MemberExpression(new VariableExpression(ScriptBindings.State), "turn"),
 								"turn_number"),
 							IsGlobal: true),
 						new DeclarationInstruction(
-							ResourceId.Vanilla("copy_hp"),
+							CardWarsIds.Vanilla("copy_hp"),
 							new MemberExpression(new VariableExpression(ScriptBindings.Vars), "self_hp"),
 							IsGlobal: true)
 					])
@@ -53,10 +54,10 @@ public sealed class ScriptBehaviourTests
 		var result = behaviour.Start(new TestEvent { Value = 9 }, context);
 
 		Assert.Equal(BehaviourResult.Complete, result);
-		Assert.Equal(9, Assert.IsType<IntTag>(state.GlobalScope.Variables[ResourceId.Vanilla("event_value")]).Value);
-		Assert.Equal(10, Assert.IsType<IntTag>(state.GlobalScope.Variables[ResourceId.Vanilla("self_hp")]).Value);
-		Assert.Equal(0, Assert.IsType<IntTag>(state.GlobalScope.Variables[ResourceId.Vanilla("turn_number")]).Value);
-		Assert.Equal(10, Assert.IsType<IntTag>(state.GlobalScope.Variables[ResourceId.Vanilla("copy_hp")]).Value);
+		Assert.Equal(9, Assert.IsType<IntTag>(state.GlobalScope.Variables[CardWarsIds.Vanilla("event_value")]).Value);
+		Assert.Equal(10, Assert.IsType<IntTag>(state.GlobalScope.Variables[CardWarsIds.Vanilla("self_hp")]).Value);
+		Assert.Equal(0, Assert.IsType<IntTag>(state.GlobalScope.Variables[CardWarsIds.Vanilla("turn_number")]).Value);
+		Assert.Equal(10, Assert.IsType<IntTag>(state.GlobalScope.Variables[CardWarsIds.Vanilla("copy_hp")]).Value);
 	}
 
 	[Fact]
@@ -71,10 +72,10 @@ public sealed class ScriptBehaviourTests
 		var definition = new BehaviourDefinition(
 			[
 				new EventHook(
-					ResourceId.Vanilla("test/event"),
+					CardWarsIds.Vanilla("test/event"),
 					[
 						new DeclarationInstruction(
-							ResourceId.Vanilla("event_value"),
+							CardWarsIds.Vanilla("event_value"),
 							new MemberExpression(new VariableExpression(ScriptBindings.Event), "value"),
 							IsGlobal: true),
 						new WaitInstruction()
@@ -82,10 +83,10 @@ public sealed class ScriptBehaviourTests
 			],
 			[
 				new InputHook(
-					ResourceId.Vanilla("test/input"),
+					CardWarsIds.Vanilla("test/input"),
 					[
 						new DeclarationInstruction(
-							ResourceId.Vanilla("input_value"),
+							CardWarsIds.Vanilla("input_value"),
 							new MemberExpression(new VariableExpression(ScriptBindings.Input), "value"),
 							IsGlobal: true)
 					])
@@ -94,15 +95,15 @@ public sealed class ScriptBehaviourTests
 		var behaviour = new ScriptBehaviour(definition, registry.DataDriven);
 		var start = behaviour.Start(new TestEvent { Value = 9 }, context);
 		Assert.Equal(BehaviourResult.WaitForInput, start);
-		Assert.Equal(9, Assert.IsType<IntTag>(state.GlobalScope.Variables[ResourceId.Vanilla("event_value")]).Value);
+		Assert.Equal(9, Assert.IsType<IntTag>(state.GlobalScope.Variables[CardWarsIds.Vanilla("event_value")]).Value);
 
 		var unmatched = behaviour.Resume(EntityId.None, new OtherInput(), context);
 		Assert.Equal(BehaviourResult.WaitForInput, unmatched);
-		Assert.False(state.GlobalScope.Variables.ContainsKey(ResourceId.Vanilla("input_value")));
+		Assert.False(state.GlobalScope.Variables.ContainsKey(CardWarsIds.Vanilla("input_value")));
 
 		var resumed = behaviour.Resume(EntityId.None, new TestInput { Value = 4 }, context);
 		Assert.Equal(BehaviourResult.Complete, resumed);
-		Assert.Equal(4, Assert.IsType<IntTag>(state.GlobalScope.Variables[ResourceId.Vanilla("input_value")]).Value);
+		Assert.Equal(4, Assert.IsType<IntTag>(state.GlobalScope.Variables[CardWarsIds.Vanilla("input_value")]).Value);
 	}
 
 	[Fact]
@@ -116,15 +117,15 @@ public sealed class ScriptBehaviourTests
 
 		var definition = new BehaviourDefinition(
 			[
-				new EventHook(ResourceId.Vanilla("test/event"), [new WaitInstruction()])
+				new EventHook(CardWarsIds.Vanilla("test/event"), [new WaitInstruction()])
 			],
 			[
 				new InputHook(
-					ResourceId.Vanilla("test/input"),
+					CardWarsIds.Vanilla("test/input"),
 					[
 						new WaitInstruction(),
 						new DeclarationInstruction(
-							ResourceId.Vanilla("input_resumed"),
+							CardWarsIds.Vanilla("input_resumed"),
 							new LiteralExpression(new IntTag(1)),
 							IsGlobal: true)
 					])
@@ -134,10 +135,10 @@ public sealed class ScriptBehaviourTests
 
 		Assert.Equal(BehaviourResult.WaitForInput, behaviour.Start(new TestEvent { Value = 9 }, context));
 		Assert.Equal(BehaviourResult.WaitForInput, behaviour.Resume(EntityId.None, new TestInput { Value = 4 }, context));
-		Assert.False(state.GlobalScope.Variables.ContainsKey(ResourceId.Vanilla("input_resumed")));
+		Assert.False(state.GlobalScope.Variables.ContainsKey(CardWarsIds.Vanilla("input_resumed")));
 
 		Assert.Equal(BehaviourResult.Complete, behaviour.Resume(EntityId.None, new TestInput { Value = 5 }, context));
-		Assert.Equal(1, Assert.IsType<IntTag>(state.GlobalScope.Variables[ResourceId.Vanilla("input_resumed")]).Value);
+		Assert.Equal(1, Assert.IsType<IntTag>(state.GlobalScope.Variables[CardWarsIds.Vanilla("input_resumed")]).Value);
 	}
 
 	[Fact]
@@ -148,13 +149,13 @@ public sealed class ScriptBehaviourTests
 		state.Ext.GetOrCreate<CardWarsBattleState>();
 		var owner = TestSupport.AddEntity(state);
 		var context = TestSupport.CreateBehaviourContext(registry, state, owner.Id);
-		var flag = ResourceId.Vanilla("flag");
-		var continued = ResourceId.Vanilla("continued");
+		var flag = CardWarsIds.Vanilla("flag");
+		var continued = CardWarsIds.Vanilla("continued");
 
 		var definition = new BehaviourDefinition(
 			[
 				new EventHook(
-					ResourceId.Vanilla("test/event"),
+					CardWarsIds.Vanilla("test/event"),
 					[
 						new DeclarationInstruction(flag, new LiteralExpression(new BoolTag(true))),
 						new DeclarationInstruction(continued, new LiteralExpression(new IntTag(0)), IsGlobal: true),
@@ -168,7 +169,7 @@ public sealed class ScriptBehaviourTests
 					])
 			],
 			[
-				new InputHook(ResourceId.Vanilla("test/input"), [])
+				new InputHook(CardWarsIds.Vanilla("test/input"), [])
 			]);
 
 		var behaviour = new ScriptBehaviour(definition, registry.DataDriven);
@@ -194,15 +195,15 @@ public sealed class ScriptBehaviourTests
 		var definition = new BehaviourDefinition(
 			[
 				new EventHook(
-					ResourceId.Vanilla("other/event"),
-					[new DeclarationInstruction(ResourceId.Vanilla("x"), new LiteralExpression(new IntTag(1)))])
+					CardWarsIds.Vanilla("other/event"),
+					[new DeclarationInstruction(CardWarsIds.Vanilla("x"), new LiteralExpression(new IntTag(1)))])
 			]);
 
 		var behaviour = new ScriptBehaviour(definition, registry.DataDriven);
 		var result = behaviour.Start(new TestEvent { Value = 9 }, context);
 
 		Assert.Equal(BehaviourResult.Complete, result);
-		Assert.False(state.GlobalScope.Variables.ContainsKey(ResourceId.Vanilla("x")));
+		Assert.False(state.GlobalScope.Variables.ContainsKey(CardWarsIds.Vanilla("x")));
 	}
 
 	[Fact]
@@ -219,10 +220,10 @@ public sealed class ScriptBehaviourTests
 		var definition = new BehaviourDefinition(
 			[
 				new EventHook(
-					ResourceId.Vanilla("test/event"),
+					CardWarsIds.Vanilla("test/event"),
 					[
 						new StageBlockInstruction(new ConstructExpression(
-							ResourceId.Vanilla("test/block"),
+							CardWarsIds.Vanilla("test/block"),
 							new Dictionary<string, IExpression>
 							{
 								["value"] = new LiteralExpression(new IntTag(3))

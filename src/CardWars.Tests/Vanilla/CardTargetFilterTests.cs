@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
@@ -125,7 +126,7 @@ public sealed class CardTargetFilterTests
 		registry.GetOrCreateExtension<CardWarsDefinitions>().DefaultUnitTargetFilter = TestTargetFilters.CreateUnitTargetFilter();
 		var content = new ModContentResult
 		{
-			Id = ResourceId.Vanilla("cards/units/test_unit"),
+			Id = CardWarsIds.Vanilla("cards/units/test_unit"),
 			FilePath = new StoragePath("cards/units/test_unit.json", provider),
 			Category = ["cards", "units"]
 		};
@@ -166,7 +167,7 @@ public sealed class CardTargetFilterTests
 
 		var isUnitSlot = new IsEntityTypeExpression(
 			candidate,
-			ResourceId.Vanilla("battle/entity/unit_slot"));
+			CardWarsIds.Vanilla("battle/entity/unit_slot"));
 
 		var ownBattlefield = new EqualsExpression(
 			new MemberExpression(candidate, "owner_battlefield_id"),

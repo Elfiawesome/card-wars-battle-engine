@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
 using CardWars.Core.Data.Tags;
@@ -165,6 +166,6 @@ public sealed class BattleAttackTests
 		=> (_, definition) =>
 		{
 			if (definition.GetString("card_type") != "unit") return;
-			definition.Set("ba_atk", TestSupport.AttackPointer(TestBootstrap.DataTags.ToTag(new AttackDefinition(patterns, ResourceId.Vanilla("texture/icon/attacks/test"), "Test BA", 1, false))));
+			definition.Set("ba_atk", TestSupport.AttackPointer(TestBootstrap.DataTags.ToTag(new AttackDefinition(patterns, CardWarsIds.Vanilla("texture/icon/attacks/test"), "Test BA", 1, false))));
 		};
 }

@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Attacks;
 using CardWars.BattleEngine.Vanilla.Entity;
@@ -23,12 +24,12 @@ public sealed class AttackDefinitionTests
 				AttackPatternType.Row,
 				new UnitSlotPos(0, 1),
 				new AttackDamageSpec(0.5f, 0))
-		], ResourceId.Vanilla("texture/icon/attacks/cross"), "Cross", 2, true);
+		], CardWarsIds.Vanilla("texture/icon/attacks/cross"), "Cross", 2, true);
 
 		var parsed = TestBootstrap.DataTags.FromTag<AttackDefinition>(TestBootstrap.DataTags.ToTag(definition));
 
 		Assert.Equal("Cross", parsed.Name);
-		Assert.Equal(ResourceId.Vanilla("texture/icon/attacks/cross"), parsed.Texture);
+		Assert.Equal(CardWarsIds.Vanilla("texture/icon/attacks/cross"), parsed.Texture);
 		Assert.Equal(2, parsed.ChargeCost);
 		Assert.True(parsed.Bypass);
 		Assert.Equal(2, parsed.Patterns.Count);
@@ -70,15 +71,15 @@ public sealed class AttackDefinitionTests
 		var definition = new AttackDefinition(
 		[
 			Pattern(AttackPatternType.Cell, 3)
-		], ResourceId.Vanilla("texture/icon/attacks/registered"), "Registered", 2, true);
+		], CardWarsIds.Vanilla("texture/icon/attacks/registered"), "Registered", 2, true);
 		TestSupport.Definitions(registry).AttackDefinitions.Register(
-			ResourceId.Vanilla("attacks/registered"),
+			CardWarsIds.Vanilla("attacks/registered"),
 			TestBootstrap.DataTags.ToTag(definition));
 
 		var card = new GenericCard(EntityId.New())
 		{
 			Data = new CompoundTag().Set("sp_atks", new ListTag()
-				.Add(TestSupport.AttackPointer(ResourceId.Vanilla("attacks/registered"))))
+				.Add(TestSupport.AttackPointer(CardWarsIds.Vanilla("attacks/registered"))))
 		};
 
 		var attack = new AttackResolver(registry).Resolve(card);
@@ -118,7 +119,7 @@ public sealed class AttackDefinitionTests
 			Data = new CompoundTag().Set("ba_atk", TestSupport.AttackPointer(TestBootstrap.DataTags.ToTag(new AttackDefinition(
 			[
 				Pattern(AttackPatternType.Cell, 4, 1, 0)
-			], ResourceId.Vanilla("texture/icon/attacks/custom"), "Custom BA", 0, false))))
+			], CardWarsIds.Vanilla("texture/icon/attacks/custom"), "Custom BA", 0, false))))
 		};
 
 		var attack = new AttackResolver(TestSupport.CreateRegistry()).Resolve(card);
@@ -142,7 +143,7 @@ public sealed class AttackDefinitionTests
 		int chargeCost,
 		bool bypass,
 		params AttackPattern[] patterns)
-		=> TestSupport.AttackPointer(TestBootstrap.DataTags.ToTag(new AttackDefinition(patterns, ResourceId.Vanilla("texture/icon/attacks/test"), name, chargeCost, bypass)));
+		=> TestSupport.AttackPointer(TestBootstrap.DataTags.ToTag(new AttackDefinition(patterns, CardWarsIds.Vanilla("texture/icon/attacks/test"), name, chargeCost, bypass)));
 
 	private static AttackPattern Pattern(
 		AttackPatternType type,

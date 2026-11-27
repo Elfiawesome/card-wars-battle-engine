@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
@@ -24,12 +25,12 @@ public sealed class InstructionHandlerTests
 
 		var outcome = Execute(runtime, 
 		[
-			new DeclarationInstruction(ResourceId.Vanilla("x"), new LiteralExpression(new IntTag(1))),
-			new SetInstruction(ResourceId.Vanilla("x"), new LiteralExpression(new IntTag(2)))
+			new DeclarationInstruction(CardWarsIds.Vanilla("x"), new LiteralExpression(new IntTag(1))),
+			new SetInstruction(CardWarsIds.Vanilla("x"), new LiteralExpression(new IntTag(2)))
 		]);
 
 		Assert.Equal(InstructionOutcome.Continue, outcome);
-		Assert.True(runtime.TryGetVariable(ResourceId.Vanilla("x"), out var value));
+		Assert.True(runtime.TryGetVariable(CardWarsIds.Vanilla("x"), out var value));
 		Assert.Equal(2, Assert.IsType<IntTag>(value).Value);
 	}
 
@@ -39,7 +40,7 @@ public sealed class InstructionHandlerTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
-		var x = ResourceId.Vanilla("x");
+		var x = CardWarsIds.Vanilla("x");
 
 		runtime.DeclareVariable(x, new IntTag(0));
 
@@ -70,8 +71,8 @@ public sealed class InstructionHandlerTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
-		var flag = ResourceId.Vanilla("flag");
-		var count = ResourceId.Vanilla("count");
+		var flag = CardWarsIds.Vanilla("flag");
+		var count = CardWarsIds.Vanilla("count");
 
 		runtime.DeclareVariable(flag, new BoolTag(true));
 		runtime.DeclareVariable(count, new IntTag(0));
@@ -97,8 +98,8 @@ public sealed class InstructionHandlerTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
-		var flag = ResourceId.Vanilla("flag");
-		var steps = ResourceId.Vanilla("steps");
+		var flag = CardWarsIds.Vanilla("flag");
+		var steps = CardWarsIds.Vanilla("steps");
 
 		runtime.DeclareVariable(flag, new BoolTag(true));
 		runtime.DeclareVariable(steps, new IntTag(0));
@@ -123,8 +124,8 @@ public sealed class InstructionHandlerTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
-		var item = ResourceId.Vanilla("item");
-		var last = ResourceId.Vanilla("last");
+		var item = CardWarsIds.Vanilla("item");
+		var last = CardWarsIds.Vanilla("last");
 
 		runtime.DeclareVariable(last, new IntTag(0));
 
@@ -152,9 +153,9 @@ public sealed class InstructionHandlerTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
-		var flag = ResourceId.Vanilla("flag");
-		var last = ResourceId.Vanilla("last");
-		var item = ResourceId.Vanilla("item");
+		var flag = CardWarsIds.Vanilla("flag");
+		var last = CardWarsIds.Vanilla("last");
+		var item = CardWarsIds.Vanilla("item");
 
 		runtime.DeclareVariable(flag, new BoolTag(true));
 		runtime.DeclareVariable(last, new IntTag(0));
@@ -190,11 +191,11 @@ public sealed class InstructionHandlerTests
 		var outcome = Execute(runtime, 
 		[
 			new ReturnInstruction(new LiteralExpression(new IntTag(1))),
-			new DeclarationInstruction(ResourceId.Vanilla("x"), new LiteralExpression(new IntTag(2)))
+			new DeclarationInstruction(CardWarsIds.Vanilla("x"), new LiteralExpression(new IntTag(2)))
 		]);
 
 		Assert.Equal(InstructionOutcome.Return, outcome);
-		Assert.False(runtime.TryGetVariable(ResourceId.Vanilla("x"), out _));
+		Assert.False(runtime.TryGetVariable(CardWarsIds.Vanilla("x"), out _));
 	}
 
 	[Fact]
@@ -204,7 +205,7 @@ public sealed class InstructionHandlerTests
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
 		runtime.MaxLoopIterations = 2;
-		var flag = ResourceId.Vanilla("flag");
+		var flag = CardWarsIds.Vanilla("flag");
 		runtime.DeclareVariable(flag, new BoolTag(true));
 
 		var outcome = Execute(runtime, 
@@ -230,7 +231,7 @@ public sealed class InstructionHandlerTests
 		Execute(runtime, 
 		[
 			new RaiseInstruction(new ConstructExpression(
-				ResourceId.Vanilla("test/event"),
+				CardWarsIds.Vanilla("test/event"),
 				new Dictionary<string, IExpression> { ["value"] = new LiteralExpression(new IntTag(5)) }))
 		]);
 
@@ -295,7 +296,7 @@ public sealed class InstructionHandlerTests
 
 	private static ConstructExpression ConstructBlock(int value)
 		=> new(
-			ResourceId.Vanilla("test/block"),
+			CardWarsIds.Vanilla("test/block"),
 			new Dictionary<string, IExpression>
 			{
 				["value"] = new LiteralExpression(new IntTag(value))

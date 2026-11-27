@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using System;
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.registry;
@@ -17,7 +18,7 @@ public sealed class BattlePersistenceTests
 		var instance = new BattleInstance
 		{
 			InstanceId = Guid.NewGuid(),
-			InstanceProviderId = ResourceId.Vanilla("battles/test"),
+			InstanceProviderId = CardWarsIds.Vanilla("battles/test"),
 			Snapshot = battle.State.ToSnapshot(TestBootstrap.DataTags)
 		};
 

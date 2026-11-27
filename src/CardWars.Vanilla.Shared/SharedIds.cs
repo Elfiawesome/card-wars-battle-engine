@@ -1,47 +1,53 @@
+using CardWars.Vanilla.Shared;
 using CardWars.Core.Registry;
 
 namespace CardWars.Vanilla.Shared;
+
+public static class CardWarsIds
+{
+	public static ResourceId Vanilla(string path) => new("cardwars", path);
+}
 
 public static class SharedIds
 {
 	// Instances
 	public static class Instances
 	{
-		public static readonly ResourceId World = ResourceId.Vanilla("world");
-		public static readonly ResourceId Battle = ResourceId.Vanilla("battle");
+		public static readonly ResourceId World = CardWarsIds.Vanilla("world");
+		public static readonly ResourceId Battle = CardWarsIds.Vanilla("battle");
 	}
 
 	// UI
 	public static class UI
 	{
-		public static readonly ResourceId StandardCardDisplay = ResourceId.Vanilla("standard_card_display");
-		public static readonly ResourceId StandardCardInspectionPanel = ResourceId.Vanilla("standard_card_inspection_panel");
-		public static readonly ResourceId LineArrow = ResourceId.Vanilla("line_arrow");
-		public static readonly ResourceId TargetHighlight = ResourceId.Vanilla("target_highlight");
+		public static readonly ResourceId StandardCardDisplay = CardWarsIds.Vanilla("standard_card_display");
+		public static readonly ResourceId StandardCardInspectionPanel = CardWarsIds.Vanilla("standard_card_inspection_panel");
+		public static readonly ResourceId LineArrow = CardWarsIds.Vanilla("line_arrow");
+		public static readonly ResourceId TargetHighlight = CardWarsIds.Vanilla("target_highlight");
 	}
 
 	// Battle Entity Objects
 	public static class Entities
 	{
-		public static readonly ResourceId Battlefield = ResourceId.Vanilla("battle/entity/battlefield");
-		public static readonly ResourceId UnitSlot = ResourceId.Vanilla("battle/entity/unit_slot");
-		public static readonly ResourceId Card = ResourceId.Vanilla("battle/entity/card");
-		public static readonly ResourceId Player = ResourceId.Vanilla("battle/entity/player");
-		public static readonly ResourceId Deck = ResourceId.Vanilla("battle/entity/deck");
+		public static readonly ResourceId Battlefield = CardWarsIds.Vanilla("battle/entity/battlefield");
+		public static readonly ResourceId UnitSlot = CardWarsIds.Vanilla("battle/entity/unit_slot");
+		public static readonly ResourceId Card = CardWarsIds.Vanilla("battle/entity/card");
+		public static readonly ResourceId Player = CardWarsIds.Vanilla("battle/entity/player");
+		public static readonly ResourceId Deck = CardWarsIds.Vanilla("battle/entity/deck");
 	}
 
 	public static class PlayerData
 	{
-		public static readonly ResourceId Profile = ResourceId.Vanilla("player_data/profile");
+		public static readonly ResourceId Profile = CardWarsIds.Vanilla("player_data/profile");
 	}
 
 	public static class Animations
 	{
-		public static readonly ResourceId PlayerIntroduction = ResourceId.Vanilla("battle/animation/player_introduction_animation");
-		public static readonly ResourceId PlayCard = ResourceId.Vanilla("battle/animation/play_card_animation");
-		public static readonly ResourceId Attack = ResourceId.Vanilla("battle/animation/attack_animation");
-		public static readonly ResourceId TakeDamage = ResourceId.Vanilla("battle/animation/take_damage_animation");
-		public static readonly ResourceId Death = ResourceId.Vanilla("battle/animation/death_animation");
+		public static readonly ResourceId PlayerIntroduction = CardWarsIds.Vanilla("battle/animation/player_introduction_animation");
+		public static readonly ResourceId PlayCard = CardWarsIds.Vanilla("battle/animation/play_card_animation");
+		public static readonly ResourceId Attack = CardWarsIds.Vanilla("battle/animation/attack_animation");
+		public static readonly ResourceId TakeDamage = CardWarsIds.Vanilla("battle/animation/take_damage_animation");
+		public static readonly ResourceId Death = CardWarsIds.Vanilla("battle/animation/death_animation");
 
 		public static class Args
 		{

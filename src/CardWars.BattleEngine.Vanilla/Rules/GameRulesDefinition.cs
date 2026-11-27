@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.registry;
 using CardWars.BattleEngine.Vanilla.Entity;
@@ -10,7 +11,7 @@ namespace CardWars.BattleEngine.Vanilla.Rules;
 [DataTagType("battle/rules")]
 public sealed class GameRulesDefinition
 {
-	public static readonly ResourceId DefaultId = ResourceId.Vanilla("rules/default");
+	public static readonly ResourceId DefaultId = CardWarsIds.Vanilla("rules/default");
 
 	[DataTag] public List<int> PtSchedule { get; set; } = [];
 	[DataTag] public int PtCap { get; set; }

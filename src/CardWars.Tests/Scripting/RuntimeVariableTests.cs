@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Registry;
@@ -14,7 +15,7 @@ public sealed class RuntimeVariableTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
-		var name = ResourceId.Vanilla("local");
+		var name = CardWarsIds.Vanilla("local");
 
 		runtime.DeclareVariable(name, new IntTag(1));
 		Assert.True(runtime.TryGetVariable(name, out var value));
@@ -31,7 +32,7 @@ public sealed class RuntimeVariableTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
-		var name = ResourceId.Vanilla("constant");
+		var name = CardWarsIds.Vanilla("constant");
 
 		runtime.DeclareVariable(name, new IntTag(1), isConstant: true);
 		Assert.False(runtime.TrySetVariable(name, new IntTag(2)));
@@ -45,7 +46,7 @@ public sealed class RuntimeVariableTests
 		var registry = TestSupport.CreateRegistry();
 		var stateA = new GameState();
 		var stateB = new GameState();
-		var name = ResourceId.Vanilla("global");
+		var name = CardWarsIds.Vanilla("global");
 
 		var runtimeA = TestSupport.CreateRuntime(registry, stateA, EntityId.None);
 		runtimeA.DeclareVariable(name, new IntTag(5), isGlobal: true);
@@ -67,7 +68,7 @@ public sealed class RuntimeVariableTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
-		var name = ResourceId.Vanilla("shadowed");
+		var name = CardWarsIds.Vanilla("shadowed");
 
 		runtime.DeclareVariable(name, new IntTag(1), isGlobal: true);
 		runtime.PushScope();
@@ -88,7 +89,7 @@ public sealed class RuntimeVariableTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
-		var name = ResourceId.Vanilla("shadowed");
+		var name = CardWarsIds.Vanilla("shadowed");
 
 		runtime.DeclareVariable(name, new IntTag(1), isGlobal: true);
 		runtime.PushScope();
@@ -104,7 +105,7 @@ public sealed class RuntimeVariableTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
-		var name = ResourceId.Vanilla("constant");
+		var name = CardWarsIds.Vanilla("constant");
 
 		runtime.DeclareVariable(name, new IntTag(1), isConstant: true);
 		runtime.DeclareVariable(name, new IntTag(2), isConstant: true);
@@ -118,7 +119,7 @@ public sealed class RuntimeVariableTests
 	{
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
-		var name = ResourceId.Vanilla("global_constant");
+		var name = CardWarsIds.Vanilla("global_constant");
 
 		var first = TestSupport.CreateRuntime(registry, state, EntityId.None);
 		first.DeclareVariable(name, new IntTag(1), isConstant: true, isGlobal: true);
@@ -135,7 +136,7 @@ public sealed class RuntimeVariableTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
-		var name = ResourceId.Vanilla("global");
+		var name = CardWarsIds.Vanilla("global");
 
 		runtime.DeclareVariable(name, new IntTag(1), isConstant: true, isGlobal: true);
 		state.Clear();
@@ -151,9 +152,9 @@ public sealed class RuntimeVariableTests
 		var state = new GameState();
 		var runtime = TestSupport.CreateRuntime(registry, state, EntityId.None);
 
-		Assert.False(runtime.TryGetVariable(ResourceId.Vanilla("missing"), out var value));
+		Assert.False(runtime.TryGetVariable(CardWarsIds.Vanilla("missing"), out var value));
 		Assert.Null(value);
-		Assert.False(runtime.TrySetVariable(ResourceId.Vanilla("missing"), new IntTag(1)));
+		Assert.False(runtime.TrySetVariable(CardWarsIds.Vanilla("missing"), new IntTag(1)));
 	}
 
 	[Fact]

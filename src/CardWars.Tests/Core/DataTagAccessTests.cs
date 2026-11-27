@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
@@ -81,7 +82,7 @@ public sealed class DataTagAccessTests
 		var registry = TestSupport.CreateRegistry();
 		var state = new GameState();
 		var context = new ScriptContext(state, registry.DataDriven);
-		var name = CardWars.Core.Registry.ResourceId.Vanilla("x");
+		var name = CardWarsIds.Vanilla("x");
 		context.DeclareVariable(name, new IntTag(6));
 
 		Assert.True(TestBootstrap.DataTags.TryGetMember(context, "x", out var memberValue));

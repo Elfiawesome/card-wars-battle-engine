@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.registry;
@@ -26,10 +27,10 @@ public sealed class TransactionIntegrationTests
 		var definition = new BehaviourDefinition(
 			[
 				new EventHook(
-					ResourceId.Vanilla("test/event"),
+					CardWarsIds.Vanilla("test/event"),
 					[
 						new DeclarationInstruction(
-							ResourceId.Vanilla("event_value"),
+							CardWarsIds.Vanilla("event_value"),
 							new MemberExpression(new VariableExpression(ScriptBindings.Event), "value"),
 							IsGlobal: true)
 					])
@@ -46,7 +47,7 @@ public sealed class TransactionIntegrationTests
 
 		engine.HandleInput(EntityId.None, new TestEventInput());
 
-		Assert.True(engine.State.GlobalScope.Variables.TryGetValue(ResourceId.Vanilla("event_value"), out var value));
+		Assert.True(engine.State.GlobalScope.Variables.TryGetValue(CardWarsIds.Vanilla("event_value"), out var value));
 		Assert.Equal(9, Assert.IsType<IntTag>(value).Value);
 	}
 }

@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.registry;
@@ -10,11 +11,11 @@ namespace CardWars.BattleEngine.Vanilla.Rules;
 
 public static class WinBindings
 {
-	public static readonly ResourceId Team = ResourceId.Vanilla("win/team");
-	public static readonly ResourceId TeamAlive = ResourceId.Vanilla("win/team_alive");
-	public static readonly ResourceId AliveTeamCount = ResourceId.Vanilla("win/alive_team_count");
-	public static readonly ResourceId AlivePlayerCount = ResourceId.Vanilla("win/alive_player_count");
-	public static readonly ResourceId AliveTeams = ResourceId.Vanilla("win/alive_teams");
+	public static readonly ResourceId Team = CardWarsIds.Vanilla("win/team");
+	public static readonly ResourceId TeamAlive = CardWarsIds.Vanilla("win/team_alive");
+	public static readonly ResourceId AliveTeamCount = CardWarsIds.Vanilla("win/alive_team_count");
+	public static readonly ResourceId AlivePlayerCount = CardWarsIds.Vanilla("win/alive_player_count");
+	public static readonly ResourceId AliveTeams = CardWarsIds.Vanilla("win/alive_teams");
 }
 
 public readonly record struct WinConditionResult(IReadOnlyList<int> WinningTeams, bool IsDraw)

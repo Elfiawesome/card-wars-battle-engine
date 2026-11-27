@@ -11,6 +11,12 @@ internal sealed class DataTagTypeRegistry
 {
 	private readonly ConcurrentDictionary<string, Type> _idToType = new();
 	private readonly ConcurrentDictionary<Type, string> _typeToId = new();
+	private readonly string _defaultNamespace;
+
+	public DataTagTypeRegistry(string defaultNamespace)
+	{
+		_defaultNamespace = defaultNamespace;
+	}
 
 	public void ScanLoadedAssemblies()
 	{
@@ -35,11 +41,11 @@ internal sealed class DataTagTypeRegistry
 
 			if (attr.Id is null)
 			{
-				Register(type, ResourceId.Vanilla(NamingUtils.ToSnakeCase(type.Name)).ToString());
+				Register(type, new ResourceId(_defaultNamespace, NamingUtils.ToSnakeCase(type.Name)).ToString());
 			}
 			else
 			{
-				Register(type, attr.Id.ToString() ?? "unknown:unknown");
+				Register(type, ResourceId.Parse(attr.Id, _defaultNamespace).ToString());
 			}
 		}
 	}

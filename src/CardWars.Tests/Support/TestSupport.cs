@@ -1,3 +1,4 @@
+using CardWars.Vanilla.Shared;
 using CardWars.BattleEngine;
 using CardWars.BattleEngine.Behaviour;
 using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
@@ -32,7 +33,7 @@ internal static class TestSupport
 				new UnitSlotPos(1, 0),
 				new UnitSlotPos(0, -1)
 			],
-			IntroductionAnimation = ResourceId.Vanilla("battle/animation/player_introduction_animation")
+			IntroductionAnimation = CardWarsIds.Vanilla("battle/animation/player_introduction_animation")
 		}));
 		return registry;
 	}
