@@ -52,4 +52,4 @@ A list of patterns we use and NOT use
 - Put C# files under `scenes/` when they are Godot scripts or Godot-facing types (`Node`, `Resource`, scene lifecycle, Godot APIs).
 - Put plain C# library, model, orchestration, and domain scripts under `scripts/`.
 - Exception: a plain C# helper may stay beside the specific Godot script it is tightly coupled to.
-- Keep shared identifiers, namespaces, and application-wide literals in the shared project that owns them; inject app-scoped values from the composition root instead of duplicating literals.
+- Keep shared literals in the project that owns them; inject app-scoped values from the composition root.
