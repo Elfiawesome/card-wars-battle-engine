@@ -31,7 +31,7 @@ internal sealed class BattleTestHarness
 		var registry = TestSupport.CreateRegistry();
 		TestCards.RegisterStarterDeck(registry, configureCards);
 
-		var engine = new BattleEngine.BattleEngine { Registry = registry };
+		var engine = new BattleEngine.BattleEngine(registry);
 		var player1Id = EntityId.New();
 		var player2Id = EntityId.New();
 

@@ -17,7 +17,7 @@ public sealed class TransactionIntegrationTests
 	[Fact]
 	public void BattleEngine_InstantiatesDataDrivenBehaviourFromPointer()
 	{
-		var engine = new BattleEngine.BattleEngine();
+		var engine = new BattleEngine.BattleEngine(new CardWars.BattleEngine.BattleEngineRegistry());
 		new VanillaMod().OnLoad(engine.Registry, []);
 		engine.Registry.InputHandlers.Register(new TestEventInputHandler());
 		engine.Registry.EventHandlers.Register(new TestEventHandler());

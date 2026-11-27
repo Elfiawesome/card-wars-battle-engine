@@ -16,7 +16,7 @@ public class VanillaMod : IClientMod
 	public string ModName => "Card Wars Vanilla Client";
 	public string Version => "0.0.0";
 
-	public BattleViewRegistry BattleViewRegistry = new();
+	public BattleViewRegistry BattleViewRegistry { get; } = new();
 
 	public void OnLoad(ClientRegistry registry, IReadOnlyList<ModContentResult> modContents)
 	{

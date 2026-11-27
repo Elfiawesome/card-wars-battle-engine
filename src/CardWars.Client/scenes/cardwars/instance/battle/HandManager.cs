@@ -30,7 +30,14 @@ public partial class HandManager : Control
 	public CardDisplay? SelectedCard = null;
 	public LineArrow? LineArrow = null;
 	public HashSet<EntityId> ArrowTargets = [];
-	public BattleInstance? BattleInstance = null;
+	public BattleInstance? BattleInstance { get; private set; }
+
+	public void Setup(BattleInstance battleInstance)
+	{
+		if (BattleInstance is not null)
+			throw new InvalidOperationException("Hand manager has already been initialized.");
+		BattleInstance = battleInstance;
+	}
 
 	private Dictionary<EntityId, CardDisplay> _cards = [];
 	public IReadOnlyDictionary<EntityId, CardDisplay> Cards => _cards;

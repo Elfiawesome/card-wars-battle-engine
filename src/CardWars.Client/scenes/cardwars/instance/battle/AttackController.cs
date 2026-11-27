@@ -13,7 +13,7 @@ namespace CardWars.Client.scenes.cardwars.instance.battle;
 
 public partial class AttackController : Node
 {
-	public BattleInstance? BattleInstance;
+	public BattleInstance? BattleInstance { get; private set; }
 
 	private readonly HashSet<EntityId> _selected = [];
 	private readonly Dictionary<EntityId, LineArrow> _arrows = [];

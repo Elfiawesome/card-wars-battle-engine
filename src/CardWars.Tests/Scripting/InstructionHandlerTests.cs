@@ -223,7 +223,7 @@ public sealed class InstructionHandlerTests
 		registry.EventHandlers.Register(eventHandler);
 		registry.InputHandlers.Register(new OtherInputHandler());
 		var state = new GameState();
-		var transaction = new Transaction { Registry = registry, State = state };
+		var transaction = new Transaction(registry, state);
 		var behaviourContext = new BehaviourContext(transaction, state, EntityId.None);
 		var runtime = new ScriptRuntimeContext(behaviourContext, registry.DataDriven);
 

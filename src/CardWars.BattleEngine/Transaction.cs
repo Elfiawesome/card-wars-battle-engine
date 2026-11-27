@@ -14,16 +14,25 @@ namespace CardWars.BattleEngine;
 public class Transaction
 {
 	public const int ProcessStackLimit = 1000;
-	public required BattleEngineRegistry Registry { get; init; }
-	public required GameState State { get; init; }
 
-	public bool IsIdle => _behaviourQueue.Count == 0 && _eventQueue.Count == 0 && _activeEvent is null;
-
-	public Action<BlockBatch>? OnBlockBatchEvent;
-
+	private readonly Action<BlockBatch>? _onBlockBatchEvent;
 	private readonly Queue<IEvent> _eventQueue = [];
 	private readonly List<BehaviourExecution> _behaviourQueue = [];
 	private IEvent? _activeEvent = null;
+
+	public Transaction(
+		BattleEngineRegistry registry,
+		GameState state,
+		Action<BlockBatch>? onBlockBatchEvent = null)
+	{
+		Registry = registry;
+		State = state;
+		_onBlockBatchEvent = onBlockBatchEvent;
+	}
+
+	public BattleEngineRegistry Registry { get; }
+	public GameState State { get; }
+	public bool IsIdle => _behaviourQueue.Count == 0 && _eventQueue.Count == 0 && _activeEvent is null;
 
 	// Public APIs entries
 	public void ProcessInput(EntityId playerId, IInput input)
@@ -61,7 +70,7 @@ public class Transaction
 			Registry.BlockHandlers.Execute(State, block);
 			Log.Debug($"Executing Block [{block.GetType().Name}]: {DataTagSerializer.Serialize(DataTagMapper.ToTag(block))}");
 		}
-		OnBlockBatchEvent?.Invoke(batch);
+		_onBlockBatchEvent?.Invoke(batch);
 	}
 
 	public void QueueEvent(IEvent evnt) => _eventQueue.Enqueue(evnt);

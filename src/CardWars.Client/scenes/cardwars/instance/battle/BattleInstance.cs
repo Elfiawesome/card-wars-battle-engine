@@ -69,7 +69,7 @@ public partial class BattleInstance : ClientInstance
 	public override void _Ready()
 	{
 		if (BattleRuntime is { } runtime) ActionValidator = new(runtime.Engine);
-		if (HandManagerNode is not null) HandManagerNode.BattleInstance = this;
+		if (HandManagerNode is not null) HandManagerNode.Setup(this);
 		if (AttackControllerNode is not null) AttackControllerNode.Setup(this);
 		AnimationHandler.Completed += ReleasePendingNodes;
 	}

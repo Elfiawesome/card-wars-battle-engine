@@ -1,3 +1,4 @@
+using System;
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.State;
 using CardWars.BattleEngine.Vanilla.Features;
@@ -25,7 +26,14 @@ public class BattleInstance : ServerInstance
 		Heroes = [ResourceId.Vanilla("cards/heroes/captain")]
 	};
 
-	public BattleEngine.BattleEngine? Engine { get; set; }
+	public BattleEngine.BattleEngine? Engine { get; private set; }
+
+	public void InitializeEngine(BattleEngine.BattleEngine engine)
+	{
+		if (Engine is not null)
+			throw new InvalidOperationException("Battle instance engine has already been initialized.");
+		Engine = engine;
+	}
 
 	public override void AddPlayer(PlayerSession player)
 	{

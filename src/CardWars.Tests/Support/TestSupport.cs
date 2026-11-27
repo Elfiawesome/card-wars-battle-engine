@@ -56,7 +56,7 @@ internal static class TestSupport
 
 	public static BehaviourContext CreateBehaviourContext(BattleEngineRegistry registry, GameState state, EntityId owner)
 	{
-		var transaction = new Transaction { Registry = registry, State = state };
+		var transaction = new Transaction(registry, state);
 		return new BehaviourContext(transaction, state, owner);
 	}
 
