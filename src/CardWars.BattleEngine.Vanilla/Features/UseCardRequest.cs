@@ -22,14 +22,14 @@ public class UseCardRequestInputHandler : IInputHandler<UseCardRequestInput>
 
 		if (state.Require<GenericCard>(request.CardId) is not { } card)
 		{
-			Log.Warn($"Card play rejected: card [{request.CardId}] was not found");
+			context.Logger.Warn($"Card play rejected: card [{request.CardId}] was not found");
 			return;
 		}
 
 		var validator = new BattleActionValidator(context.Transaction.Registry);
 		if (!validator.CanPlayCard(state, context.PlayerId, card, request.TargetEntityId, out var reason))
 		{
-			Log.Warn($"Card play rejected: {reason}");
+			context.Logger.Warn($"Card play rejected: {reason}");
 			return;
 		}
 

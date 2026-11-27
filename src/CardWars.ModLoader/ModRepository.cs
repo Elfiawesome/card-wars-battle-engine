@@ -23,20 +23,23 @@ public class ModRepository
 {
 	private readonly IEnumerable<StoragePath> _modDirs;
 	private readonly DataTagContext _dataTags;
+	private readonly Logger _logger;
 	private readonly Dictionary<string, LoadedMod> _mods = [];
 	private readonly List<string> _loadOrder = [];
 	private readonly Dictionary<(string ContentRoot, string? AssetRoot), ModContentFiles> _content = [];
 
-	public ModRepository(StoragePath modDir, DataTagContext dataTags)
+	public ModRepository(StoragePath modDir, DataTagContext dataTags, Logger logger)
 	{
 		_modDirs = [modDir];
 		_dataTags = dataTags;
+		_logger = logger;
 	}
 
-	public ModRepository(IEnumerable<StoragePath> modDirs, DataTagContext dataTags)
+	public ModRepository(IEnumerable<StoragePath> modDirs, DataTagContext dataTags, Logger logger)
 	{
 		_modDirs = modDirs;
 		_dataTags = dataTags;
+		_logger = logger;
 	}
 
 	public void Setup()
@@ -56,7 +59,7 @@ public class ModRepository
 			var manifestPath = modDir.Combine("mod.json");
 			if (!manifestPath.Exists) continue;
 
-			Log.Info($"Mod found in '{modDir.FullPath}'");
+			_logger.Info($"Mod found in '{modDir.FullPath}'");
 
 			var manifest = ModManifest.Load(manifestPath, _dataTags);
 			_mods[manifest.Id] = new()
@@ -138,19 +141,19 @@ public class ModRepository
 			foreach (var dllPath in codeDir.GetFiles("*.dll"))
 			{
 				if (mod.Assemblies.Any(a => a.Location == dllPath.FullPath)) continue;
-				Log.Info($"Loading mod dll from '{dllPath}'");
+				_logger.Info($"Loading mod dll from '{dllPath}'");
 				try
 				{
 					using var stream = dllPath.OpenRead();
 					var assembly = loadContext.LoadFromStream(stream);
 					mod.Assemblies.Add(assembly);
 					mod.State = ModLoadState.AssemblyLoaded;
-					Log.Info($"Successfully loaded dll assembly for '{dllPath.FullPath}'");
+					_logger.Info($"Successfully loaded dll assembly for '{dllPath.FullPath}'");
 				}
 				catch (Exception ex)
 				{
 					mod.State = ModLoadState.Failed;
-					Log.Error($"Failed to load dll assembly for '{dllPath}': {ex.Message}");
+					_logger.Error($"Failed to load dll assembly for '{dllPath}': {ex.Message}");
 				}
 			}
 			
@@ -160,11 +163,11 @@ public class ModRepository
 	public List<TModEntry> LoadModEntry<TModEntry>()
 		where TModEntry : IModEntry
 	{
-		Log.Info($"Locating mod entry of type [{typeof(TModEntry)}]");
+		_logger.Info($"Locating mod entry of type [{typeof(TModEntry)}]");
 		List<TModEntry> modEntries = [];
 		foreach (var modId in _loadOrder)
 		{
-			Log.Info($"Scanning [{typeof(TModEntry)}] in [{modId}]...");
+			_logger.Info($"Scanning [{typeof(TModEntry)}] in [{modId}]...");
 			var mod = _mods[modId];
 
 			foreach (var assembly in mod.Assemblies)
@@ -174,7 +177,7 @@ public class ModRepository
 					.ToList()
 					.ForEach(t =>
 					{
-						Log.Info($"Found mod entry type '{typeof(TModEntry)}': '{t.FullName}'");
+						_logger.Info($"Found mod entry type '{typeof(TModEntry)}': '{t.FullName}'");
 						var modeEntry = (TModEntry?)Activator.CreateInstance(t);
 						if (modeEntry is not null)
 						{
@@ -208,7 +211,7 @@ public class ModRepository
 
 		var result = new ModContentFiles(data, assets);
 		_content[key] = result;
-		Log.Info($"Content loaded [{contentRoot}]: data {data.Count}, assets {assets.Count}");
+		_logger.Info($"Content loaded [{contentRoot}]: data {data.Count}, assets {assets.Count}");
 		return result;
 	}
 

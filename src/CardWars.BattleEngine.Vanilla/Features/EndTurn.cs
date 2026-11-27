@@ -66,7 +66,7 @@ public class TurnEndedEventHandler : IEventHandler<TurnEndedEvent>
 		var currentPlayerId = newTurnState.TurnOrder.ElementAtOrDefault(newTurnState.TurnIndex);
 		if (currentPlayerId.IsNone)
 		{
-			Log.Warn($"TurnOrder[{newTurnState.TurnIndex}] is null/empty, turn cannot advance");
+			context.Logger.Warn($"TurnOrder[{newTurnState.TurnIndex}] is null/empty, turn cannot advance");
 			return;
 		}
 

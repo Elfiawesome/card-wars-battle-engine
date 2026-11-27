@@ -1,3 +1,4 @@
+using Logger = CardWars.Core.Logging.Logger;
 using System.Collections.Generic;
 using CardWars.Client.scripts.core.registry;
 using CardWars.Client.scripts.core.storage;
@@ -8,7 +9,7 @@ using Godot;
 
 namespace CardWars.Client.scripts.core.content;
 
-public sealed class ClientContentLoader(ResourceRegistry<ResourceId> resources)
+public sealed class ClientContentLoader(ResourceRegistry<ResourceId> resources, Logger logger)
 {
 	private const string AssetsRoot = "res://assets";
 
@@ -32,11 +33,11 @@ public sealed class ClientContentLoader(ResourceRegistry<ResourceId> resources)
 		{
 			if (!ProjectSettings.LoadResourcePack(pack.FilePath.FullPath, true))
 			{
-				Log.Error($"Failed to mount client pack [{pack.Id}]");
+				logger.Error($"Failed to mount client pack [{pack.Id}]");
 				continue;
 			}
 
-			Log.Info($"Mounted client pack [{pack.Id}]");
+			logger.Info($"Mounted client pack [{pack.Id}]");
 		}
 	}
 
@@ -50,7 +51,7 @@ public sealed class ClientContentLoader(ResourceRegistry<ResourceId> resources)
 			foreach (var (resourceId, resourcePath) in new GDContentLoader(modName).LoadAssets())
 			{
 				resources.Register(resourceId, resourcePath);
-				Log.Debug($"Registered mounted asset [{resourceId}]");
+				logger.Debug($"Registered mounted asset [{resourceId}]");
 			}
 		}
 	}
@@ -64,19 +65,19 @@ public sealed class ClientContentLoader(ResourceRegistry<ResourceId> resources)
 			if (handler is null)
 			{
 				if (SourceAssetExtensions.Contains(extension)) continue;
-				Log.Warn($"No asset handler for [{content.Id}] ({extension})");
+				logger.Warn($"No asset handler for [{content.Id}] ({extension})");
 				continue;
 			}
 
 			var resource = handler.Load(content);
 			if (resource is null)
 			{
-				Log.Warn($"Failed to load asset [{content.Id}]");
+				logger.Warn($"Failed to load asset [{content.Id}]");
 				continue;
 			}
 
 			resources.Register(content.Id, resource);
-			Log.Debug($"Registered asset [{content.Id}]");
+			logger.Debug($"Registered asset [{content.Id}]");
 		}
 	}
 }

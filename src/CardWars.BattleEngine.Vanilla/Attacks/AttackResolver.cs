@@ -37,7 +37,7 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 					);
 			}
 
-			Log.Warn($"Card [{card.Id}] has no valid sp_atk definitions, falling back to ba_atk");
+			registry.Logger.Warn($"Card [{card.Id}] has no valid sp_atk definitions, falling back to ba_atk");
 		}
 
 		// Get the custom BA (if have any)

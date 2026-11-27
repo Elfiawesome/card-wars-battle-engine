@@ -59,7 +59,7 @@ public sealed class ClientRuntime
 			throw new InvalidOperationException("Client runtime has already started.");
 
 		// Load all contents
-		var contentLoader = new ClientContentLoader(Registry.Resources);
+		var contentLoader = new ClientContentLoader(Registry.Resources, Context.Logger);
 		contentLoader.MountPacks(Context.Content.ClientPacks);
 		contentLoader.RegisterMountedAssets();
 		contentLoader.LoadRawAssets(Context.Content.BattleAssets);
@@ -92,7 +92,8 @@ public sealed class ClientRuntime
 		newInstance.Initialize(new ClientInstanceContext(
 			new ClientInstanceRegistry(Registry),
 			playerId ?? Guid.Empty,
-			SendPacket));
+			SendPacket,
+			Context.Logger));
 		_root.AddChild(newInstance);
 	}
 
@@ -115,7 +116,7 @@ public sealed class ClientRuntime
 
 	private void HandleIncomingPacket(IPacket packet)
 	{
-		Log.Debug($"Client received packet from server: {packet.GetType().Name}");
+		Context.Logger.Debug($"Client received packet from server: {packet.GetType().Name}");
 		var context = new PacketContextClient(this);
 		if (Instance is { } instance && instance.OnPacket(packet, context)) return;
 		Registry.PacketHandlers.Execute(context, packet);

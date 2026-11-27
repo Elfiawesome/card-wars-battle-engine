@@ -36,7 +36,7 @@ public sealed class GameRulesDefinition
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Could not parse game rules [{ruleId}]: {ex.Message}");
+			registry.Logger.Warn($"Could not parse game rules [{ruleId}]: {ex.Message}");
 			return null;
 		}
 	}

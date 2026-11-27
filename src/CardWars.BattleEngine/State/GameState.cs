@@ -4,7 +4,6 @@ using CardWars.Core.Data;
 using CardWars.Core.Data.Access;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Tags;
-using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine.State;
@@ -43,25 +42,8 @@ public class GameState : IDataTagAccessible
 		return null;
 	}
 
-	public T? Require<T>(EntityId id,
-		[CallerFilePath] string file = "",
-		[CallerMemberName] string member = "") where T : class, IEntity
-	{
-		// Fast path — identical cost to Get<T>
-		if (_entities.TryGetValue(id, out var entity) && entity is T typed)
-			return typed;
-
-		// Slow path — only on failure, only then do we build strings
-		var source = $"{Path.GetFileNameWithoutExtension(file)}.{member}";
-		if (id == EntityId.None)
-			Log.Warn($"[{source}] Require<{typeof(T).Name}> called with EntityId.None");
-		else if (entity is null)
-			Log.Warn($"[{source}] Entity not found: {typeof(T).Name} [{id}]");
-		else
-			Log.Warn($"[{source}] Type mismatch: [{id}] is {entity.GetType().Name}, expected {typeof(T).Name}");
-
-		return null;
-	}
+	public T? Require<T>(EntityId id) where T : class, IEntity
+		=> _entities.TryGetValue(id, out var entity) && entity is T typed ? typed : null;
 
 	// --- Queries ---
 

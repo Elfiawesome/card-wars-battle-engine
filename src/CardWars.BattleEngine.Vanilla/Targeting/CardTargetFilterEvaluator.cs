@@ -82,7 +82,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven)
 
 		if (tag is not CompoundTag compound)
 		{
-			Log.Warn($"Card [{card.Id}] target_filter must be a single expression");
+			dataDriven.Logger.Warn($"Card [{card.Id}] target_filter must be a single expression");
 			return null;
 		}
 
@@ -92,7 +92,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven)
 		}
 		catch (Exception ex)
 		{
-			Log.Error($"Could not parse target_filter for card [{card.Id}]: {ex.Message}");
+			dataDriven.Logger.Error($"Could not parse target_filter for card [{card.Id}]: {ex.Message}");
 			return null;
 		}
 	}

@@ -24,15 +24,15 @@ public class VanillaMod : IServerMod
 		var profileRegistry = new PlayerProfileRegistry();
 		RegisterPackets(server.Registry, profileRegistry);
 		RegisterEvents(server, worldRegistry, profileRegistry);
-		LoadWorldDefinitions(worldRegistry, profileRegistry, modContents, server.Session.DataTags);
-		LoadPlayerProfiles(profileRegistry, modContents, server.Session.DataTags); // Get the default starter profile and register it in profileRegistry
+		LoadWorldDefinitions(worldRegistry, profileRegistry, modContents, server.Session.DataTags, server.Logger);
+		LoadPlayerProfiles(profileRegistry, modContents, server.Session.DataTags, server.Logger); // Get the default starter profile and register it in profileRegistry
 
 		// Get extension registries (this ones arent local :0)
 		var battleEngineRegistry = server.Registry.GetExtension<BattleEngineRegistry>()
 			?? throw new InvalidOperationException("Battle engine registry extension is required.");
 
 		// Register instances
-		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.World, new WorldInstanceProvider(worldRegistry, server.Session, SharedIds.Instances.World));
+		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.World, new WorldInstanceProvider(worldRegistry, server.Session, SharedIds.Instances.World, server.Logger));
 		server.Registry.ServerInstanceProviders.Register(SharedIds.Instances.Battle, new BattleInstanceProvider(server.Session, battleEngineRegistry, SharedIds.Instances.Battle));
 	}
 
@@ -88,7 +88,7 @@ public class VanillaMod : IServerMod
 
 		if (worldRegistry.DefaultWorld.IsEmpty)
 		{
-			Log.Warn("No default world configured; player was not placed into a world.");
+			server.Logger.Warn("No default world configured; player was not placed into a world.");
 			return;
 		}
 
@@ -139,7 +139,7 @@ public class VanillaMod : IServerMod
 		}
 	}
 
-	private void LoadPlayerProfiles(PlayerProfileRegistry profileRegistry, IReadOnlyList<ModContentResult> modContents, DataTagContext dataTags)
+	private void LoadPlayerProfiles(PlayerProfileRegistry profileRegistry, IReadOnlyList<ModContentResult> modContents, DataTagContext dataTags, Logger logger)
 	{
 		foreach (var content in modContents)
 		{
@@ -147,11 +147,11 @@ public class VanillaMod : IServerMod
 
 			var profile = content.ReadAsObject<PlayerProfile>(dataTags);
 			profileRegistry.Starter = profile;
-			Log.Info($"Registered starter profile: {content.Id}");
+			logger.Info($"Registered starter profile: {content.Id}");
 		}
 	}
 
-	private void LoadWorldDefinitions(WorldRegistry worldRegistry, PlayerProfileRegistry profileRegistry, IReadOnlyList<ModContentResult> modContents, DataTagContext dataTags)
+	private void LoadWorldDefinitions(WorldRegistry worldRegistry, PlayerProfileRegistry profileRegistry, IReadOnlyList<ModContentResult> modContents, DataTagContext dataTags, Logger logger)
 	{
 		foreach (var content in modContents)
 		{
@@ -160,7 +160,7 @@ public class VanillaMod : IServerMod
 				case ["worlds"]:
 					var worldDataTag = content.ReadAs<CompoundTag>(dataTags);
 					if (worldDataTag is null) continue;
-					Log.Info("Registered World: " + content.Id.ToString());
+					logger.Info("Registered World: " + content.Id.ToString());
 					worldRegistry.Templates.Register(content.Id, worldDataTag);
 					break;
 				case []:
@@ -170,13 +170,13 @@ public class VanillaMod : IServerMod
 						if (configDataTag is null) continue;
 
 						worldRegistry.DefaultWorld = ResourceId.Parse(configDataTag.GetString("default_world"));
-						Log.Info("Registered default_world as: " + worldRegistry.DefaultWorld);
+						logger.Info("Registered default_world as: " + worldRegistry.DefaultWorld);
 
 						var authority = configDataTag.GetString("profile_authority", "server");
 						profileRegistry.Authority = authority.Equals("client", StringComparison.OrdinalIgnoreCase)
 							? ProfileAuthority.Client
 							: ProfileAuthority.Server;
-						Log.Info($"Profile authority: {profileRegistry.Authority}");
+						logger.Info($"Profile authority: {profileRegistry.Authority}");
 					}
 					break;
 			}

@@ -22,7 +22,7 @@ public sealed class MultiplyExpressionHandler : IExpressionHandler<MultiplyExpre
 		if (!ExpressionValue.TryGetNumber(left, out var leftNumber) ||
 			!ExpressionValue.TryGetNumber(right, out var rightNumber))
 		{
-			Log.Error($"Cannot multiply [{left.Type}] and [{right.Type}]");
+			context.Logger.Error($"Cannot multiply [{left.Type}] and [{right.Type}]");
 			return new NullTag();
 		}
 

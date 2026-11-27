@@ -17,7 +17,7 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler(PlayerProfileRegistry 
 		{
 			persistentId = Guid.NewGuid();
 			context.Server.Session.SaveUsernameMapping(request.Username, persistentId);
-			Log.Info("Mapping does not exist, making one now");
+			context.Server.Logger.Info("Mapping does not exist, making one now");
 		}
 
 		PlayerSession playerSession;
@@ -43,11 +43,11 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler(PlayerProfileRegistry 
 			if (request.Profile is { } clientProfile)
 			{
 				profileData.Profile = clientProfile.Copy();
-				Log.Info($"Accepted client profile for [{playerSession.Username}]");
+				context.Server.Logger.Info($"Accepted client profile for [{playerSession.Username}]");
 			}
 			else
 			{
-				Log.Warn($"Client profile missing for [{playerSession.Username}], using server profile");
+				context.Server.Logger.Warn($"Client profile missing for [{playerSession.Username}], using server profile");
 			}
 		}
 
@@ -63,6 +63,6 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler(PlayerProfileRegistry 
 		context.Server.RemoveUnauthenticatedConnection(context.Connection);
 		context.Server.AddPlayer(playerSession);
 
-		Log.Info($"[{playerSession.Username}] [{playerSession.PlayerId}] has connected!");
+		context.Server.Logger.Info($"[{playerSession.Username}] [{playerSession.PlayerId}] has connected!");
 	}
 }

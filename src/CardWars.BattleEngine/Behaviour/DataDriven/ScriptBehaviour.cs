@@ -177,7 +177,7 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 		var typeId = dataDriven.DataTags.GetTypeId(type);
 		if (typeId is null)
 		{
-			Log.Warn($"Type [{type.Name}] is not registered as a data tag type");
+			dataDriven.Logger.Warn($"Type [{type.Name}] is not registered as a data tag type");
 			return null;
 		}
 

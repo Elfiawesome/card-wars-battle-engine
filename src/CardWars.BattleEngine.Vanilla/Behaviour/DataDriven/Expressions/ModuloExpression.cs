@@ -22,13 +22,13 @@ public sealed class ModuloExpressionHandler : IExpressionHandler<ModuloExpressio
 		if (!ExpressionValue.TryGetNumber(left, out var leftNumber) ||
 			!ExpressionValue.TryGetNumber(right, out var rightNumber))
 		{
-			Log.Error($"Cannot modulo [{left.Type}] by [{right.Type}]");
+			context.Logger.Error($"Cannot modulo [{left.Type}] by [{right.Type}]");
 			return new NullTag();
 		}
 
 		if (rightNumber == 0)
 		{
-			Log.Error("Cannot modulo by zero");
+			context.Logger.Error("Cannot modulo by zero");
 			return new NullTag();
 		}
 

@@ -21,7 +21,7 @@ public sealed class GreaterThanOrEqualExpressionHandler : IExpressionHandler<Gre
 		var comparison = ExpressionValue.Compare(left, right);
 		if (comparison is null)
 		{
-			Log.Error($"Cannot compare [{left.Type}] and [{right.Type}]");
+			context.Logger.Error($"Cannot compare [{left.Type}] and [{right.Type}]");
 			return new NullTag();
 		}
 

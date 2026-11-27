@@ -44,7 +44,7 @@ public sealed class GameRulesTests
 			}
 			""");
 
-		var registry = new BattleEngineRegistry(TestBootstrap.DataTags);
+		var registry = new BattleEngineRegistry(TestBootstrap.DataTags, TestBootstrap.Logger);
 		var content = new ModContentResult
 		{
 			Id = GameRulesDefinition.DefaultId,

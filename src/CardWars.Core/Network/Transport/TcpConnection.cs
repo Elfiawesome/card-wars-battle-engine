@@ -13,15 +13,17 @@ public class TcpConnection : IConnection
 	private readonly ConcurrentQueue<IPacket> _receiveQueue = new();
 	private readonly CancellationTokenSource _cts = new();
 	private readonly PacketCodec _codec;
+	private readonly Logger _logger;
 
 	public bool IsConnected => _tcpClient.Connected;
 
-	public TcpConnection(TcpClient tcpClient, PacketCodec codec)
+	public TcpConnection(TcpClient tcpClient, PacketCodec codec, Logger logger)
 	{
 		_tcpClient = tcpClient;
 		_tcpClient.NoDelay = true;
 		_stream = tcpClient.GetStream();
 		_codec = codec;
+		_logger = logger;
 		Task.Run(() => ReceiveLoop(_cts.Token));
 	}
 
@@ -46,7 +48,7 @@ public class TcpConnection : IConnection
 		}
 		catch (Exception ex)
 		{
-			Log.Error($"TcpConnection: Send failed: {ex.Message}");
+			_logger.Error($"TcpConnection: Send failed: {ex.Message}");
 			Disconnect();
 		}
 	}
@@ -89,7 +91,7 @@ public class TcpConnection : IConnection
 			catch when (token.IsCancellationRequested) { break; }
 			catch (Exception ex)
 			{
-				Log.Error($"TcpConnection: Receive failed: {ex.Message}");
+				_logger.Error($"TcpConnection: Receive failed: {ex.Message}");
 			}
 		}
 

@@ -1,70 +1,36 @@
-using CardWars.Core.Data.Serialization.Json;
-using CardWars.Core.Data.Tags;
+using System.Collections;
 
 namespace CardWars.Core.Logging;
 
-public static class Log
+public sealed class Logger(ILogSink sink, string? identity = null)
 {
-	public static Action<LogEntry>? OnLog { get; set; }
+	private readonly ILogSink _sink = sink;
 
-	public static void Info(object? msg) => Info(ToReadable(msg));
-	public static void Info(string msg) => Print(msg, "INFO", ConsoleColor.White);
+	public string? Identity { get; } = identity;
 
-	public static void Debug(object? msg) => Debug(ToReadable(msg));
-	public static void Debug(string msg) => Print(msg, "DEBUG", ConsoleColor.DarkGray);
+	public Logger ForIdentity(string identity) => new(_sink, identity);
 
-	public static void Warn(object? msg) => Warn(ToReadable(msg));
-	public static void Warn(string msg) => Print(msg, "WARN", ConsoleColor.Yellow);
+	public void Debug(object? message) => Write(LogLevel.Debug, message);
 
-	public static void Error(object? msg) => Error(ToReadable(msg));
-	public static void Error(string msg) => Print(msg, "ERROR", ConsoleColor.Red);
+	public void Info(object? message) => Write(LogLevel.Info, message);
 
-	public static void Custom(object? msg) => Custom(ToReadable(msg));
-	public static void Custom(string msg, string level = "---", ConsoleColor color = ConsoleColor.Cyan) => Print(msg, level, color);
+	public void Warn(object? message) => Write(LogLevel.Warn, message);
 
-	public static string Identity { get; set; } = "";
+	public void Error(object? message) => Write(LogLevel.Error, message);
 
-	private static void Print(string msg, string level, object? data = null, ConsoleColor color = ConsoleColor.White)
+	private void Write(LogLevel level, object? message)
+		=> _sink.Write(new LogEntry(level, Format(message), Identity));
+
+	private static string Format(object? value)
 	{
-		var entry = new LogEntry { Level = level, Message = msg, Data = data };
-		OnLog?.Invoke(entry);
-		Console.ForegroundColor = color;
-		Console.WriteLine(BuildLine(msg, level));
-		Console.ResetColor();
+		if (value is null) return "null";
+		if (value is string text) return text;
+		if (value is int or float or double or long or bool or Guid)
+			return value.ToString() ?? "";
+
+		if (value is IEnumerable enumerable)
+			return "[" + string.Join(", ", enumerable.Cast<object?>().Select(Format)) + "]";
+
+		return value.ToString() ?? "<NULL INSTANCE>";
 	}
-
-	public static string BuildLine(string msg, string level)
-	{
-		string line = "";
-		if (Identity != "") line += $"[{Identity}]";
-		line += $"[{level}]";
-		line += $": {msg}";
-		return line;
-	}
-
-	public static string ToReadable(object? obj)
-	{
-		if (obj is null) return "null";
-
-		if (obj is string s) return s;
-		if (obj is int || obj is float || obj is bool || obj is Guid)
-			return obj.ToString() ?? "";
-
-		if (obj is System.Collections.IEnumerable enumerable)
-			return "[" + string.Join(", ", enumerable.Cast<object>().Select(ToReadable)) + "]";
-
-		if (obj is ObjectRefTag objectRef) return objectRef.Value.ToString() ?? "<object>";
-
-		if (obj is DataTag tag)
-			return DataTagJson.Serialize(tag);
-
-		return obj.ToString() ?? "<NULL INSTANCE>";
-	}
-}
-
-public class LogEntry
-{
-	public string Level { get; set; } = "";
-	public string Message { get; set; } = "";
-	public object? Data { get; set; } = null;
 }

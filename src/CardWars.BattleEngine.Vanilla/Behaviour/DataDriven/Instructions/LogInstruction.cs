@@ -17,7 +17,7 @@ public sealed class LogInstructionHandler : IInstructionHandler<LogInstruction>
 	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, LogInstruction request)
 	{
 		var value = context.Evaluate(request.Value);
-		Log.Info(value is ObjectRefTag objectRef ? objectRef.Value : value);
+		context.Logger.Info(value is ObjectRefTag objectRef ? objectRef.Value : value);
 		yield return InstructionOutcome.Continue;
 	}
 }

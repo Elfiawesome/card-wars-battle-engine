@@ -42,7 +42,7 @@ public class BattleInstance : ServerInstance
 
 		if (profile is null)
 		{
-			Log.Warn($"Player [{player.PlayerId}] has no usable profile; using temporary battle setup");
+			Engine?.Registry.Logger.Warn($"Player [{player.PlayerId}] has no usable profile; using temporary battle setup");
 			setup = TemporaryBattleSetup;
 		}
 		else

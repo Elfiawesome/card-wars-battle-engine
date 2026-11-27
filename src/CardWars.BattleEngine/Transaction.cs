@@ -29,6 +29,7 @@ public class Transaction
 	}
 
 	public BattleEngineRegistry Registry { get; }
+	public Logger Logger => Registry.Logger;
 	public GameState State { get; }
 	public bool IsIdle => _behaviourQueue.Count == 0 && _eventQueue.Count == 0 && _activeEvent is null;
 
@@ -37,7 +38,7 @@ public class Transaction
 	{
 		if (State.IsGameOver)
 		{
-			Log.Warn("Input received after the game ended");
+			Logger.Warn("Input received after the game ended");
 			return;
 		}
 
@@ -53,7 +54,7 @@ public class Transaction
 			}
 			else
 			{
-				Log.Error($"Input received cannot be processed because the attached Player Id [{playerId}] is not allowed to be processed. Could be because AllowedPlayerInputs does not contain it.");
+				Logger.Error($"Input received cannot be processed because the attached Player Id [{playerId}] is not allowed to be processed. Could be because AllowedPlayerInputs does not contain it.");
 			}
 		}
 
@@ -66,7 +67,7 @@ public class Transaction
 		foreach (var block in batch.Blocks ?? [])
 		{
 			Registry.BlockHandlers.Execute(State, block);
-			Log.Debug($"Executing Block [{block.GetType().Name}]: {Registry.DataTags.Serialize(Registry.DataTags.ToTag(block))}");
+			Logger.Debug($"Executing Block [{block.GetType().Name}]: {Registry.DataTags.Serialize(Registry.DataTags.ToTag(block))}");
 		}
 		_onBlockBatchEvent?.Invoke(batch);
 	}
@@ -126,7 +127,7 @@ public class Transaction
 		// Cleanup if infinite loop
 		if (count > ProcessStackLimit)
 		{
-			Log.Error($"Game process stack exceeded stack limit of {ProcessStackLimit}");
+			Logger.Error($"Game process stack exceeded stack limit of {ProcessStackLimit}");
 			_eventQueue.Clear();
 			_behaviourQueue.Clear();
 			_activeEvent = null;
@@ -151,7 +152,7 @@ public class Transaction
 			var entity = State.Get(entityId);
 			if (entity is null)
 			{
-				Log.Warn($"Behaviour pointer references missing entity [{entityId}], skipping");
+				Logger.Warn($"Behaviour pointer references missing entity [{entityId}], skipping");
 				continue;
 			}
 			var behaviourContext = new BehaviourContext(this, State, entityId);
@@ -203,7 +204,7 @@ public class Transaction
 			}
 			catch (Exception ex)
 			{
-				Log.Error($"Could not create data-driven behaviour: {ex.Message}");
+				Logger.Error($"Could not create data-driven behaviour: {ex.Message}");
 			}
 		}
 

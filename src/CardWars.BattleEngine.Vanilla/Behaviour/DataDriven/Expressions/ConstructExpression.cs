@@ -20,7 +20,7 @@ public sealed class ConstructExpressionHandler : IExpressionHandler<ConstructExp
 		var type = context.DataTags.GetType(request.Type.ToString());
 		if (type is null)
 		{
-			Log.Error($"Could not construct unknown type [{request.Type}]");
+			context.Logger.Error($"Could not construct unknown type [{request.Type}]");
 			return new NullTag();
 		}
 
@@ -37,7 +37,7 @@ public sealed class ConstructExpressionHandler : IExpressionHandler<ConstructExp
 		}
 		catch (Exception ex)
 		{
-			Log.Error($"Could not construct [{request.Type}]: {ex.Message}");
+			context.Logger.Error($"Could not construct [{request.Type}]: {ex.Message}");
 			return new NullTag();
 		}
 	}

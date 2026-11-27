@@ -22,13 +22,13 @@ public sealed class DivideExpressionHandler : IExpressionHandler<DivideExpressio
 		if (!ExpressionValue.TryGetNumber(left, out var leftNumber) ||
 			!ExpressionValue.TryGetNumber(right, out var rightNumber))
 		{
-			Log.Error($"Cannot divide [{left.Type}] by [{right.Type}]");
+			context.Logger.Error($"Cannot divide [{left.Type}] by [{right.Type}]");
 			return new NullTag();
 		}
 
 		if (rightNumber == 0)
 		{
-			Log.Error("Cannot divide by zero");
+			context.Logger.Error("Cannot divide by zero");
 			return new NullTag();
 		}
 

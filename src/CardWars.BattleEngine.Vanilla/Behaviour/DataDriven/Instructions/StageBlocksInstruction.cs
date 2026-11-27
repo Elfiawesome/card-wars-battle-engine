@@ -22,7 +22,7 @@ public sealed class StageBlocksInstructionHandler : IInstructionHandler<StageBlo
 		var blocks = ResolveBlocks(context, value);
 		if (blocks.Count == 0)
 		{
-			Log.Error($"stage_blocks expected blocks but received [{value.Type}]");
+			context.Logger.Error($"stage_blocks expected blocks but received [{value.Type}]");
 			yield return InstructionOutcome.Continue;
 			yield break;
 		}

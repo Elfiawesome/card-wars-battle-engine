@@ -20,7 +20,7 @@ public sealed class StageBlockInstructionHandler : IInstructionHandler<StageBloc
 		var block = context.ResolveObject<IBlock>(value);
 		if (block is null)
 		{
-			Log.Error($"stage_block expected a block but received [{value.Type}]");
+			context.Logger.Error($"stage_block expected a block but received [{value.Type}]");
 			yield return InstructionOutcome.Continue;
 			yield break;
 		}

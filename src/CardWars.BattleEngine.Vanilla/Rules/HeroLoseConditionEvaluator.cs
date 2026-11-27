@@ -21,7 +21,7 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry)
 			var condition = registry.EntityConditions.Create(resourceId);
 			if (condition is null)
 			{
-				Log.Warn($"Unknown hero lose condition [{resourceId}] for hero [{hero.Id}]");
+				registry.Logger.Warn($"Unknown hero lose condition [{resourceId}] for hero [{hero.Id}]");
 				return UseDefault(state, hero);
 			}
 
@@ -38,7 +38,7 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry)
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Could not parse lose_condition for hero [{hero.Id}]: {ex.Message}");
+			registry.Logger.Warn($"Could not parse lose_condition for hero [{hero.Id}]: {ex.Message}");
 			return UseDefault(state, hero);
 		}
 
@@ -76,7 +76,7 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry)
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Could not parse lose_condition for hero [{hero.Id}]: {ex.Message}");
+			registry.Logger.Warn($"Could not parse lose_condition for hero [{hero.Id}]: {ex.Message}");
 			return new ContentPointer(Resource: HeroHrtLoseCondition.Id);
 		}
 	}

@@ -37,13 +37,13 @@ public class AttackRequestInputHandler : IInputHandler<AttackRequestInput>
 
 			if (!validator.TryResolveAttack(state, context.PlayerId, attackerCard, out var attack, out var reason))
 			{
-				Log.Warn($"Attack rejected: {reason}");
+				context.Logger.Warn($"Attack rejected: {reason}");
 				continue;
 			}
 
 			if (!validator.CanTargetUnit(state, attackerCard, attack, targetSlot.Id, out reason))
 			{
-				Log.Warn($"Attack rejected: {reason}");
+				context.Logger.Warn($"Attack rejected: {reason}");
 				continue;
 			}
 
@@ -117,20 +117,20 @@ public class UnitAttackEventHandler : IEventHandler<UnitAttackEvent>
 		if (state.Require<UnitSlot>(attackerOwnerUnitSlotId) is not { } attackerUnitSlot) return;
 		if (state.Require<GenericCard>(request.TargetId) is not { } targetCard) return;
 		if (state.GetParent<Battlefield>(request.TargetId) is not { } battlefield) return;
-		if (targetCard.OwnerUnitSlotId is not { } targetSlotId) { Log.Error("Target Card is not on any OwnerUnitSlotId"); return; }
+		if (targetCard.OwnerUnitSlotId is not { } targetSlotId) { context.Logger.Error("Target Card is not on any OwnerUnitSlotId"); return; }
 
 		if (state.GetParent<Player>(attackerCard)?.Id is not { } ownerId) return;
 
 		var validator = new BattleActionValidator(context.Registry);
 		if (!validator.TryResolveAttack(state, ownerId, attackerCard, out var attack, out var reason))
 		{
-			Log.Warn($"Attack rejected: {reason}");
+			context.Logger.Warn($"Attack rejected: {reason}");
 			return;
 		}
 
 		if (!validator.CanTargetUnit(state, attackerCard, attack, targetSlotId, out reason))
 		{
-			Log.Warn($"Attack rejected: {reason}");
+			context.Logger.Warn($"Attack rejected: {reason}");
 			return;
 		}
 

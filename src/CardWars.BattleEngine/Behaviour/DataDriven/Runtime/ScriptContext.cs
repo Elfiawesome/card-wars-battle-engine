@@ -15,6 +15,7 @@ public class ScriptContext : IDataTagAccessible
 	public GameState State { get; }
 	public DataDrivenRegistry DataDriven { get; }
 	public DataTagContext DataTags => DataDriven.DataTags;
+	public Logger Logger => DataDriven.Logger;
 	public ScriptScope GlobalScope { get; }
 	public ScriptScope CurrentScope => _scopes[^1];
 	public IReadOnlyDictionary<ResourceId, DataTag> Variables => CurrentScope.Variables;
@@ -53,7 +54,7 @@ public class ScriptContext : IDataTagAccessible
 	{
 		if (scope.Constants.Contains(name))
 		{
-			Log.Warn($"Cannot redeclare constant variable [{name}]");
+			Logger.Warn($"Cannot redeclare constant variable [{name}]");
 			return;
 		}
 
@@ -82,7 +83,7 @@ public class ScriptContext : IDataTagAccessible
 			if (!scope.Variables.ContainsKey(name)) continue;
 			if (scope.Constants.Contains(name))
 			{
-				Log.Warn($"Cannot assign to constant variable [{name}]");
+				Logger.Warn($"Cannot assign to constant variable [{name}]");
 				return false;
 			}
 
@@ -94,7 +95,7 @@ public class ScriptContext : IDataTagAccessible
 		{
 			if (GlobalScope.Constants.Contains(name))
 			{
-				Log.Warn($"Cannot assign to constant variable [{name}]");
+				Logger.Warn($"Cannot assign to constant variable [{name}]");
 				return false;
 			}
 
@@ -102,7 +103,7 @@ public class ScriptContext : IDataTagAccessible
 			return true;
 		}
 
-		Log.Warn($"Unknown variable [{name}]");
+		Logger.Warn($"Unknown variable [{name}]");
 		return false;
 	}
 
@@ -147,7 +148,7 @@ public class ScriptContext : IDataTagAccessible
 				}
 				catch (Exception ex)
 				{
-					Log.Error($"Could not resolve [{typeof(T).Name}] from data tag: {ex.Message}");
+					Logger.Error($"Could not resolve [{typeof(T).Name}] from data tag: {ex.Message}");
 					return null;
 				}
 			default:

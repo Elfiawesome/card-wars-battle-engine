@@ -19,7 +19,7 @@ public class InstantiateCardBlockHandler : IBlockHandler<InstantiateCardBlock>
 	{
 		if (context.Get(request.Id) is not null)
 		{
-			Log.Warn($"Entity [{request.Id}] already exists, skipping InstantiateCardBlock"); return;
+			return;
 		}
 
 		var card = new GenericCard(request.Id);

@@ -1,5 +1,5 @@
 using CardWars.Client.scripts.core.application;
-using CardWars.Core.Logging;
+using CardWars.Client.scripts.core.global;
 using CardWars.Core.Storage;
 using Godot;
 
@@ -8,6 +8,7 @@ namespace CardWars.Client.scenes.core.game_session;
 public partial class GameSession : Node
 {
 	public SessionRuntime? Session { get; private set; }
+	private GodotLogSink? _logSink;
 
 	public string ConnectingUsername = "";
 	public string TargetIpAddress = "127.0.0.1";
@@ -21,14 +22,18 @@ public partial class GameSession : Node
 		TargetIpAddress = args.Length > 3 ? args[3] : TargetIpAddress;
 		TargetPort = args.Length > 4 ? args[4].ToInt() : TargetPort;
 		GetWindow().Title = ConnectingUsername;
-		Log.Identity = ConnectingUsername;
 
 		// Setup storage & providers
 		var provider = new LocalFileProvider();
 		var clientDir = System.Environment.CurrentDirectory;
 		var projectRoot = provider.GetFullPath(provider.Combine(provider.Combine(clientDir, ".."), ".."));
 		var gamedataPath = provider.Combine(projectRoot, "gamedata");
-		var app = new GameApplication(provider, gamedataPath);
+		
+		// Setup Logger Node (NOT ILogSink, tahts in app btw...)
+		_logSink = new GodotLogSink();
+		AddChild(_logSink);
+		
+		var app = new GameApplication(provider, gamedataPath, _logSink);
 
 		var mode = ConnectingUsername == "Elfiawesome"
 			? SessionMode.Integrated
@@ -64,6 +69,7 @@ public partial class GameSession : Node
 	{
 		GD.Print("Cleaning up");
 		Session?.Stop();
+		_logSink?.Flush();
 		GetTree().Quit();
 	}
 }

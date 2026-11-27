@@ -18,7 +18,7 @@ public sealed class VariableExpressionHandler : IExpressionHandler<VariableExpre
 	{
 		if (context.TryGetVariable(request.Name, out var variable)) return variable ?? new NullTag();
 
-		Log.Warn($"Unknown variable [{request.Name}]");
+		context.Logger.Warn($"Unknown variable [{request.Name}]");
 		return new NullTag();
 	}
 }

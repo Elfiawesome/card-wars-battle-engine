@@ -25,7 +25,7 @@ public sealed class ServerRuntime
 		_mods = mods;
 		_listeners = listeners;
 
-		Server = new ServerCore(storage);
+		Server = new ServerCore(storage, context.Logger);
 		Server.Registry.RegisterExtension(context.BattleRegistry);
 	}
 

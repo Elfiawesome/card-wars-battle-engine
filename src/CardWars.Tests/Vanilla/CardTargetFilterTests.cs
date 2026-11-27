@@ -121,7 +121,7 @@ public sealed class CardTargetFilterTests
 		var provider = new MemoryFileProvider();
 		provider.AddFile("cards/units/test_unit.json", """{"name":"Test Unit","hp":4,"atk":2}""");
 
-		var registry = new BattleEngineRegistry(TestBootstrap.DataTags);
+		var registry = new BattleEngineRegistry(TestBootstrap.DataTags, TestBootstrap.Logger);
 		registry.GetOrCreateExtension<CardWarsDefinitions>().DefaultUnitTargetFilter = TestTargetFilters.CreateUnitTargetFilter();
 		var content = new ModContentResult
 		{

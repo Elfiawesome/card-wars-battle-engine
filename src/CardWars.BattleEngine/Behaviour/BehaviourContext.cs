@@ -1,6 +1,7 @@
 using CardWars.BattleEngine.Block;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine.Behaviour;
 
@@ -12,6 +13,7 @@ public class BehaviourContext
 	public GameState State { get; }
 	public EntityId OwnerEntityId { get; init; }
 	public BattleEngineRegistry Registry => _transaction.Registry;
+	public Logger Logger => _transaction.Logger;
 
 	internal BehaviourContext(Transaction transaction, GameState state, EntityId owner)
 	{

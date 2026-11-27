@@ -14,7 +14,7 @@ public class C2S_DEBUG_WarpRequestPacketHandler : IPacketHandlerServer<C2S_DEBUG
 
 		if (!world.GetWarpOptions().Contains(request.TargetWorld))
 		{
-			Log.Warn($"Player tried to warp to invalid world '{request.TargetWorld}' from '{world.WorldId}'.");
+			context.Server.Logger.Warn($"Player tried to warp to invalid world '{request.TargetWorld}' from '{world.WorldId}'.");
 			return;
 		}
 

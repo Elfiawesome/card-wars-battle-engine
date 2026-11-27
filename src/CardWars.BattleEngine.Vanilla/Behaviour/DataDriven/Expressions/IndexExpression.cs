@@ -23,14 +23,14 @@ public sealed class IndexExpressionHandler : IExpressionHandler<IndexExpression>
 
 		if (targetObject is NullTag)
 		{
-			Log.Warn("Cannot index a null value");
+			context.Logger.Warn("Cannot index a null value");
 			return new NullTag();
 		}
 
 		if (context.DataTags.TryGetIndex(targetObject, index, out var value))
 			return value ?? new NullTag();
 
-		Log.Warn($"Index [{index.Type}] was not found on [{targetObject.GetType().Name}]");
+		context.Logger.Warn($"Index [{index.Type}] was not found on [{targetObject.GetType().Name}]");
 		return new NullTag();
 	}
 }

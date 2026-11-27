@@ -28,13 +28,13 @@ public class PlayerJoinedEventHandler : IEventHandler<PlayerJoinedEvent>
 		// Get rules to set the default points
 		var ruleId = context.State.RuleId.IsEmpty ? GameRulesDefinition.DefaultId : context.State.RuleId;
 		var rules = GameRulesDefinition.Get(context.Registry, ruleId);
-		if (rules is null) { Log.Error($"Missing game rules [{ruleId}]"); return; }
-		if (rules.PtSchedule.Count == 0 || rules.PtCap <= 0) { Log.Error($"Game rules [{ruleId}] are missing a valid Pt schedule or cap"); return; }
+		if (rules is null) { context.Logger.Error($"Missing game rules [{ruleId}]"); return; }
+		if (rules.PtSchedule.Count == 0 || rules.PtCap <= 0) { context.Logger.Error($"Game rules [{ruleId}] are missing a valid Pt schedule or cap"); return; }
 
 		// get Definitiosn for loading cards into players
 		var definitions = context.Registry.GetExtension<CardWarsDefinitions>();
-		if (definitions is null) { Log.Error("Card Wars definitions are not registered"); return; }
-		if (request.Setup is not { } setup) { Log.Error($"Missing battle setup for player [{request.PlayerId}]"); return; }
+		if (definitions is null) { context.Logger.Error("Card Wars definitions are not registered"); return; }
+		if (request.Setup is not { } setup) { context.Logger.Error($"Missing battle setup for player [{request.PlayerId}]"); return; }
 
 		var batch = new BlockBatch([]);
 		if (context.State.RuleId.IsEmpty)

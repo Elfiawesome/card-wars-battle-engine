@@ -18,10 +18,6 @@ config/name="Card Wars"
 run/main_scene="uid://ck85drgp1us8a"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 
-[autoload]
-
-LoggerHook="res://scripts/core/global/LoggerHook.cs"
-
 [debug]
 
 gdscript/warnings/untyped_declaration=2

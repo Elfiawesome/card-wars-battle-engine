@@ -1,6 +1,8 @@
+using Logger = CardWars.Core.Logging.Logger;
 using System;
 using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.packet;
+using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using Godot;
 
@@ -16,6 +18,7 @@ public partial class ClientInstance : Node
 	public ClientInstanceRegistry Registry => Context.Registry;
 
 	public Guid MyPlayerId => Context.PlayerId;
+	public Logger Logger => Context.Logger;
 
 	public void Initialize(ClientInstanceContext context)
 	{
@@ -32,7 +35,8 @@ public partial class ClientInstance : Node
 public readonly record struct ClientInstanceContext(
 	ClientInstanceRegistry Registry,
 	Guid PlayerId,
-	Action<IPacket> SendPacket
+	Action<IPacket> SendPacket,
+	Logger Logger
 );
 
 public record struct ClientInstanceRegistry(

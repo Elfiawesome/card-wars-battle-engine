@@ -1,7 +1,9 @@
+using Logger = CardWars.Core.Logging.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using CardWars.Core.Data;
+using CardWars.Core.Logging;
 using CardWars.Core.Storage;
 using CardWars.ModLoader;
 using Godot;
@@ -13,16 +15,18 @@ public sealed class GameApplication
 	public IFileProvider Provider { get; }
 	public string GamedataPath { get; }
 	public DataTagContext DataTags { get; }
+	public Logger Logger { get; }
 	public StorageManager Storage { get; }
 	public ModRepository Mods { get; }
 
-	public GameApplication(IFileProvider provider, string gamedataPath)
+	public GameApplication(IFileProvider provider, string gamedataPath, ILogSink logSink)
 	{
 		Provider = provider;
 		GamedataPath = provider.GetFullPath(gamedataPath);
+		Logger = new Logger(logSink);
 		DataTags = new DataTagContext();
-		Storage = new StorageManager(GamedataPath, provider, DataTags);
-		Mods = new ModRepository(Storage.AllModDirectories, DataTags);
+		Storage = new StorageManager(GamedataPath, provider, DataTags, Logger);
+		Mods = new ModRepository(Storage.AllModDirectories, DataTags, Logger);
 		Mods.Setup();
 	}
 

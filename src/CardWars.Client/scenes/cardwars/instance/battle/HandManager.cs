@@ -272,7 +272,7 @@ public partial class HandManager : Control
 
 					if (!validator.CanPlayCard(instance.State, instance.MyPlayerId, card, targetId, out var reason))
 					{
-						Log.Debug($"Card play rejected: {reason}");
+						BattleInstance?.Logger.Debug($"Card play rejected: {reason}");
 						ResetArrows();
 						return;
 					}

@@ -17,7 +17,7 @@ internal static class TestSupport
 {
 	public static BattleEngineRegistry CreateRegistry()
 	{
-		var registry = new BattleEngineRegistry(TestBootstrap.DataTags);
+		var registry = new BattleEngineRegistry(TestBootstrap.DataTags, TestBootstrap.Logger);
 		new VanillaMod().OnLoad(registry, []);
 		var definitions = Definitions(registry);
 		definitions.DefaultUnitTargetFilter = TestTargetFilters.CreateUnitTargetFilter();

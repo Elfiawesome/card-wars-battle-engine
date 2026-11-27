@@ -4,19 +4,22 @@ using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data;
+using CardWars.Core.Logging;
 using CardWars.Core.Registry;
 
 namespace CardWars.BattleEngine;
 
 public class BattleEngineRegistry : ExtensibleRegistry
 {
-	public BattleEngineRegistry(DataTagContext dataTags)
+	public BattleEngineRegistry(DataTagContext dataTags, Logger logger)
 	{
 		DataTags = dataTags;
-		DataDriven = new DataDrivenRegistry(dataTags);
+		Logger = logger;
+		DataDriven = new DataDrivenRegistry(dataTags, logger);
 	}
 
 	public DataTagContext DataTags { get; }
+	public Logger Logger { get; }
 	public HandlerRegistry<InputContext> InputHandlers { get; } = new();
 	public HandlerRegistry<GameState> BlockHandlers { get; } = new();
 	public HandlerRegistry<Transaction> EventHandlers { get; } = new();

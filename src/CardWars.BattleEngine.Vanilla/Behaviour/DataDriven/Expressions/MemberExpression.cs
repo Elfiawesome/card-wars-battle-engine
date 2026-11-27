@@ -22,14 +22,14 @@ public sealed class MemberExpressionHandler : IExpressionHandler<MemberExpressio
 
 		if (targetObject is NullTag)
 		{
-			Log.Warn($"Cannot read member [{request.Member}] from null");
+			context.Logger.Warn($"Cannot read member [{request.Member}] from null");
 			return new NullTag();
 		}
 
 		if (context.DataTags.TryGetMember(targetObject, request.Member, out var value))
 			return value ?? new NullTag();
 
-		Log.Warn($"Member [{request.Member}] was not found on [{targetObject.GetType().Name}]");
+		context.Logger.Warn($"Member [{request.Member}] was not found on [{targetObject.GetType().Name}]");
 		return new NullTag();
 	}
 }

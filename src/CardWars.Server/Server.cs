@@ -20,6 +20,7 @@ public class Server
 	public IReadOnlyDictionary<Guid, PlayerSession> PlayerSessions => _playerSessions;
 
 	public SessionStorage Session { get; }
+	public Logger Logger { get; }
 
 	public Action<IConnection>? OnUnauthenticatedConnectionReceived { get; set; }
 	public Action<IConnection>? OnUnauthenticatedConnectionRemoved { get; set; }
@@ -43,9 +44,10 @@ public class Server
 	// private double _intervalSaveAccumulator = 0;
 	private CancellationTokenSource? _cts;
 
-	public Server(SessionStorage session)
+	public Server(SessionStorage session, Logger logger)
 	{
 		Session = session;
+		Logger = logger;
 	}
 
 	public void Start(params IListener[] listeners)
@@ -59,7 +61,7 @@ public class Server
 
 		_cts = new CancellationTokenSource();
 		Task.Run(() => ServerLoop(_cts.Token));
-		Log.Info("Server started successfully.");
+		Logger.Info("Server started successfully.");
 	}
 
 	public void Stop()
@@ -87,12 +89,12 @@ public class Server
 				conn.Disconnect();
 			_unauthenticatedConnections.Clear();
 		}
-		Log.Info("Server stopped.");
+		Logger.Info("Server stopped.");
 	}
 
 	private void OnConnectionReceived(IConnection connection)
 	{
-		Log.Debug($"Server: A new unauthenticated connection was received.");
+		Logger.Debug($"Server: A new unauthenticated connection was received.");
 		AddUnauthenticatedConnection(connection);
 	}
 
@@ -269,14 +271,14 @@ public class Server
 		{
 			_unauthenticatedConnections.Remove(conn);
 			conn.Disconnect();
-			Log.Debug($"Server: An unauthenticated connection timed out and was closed.");
+			Logger.Debug($"Server: An unauthenticated connection timed out and was closed.");
 		}
 
 		var deadUnauthenticated = _unauthenticatedConnections.Where(kv => !kv.Key.IsConnected).ToList();
 		foreach (var (conn, _) in deadUnauthenticated)
 		{
 			_unauthenticatedConnections.Remove(conn);
-			Log.Debug($"Server: An unauthenticated connection disconnected.");
+			Logger.Debug($"Server: An unauthenticated connection disconnected.");
 		}
 
 		var disconnected = _playerSessions
@@ -285,7 +287,7 @@ public class Server
 		foreach (var (id, session) in disconnected)
 		{
 			RemovePlayer(session);
-			Log.Debug($"Server: Player [{id}] disconnected.");
+			Logger.Debug($"Server: Player [{id}] disconnected.");
 		}
 	}
 

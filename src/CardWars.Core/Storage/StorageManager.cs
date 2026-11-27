@@ -10,14 +10,16 @@ public class StorageManager
 	public StoragePath SavesDir { get; }
 	public StoragePath SettingsFile { get; }
 	public DataTagContext DataTags { get; }
+	public Logger Logger { get; }
 
 	public SessionStorage? CurrentSession { get; private set; }
 
 	internal IFileProvider Provider { get; }
 
-	public StorageManager(string dataRoot, IFileProvider provider, DataTagContext dataTags)
+	public StorageManager(string dataRoot, IFileProvider provider, DataTagContext dataTags, Logger logger)
 	{
 		DataTags = dataTags;
+		Logger = logger;
 		DataRoot = provider.GetFullPath(dataRoot);
 		Provider = provider;
 
@@ -45,7 +47,7 @@ public class StorageManager
 
 		CurrentSession = new SessionStorage(this, sessionName, sessionRoot, DataTags);
 		CurrentSession.EnsureDirectories();
-		Log.Info($"Storage: Opened session '{sessionName}' at '{sessionRoot.FullPath}'");
+		Logger.Info($"Storage: Opened session '{sessionName}' at '{sessionRoot.FullPath}'");
 		return CurrentSession;
 	}
 
@@ -53,7 +55,7 @@ public class StorageManager
 	{
 		if (CurrentSession is not null)
 		{
-			Log.Info($"Storage: Closed session '{CurrentSession.SessionName}'");
+			Logger.Info($"Storage: Closed session '{CurrentSession.SessionName}'");
 			CurrentSession = null;
 		}
 	}

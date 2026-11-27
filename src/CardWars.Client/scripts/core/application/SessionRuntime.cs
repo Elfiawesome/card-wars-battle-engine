@@ -1,3 +1,4 @@
+using Logger = CardWars.Core.Logging.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,7 @@ public sealed class SessionRuntime
 	private GameContent? _content;
 	private BattleEngineRegistry? _battleRegistry;
 	private LocalListener? _localListener;
+	private Logger? _logger;
 
 	public SessionRuntime(
 		GameApplication app,
@@ -65,23 +67,26 @@ public sealed class SessionRuntime
 		if (_context is not null)
 			throw new InvalidOperationException("Session has already started.");
 
+		// Get logger :/
+		_logger = _app.Logger.ForIdentity(_username);
+
 		// Get all content (battle/server/client)
 		_content = GameContent.Load(_app.Mods);
 
 		// Load up battle mods and common battle registry
-		_battleRegistry = new BattleEngineRegistry(_app.DataTags);
+		_battleRegistry = new BattleEngineRegistry(_app.DataTags, _logger);
 		foreach (var mod in _app.Mods.LoadModEntry<IBattleEngineMod>())
 			mod.OnLoad(_battleRegistry, _content.BattleData);
 
 		// Server storage
 		if (HasServer)
 			_storage = _app.Storage.OpenSession(DefaultSessionName);
-		_context = new SessionContext(_app.DataTags, _storage, _content, _battleRegistry);
+		_context = new SessionContext(_app.DataTags, _logger, _storage, _content, _battleRegistry);
 
 		if (HasServer) StartServer();
 		if (HasClient) StartClient(); // start client after server is up (TODO: although we should really do a timer request and not immediately quit...)
 
-		Log.Info($"Session started in {Mode} mode with username: {_username}");
+		_logger.Info($"Session started in {Mode} mode with username: {_username}");
 	}
 
 	private void StartClient()
@@ -95,7 +100,8 @@ public sealed class SessionRuntime
 		else
 			connection = new TcpConnection(
 				new TcpClient(_targetIpAddress, _targetPort),
-				new PacketCodec(Context.DataTags));
+				new PacketCodec(Context.DataTags),
+				Context.Logger);
 
 		// Prep client mdos
 		var clientMods = _app.CreateModEntries<IClientMod>()
@@ -106,7 +112,7 @@ public sealed class SessionRuntime
 		var profileRoot = new StoragePath(
 			_app.Provider.Combine(_app.GamedataPath, ".userdata"),
 			_app.Provider);
-		var profiles = new ClientProfileStore(profileRoot, Context.DataTags);
+		var profiles = new ClientProfileStore(profileRoot, Context.DataTags, Context.Logger);
 
 		Client = new ClientRuntime(
 			_root,
@@ -136,7 +142,7 @@ public sealed class SessionRuntime
 			listeners.Add(_localListener);
 		}
 
-		listeners.Add(new TcpGameListener(codec, _targetPort));
+		listeners.Add(new TcpGameListener(codec, _targetPort, Context.Logger));
 
 		// Prep server mods
 		var serverMods = _app.Mods.LoadModEntry<IServerMod>().ToList();

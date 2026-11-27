@@ -12,11 +12,13 @@ public sealed class ClientProfileStore
 {
 	private readonly StoragePath _root;
 	private readonly DataTagContext _dataTags;
+	private readonly Logger _logger;
 
-	public ClientProfileStore(StoragePath root, DataTagContext dataTags)
+	public ClientProfileStore(StoragePath root, DataTagContext dataTags, Logger logger)
 	{
 		_root = root;
 		_dataTags = dataTags;
+		_logger = logger;
 		if (!_root.Exists) _root.CreateDirectory();
 	}
 
@@ -31,7 +33,7 @@ public sealed class ClientProfileStore
 			var tag = _dataTags.Deserialize<CompoundTag>(path.ReadAllText());
 			if (tag is null)
 			{
-				Log.Warn($"Client profile [{username}] could not be read");
+				_logger.Warn($"Client profile [{username}] could not be read");
 				return null;
 			}
 
@@ -39,7 +41,7 @@ public sealed class ClientProfileStore
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Client profile [{username}] could not be loaded: {ex.Message}");
+			_logger.Warn($"Client profile [{username}] could not be loaded: {ex.Message}");
 			return null;
 		}
 	}
@@ -53,7 +55,7 @@ public sealed class ClientProfileStore
 		}
 		catch (Exception ex)
 		{
-			Log.Error($"Client profile [{username}] could not be saved: {ex.Message}");
+			_logger.Error($"Client profile [{username}] could not be saved: {ex.Message}");
 		}
 	}
 

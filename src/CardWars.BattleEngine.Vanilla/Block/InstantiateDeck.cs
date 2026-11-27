@@ -17,7 +17,7 @@ public class InstantiateDeckBlockHandler : IBlockHandler<InstantiateDeckBlock>
 	{
 		if (context.Get(request.Id) is not null)
 		{
-			Log.Warn($"Entity [{request.Id}] already exists, skipping InstantiateDeckBlock"); return;
+			return;
 		}
 		context.Add(new Deck(request.Id));
 	}

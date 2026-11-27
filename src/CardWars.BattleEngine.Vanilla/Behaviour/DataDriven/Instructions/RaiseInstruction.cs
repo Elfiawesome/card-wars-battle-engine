@@ -20,7 +20,7 @@ public sealed class RaiseInstructionHandler : IInstructionHandler<RaiseInstructi
 		var evnt = context.ResolveObject<IEvent>(value);
 		if (evnt is null)
 		{
-			Log.Error($"raise expected an event but received [{value.Type}]");
+			context.Logger.Error($"raise expected an event but received [{value.Type}]");
 			yield return InstructionOutcome.Continue;
 			yield break;
 		}
