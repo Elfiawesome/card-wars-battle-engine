@@ -1,3 +1,4 @@
+using CardWars.Tests.Support;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Serialization.Json;
@@ -70,10 +71,10 @@ public sealed class TurnStateTests
 		var player = EntityId.New();
 		var source = new TurnState([player], [player], 1, 3, TurnPhase.Attacking, 4);
 
-		var tag = DataTagMapper.ToTag(source);
-		var json = DataTagSerializer.Serialize(tag);
-		var restoredTag = DataTagSerializer.Deserialize<CompoundTag>(json) ?? new CompoundTag();
-		var restored = DataTagMapper.FromTag<TurnState>(restoredTag);
+		var tag = TestBootstrap.DataTags.ToTag(source);
+		var json = TestBootstrap.DataTags.Serialize(tag);
+		var restoredTag = TestBootstrap.DataTags.Deserialize<CompoundTag>(json) ?? new CompoundTag();
+		var restored = TestBootstrap.DataTags.FromTag<TurnState>(restoredTag);
 
 		Assert.Equal(source.TurnOrder, restored.TurnOrder);
 		Assert.Equal(source.AllowedPlayerInputs, restored.AllowedPlayerInputs);
@@ -93,8 +94,8 @@ public sealed class TurnStateTests
 		};
 		state.Turn.RoundNumber = 4;
 
-		var tag = DataTagMapper.ToTag(state.ToSnapshot());
-		var restored = DataTagMapper.FromTag<GameStateSnapshot>(tag);
+		var tag = TestBootstrap.DataTags.ToTag(state.ToSnapshot());
+		var restored = TestBootstrap.DataTags.FromTag<GameStateSnapshot>(tag);
 
 		Assert.Equal(state.RuleId, restored.RuleId);
 		Assert.True(restored.Outcome.IsGameOver);

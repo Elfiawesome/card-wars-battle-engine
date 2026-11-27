@@ -212,7 +212,7 @@ public class Server
 	public void RemovePlayer(PlayerSession player)
 	{
 		LeaveInstance(player);
-		Session.SavePlayer(player.PlayerId, DataTagMapper.ToTag(player, false));
+		Session.SavePlayer(player.PlayerId, Session.DataTags.ToTag(player, false));
 		lock (_sync) { _playerSessions.Remove(player.PlayerId); }
 		OnRemovePlayer?.Invoke(player);
 	}
@@ -225,7 +225,7 @@ public class Server
 			{
 				// Logger.Debug(p.Key.ToString());
 				// Logger.Debug(p.Value.TimePlayed.ToString());
-				Session.SavePlayer(p.Key, DataTagMapper.ToTag(p.Value, false));
+				Session.SavePlayer(p.Key, Session.DataTags.ToTag(p.Value, false));
 			}
 		}
 	}

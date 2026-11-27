@@ -3,7 +3,6 @@ using CardWars.BattleEngine.Behaviour.DataDriven.Runtime;
 using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.State;
-using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
@@ -173,9 +172,9 @@ public sealed class ScriptBehaviour(BehaviourDefinition definition, DataDrivenRe
 		_waitingRuntime = null;
 	}
 
-	private static ResourceId? GetRequestId(Type type)
+	private ResourceId? GetRequestId(Type type)
 	{
-		var typeId = DataTagTypeRegistry.GetTypeId(type);
+		var typeId = dataDriven.DataTags.GetTypeId(type);
 		if (typeId is null)
 		{
 			Log.Warn($"Type [{type.Name}] is not registered as a data tag type");

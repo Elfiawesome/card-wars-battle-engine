@@ -82,8 +82,8 @@ public sealed class BattleWinConditionTests
 	{
 		var battle = BattleTestHarness.Create();
 		var hero = battle.HeroOf(battle.Player2Id);
-		hero.Data.Set("lose_condition", DataTagMapper.ToTag(new ContentPointer(
-			Definition: DataTagMapper.ToTag(new LiteralExpression(new BoolTag(true))))));
+		hero.Data.Set("lose_condition", TestBootstrap.DataTags.ToTag(new ContentPointer(
+			Definition: TestBootstrap.DataTags.ToTag(new LiteralExpression(new BoolTag(true))))));
 
 		battle.AdvanceToAttackingPhase();
 		battle.EndTurn(battle.Player1Id);
@@ -100,7 +100,7 @@ public sealed class BattleWinConditionTests
 		var conditionId = ResourceId.Vanilla("hero_lose_conditions/always");
 		var hero = battle.HeroOf(battle.Player2Id);
 		battle.Engine.Registry.EntityConditions.Register<AlwaysLoseCondition>(conditionId);
-		hero.Data.Set("lose_condition", DataTagMapper.ToTag(
+		hero.Data.Set("lose_condition", TestBootstrap.DataTags.ToTag(
 			new ContentPointer(Resource: conditionId)));
 
 		battle.AdvanceToAttackingPhase();
@@ -116,8 +116,8 @@ public sealed class BattleWinConditionTests
 	{
 		var battle = BattleTestHarness.Create();
 		var hero = battle.HeroOf(battle.Player2Id);
-		hero.Data.Set("lose_condition", DataTagMapper.ToTag(new ContentPointer(
-			Definition: DataTagMapper.ToTag(new GreaterThanExpression(
+		hero.Data.Set("lose_condition", TestBootstrap.DataTags.ToTag(new ContentPointer(
+			Definition: TestBootstrap.DataTags.ToTag(new GreaterThanExpression(
 				new MemberExpression(
 					new VariableExpression(ScriptBindings.Self),
 					"hrt"),
@@ -182,7 +182,7 @@ public sealed class BattleWinConditionTests
 				new LiteralExpression(new IntTag(2)))
 		};
 
-		TestSupport.Definitions(battle.Engine.Registry).RuleDefinitions.Register(ruleId, DataTagMapper.ToTag(rule));
+		TestSupport.Definitions(battle.Engine.Registry).RuleDefinitions.Register(ruleId, TestBootstrap.DataTags.ToTag(rule));
 		battle.State.RuleId = ruleId;
 
 		battle.AdvanceToAttackingPhase();

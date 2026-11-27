@@ -1,4 +1,3 @@
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Serialization.Json;
 using CardWars.Core.Data.Tags;
 
@@ -57,11 +56,9 @@ public static class Log
 		if (obj is ObjectRefTag objectRef) return objectRef.Value.ToString() ?? "<object>";
 
 		if (obj is DataTag tag)
-			return DataTagSerializer.Serialize(tag);  // compact JSON
+			return DataTagJson.Serialize(tag);
 
-		var compound = DataTagMapper.ToTag(obj, includeType: true);
-		if (compound.Count == 0) return obj.ToString() ?? "<NULL INSTANCE>";
-		return DataTagSerializer.Serialize(compound);
+		return obj.ToString() ?? "<NULL INSTANCE>";
 	}
 }
 

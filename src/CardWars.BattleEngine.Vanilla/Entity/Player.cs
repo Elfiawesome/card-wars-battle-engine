@@ -1,4 +1,5 @@
 using CardWars.BattleEngine.Rules;
+using CardWars.Core.Data;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
 
@@ -21,5 +22,5 @@ public class Player(EntityId id) : IEntity
 	[DataTag] public List<EntityId> GraveyardCardIds { get; } = [];
 
 	public int BehaviourPriority => 0;
-	public List<ContentPointer> GetBehaviours() => [];
+	public List<ContentPointer> GetBehaviours(DataTagContext dataTags) => [];
 }

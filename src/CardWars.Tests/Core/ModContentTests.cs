@@ -16,7 +16,7 @@ public sealed class ModContentTests
 		provider.AddFile("mods/test/content/battle/cards/units/hero.json", "{}");
 		provider.AddFile("mods/test/content/battle/assets/texture/cards/hero.png", "image");
 
-		var loader = new CardWars.ModLoader.ModRepository([new StoragePath("mods/test", provider)]);
+		var loader = new CardWars.ModLoader.ModRepository([new StoragePath("mods/test", provider)], TestBootstrap.DataTags);
 		loader.Setup();
 
 		var server = loader.GetContent("server");

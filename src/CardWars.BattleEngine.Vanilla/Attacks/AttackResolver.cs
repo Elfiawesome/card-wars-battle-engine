@@ -59,7 +59,7 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 		=> tag is CompoundTag compoundTag ? GetAttackDefinitionFromPointer(compoundTag) : null;
 
 	public AttackDefinition? GetAttackDefinitionFromPointer(CompoundTag compoundTag)
-		=> GetAttackDefinitionFromPointer(DataTagMapper.FromTag<ContentPointer>(compoundTag));
+		=> GetAttackDefinitionFromPointer(registry.DataTags.FromTag<ContentPointer>(compoundTag));
 
 	public AttackDefinition? GetAttackDefinitionFromPointer(ContentPointer pointer)
 	{
@@ -68,13 +68,13 @@ public sealed class AttackResolver(BattleEngineRegistry registry)
 			var definition = registry.GetExtension<CardWarsDefinitions>()?.AttackDefinitions.Get(resourceId);
 			if (definition is not null)
 			{
-				var def = DataTagMapper.FromTag<AttackDefinition>(definition);
+				var def = registry.DataTags.FromTag<AttackDefinition>(definition);
 				return def;
 			}
 		}
 		else if (pointer.Definition is { } definition)
 		{
-			var def = DataTagMapper.FromTag<AttackDefinition>(definition);
+			var def = registry.DataTags.FromTag<AttackDefinition>(definition);
 			return def;
 		}
 		return null;

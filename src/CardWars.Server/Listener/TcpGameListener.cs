@@ -1,11 +1,12 @@
 using System.Net;
 using System.Net.Sockets;
 using CardWars.Core.Logging;
+using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 
 namespace CardWars.Server.Listener;
 
-public class TcpGameListener(int port = 5060) : IListener
+public class TcpGameListener(PacketCodec codec, int port = 5060) : IListener
 {
 	public Action<IConnection>? OnNewConnection { get; set; }
 
@@ -35,7 +36,7 @@ public class TcpGameListener(int port = 5060) : IListener
 			{
 				if (_listener is not { } listener) break;
 				var client = listener.AcceptTcpClient();
-				OnNewConnection?.Invoke(new TcpConnection(client));
+				OnNewConnection?.Invoke(new TcpConnection(client, codec));
 			}
 			catch when (token.IsCancellationRequested) { break; }
 			catch (Exception ex) { Log.Error($"TCP accept failed: {ex.Message}"); }

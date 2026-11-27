@@ -121,7 +121,7 @@ public sealed class CardTargetFilterTests
 		var provider = new MemoryFileProvider();
 		provider.AddFile("cards/units/test_unit.json", """{"name":"Test Unit","hp":4,"atk":2}""");
 
-		var registry = new BattleEngineRegistry();
+		var registry = new BattleEngineRegistry(TestBootstrap.DataTags);
 		registry.GetOrCreateExtension<CardWarsDefinitions>().DefaultUnitTargetFilter = TestTargetFilters.CreateUnitTargetFilter();
 		var content = new ModContentResult
 		{
@@ -202,7 +202,7 @@ public sealed class CardTargetFilterTests
 	private static GenericCard AddFilteredCard(GameState state, Player owner, IExpression filter)
 	{
 		var card = new GenericCard(EntityId.New()) { OwnerPlayerId = owner.Id };
-		card.Data.Set("target_filter", DataTagMapper.ToTag(filter));
+		card.Data.Set("target_filter", TestBootstrap.DataTags.ToTag(filter));
 		state.Add(card);
 		return card;
 	}

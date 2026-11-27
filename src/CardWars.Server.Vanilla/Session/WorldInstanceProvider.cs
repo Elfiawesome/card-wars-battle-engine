@@ -20,7 +20,7 @@ public class WorldInstanceProvider(
 		var save = session.LoadInstance(worldId.ToFlatString());
 		if (save is CompoundTag saveTag)
 		{
-			instance = DataTagMapper.FromTag<WorldInstance>(saveTag);
+			instance = session.DataTags.FromTag<WorldInstance>(saveTag);
 			instance.InstanceId = Guid.NewGuid();
 		}
 		else
@@ -34,7 +34,7 @@ public class WorldInstanceProvider(
 		}
 
 		instance.TemplateData = worlds.Templates.Get(worldId) is { } template
-			? (CompoundTag)template.Clone()
+			? template.Clone()
 			: new CompoundTag();
 
 		if (instance.TemplateData.Count == 0)
@@ -45,7 +45,7 @@ public class WorldInstanceProvider(
 
 	public override string? Save(WorldInstance serverInstance, StoragePath instanceStoragePath)
 	{
-		session.SaveInstance(serverInstance.WorldId.ToFlatString(), DataTagMapper.ToTag(serverInstance, false));
+		session.SaveInstance(serverInstance.WorldId.ToFlatString(), session.DataTags.ToTag(serverInstance, false));
 		return serverInstance.WorldId.ToString();
 	}
 }

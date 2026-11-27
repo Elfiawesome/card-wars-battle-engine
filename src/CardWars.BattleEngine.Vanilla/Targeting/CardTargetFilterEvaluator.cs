@@ -75,7 +75,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven)
 	private static void BindCandidate(ScriptContext context, IEntity candidate)
 		=> context.DeclareVariable(TargetBindings.Candidate, new ObjectRefTag(candidate));
 
-	private static IExpression? GetFilter(GenericCard card)
+	private IExpression? GetFilter(GenericCard card)
 	{
 		var tag = card.Data.Get("target_filter");
 		if (tag is null) return null;
@@ -88,7 +88,7 @@ public sealed class CardTargetFilterEvaluator(DataDrivenRegistry dataDriven)
 
 		try
 		{
-			return DataTagMapper.FromTag<IExpression>(compound);
+			return dataDriven.DataTags.FromTag<IExpression>(compound);
 		}
 		catch (Exception ex)
 		{

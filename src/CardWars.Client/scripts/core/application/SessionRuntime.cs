@@ -7,6 +7,7 @@ using CardWars.Client.scripts.core;
 using CardWars.Client.scripts.core.content;
 using CardWars.Client.scripts.core.profile;
 using CardWars.Core.Logging;
+using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;
 using CardWars.Server;
@@ -68,14 +69,14 @@ public sealed class SessionRuntime
 		_content = GameContent.Load(_app.Mods);
 
 		// Load up battle mods and common battle registry
-		_battleRegistry = new BattleEngineRegistry();
+		_battleRegistry = new BattleEngineRegistry(_app.DataTags);
 		foreach (var mod in _app.Mods.LoadModEntry<IBattleEngineMod>())
 			mod.OnLoad(_battleRegistry, _content.BattleData);
 
 		// Server storage
 		if (HasServer)
 			_storage = _app.Storage.OpenSession(DefaultSessionName);
-		_context = new SessionContext(_storage, _content, _battleRegistry);
+		_context = new SessionContext(_app.DataTags, _storage, _content, _battleRegistry);
 
 		if (HasServer) StartServer();
 		if (HasClient) StartClient(); // start client after server is up (TODO: although we should really do a timer request and not immediately quit...)
@@ -92,7 +93,9 @@ public sealed class SessionRuntime
 			connection = _localListener?.ConnectClient()
 				?? throw new InvalidOperationException("An integrated client requires a local listener.");
 		else
-			connection = new TcpConnection(new TcpClient(_targetIpAddress, _targetPort));
+			connection = new TcpConnection(
+				new TcpClient(_targetIpAddress, _targetPort),
+				new PacketCodec(Context.DataTags));
 
 		// Prep client mdos
 		var clientMods = _app.CreateModEntries<IClientMod>()
@@ -103,7 +106,7 @@ public sealed class SessionRuntime
 		var profileRoot = new StoragePath(
 			_app.Provider.Combine(_app.GamedataPath, ".userdata"),
 			_app.Provider);
-		var profiles = new ClientProfileStore(profileRoot);
+		var profiles = new ClientProfileStore(profileRoot, Context.DataTags);
 
 		Client = new ClientRuntime(
 			_root,
@@ -124,15 +127,16 @@ public sealed class SessionRuntime
 	{
 		// Setup all listeners
 		var listeners = new List<IListener>();
+		var codec = new PacketCodec(Context.DataTags);
 		_localListener = null;
 
 		if (Mode == SessionMode.Integrated)
 		{
-			_localListener = new LocalListener { IsSerialized = true };
+			_localListener = new LocalListener(codec) { IsSerialized = true };
 			listeners.Add(_localListener);
 		}
 
-		listeners.Add(new TcpGameListener(_targetPort));
+		listeners.Add(new TcpGameListener(codec, _targetPort));
 
 		// Prep server mods
 		var serverMods = _app.Mods.LoadModEntry<IServerMod>().ToList();

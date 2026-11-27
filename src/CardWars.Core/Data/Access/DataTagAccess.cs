@@ -2,25 +2,28 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Reflection;
 using CardWars.Core.Data.Attributes;
-using CardWars.Core.Data.Global;
+using CardWars.Core.Data.Context;
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 
 namespace CardWars.Core.Data.Access;
 
-public static class DataTagAccess
+internal sealed class DataTagAccess
 {
-	private static readonly ConcurrentDictionary<Type, PropertyInfo[]> Properties = new();
-	private static readonly ConcurrentDictionary<Type, PropertyInfo[]> Indexers = new();
+	private readonly ConcurrentDictionary<Type, PropertyInfo[]> _properties = new();
+	private readonly ConcurrentDictionary<Type, PropertyInfo[]> _indexers = new();
+	private readonly DataTagMapper _mapper;
 
-	public static bool TryGetMember(object target, string member, out DataTag? value)
+	public DataTagAccess(DataTagMapper mapper) => _mapper = mapper;
+
+	public bool TryGetMember(object target, string member, out DataTag? value)
 	{
 		if (target is IDataTagAccessible accessible && accessible.TryGetMember(member, out value)) return true;
 		if (target is DataTag tag && TryGetTagMember(tag, member, out value)) return true;
 
-		if (member == DataTagMapper.TypeDiscriminatorKey)
+		if (member == _mapper.TypeDiscriminatorKey)
 		{
-			var typeId = DataTagTypeRegistry.GetTypeId(target.GetType());
+			var typeId = _mapper.Types.GetTypeId(target.GetType());
 			if (typeId is not null)
 			{
 				value = new StringTag(typeId);
@@ -42,7 +45,7 @@ public static class DataTagAccess
 		return false;
 	}
 
-	public static bool TrySetMember(object target, string member, DataTag value)
+	public bool TrySetMember(object target, string member, DataTag value)
 	{
 		if (target is IDataTagAccessible accessible && accessible.TrySetMember(member, value)) return true;
 
@@ -60,7 +63,7 @@ public static class DataTagAccess
 		var property = FindProperty(target.GetType(), member);
 		if (property is { CanWrite: true })
 		{
-			property.SetValue(target, DataTagMapper.FromValueTag(value, property.PropertyType));
+			property.SetValue(target, _mapper.FromValueTag(value, property.PropertyType));
 			return true;
 		}
 
@@ -73,7 +76,7 @@ public static class DataTagAccess
 		return TrySetIndexerMember(target, member, value);
 	}
 
-	public static bool TryGetIndex(object target, DataTag index, out DataTag? value)
+	public bool TryGetIndex(object target, DataTag index, out DataTag? value)
 	{
 		if (target is IDataTagAccessible accessible && accessible.TryGetIndex(index, out value)) return true;
 
@@ -104,7 +107,7 @@ public static class DataTagAccess
 		return false;
 	}
 
-	public static bool TrySetIndex(object target, DataTag index, DataTag value)
+	public bool TrySetIndex(object target, DataTag index, DataTag value)
 	{
 		if (target is IDataTagAccessible accessible && accessible.TrySetIndex(index, value)) return true;
 
@@ -120,18 +123,18 @@ public static class DataTagAccess
 			case IDictionary dictionary:
 				var dictionaryKey = ConvertToType(index, GetDictionaryKeyType(target.GetType()));
 				if (dictionaryKey is null) return false;
-				dictionary[dictionaryKey] = DataTagMapper.FromValueTag(value, GetDictionaryValueType(target.GetType()));
+				dictionary[dictionaryKey] = _mapper.FromValueTag(value, GetDictionaryValueType(target.GetType()));
 				return true;
 			case IList list when index is IntTag intTag:
 				if (intTag.Value < 0 || intTag.Value >= list.Count) return false;
-				list[intTag.Value] = DataTagMapper.FromValueTag(value, typeof(object));
+				list[intTag.Value] = _mapper.FromValueTag(value, typeof(object));
 				return true;
 		}
 
 		return TrySetIndexer(target, index, value);
 	}
 
-	private static bool TryGetTagMember(DataTag target, string member, out DataTag? value)
+	private bool TryGetTagMember(DataTag target, string member, out DataTag? value)
 	{
 		switch (target)
 		{
@@ -149,7 +152,7 @@ public static class DataTagAccess
 		return false;
 	}
 
-	private static PropertyInfo? FindProperty(Type type, string member)
+	private PropertyInfo? FindProperty(Type type, string member)
 	{
 		var normalized = Normalize(member);
 		foreach (var property in GetProperties(type))
@@ -162,19 +165,19 @@ public static class DataTagAccess
 		return null;
 	}
 
-	private static PropertyInfo[] GetProperties(Type type)
-		=> Properties.GetOrAdd(type, static t => t
+	private PropertyInfo[] GetProperties(Type type)
+		=> _properties.GetOrAdd(type, static t => t
 			.GetProperties(BindingFlags.Public | BindingFlags.Instance)
 			.Where(property => property.GetIndexParameters().Length == 0)
 			.ToArray());
 
-	private static PropertyInfo[] GetIndexers(Type type)
-		=> Indexers.GetOrAdd(type, static t => t
+	private PropertyInfo[] GetIndexers(Type type)
+		=> _indexers.GetOrAdd(type, static t => t
 			.GetProperties(BindingFlags.Public | BindingFlags.Instance)
 			.Where(property => property.GetIndexParameters().Length == 1)
 			.ToArray());
 
-	private static bool TryGetIndexerMember(object target, string member, out DataTag? value)
+	private bool TryGetIndexerMember(object target, string member, out DataTag? value)
 	{
 		foreach (var indexer in GetIndexers(target.GetType()))
 		{
@@ -190,7 +193,7 @@ public static class DataTagAccess
 		return false;
 	}
 
-	private static bool TrySetIndexerMember(object target, string member, DataTag value)
+	private bool TrySetIndexerMember(object target, string member, DataTag value)
 	{
 		foreach (var indexer in GetIndexers(target.GetType()))
 		{
@@ -198,14 +201,14 @@ public static class DataTagAccess
 			var parameter = indexer.GetIndexParameters()[0];
 			var converted = ConvertToType(new StringTag(member), parameter.ParameterType);
 			if (converted is null) continue;
-			indexer.SetValue(target, DataTagMapper.FromValueTag(value, indexer.PropertyType), [converted]);
+			indexer.SetValue(target, _mapper.FromValueTag(value, indexer.PropertyType), [converted]);
 			return true;
 		}
 
 		return false;
 	}
 
-	private static bool TryGetIndexer(object target, DataTag index, out DataTag? value)
+	private bool TryGetIndexer(object target, DataTag index, out DataTag? value)
 	{
 		foreach (var indexer in GetIndexers(target.GetType()))
 		{
@@ -221,7 +224,7 @@ public static class DataTagAccess
 		return false;
 	}
 
-	private static bool TrySetIndexer(object target, DataTag index, DataTag value)
+	private bool TrySetIndexer(object target, DataTag index, DataTag value)
 	{
 		foreach (var indexer in GetIndexers(target.GetType()))
 		{
@@ -229,14 +232,14 @@ public static class DataTagAccess
 			var parameter = indexer.GetIndexParameters()[0];
 			var converted = ConvertToType(index, parameter.ParameterType);
 			if (converted is null) continue;
-			indexer.SetValue(target, DataTagMapper.FromValueTag(value, indexer.PropertyType), [converted]);
+			indexer.SetValue(target, _mapper.FromValueTag(value, indexer.PropertyType), [converted]);
 			return true;
 		}
 
 		return false;
 	}
 
-	private static bool TryGetDataBag(object target, out CompoundTag? data)
+	private bool TryGetDataBag(object target, out CompoundTag? data)
 	{
 		var property = target.GetType().GetProperty("Data", BindingFlags.Public | BindingFlags.Instance);
 		if (property?.GetValue(target) is CompoundTag compound)
@@ -249,7 +252,7 @@ public static class DataTagAccess
 		return false;
 	}
 
-	private static bool TryGetDataEntry(CompoundTag data, string member, out DataTag? value)
+	private bool TryGetDataEntry(CompoundTag data, string member, out DataTag? value)
 	{
 		if (data.Has(member))
 		{
@@ -269,37 +272,37 @@ public static class DataTagAccess
 		return false;
 	}
 
-	private static object? ConvertToType(DataTag tag, Type targetType)
+	private object? ConvertToType(DataTag tag, Type targetType)
 	{
 		if (targetType == typeof(string) && tag is StringTag stringTag) return stringTag.Value;
-		return DataTagMapper.FromValueTag(tag, targetType);
+		return _mapper.FromValueTag(tag, targetType);
 	}
 
-	private static Type GetDictionaryKeyType(Type type)
+	private Type GetDictionaryKeyType(Type type)
 		=> GetDictionaryInterface(type)?.GetGenericArguments()[0] ?? typeof(object);
 
-	private static Type GetDictionaryValueType(Type type)
+	private Type GetDictionaryValueType(Type type)
 		=> GetDictionaryInterface(type)?.GetGenericArguments()[1] ?? typeof(object);
 
-	private static Type? GetDictionaryInterface(Type type)
+	private Type? GetDictionaryInterface(Type type)
 	{
 		if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>)) return type;
 		return type.GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>));
 	}
 
-	private static DataTag ToAccessTag(object? value, Type declaredType)
+	private DataTag ToAccessTag(object? value, Type declaredType)
 	{
 		if (value is null) return new NullTag();
 		if (value is DataTag tag) return tag;
 		if (value is string or int or float or double or long or bool or Guid)
-			return DataTagMapper.ToValueTag(value, declaredType) ?? new NullTag();
+			return _mapper.ToValueTag(value, declaredType) ?? new NullTag();
 		if (declaredType.IsEnum) return new StringTag(value.ToString() ?? "");
-		if (DataTagMapper.HasConverter(declaredType) || DataTagMapper.HasConverter(value.GetType()))
-			return DataTagMapper.ToValueTag(value, declaredType) ?? new NullTag();
+		if (_mapper.HasConverter(declaredType) || _mapper.HasConverter(value.GetType()))
+			return _mapper.ToValueTag(value, declaredType) ?? new NullTag();
 		if (value is IDictionary) return new ObjectRefTag(value);
-		if (value is IEnumerable) return DataTagMapper.ToValueTag(value, declaredType) ?? new NullTag();
+		if (value is IEnumerable) return _mapper.ToValueTag(value, declaredType) ?? new NullTag();
 		return new ObjectRefTag(value);
 	}
 
-	private static string Normalize(string value) => value.Replace("_", "").ToLowerInvariant();
+	private string Normalize(string value) => value.Replace("_", "").ToLowerInvariant();
 }

@@ -1,81 +1,89 @@
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using CardWars.Core.Data.Attributes;
+using CardWars.Core.Data.Context;
 using CardWars.Core.Data.Converters;
 using CardWars.Core.Data.Mapping.Internal;
 using CardWars.Core.Data.Tags;
 
 namespace CardWars.Core.Data.Mapping;
 
-public static class DataTagMapper
+internal sealed class DataTagMapper
 {
-	/// <summary>
-	/// The discriminator key used for polymorphic types.
-	/// Defaulted to "_type" to match your senior's convention.
-	/// </summary>
-	public static string TypeDiscriminatorKey { get; set; } = "_type";
+	private readonly DataTagTypeRegistry _types;
+	private readonly TypeMetadataCache _metadata;
+	private readonly TagSerializer _serializer;
+	private readonly TagDeserializer _deserializer;
+	private readonly ConcurrentDictionary<Type, IDataTagConverter> _converters = new();
 
-	private static readonly ConcurrentDictionary<Type, IDataTagConverter> _globalConverters = new();
-
-	// ======================== PUBLIC SERIALIZATION ========================
-
-	public static CompoundTag ToTag(object obj, bool includeType = true)
+	internal DataTagMapper(DataTagTypeRegistry types, TypeMetadataCache metadata)
 	{
-		ArgumentNullException.ThrowIfNull(obj);
-		return TagSerializer.SerializeObject(obj, obj.GetType(), includeType);
+		_types = types;
+		_metadata = metadata;
+		_serializer = new TagSerializer(this);
+		_deserializer = new TagDeserializer(this);
 	}
 
-	public static CompoundTag ToTagAs<T>(T obj, bool includeType = true)
+	public string TypeDiscriminatorKey { get; set; } = "_type";
+
+	internal DataTagTypeRegistry Types => _types;
+	internal TypeMetadataCache Metadata => _metadata;
+
+	public CompoundTag ToTag(object obj, bool includeType = true)
 	{
 		ArgumentNullException.ThrowIfNull(obj);
-		return TagSerializer.SerializeObject(obj, typeof(T), includeType);
+		return _serializer.SerializeObject(obj, obj.GetType(), includeType);
 	}
 
-	public static CompoundTag ToTagAs(object obj, Type declaredType, bool includeType = true)
+	public CompoundTag ToTagAs<T>(T obj, bool includeType = true)
+	{
+		ArgumentNullException.ThrowIfNull(obj);
+		return _serializer.SerializeObject(obj, typeof(T), includeType);
+	}
+
+	public CompoundTag ToTagAs(object obj, Type declaredType, bool includeType = true)
 	{
 		ArgumentNullException.ThrowIfNull(obj);
 		ArgumentNullException.ThrowIfNull(declaredType);
-		return TagSerializer.SerializeObject(obj, declaredType, includeType);
+		return _serializer.SerializeObject(obj, declaredType, includeType);
 	}
 
-	// ======================== PUBLIC DESERIALIZATION ========================
-
-	public static T FromTag<T>(CompoundTag tag)
+	public T FromTag<T>(CompoundTag tag)
 	{
 		ArgumentNullException.ThrowIfNull(tag);
-		return (T)TagDeserializer.Deserialize(tag, typeof(T))!;
+		var value = _deserializer.Deserialize(tag, typeof(T))
+			?? throw new InvalidOperationException($"Could not deserialize [{typeof(T).Name}].");
+		return (T)value;
 	}
 
-	public static object? FromTag(CompoundTag tag, Type targetType)
+	public object? FromTag(CompoundTag tag, Type targetType)
 	{
 		ArgumentNullException.ThrowIfNull(tag);
 		ArgumentNullException.ThrowIfNull(targetType);
-		return TagDeserializer.Deserialize(tag, targetType);
+		return _deserializer.Deserialize(tag, targetType);
 	}
 
-	// ======================== SINGLE VALUES ========================
-
-	public static DataTag? ToValueTag(object? value, Type? declaredType = null)
+	public DataTag? ToValueTag(object? value, Type? declaredType = null)
 	{
 		if (value is null) return null;
-		return TagSerializer.SerializeValue(value, declaredType ?? value.GetType());
+		return _serializer.SerializeValue(value, declaredType ?? value.GetType());
 	}
 
-	public static object? FromValueTag(DataTag? tag, Type targetType)
-		=> TagDeserializer.Deserialize(tag, targetType);
+	public object? FromValueTag(DataTag? tag, Type targetType)
+		=> _deserializer.Deserialize(tag, targetType);
 
-	// ======================== CONVERTERS ========================
+	public void RegisterConverter<T>(DataTagConverter<T> converter) => _converters[typeof(T)] = converter;
 
-	public static void RegisterConverter<T>(DataTagConverter<T> converter) => _globalConverters[typeof(T)] = converter;
-	public static void RegisterConverter(Type type, IDataTagConverter converter) => _globalConverters[type] = converter;
+	public void RegisterConverter(Type type, IDataTagConverter converter) => _converters[type] = converter;
 
-	public static bool HasConverter(Type type) => TryGetConverter(type, out _);
+	public bool HasConverter(Type type) => TryGetConverter(type, out _);
 
-	internal static bool TryGetConverter(Type type, [NotNullWhen(true)] out IDataTagConverter? converter)
+	internal bool TryGetConverter(Type type, [NotNullWhen(true)] out IDataTagConverter? converter)
 	{
 		converter = null;
-		if (_globalConverters.TryGetValue(type, out var found))
+		if (_converters.TryGetValue(type, out var found))
 		{
 			converter = found;
 			return true;
@@ -84,7 +92,7 @@ public static class DataTagMapper
 		var attr = type.GetCustomAttribute<DataTagConverterAttribute>();
 		if (attr is not null)
 		{
-			converter = TypeMetadataCache.GetConverterInstance(attr.ConverterType);
+			converter = _metadata.GetConverterInstance(attr.ConverterType);
 			return true;
 		}
 

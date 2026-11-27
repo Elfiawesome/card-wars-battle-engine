@@ -17,7 +17,7 @@ public sealed class TransactionIntegrationTests
 	[Fact]
 	public void BattleEngine_InstantiatesDataDrivenBehaviourFromPointer()
 	{
-		var engine = new BattleEngine.BattleEngine(new CardWars.BattleEngine.BattleEngineRegistry());
+		var engine = new BattleEngine.BattleEngine(new CardWars.BattleEngine.BattleEngineRegistry(TestBootstrap.DataTags));
 		new VanillaMod().OnLoad(engine.Registry, []);
 		engine.Registry.InputHandlers.Register(new TestEventInputHandler());
 		engine.Registry.EventHandlers.Register(new TestEventHandler());
@@ -34,7 +34,7 @@ public sealed class TransactionIntegrationTests
 					])
 			]);
 
-		var pointer = new ContentPointer(Definition: DataTagMapper.ToTag(definition));
+		var pointer = new ContentPointer(Definition: TestBootstrap.DataTags.ToTag(definition));
 		var entity = new TestEntity
 		{
 			Id = EntityId.New(),

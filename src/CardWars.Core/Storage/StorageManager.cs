@@ -1,3 +1,4 @@
+using CardWars.Core.Data;
 using CardWars.Core.Logging;
 
 namespace CardWars.Core.Storage;
@@ -8,14 +9,15 @@ public class StorageManager
 	public StoragePath ModsDir { get; }
 	public StoragePath SavesDir { get; }
 	public StoragePath SettingsFile { get; }
+	public DataTagContext DataTags { get; }
 
 	public SessionStorage? CurrentSession { get; private set; }
 
 	internal IFileProvider Provider { get; }
 
-
-	public StorageManager(string dataRoot, IFileProvider provider)
+	public StorageManager(string dataRoot, IFileProvider provider, DataTagContext dataTags)
 	{
+		DataTags = dataTags;
 		DataRoot = provider.GetFullPath(dataRoot);
 		Provider = provider;
 
@@ -41,7 +43,7 @@ public class StorageManager
 		if (!sessionRoot.Exists)
 			sessionRoot.CreateDirectory();
 
-		CurrentSession = new SessionStorage(this, sessionName, sessionRoot);
+		CurrentSession = new SessionStorage(this, sessionName, sessionRoot, DataTags);
 		CurrentSession.EnsureDirectories();
 		Log.Info($"Storage: Opened session '{sessionName}' at '{sessionRoot.FullPath}'");
 		return CurrentSession;
@@ -59,5 +61,4 @@ public class StorageManager
 	public StoragePath[] GlobalModDirectories => ModsDir.GetDirectories();
 	public StoragePath[] SessionModDirectories => CurrentSession?.ModsDir.GetDirectories() ?? [];
 	public StoragePath[] AllModDirectories => [.. GlobalModDirectories, .. SessionModDirectories];
-
 }

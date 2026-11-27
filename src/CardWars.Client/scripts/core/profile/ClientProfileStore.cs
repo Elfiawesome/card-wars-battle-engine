@@ -1,7 +1,6 @@
 using System;
 using System.Text;
-using CardWars.Core.Data.Mapping;
-using CardWars.Core.Data.Serialization.Json;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Storage;
@@ -12,10 +11,12 @@ namespace CardWars.Client.scripts.core.profile;
 public sealed class ClientProfileStore
 {
 	private readonly StoragePath _root;
+	private readonly DataTagContext _dataTags;
 
-	public ClientProfileStore(StoragePath root)
+	public ClientProfileStore(StoragePath root, DataTagContext dataTags)
 	{
 		_root = root;
+		_dataTags = dataTags;
 		if (!_root.Exists) _root.CreateDirectory();
 	}
 
@@ -27,14 +28,14 @@ public sealed class ClientProfileStore
 
 		try
 		{
-			var tag = DataTagSerializer.Deserialize<CompoundTag>(path.ReadAllText());
+			var tag = _dataTags.Deserialize<CompoundTag>(path.ReadAllText());
 			if (tag is null)
 			{
 				Log.Warn($"Client profile [{username}] could not be read");
 				return null;
 			}
 
-			return DataTagMapper.FromTag<PlayerProfile>(tag);
+			return _dataTags.FromTag<PlayerProfile>(tag);
 		}
 		catch (Exception ex)
 		{
@@ -47,7 +48,7 @@ public sealed class ClientProfileStore
 	{
 		try
 		{
-			var json = DataTagSerializer.Serialize(DataTagMapper.ToTag(profile));
+			var json = _dataTags.Serialize(_dataTags.ToTag(profile));
 			GetPath(username).WriteAllText(json);
 		}
 		catch (Exception ex)

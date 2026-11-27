@@ -1,5 +1,5 @@
 using System.Globalization;
-using CardWars.Core.Data.Serialization.Json;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 
 namespace CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
@@ -58,7 +58,7 @@ internal static class ExpressionValue
 		return null;
 	}
 
-	public static string ToText(DataTag tag) => tag switch
+	public static string ToText(DataTag tag, DataTagContext dataTags) => tag switch
 	{
 		NullTag => "",
 		IntTag intTag => intTag.Value.ToString(CultureInfo.InvariantCulture),
@@ -66,7 +66,7 @@ internal static class ExpressionValue
 		BoolTag boolTag => boolTag.Value ? "true" : "false",
 		StringTag stringTag => stringTag.Value,
 		GuidTag guidTag => guidTag.Value.ToString(),
-		CompoundTag or ListTag => DataTagSerializer.Serialize(tag),
+		CompoundTag or ListTag => dataTags.Serialize(tag),
 		ObjectRefTag objectTag => objectTag.Value.ToString() ?? "",
 		_ => tag.ToString() ?? ""
 	};

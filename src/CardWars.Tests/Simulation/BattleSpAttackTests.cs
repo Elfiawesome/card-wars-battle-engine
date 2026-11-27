@@ -177,10 +177,10 @@ public sealed class BattleSpAttackTests
 		int chargeCost,
 		bool bypass,
 		params AttackPattern[] patterns)
-		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, ResourceId.Vanilla("texture/icon/attacks/test"), name, chargeCost, bypass)));
+		=> TestSupport.AttackPointer(TestBootstrap.DataTags.ToTag(new AttackDefinition(patterns, ResourceId.Vanilla("texture/icon/attacks/test"), name, chargeCost, bypass)));
 
 	private static CompoundTag BaAtk(params AttackPattern[] patterns)
-		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, ResourceId.Vanilla("texture/icon/attacks/test"), "Test BA", 1, false)));
+		=> TestSupport.AttackPointer(TestBootstrap.DataTags.ToTag(new AttackDefinition(patterns, ResourceId.Vanilla("texture/icon/attacks/test"), "Test BA", 1, false)));
 
 	private static AttackPattern Pattern(
 		AttackPatternType type,

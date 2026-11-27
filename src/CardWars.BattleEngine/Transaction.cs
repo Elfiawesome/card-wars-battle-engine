@@ -5,8 +5,6 @@ using CardWars.BattleEngine.Event;
 using CardWars.BattleEngine.Input;
 using CardWars.BattleEngine.Rules;
 using CardWars.BattleEngine.State;
-using CardWars.Core.Data.Mapping;
-using CardWars.Core.Data.Serialization.Json;
 using CardWars.Core.Logging;
 
 namespace CardWars.BattleEngine;
@@ -68,7 +66,7 @@ public class Transaction
 		foreach (var block in batch.Blocks ?? [])
 		{
 			Registry.BlockHandlers.Execute(State, block);
-			Log.Debug($"Executing Block [{block.GetType().Name}]: {DataTagSerializer.Serialize(DataTagMapper.ToTag(block))}");
+			Log.Debug($"Executing Block [{block.GetType().Name}]: {Registry.DataTags.Serialize(Registry.DataTags.ToTag(block))}");
 		}
 		_onBlockBatchEvent?.Invoke(batch);
 	}
@@ -138,7 +136,7 @@ public class Transaction
 	private void QueueBehavioursForEvent(IEvent evnt)
 	{
 		var eventType = evnt.GetType();
-		var pointers = State.GetAllBehaviourPointers();
+		var pointers = State.GetAllBehaviourPointers(Registry.DataTags);
 
 		var executions = new List<(
 			int entityPriority,
@@ -200,7 +198,7 @@ public class Transaction
 		{
 			try
 			{
-				var definition = DataTagMapper.FromTag<BehaviourDefinition>(definitionTag);
+				var definition = Registry.DataTags.FromTag<BehaviourDefinition>(definitionTag);
 				behaviour = new ScriptBehaviour(definition, Registry.DataDriven);
 			}
 			catch (Exception ex)

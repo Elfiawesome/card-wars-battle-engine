@@ -1,7 +1,8 @@
+using CardWars.Tests.Support;
 using CardWars.BattleEngine.Behaviour.DataDriven;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.Vanilla.Behaviour.DataDriven.Instructions;
-using CardWars.Core.Data.Global;
+
 using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Serialization.Json;
 using CardWars.Core.Data.Tags;
@@ -45,10 +46,10 @@ public sealed class DefinitionSerializationTests
 			Priority = 7
 		};
 
-		var tag = DataTagMapper.ToTag(definition);
-		var json = DataTagSerializer.Serialize(tag);
-		var restoredTag = DataTagSerializer.Deserialize<CompoundTag>(json) ?? new CompoundTag();
-		var restored = DataTagMapper.FromTag<BehaviourDefinition>(restoredTag);
+		var tag = TestBootstrap.DataTags.ToTag(definition);
+		var json = TestBootstrap.DataTags.Serialize(tag);
+		var restoredTag = TestBootstrap.DataTags.Deserialize<CompoundTag>(json) ?? new CompoundTag();
+		var restored = TestBootstrap.DataTags.FromTag<BehaviourDefinition>(restoredTag);
 
 		Assert.Equal(7, restored.Priority);
 		var eventHook = Assert.Single(restored.OnEvent ?? []);
@@ -75,8 +76,8 @@ public sealed class DefinitionSerializationTests
 	[Fact]
 	public void ConcreteScriptTypes_AreRegistered()
 	{
-		Assert.Equal(typeof(IfInstruction), DataTagTypeRegistry.GetType("cardwars:script/instruction/if"));
-		Assert.Equal(typeof(AddExpression), DataTagTypeRegistry.GetType("cardwars:script/expression/add"));
-		Assert.Equal(typeof(BehaviourDefinition), DataTagTypeRegistry.GetType("cardwars:script/behaviour"));
+		Assert.Equal(typeof(IfInstruction), TestBootstrap.DataTags.GetType("cardwars:script/instruction/if"));
+		Assert.Equal(typeof(AddExpression), TestBootstrap.DataTags.GetType("cardwars:script/expression/add"));
+		Assert.Equal(typeof(BehaviourDefinition), TestBootstrap.DataTags.GetType("cardwars:script/behaviour"));
 	}
 }

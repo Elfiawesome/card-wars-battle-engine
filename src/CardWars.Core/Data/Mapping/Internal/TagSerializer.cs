@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Reflection;
 using CardWars.Core.Data.Converters;
-using CardWars.Core.Data.Global;
 using CardWars.Core.Data.Tags;
 
 namespace CardWars.Core.Data.Mapping.Internal;
 
-internal static class TagSerializer
+internal sealed class TagSerializer(DataTagMapper mapper)
 {
-	public static CompoundTag SerializeObject(object obj, Type declaredType, bool includeType = true)
+	public CompoundTag SerializeObject(object obj, Type declaredType, bool includeType = true)
 	{
 		if (obj is CompoundTag existing) return (CompoundTag)existing.Clone();
 
@@ -17,14 +16,14 @@ internal static class TagSerializer
 
 		if (includeType)
 		{
-			var runtimeTypeId = DataTagTypeRegistry.GetTypeId(runtimeType);
+			var runtimeTypeId = mapper.Types.GetTypeId(runtimeType);
 			if (runtimeTypeId is not null)
 			{
-				compound.Set(DataTagMapper.TypeDiscriminatorKey, runtimeTypeId);
+				compound.Set(mapper.TypeDiscriminatorKey, runtimeTypeId);
 			}
 		}
 
-		var metadata = TypeMetadataCache.Get(declaredType);
+		var metadata = mapper.Metadata.Get(declaredType);
 		foreach (var prop in metadata.Properties)
 		{
 			if (!prop.PropertyInfo.CanRead) continue;
@@ -42,28 +41,25 @@ internal static class TagSerializer
 		return compound;
 	}
 
-	public static DataTag? SerializeValue(object? value, Type declaredType, IDataTagConverter? propertyConverter = null)
+	public DataTag? SerializeValue(object? value, Type declaredType, IDataTagConverter? propertyConverter = null)
 	{
 		if (value is null) return null;
 		if (value is DataTag directTag) return directTag.Clone();
 
 		var actualType = Nullable.GetUnderlyingType(declaredType) ?? declaredType;
 
-		// 1. Property or Type Converters
 		if (propertyConverter is not null) return propertyConverter.ToTag(value);
-		if (DataTagMapper.TryGetConverter(actualType, out var typeConverter) ||
-			DataTagMapper.TryGetConverter(value.GetType(), out typeConverter))
+		if (mapper.TryGetConverter(actualType, out var typeConverter) ||
+			mapper.TryGetConverter(value.GetType(), out typeConverter))
 		{
 			return typeConverter.ToTag(value);
 		}
 
-		// 2. Dictionaries (Checked BEFORE generic IEnumerable)
 		if (value is IDictionary dict)
 		{
 			return SerializeDictionary(dict);
 		}
 
-		// 3. Primitives
 		switch (value)
 		{
 			case int i: return new IntTag(i);
@@ -75,24 +71,20 @@ internal static class TagSerializer
 			case Guid g: return new GuidTag(g);
 		}
 
-		// 4. Enums
 		if (actualType.IsEnum)
 			return new StringTag(value.ToString()!);
 
-		// 5. Collections
 		if (value is IEnumerable list)
 			return SerializeList(list, actualType);
 
-		// 6. Complex objects / Single-value wrappers
 		return SerializeComplexValue(value);
 	}
 
-	private static DataTag SerializeDictionary(IDictionary dict)
+	private DataTag SerializeDictionary(IDictionary dict)
 	{
 		var dictType = dict.GetType();
 		var keyType = dictType.IsGenericType ? dictType.GetGenericArguments()[0] : typeof(object);
 
-		// String-keyed: CompoundTag
 		if (keyType == typeof(string))
 		{
 			var compound = new CompoundTag();
@@ -107,7 +99,6 @@ internal static class TagSerializer
 			return compound;
 		}
 
-		// Object-keyed: ListTag of { "k": ..., "v": ... }
 		var listTag = new ListTag();
 		foreach (DictionaryEntry entry in dict)
 		{
@@ -122,7 +113,7 @@ internal static class TagSerializer
 		return listTag;
 	}
 
-	private static ListTag SerializeList(IEnumerable list, Type collectionType)
+	private ListTag SerializeList(IEnumerable list, Type collectionType)
 	{
 		var elemType = GetElementType(collectionType) ?? typeof(object);
 		var tagList = new ListTag();
@@ -135,11 +126,10 @@ internal static class TagSerializer
 		return tagList;
 	}
 
-	private static DataTag SerializeComplexValue(object value)
+	private DataTag SerializeComplexValue(object value)
 	{
 		var type = value.GetType();
 
-		// Single-value wrapper (e.g. EntityId wrapping Guid)
 		var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 		if (props.Length == 1 && props[0].PropertyType == typeof(Guid))
 			return new GuidTag((Guid)props[0].GetValue(value)!);

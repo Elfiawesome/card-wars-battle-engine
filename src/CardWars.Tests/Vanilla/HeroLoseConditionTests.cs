@@ -22,7 +22,7 @@ public sealed class HeroLoseConditionTests
 			}
 			""");
 
-		var registry = new BattleEngineRegistry();
+		var registry = new BattleEngineRegistry(TestBootstrap.DataTags);
 		var content = new ModContentResult
 		{
 			Id = ResourceId.Vanilla("cards/heroes/test_hero"),

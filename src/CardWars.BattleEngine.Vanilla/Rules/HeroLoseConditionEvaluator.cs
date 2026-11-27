@@ -34,7 +34,7 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry)
 		IExpression conditionExpression;
 		try
 		{
-			conditionExpression = DataTagMapper.FromTag<IExpression>(definition);
+			conditionExpression = registry.DataTags.FromTag<IExpression>(definition);
 		}
 		catch (Exception ex)
 		{
@@ -65,14 +65,14 @@ public sealed class HeroLoseConditionEvaluator(BattleEngineRegistry registry)
 		return condition?.IsMet(state, hero.Id) ?? hero.Hrt <= 0;
 	}
 
-	private static ContentPointer GetPointer(GenericCard hero)
+	private ContentPointer GetPointer(GenericCard hero)
 	{
 		if (hero.Data.Get("lose_condition") is not CompoundTag pointerTag)
 			return new ContentPointer(Resource: HeroHrtLoseCondition.Id);
 
 		try
 		{
-			return DataTagMapper.FromTag<ContentPointer>(pointerTag);
+			return registry.DataTags.FromTag<ContentPointer>(pointerTag);
 		}
 		catch (Exception ex)
 		{

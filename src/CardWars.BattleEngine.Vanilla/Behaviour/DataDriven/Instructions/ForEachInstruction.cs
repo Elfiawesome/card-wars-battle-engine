@@ -22,7 +22,7 @@ public sealed class ForEachInstructionHandler : IInstructionHandler<ForEachInstr
 	public IEnumerable<InstructionOutcome> Handle(ScriptRuntimeContext context, ForEachInstruction request)
 	{
 		var collection = context.Evaluate(request.Collection);
-		var items = GetItems(collection);
+		var items = GetItems(context, collection);
 		if (items is null)
 		{
 			Log.Error($"ForEach collection type [{collection.Type}] is not enumerable");
@@ -68,12 +68,12 @@ public sealed class ForEachInstructionHandler : IInstructionHandler<ForEachInstr
 		}
 	}
 
-	private static IEnumerable<DataTag>? GetItems(DataTag collection) => collection switch
+	private static IEnumerable<DataTag>? GetItems(ScriptContext context, DataTag collection) => collection switch
 	{
 		ListTag list => list.Items,
 		ObjectRefTag { Value: IEnumerable enumerable } => enumerable
 			.Cast<object?>()
-			.Select(item => item is DataTag tag ? tag : DataTagMapper.ToValueTag(item) ?? new NullTag()),
+			.Select(item => item is DataTag tag ? tag : context.DataTags.ToValueTag(item) ?? new NullTag()),
 		_ => null
 	};
 }

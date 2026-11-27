@@ -25,13 +25,13 @@ public class C2S_PlayerJoinedRequestResponsePacketHandler(PlayerProfileRegistry 
 		var data = context.Server.Session.LoadPlayer(persistentId);
 		if (data is not null)
 		{
-			playerSession = DataTagMapper.FromTag<PlayerSession>(data);
+			playerSession = context.Server.Session.DataTags.FromTag<PlayerSession>(data);
 			playerSession.Connection = context.Connection;
 		}
 		else
 		{
 			playerSession = new() { Connection = context.Connection, PlayerId = persistentId };
-			context.Server.Session.SavePlayer(persistentId, DataTagMapper.ToTag(playerSession, false));
+			context.Server.Session.SavePlayer(persistentId, context.Server.Session.DataTags.ToTag(playerSession, false));
 		}
 
 		playerSession.Username = request.Username;

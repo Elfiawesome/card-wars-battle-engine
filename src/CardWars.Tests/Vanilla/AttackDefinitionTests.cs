@@ -26,7 +26,7 @@ public sealed class AttackDefinitionTests
 				new AttackDamageSpec(0.5f, 0))
 		], ResourceId.Vanilla("texture/icon/attacks/cross"), "Cross", 2, true);
 
-		var parsed = DataTagMapper.FromTag<AttackDefinition>(DataTagMapper.ToTag(definition));
+		var parsed = TestBootstrap.DataTags.FromTag<AttackDefinition>(TestBootstrap.DataTags.ToTag(definition));
 
 		Assert.Equal("Cross", parsed.Name);
 		Assert.Equal(ResourceId.Vanilla("texture/icon/attacks/cross"), parsed.Texture);
@@ -74,7 +74,7 @@ public sealed class AttackDefinitionTests
 		], ResourceId.Vanilla("texture/icon/attacks/registered"), "Registered", 2, true);
 		TestSupport.Definitions(registry).AttackDefinitions.Register(
 			ResourceId.Vanilla("attacks/registered"),
-			DataTagMapper.ToTag(definition));
+			TestBootstrap.DataTags.ToTag(definition));
 
 		var card = new GenericCard(EntityId.New())
 		{
@@ -116,7 +116,7 @@ public sealed class AttackDefinitionTests
 	{
 		var card = new GenericCard(EntityId.New())
 		{
-			Data = new CompoundTag().Set("ba_atk", TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(
+			Data = new CompoundTag().Set("ba_atk", TestSupport.AttackPointer(TestBootstrap.DataTags.ToTag(new AttackDefinition(
 			[
 				Pattern(AttackPatternType.Cell, 4, 1, 0)
 			], ResourceId.Vanilla("texture/icon/attacks/custom"), "Custom BA", 0, false))))
@@ -143,7 +143,7 @@ public sealed class AttackDefinitionTests
 		int chargeCost,
 		bool bypass,
 		params AttackPattern[] patterns)
-		=> TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(patterns, ResourceId.Vanilla("texture/icon/attacks/test"), name, chargeCost, bypass)));
+		=> TestSupport.AttackPointer(TestBootstrap.DataTags.ToTag(new AttackDefinition(patterns, ResourceId.Vanilla("texture/icon/attacks/test"), name, chargeCost, bypass)));
 
 	private static AttackPattern Pattern(
 		AttackPatternType type,

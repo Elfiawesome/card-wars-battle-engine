@@ -64,7 +64,7 @@ public sealed class BattleHeroTests
 		{
 			if (id != TestCards.CobCannon) return;
 
-			definition.Set("sp_atks", new ListTag().Add(TestSupport.AttackPointer(DataTagMapper.ToTag(new AttackDefinition(
+			definition.Set("sp_atks", new ListTag().Add(TestSupport.AttackPointer(TestBootstrap.DataTags.ToTag(new AttackDefinition(
 			[
 				new AttackPattern(
 					AttackPatternType.Cell,

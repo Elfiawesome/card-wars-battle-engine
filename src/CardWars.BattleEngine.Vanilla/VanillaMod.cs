@@ -6,6 +6,7 @@ using CardWars.BattleEngine.Vanilla.Block;
 using CardWars.BattleEngine.Vanilla.Features;
 using CardWars.BattleEngine.Vanilla.Rules;
 using CardWars.Core.Data.Mapping;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
@@ -99,16 +100,16 @@ public class VanillaMod : IBattleEngineMod
 		RegisterDataDriven(registry);
 
 		// --- Game Rules ---
-		RegisterGameRules(definitions, modContents);
+		RegisterGameRules(definitions, modContents, registry.DataTags);
 
 		// --- Attack Definitions ---
-		RegisterAttackDefinitions(definitions, modContents);
+		RegisterAttackDefinitions(definitions, modContents, registry.DataTags);
 
 		// --- Register Ability Types ---
-		RegisterAbilityTypes(definitions, modContents);
+		RegisterAbilityTypes(definitions, modContents, registry.DataTags);
 
 		// --- Card Definitions ---
-		RegisterCardDefinitions(definitions, modContents);
+		RegisterCardDefinitions(definitions, modContents, registry.DataTags);
 	}
 
 	private static void RegisterDataDriven(BattleEngineRegistry registry)
@@ -160,13 +161,13 @@ public class VanillaMod : IBattleEngineMod
 	}
 
 
-	private static void RegisterGameRules(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents)
+	private static void RegisterGameRules(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents, DataTagContext dataTags)
 	{
 		foreach (var content in modContents)
 		{
 			if (content.Category.Length == 0 || content.Category[0] != "rules") continue;
 
-			var rules = content.ReadAs<CompoundTag>();
+			var rules = content.ReadAs<CompoundTag>(dataTags);
 			if (rules is null) continue;
 
 			definitions.RuleDefinitions.Register(content.Id, rules);
@@ -174,7 +175,7 @@ public class VanillaMod : IBattleEngineMod
 			{
 				try
 				{
-					definitions.DefaultUnitTargetFilter = DataTagMapper.FromTag<GameRulesDefinition>(rules).UnitTargetFilter;
+					definitions.DefaultUnitTargetFilter = dataTags.FromTag<GameRulesDefinition>(rules).UnitTargetFilter;
 				}
 				catch (Exception ex)
 				{
@@ -186,13 +187,13 @@ public class VanillaMod : IBattleEngineMod
 		}
 	}
 
-	private static void RegisterAttackDefinitions(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents)
+	private static void RegisterAttackDefinitions(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents, DataTagContext dataTags)
 	{
 		foreach (var content in modContents)
 		{
 			if (content.Category.Length == 0 || content.Category[0] is not ("attacks" or "sp_atks")) continue;
 
-			var attack = content.ReadAs<CompoundTag>();
+			var attack = content.ReadAs<CompoundTag>(dataTags);
 			if (attack is null) continue;
 
 			definitions.AttackDefinitions.Register(content.Id, attack);
@@ -200,13 +201,13 @@ public class VanillaMod : IBattleEngineMod
 		}
 	}
 
-	public static void RegisterAbilityTypes(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents)
+	public static void RegisterAbilityTypes(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents, DataTagContext dataTags)
 	{
 		foreach (var content in modContents)
 		{
 			if (content.Category.Length == 1 && content.Category[0] == "ability_types")
 			{
-				var abilityType = content.ReadAs<CompoundTag>();
+				var abilityType = content.ReadAs<CompoundTag>(dataTags);
 				if (abilityType is null) continue;
 				definitions.AbilityTypeDefinitions.Register(content.Id, abilityType);
 				Log.Info($"Registered Ability Type: {content.Id}");
@@ -214,14 +215,14 @@ public class VanillaMod : IBattleEngineMod
 		}
 	}
 
-	private static void RegisterCardDefinitions(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents)
+	private static void RegisterCardDefinitions(CardWarsDefinitions definitions, IReadOnlyList<ModContentResult> modContents, DataTagContext dataTags)
 	{
 		foreach (var content in modContents)
 		{
 			switch (content.Category)
 			{
 				case ["cards", "units", ..]:
-					var unitDataTag = content.ReadAs<CompoundTag>();
+					var unitDataTag = content.ReadAs<CompoundTag>(dataTags);
 					if (unitDataTag is null) continue;
 
 					unitDataTag.Set("card_type", "unit");
@@ -229,7 +230,7 @@ public class VanillaMod : IBattleEngineMod
 					unitDataTag.Set("intrinsic_behaviours", new ListTag().Add(new CompoundTag().Set("resource", "cardwars:summon_unit_card_to_unit_slot_behaviour")));
 					// Set unit card's default unit targeting
 					if (!unitDataTag.Has("target_filter") && definitions.DefaultUnitTargetFilter is { } targetFilter)
-						unitDataTag.Set("target_filter", DataTagMapper.ToTag(targetFilter));
+						unitDataTag.Set("target_filter", dataTags.ToTag(targetFilter));
 
 					// Set unit card's abilities
 					// var abilities = unitDataTag.GetList("abilities");
@@ -256,7 +257,7 @@ public class VanillaMod : IBattleEngineMod
 					Log.Info($"Registered Unit Card: {content.Id}");
 					break;
 				case ["cards", "spells", ..]:
-					var spellDataTag = content.ReadAs<CompoundTag>();
+					var spellDataTag = content.ReadAs<CompoundTag>(dataTags);
 					if (spellDataTag is null) continue;
 
 					spellDataTag.Set("card_type", "spell");
@@ -264,12 +265,12 @@ public class VanillaMod : IBattleEngineMod
 					Log.Info($"Registered Spell Card: {content.Id}");
 					break;
 				case ["cards", "heroes", ..]:
-					var heroDataTag = content.ReadAs<CompoundTag>();
+					var heroDataTag = content.ReadAs<CompoundTag>(dataTags);
 					if (heroDataTag is null) continue;
 
 					heroDataTag.Set("card_type", "hero");
 					if (!heroDataTag.Has("lose_condition"))
-						heroDataTag.Set("lose_condition", DataTagMapper.ToTag(new ContentPointer(Resource: HeroHrtLoseCondition.Id)));
+						heroDataTag.Set("lose_condition", dataTags.ToTag(new ContentPointer(Resource: HeroHrtLoseCondition.Id)));
 
 					definitions.CardDefinitions.Register(content.Id, heroDataTag);
 					Log.Info($"Registered Hero Card: {content.Id}");

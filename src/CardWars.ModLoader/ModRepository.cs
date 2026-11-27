@@ -1,8 +1,6 @@
 using System.Reflection;
 using System.Runtime.Loader;
-using CardWars.Core.Data.Global;
-using CardWars.Core.Data.Mapping;
-using CardWars.Core.Data.Serialization.Json;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
@@ -24,14 +22,21 @@ public class LoadedMod
 public class ModRepository
 {
 	private readonly IEnumerable<StoragePath> _modDirs;
+	private readonly DataTagContext _dataTags;
 	private readonly Dictionary<string, LoadedMod> _mods = [];
 	private readonly List<string> _loadOrder = [];
 	private readonly Dictionary<(string ContentRoot, string? AssetRoot), ModContentFiles> _content = [];
 
-	public ModRepository(StoragePath modDir) { _modDirs = [modDir]; }
-	public ModRepository(IEnumerable<StoragePath> modDirs)
+	public ModRepository(StoragePath modDir, DataTagContext dataTags)
+	{
+		_modDirs = [modDir];
+		_dataTags = dataTags;
+	}
+
+	public ModRepository(IEnumerable<StoragePath> modDirs, DataTagContext dataTags)
 	{
 		_modDirs = modDirs;
+		_dataTags = dataTags;
 	}
 
 	public void Setup()
@@ -39,7 +44,7 @@ public class ModRepository
 		DiscoverMods();
 		ResolveDependencies();
 		LoadAssemblies();
-		DataTagTypeRegistry.ScanLoadedAssemblies();
+		_dataTags.ScanLoadedAssemblies();
 	}
 
 	public void DiscoverMods()
@@ -53,7 +58,7 @@ public class ModRepository
 
 			Log.Info($"Mod found in '{modDir.FullPath}'");
 
-			var manifest = ModManifest.Load(manifestPath);
+			var manifest = ModManifest.Load(manifestPath, _dataTags);
 			_mods[manifest.Id] = new()
 			{
 				Manifest = manifest,
@@ -273,19 +278,14 @@ public class ModContentResult
 		return memory.ToArray();
 	}
 
-	public T? ReadAs<T>()
+	public T? ReadAs<T>(DataTagContext dataTags)
 		where T : DataTag
-	{
-		var json = ReadAllText();
-		var tag = DataTagSerializer.Deserialize<T>(json);
-		return tag;
-	}
+		=> dataTags.Deserialize<T>(ReadAllText());
 
-	public T ReadAsObject<T>()
+	public T ReadAsObject<T>(DataTagContext dataTags)
 	{
-		var json = ReadAllText();
-		var tag = DataTagSerializer.Deserialize<CompoundTag>(json)
+		var tag = dataTags.Deserialize<CompoundTag>(ReadAllText())
 			?? throw new InvalidOperationException($"Invalid Serialization as object for '{Id}'");
-		return DataTagMapper.FromTag<T>(tag);
+		return dataTags.FromTag<T>(tag);
 	}
 }

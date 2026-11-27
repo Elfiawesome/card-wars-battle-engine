@@ -1,4 +1,5 @@
 using CardWars.BattleEngine;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Transport;
@@ -23,8 +24,8 @@ public class VanillaMod : IServerMod
 		var profileRegistry = new PlayerProfileRegistry();
 		RegisterPackets(server.Registry, profileRegistry);
 		RegisterEvents(server, worldRegistry, profileRegistry);
-		LoadWorldDefinitions(worldRegistry, profileRegistry, modContents);
-		LoadPlayerProfiles(profileRegistry, modContents); // Get the default starter profile and register it in profileRegistry
+		LoadWorldDefinitions(worldRegistry, profileRegistry, modContents, server.Session.DataTags);
+		LoadPlayerProfiles(profileRegistry, modContents, server.Session.DataTags); // Get the default starter profile and register it in profileRegistry
 
 		// Get extension registries (this ones arent local :0)
 		var battleEngineRegistry = server.Registry.GetExtension<BattleEngineRegistry>()
@@ -138,26 +139,26 @@ public class VanillaMod : IServerMod
 		}
 	}
 
-	private void LoadPlayerProfiles(PlayerProfileRegistry profileRegistry, IReadOnlyList<ModContentResult> modContents)
+	private void LoadPlayerProfiles(PlayerProfileRegistry profileRegistry, IReadOnlyList<ModContentResult> modContents, DataTagContext dataTags)
 	{
 		foreach (var content in modContents)
 		{
 			if (content.Category is not ["profiles"]) continue;
 
-			var profile = content.ReadAsObject<PlayerProfile>();
+			var profile = content.ReadAsObject<PlayerProfile>(dataTags);
 			profileRegistry.Starter = profile;
 			Log.Info($"Registered starter profile: {content.Id}");
 		}
 	}
 
-	private void LoadWorldDefinitions(WorldRegistry worldRegistry, PlayerProfileRegistry profileRegistry, IReadOnlyList<ModContentResult> modContents)
+	private void LoadWorldDefinitions(WorldRegistry worldRegistry, PlayerProfileRegistry profileRegistry, IReadOnlyList<ModContentResult> modContents, DataTagContext dataTags)
 	{
 		foreach (var content in modContents)
 		{
 			switch (content.Category)
 			{
 				case ["worlds"]:
-					var worldDataTag = content.ReadAs<CompoundTag>();
+					var worldDataTag = content.ReadAs<CompoundTag>(dataTags);
 					if (worldDataTag is null) continue;
 					Log.Info("Registered World: " + content.Id.ToString());
 					worldRegistry.Templates.Register(content.Id, worldDataTag);
@@ -165,7 +166,7 @@ public class VanillaMod : IServerMod
 				case []:
 					if (content.FilePath.GetFileNameWithoutExtension() == "config")
 					{
-						var configDataTag = content.ReadAs<CompoundTag>();
+						var configDataTag = content.ReadAs<CompoundTag>(dataTags);
 						if (configDataTag is null) continue;
 
 						worldRegistry.DefaultWorld = ResourceId.Parse(configDataTag.GetString("default_world"));

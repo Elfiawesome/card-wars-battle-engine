@@ -1,9 +1,6 @@
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Text;
-using CardWars.Core.Data.Mapping;
-using CardWars.Core.Data.Serialization.Json;
-using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 
@@ -15,14 +12,16 @@ public class TcpConnection : IConnection
 	private readonly NetworkStream _stream;
 	private readonly ConcurrentQueue<IPacket> _receiveQueue = new();
 	private readonly CancellationTokenSource _cts = new();
+	private readonly PacketCodec _codec;
 
 	public bool IsConnected => _tcpClient.Connected;
 
-	public TcpConnection(TcpClient tcpClient)
+	public TcpConnection(TcpClient tcpClient, PacketCodec codec)
 	{
 		_tcpClient = tcpClient;
 		_tcpClient.NoDelay = true;
 		_stream = tcpClient.GetStream();
+		_codec = codec;
 		Task.Run(() => ReceiveLoop(_cts.Token));
 	}
 
@@ -32,8 +31,7 @@ public class TcpConnection : IConnection
 
 		try
 		{
-			var tag = DataTagMapper.ToTag(packet);
-			var json = DataTagSerializer.Serialize(tag);
+			var json = _codec.Encode(packet);
 			var payload = Encoding.UTF8.GetBytes(json);
 
 			var buffer = new byte[4 + payload.Length];
@@ -82,10 +80,7 @@ public class TcpConnection : IConnection
 				if (!ReadExact(payloadBuffer, 0, payloadLength, token)) break;
 
 				var json = Encoding.UTF8.GetString(payloadBuffer);
-				var tag = DataTagSerializer.Deserialize<CompoundTag>(json);
-				if (tag is null) continue;
-
-				var packet = DataTagMapper.FromTag<IPacket>(tag);
+				var packet = _codec.Decode(json);
 				if (packet is not null)
 					_receiveQueue.Enqueue(packet);
 			}

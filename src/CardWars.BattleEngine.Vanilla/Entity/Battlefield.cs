@@ -1,4 +1,5 @@
 using CardWars.BattleEngine.Rules;
+using CardWars.Core.Data;
 using CardWars.BattleEngine.State;
 using CardWars.Core.Data.Attributes;
 
@@ -17,5 +18,5 @@ public class Battlefield(EntityId id) : IEntity, IParentableEntity
 
 
 
-	public List<ContentPointer> GetBehaviours() => [];
+	public List<ContentPointer> GetBehaviours(DataTagContext dataTags) => [];
 }

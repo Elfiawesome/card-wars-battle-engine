@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CardWars.Core.Data;
 using CardWars.Core.Storage;
 using CardWars.ModLoader;
 using Godot;
@@ -11,6 +12,7 @@ public sealed class GameApplication
 {
 	public IFileProvider Provider { get; }
 	public string GamedataPath { get; }
+	public DataTagContext DataTags { get; }
 	public StorageManager Storage { get; }
 	public ModRepository Mods { get; }
 
@@ -18,8 +20,9 @@ public sealed class GameApplication
 	{
 		Provider = provider;
 		GamedataPath = provider.GetFullPath(gamedataPath);
-		Storage = new StorageManager(GamedataPath, provider);
-		Mods = new ModRepository(Storage.AllModDirectories);
+		DataTags = new DataTagContext();
+		Storage = new StorageManager(GamedataPath, provider, DataTags);
+		Mods = new ModRepository(Storage.AllModDirectories, DataTags);
 		Mods.Setup();
 	}
 

@@ -26,7 +26,7 @@ public sealed class MemberExpressionHandler : IExpressionHandler<MemberExpressio
 			return new NullTag();
 		}
 
-		if (DataTagAccess.TryGetMember(targetObject, request.Member, out var value))
+		if (context.DataTags.TryGetMember(targetObject, request.Member, out var value))
 			return value ?? new NullTag();
 
 		Log.Warn($"Member [{request.Member}] was not found on [{targetObject.GetType().Name}]");

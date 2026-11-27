@@ -51,7 +51,7 @@ internal static class TestCards
 			.Set("pt", pt)
 			.Set("charge", charge)
 			.Set("card_type", "unit")
-			.Set("target_filter", DataTagMapper.ToTag(TestTargetFilters.CreateUnitTargetFilter()))
+			.Set("target_filter", TestBootstrap.DataTags.ToTag(TestTargetFilters.CreateUnitTargetFilter()))
 			.Set("intrinsic_behaviours", new ListTag().Add(
 				new CompoundTag().Set("resource", "cardwars:summon_unit_card_to_unit_slot_behaviour")));
 }

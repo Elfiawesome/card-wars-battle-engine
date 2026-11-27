@@ -1,7 +1,7 @@
 using CardWars.BattleEngine.Behaviour.DataDriven.Expressions;
 using CardWars.BattleEngine.State;
+using CardWars.Core.Data;
 using CardWars.Core.Data.Access;
-using CardWars.Core.Data.Mapping;
 using CardWars.Core.Data.Tags;
 using CardWars.Core.Logging;
 using CardWars.Core.Registry;
@@ -14,6 +14,7 @@ public class ScriptContext : IDataTagAccessible
 
 	public GameState State { get; }
 	public DataDrivenRegistry DataDriven { get; }
+	public DataTagContext DataTags => DataDriven.DataTags;
 	public ScriptScope GlobalScope { get; }
 	public ScriptScope CurrentScope => _scopes[^1];
 	public IReadOnlyDictionary<ResourceId, DataTag> Variables => CurrentScope.Variables;
@@ -142,7 +143,7 @@ public class ScriptContext : IDataTagAccessible
 			case CompoundTag compound:
 				try
 				{
-					return DataTagMapper.FromTag<T>(compound);
+					return DataTags.FromTag<T>(compound);
 				}
 				catch (Exception ex)
 				{

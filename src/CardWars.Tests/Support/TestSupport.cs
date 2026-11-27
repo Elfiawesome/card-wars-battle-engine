@@ -17,11 +17,11 @@ internal static class TestSupport
 {
 	public static BattleEngineRegistry CreateRegistry()
 	{
-		var registry = new BattleEngineRegistry();
+		var registry = new BattleEngineRegistry(TestBootstrap.DataTags);
 		new VanillaMod().OnLoad(registry, []);
 		var definitions = Definitions(registry);
 		definitions.DefaultUnitTargetFilter = TestTargetFilters.CreateUnitTargetFilter();
-		definitions.RuleDefinitions.Register(GameRulesDefinition.DefaultId, DataTagMapper.ToTag(new GameRulesDefinition
+		definitions.RuleDefinitions.Register(GameRulesDefinition.DefaultId, TestBootstrap.DataTags.ToTag(new GameRulesDefinition
 		{
 			PtSchedule = [5, 6, 8, 11, 15, 20, 26, 33, 41, 50],
 			PtCap = 50,

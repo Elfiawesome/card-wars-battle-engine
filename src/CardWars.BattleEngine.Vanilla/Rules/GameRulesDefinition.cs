@@ -32,7 +32,7 @@ public sealed class GameRulesDefinition
 
 		try
 		{
-			return DataTagMapper.FromTag<GameRulesDefinition>(tag);
+			return registry.DataTags.FromTag<GameRulesDefinition>(tag);
 		}
 		catch (Exception ex)
 		{

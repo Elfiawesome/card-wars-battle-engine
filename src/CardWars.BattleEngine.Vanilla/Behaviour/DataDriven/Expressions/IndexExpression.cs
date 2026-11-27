@@ -27,7 +27,7 @@ public sealed class IndexExpressionHandler : IExpressionHandler<IndexExpression>
 			return new NullTag();
 		}
 
-		if (DataTagAccess.TryGetIndex(targetObject, index, out var value))
+		if (context.DataTags.TryGetIndex(targetObject, index, out var value))
 			return value ?? new NullTag();
 
 		Log.Warn($"Index [{index.Type}] was not found on [{targetObject.GetType().Name}]");

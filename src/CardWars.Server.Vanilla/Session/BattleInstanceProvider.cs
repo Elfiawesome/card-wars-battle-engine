@@ -29,7 +29,7 @@ public class BattleInstanceProvider(
 		var saveId = serverInstance.InstanceId.ToString();
 
 		// TODO: serialize battle state (GameState) — for now persist identity only.
-		session.SaveInstance(saveId, DataTagMapper.ToTag(serverInstance, false));
+		session.SaveInstance(saveId, session.DataTags.ToTag(serverInstance, false));
 		return saveId;
 	}
 }

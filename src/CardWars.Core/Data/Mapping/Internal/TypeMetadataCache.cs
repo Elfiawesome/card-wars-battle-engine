@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Reflection;
 using CardWars.Core.Data.Attributes;
 using CardWars.Core.Data.Converters;
@@ -27,24 +29,23 @@ internal sealed record TypeMetadata(
 	ConstructorParamMetadata[] ConstructorParams
 );
 
-internal static class TypeMetadataCache
+internal sealed class TypeMetadataCache
 {
-	private static readonly ConcurrentDictionary<Type, TypeMetadata> _metadataCache = new();
-	private static readonly ConcurrentDictionary<Type, IDataTagConverter> _converterInstances = new();
+	private readonly ConcurrentDictionary<Type, TypeMetadata> _metadataCache = new();
+	private readonly ConcurrentDictionary<Type, IDataTagConverter> _converterInstances = new();
 
-	public static TypeMetadata Get(Type type) => _metadataCache.GetOrAdd(type, static t => BuildMetadata(t));
+	public TypeMetadata Get(Type type) => _metadataCache.GetOrAdd(type, BuildMetadata);
 
-	public static IDataTagConverter GetConverterInstance(Type converterType) =>
+	public IDataTagConverter GetConverterInstance(Type converterType) =>
 		_converterInstances.GetOrAdd(converterType, static ct =>
 			Activator.CreateInstance(ct) as IDataTagConverter
 			?? throw new InvalidOperationException($"Converter [{ct.FullName}] could not be created."));
 
-	private static TypeMetadata BuildMetadata(Type type)
+	private TypeMetadata BuildMetadata(Type type)
 	{
 		var propList = new List<PropertyMetadata>();
 		var seenProps = new HashSet<string>();
 
-		// Correctly traverse interface hierarchies
 		var propertyInfos = type.IsInterface
 			? new[] { type }.Concat(type.GetInterfaces()).SelectMany(i => i.GetProperties(BindingFlags.Public | BindingFlags.Instance))
 			: type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -68,7 +69,6 @@ internal static class TypeMetadataCache
 			propList.Add(new PropertyMetadata(prop, tagKey, converter, IsConstructorBound: false));
 		}
 
-		// Constructor Matching (Senior's approach: pre-bind matching properties)
 		ConstructorInfo? bestCtor = null;
 		ConstructorParamMetadata[] bestCtorParams = [];
 
@@ -124,7 +124,6 @@ internal static class TypeMetadataCache
 
 		bestCtor ??= constructors.FirstOrDefault(c => c.GetParameters().Length == 0);
 
-		// Flag properties that are bound to the constructor so we don't double-set them
 		if (bestCtorParams.Length > 0)
 		{
 			var ctorKeys = new HashSet<string>(bestCtorParams.Select(p => p.TagKey));
