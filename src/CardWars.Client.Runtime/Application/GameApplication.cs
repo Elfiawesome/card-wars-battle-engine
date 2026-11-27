@@ -1,15 +1,9 @@
-using Logger = CardWars.Core.Logging.Logger;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using CardWars.Core.Data;
-using CardWars.Client.Runtime.Application;
 using CardWars.Core.Logging;
 using CardWars.Core.Storage;
 using CardWars.ModLoader;
-using Godot;
 
-namespace CardWars.Client.scripts.core.application;
+namespace CardWars.Client.Runtime.Application;
 
 public sealed class GameApplication
 {
@@ -20,31 +14,23 @@ public sealed class GameApplication
 	public StorageManager Storage { get; }
 	public ModRepository Mods { get; }
 
-	public GameApplication(IFileProvider provider, string gamedataPath, ILogSink logSink)
+	public GameApplication(IFileProvider provider, string gamedataPath, string dataTagNamespace, ILogSink logSink)
 	{
 		Provider = provider;
 		GamedataPath = provider.GetFullPath(gamedataPath);
 		Logger = new Logger(logSink);
-		DataTags = new DataTagContext("cardwars");
+		DataTags = new DataTagContext(dataTagNamespace);
 		Storage = new StorageManager(GamedataPath, provider, DataTags, Logger);
 		Mods = new ModRepository(Storage.GlobalModDirectories, DataTags, Logger);
 		Mods.Setup();
 	}
 
 	public SessionRuntime CreateSession(
-		Node root,
+		IClientRuntimeFactory clientFactory,
 		string username,
 		SessionMode mode,
 		string sessionName,
 		string targetIpAddress,
 		int targetPort)
-		=> new(this, root, username, mode, sessionName, targetIpAddress, targetPort);
-
-	public IEnumerable<TMod> CreateModEntries<TMod>()
-		where TMod : class, IModEntry
-		=> typeof(GameApplication).Assembly
-			.GetTypes()
-			.Where(type => typeof(TMod).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
-			.Select(type => Activator.CreateInstance(type))
-			.OfType<TMod>();
+		=> new(this, clientFactory, username, mode, sessionName, targetIpAddress, targetPort);
 }

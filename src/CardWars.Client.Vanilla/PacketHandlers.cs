@@ -2,7 +2,7 @@ using CardWars.Client.scenes.core.game_session;
 using CardWars.Client.scripts.core.packet;
 using CardWars.Vanilla.Shared.Packet;
 
-namespace CardWars.Client.scripts.cardwars.packet;
+namespace CardWars.Client.Vanilla;
 
 public class S2C_PlayerJoinedRequestPacketHandler() : IPacketHandlerClient<S2C_PlayerJoinedRequestPacket>
 {
@@ -55,4 +55,3 @@ public class S2C_LeaveInstancePacketHandler : IPacketHandlerClient<S2C_LeaveInst
 		context.Runtime.SetDebugStatus($"Left instance {request.PlayerId}");
 	}
 }
-

@@ -1,26 +1,23 @@
-using Logger = CardWars.Core.Logging.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using CardWars.BattleEngine;
-using CardWars.Client.Runtime.Application;
+using CardWars.BattleEngine.registry;
 using CardWars.Client.Runtime.Content;
-using CardWars.Client.Runtime.Profile;
+using CardWars.Core.Logging;
 using CardWars.Core.Network.Packet;
 using CardWars.Core.Network.Transport;
 using CardWars.Core.Storage;
 using CardWars.Server;
 using CardWars.Server.Listener;
-using Godot;
-using CardWars.BattleEngine.registry;
 
-namespace CardWars.Client.scripts.core.application;
+namespace CardWars.Client.Runtime.Application;
 
 public sealed class SessionRuntime
 {
 	private readonly GameApplication _app;
-	private readonly Node _root;
+	private readonly IClientRuntimeFactory _clientFactory;
 	private readonly string _username;
 	private readonly string _sessionName;
 	private readonly string _targetIpAddress;
@@ -35,7 +32,7 @@ public sealed class SessionRuntime
 
 	public SessionRuntime(
 		GameApplication app,
-		Node root,
+		IClientRuntimeFactory clientFactory,
 		string username,
 		SessionMode mode,
 		string sessionName,
@@ -43,7 +40,7 @@ public sealed class SessionRuntime
 		int targetPort)
 	{
 		_app = app;
-		_root = root;
+		_clientFactory = clientFactory;
 		_username = username;
 		_sessionName = sessionName;
 		Mode = mode;
@@ -53,7 +50,7 @@ public sealed class SessionRuntime
 
 	public SessionMode Mode { get; }
 	public SessionContext Context => _context ?? throw new InvalidOperationException("Session has not started.");
-	public ClientRuntime? Client { get; private set; }
+	public IClientRuntime? Client { get; private set; }
 	public ServerRuntime? Server { get; private set; }
 
 	public Action<string>? OnDebugStatus { get; set; }
@@ -68,71 +65,49 @@ public sealed class SessionRuntime
 		if (_context is not null)
 			throw new InvalidOperationException("Session has already started.");
 
-		// Get logger :/
 		_logger = _app.Logger.ForIdentity(_username);
-
-		// Get all content (battle/server/client)
 		_content = GameContent.Load(_app.Mods);
 
-		// Load up battle mods and common battle registry
 		_battleRegistry = new BattleEngineRegistry(_app.DataTags, _logger);
 		foreach (var mod in _app.Mods.LoadModEntry<IBattleEngineMod>())
 			mod.OnLoad(_battleRegistry, _content.BattleData);
 
-		// Server storage
 		if (HasServer)
 			_storage = _app.Storage.OpenSession(_sessionName);
+
 		_context = new SessionContext(_app.DataTags, _logger, _storage, _content, _battleRegistry);
 
 		if (HasServer) StartServer();
-		if (HasClient) StartClient(); // start client after server is up (TODO: although we should really do a timer request and not immediately quit...)
+		if (HasClient) StartClient();
 
 		_logger.Info($"Session started in {Mode} mode with username: {_username}");
 	}
 
 	private void StartClient()
 	{
-
-		// Determine connection type (integrated or connection)
 		IConnection connection;
 		if (Mode == SessionMode.Integrated)
+		{
 			connection = _localListener?.ConnectClient()
 				?? throw new InvalidOperationException("An integrated client requires a local listener.");
+		}
 		else
+		{
 			connection = new TcpConnection(
 				new TcpClient(_targetIpAddress, _targetPort),
 				new PacketCodec(Context.DataTags),
 				Context.Logger);
+		}
 
-		// Prep client mdos
-		var clientMods = _app.CreateModEntries<IClientMod>()
-			.Concat(_app.Mods.LoadModEntry<IClientMod>())
-			.ToList();
-
-		// Profile store (cuz its different from `Context.Storage`? TODO: Maybe combine them into one)
-		var profileRoot = new StoragePath(
-			_app.Provider.Combine(_app.GamedataPath, ".userdata"),
-			_app.Provider);
-		var profiles = new ClientProfileStore(profileRoot, Context.DataTags, Context.Logger);
-
-		Client = new ClientRuntime(
-			_root,
-			Context,
-			_username,
-			profiles,
-			clientMods,
-			connection)
-		{
-			OnDebugStatus = value => OnDebugStatus?.Invoke(value),
-			OnDebugWorld = value => OnDebugWorld?.Invoke(value),
-			OnDebugPlayers = value => OnDebugPlayers?.Invoke(value)
-		};
+		Client = _clientFactory.Create(Context, _username, connection);
+		Client.OnDebugStatus = value => OnDebugStatus?.Invoke(value);
+		Client.OnDebugWorld = value => OnDebugWorld?.Invoke(value);
+		Client.OnDebugPlayers = value => OnDebugPlayers?.Invoke(value);
 		Client.Start();
 	}
 
 	private void StartServer()
 	{
-		// Setup all listeners
 		var listeners = new List<IListener>();
 		var codec = new PacketCodec(Context.DataTags);
 		_localListener = null;
@@ -145,9 +120,7 @@ public sealed class SessionRuntime
 
 		listeners.Add(new TcpGameListener(codec, _targetPort, Context.Logger));
 
-		// Prep server mods
 		var serverMods = _app.Mods.LoadModEntry<IServerMod>().ToList();
-
 		Server = new ServerRuntime(Context, serverMods, listeners);
 		Server.Start();
 	}

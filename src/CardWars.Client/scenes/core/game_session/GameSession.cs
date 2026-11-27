@@ -2,6 +2,7 @@ using CardWars.Client.scripts.core.application;
 using CardWars.Client.Runtime.Application;
 using CardWars.Client.scenes.core.global;
 using CardWars.Core.Storage;
+using CardWars.Vanilla.Shared;
 using Godot;
 
 namespace CardWars.Client.scenes.core.game_session;
@@ -34,15 +35,16 @@ public partial class GameSession : Node
 		_logSink = new GodotLogSink();
 		AddChild(_logSink);
 		
-		var app = new GameApplication(provider, gamedataPath, _logSink);
+		var app = new GameApplication(provider, gamedataPath, CardWarsIds.DefaultNamespace, _logSink);
 
 		var mode = ConnectingUsername == "Elfiawesome"
 			? SessionMode.Integrated
 			: SessionMode.Client;
 
 		// Set up session!!!
+		var clientFactory = new ClientRuntimeFactory(this, app);
 		Session = app.CreateSession(
-			this,
+			clientFactory,
 			ConnectingUsername,
 			mode,
 			"session_1",

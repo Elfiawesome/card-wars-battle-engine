@@ -1,11 +1,12 @@
-using CardWars.Vanilla.Shared;
 using CardWars.Core.Registry;
 
 namespace CardWars.Vanilla.Shared;
 
 public static class CardWarsIds
 {
-	public static ResourceId Vanilla(string path) => new("cardwars", path);
+	public const string DefaultNamespace = "cardwars";
+
+	public static ResourceId Vanilla(string path) => new(DefaultNamespace, path);
 }
 
 public static class SharedIds

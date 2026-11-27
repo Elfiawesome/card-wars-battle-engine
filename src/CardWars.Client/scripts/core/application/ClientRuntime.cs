@@ -13,7 +13,7 @@ using Godot;
 
 namespace CardWars.Client.scripts.core.application;
 
-public sealed class ClientRuntime
+public sealed class ClientRuntime : IClientRuntime
 {
 	private readonly Node _root;
 	private readonly IReadOnlyList<IClientMod> _mods;

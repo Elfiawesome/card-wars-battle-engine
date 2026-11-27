@@ -19,6 +19,7 @@
     <ProjectReference Include="..\CardWars.BattleEngine\CardWars.BattleEngine.csproj" />
     <ProjectReference Include="..\CardWars.BattleEngine.Vanilla\CardWars.BattleEngine.Vanilla.csproj" />
     <ProjectReference Include="..\CardWars.Server.Vanilla\CardWars.Server.Vanilla.csproj" />
+    <ProjectReference Include="..\CardWars.Vanilla.Shared\CardWars.Vanilla.Shared.csproj" />
   </ItemGroup>
 
 </Project>
